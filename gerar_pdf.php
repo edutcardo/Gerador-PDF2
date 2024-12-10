@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('pg1.png', 0, 0, 210, 297);  // Ajuste para o tamanho A4 (210mm x 297mm)
+    $pdf->Image('pg1.png', 0, 0, 225, 297);  // Ajuste para o tamanho A4 (210mm x 297mm)
 
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 'B', 16);
