@@ -5,24 +5,31 @@ require_once('vendor/autoload.php'); // Ou o caminho correto, se você não esti
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome = $_POST['nome'];
     $email = $_POST['email'];
+    $valor1 = $_POST['valor1'];
+    $valor2 = $_POST['valor2'];
+
 
     // Criação do PDF
     $pdf = new TCPDF();
-    $pdf->SetAutoPageBreak(TRUE, 15);
+    $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
+    $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('pg1.png', 0, 0, 225, 297);  // Ajuste para o tamanho A4 (210mm x 297mm)
+    $pdf->Image('pg1.png', 0, 0, 210, 297);
 
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(20, 50, "Nome: $nome");
+    $pdf->Text(100, 50, "Nome: $valor1 kWh");
     $pdf->Text(20, 60, "Email: $email");
+
 
     // Segunda Página (com a imagem genérica e gráfico)
     $pdf->AddPage();  // Adiciona a segunda página
-    $pdf->Image('pg2.png', 0, 0, 210, 297);  // Ajuste para o tamanho A4 (210mm x 297mm)
+    $pdf->Image('pg2.png', 0, 0, 210, 297);
+    $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
+    $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
 
     // Definir fonte para texto
     $pdf->SetFont('helvetica', 'B', 16);
@@ -61,7 +68,81 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdf->Text($x + ($index * $gap) + 5, $y + 5, $label);  // Rótulo de cada mês
     }
 
+    // Terceira Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    
+    // Definir fonte e adicionar conteúdo à terceira página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(20, 50, "Nome: $nome");
+    $pdf->Text(20, 60, "Email: $email");
+
+    // Quarta Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    
+    // Definir fonte e adicionar conteúdo à quarta página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(20, 50, "Nome: $nome");
+    $pdf->Text(20, 60, "Email: $email");
+
+    // Quinta Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    
+    // Definir fonte e adicionar conteúdo à quinta página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(20, 50, "Nome: $nome");
+    $pdf->Text(20, 60, "Email: $email");
+
+    // Sexta Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    
+    // Definir fonte e adicionar conteúdo à sexta página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(20, 50, "Nome: $nome");
+    $pdf->Text(20, 60, "Email: $email");
+
+    // Sétima Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    
+    // Definir fonte e adicionar conteúdo à sétima página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(20, 50, "Nome: $nome");
+    $pdf->Text(20, 60, "Email: $email");
+
+    // Oitava Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    
+    // Definir fonte e adicionar conteúdo à oitava página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(20, 50, "Nome: $nome");
+    $pdf->Text(20, 60, "Email: $email");
+
+    // Nona Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    
+    // Definir fonte e adicionar conteúdo à nona página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(20, 50, "Nome: $nome");
+    $pdf->Text(20, 60, "Email: $email");
+
+
     // Salva ou exibe o PDF
     $pdf->Output('arquivo_gerado.pdf', 'I');  // 'I' para exibir no navegador
+    
+
+    
 }
 ?>
