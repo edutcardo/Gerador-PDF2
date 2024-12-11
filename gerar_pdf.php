@@ -140,9 +140,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     // Salva ou exibe o PDF
-    $pdf->Output('arquivo_gerado.pdf', 'I');  // 'I' para exibir no navegador
-    
-
+    $pdf->Output('arquivo_gerado.pdf', 'S');
+    echo $pdf->Output('arquivo_gerado.pdf', 'S');
+    exit;
     
 }
 ?>

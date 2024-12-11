@@ -3,14 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário com API</title>
+    <title>Formulário com Pesquisa</title>
+    <style>
+        .resultado-item {
+            cursor: pointer;
+            padding: 5px;
+            margin: 2px 0;
+            background-color: #f0f0f0;
+        }
+        .resultado-item:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
 </head>
 <body>
 
 <h1>Formulário de Usuário</h1>
 
-<!-- Formulário para preencher com dados da API -->
-<form action="gerar_pdf.php" method="POST">
+<form id="formulario" action="gerar_pdf.php" method="post" >
+    <label for="palavra-chave">Potência do Gerador:</label><br>
+    <input type="text" id="palavra-chave" name="palavra-chave" /><br>
+    <button type="button" onclick="buscarResultados()">Buscar</button><br><br>
+
+    <div id="resultados"></div>
+
+    <label for="preco">Preço do Integrador:</label><br>
+    <input type="text" id="preco" name="preco" readonly /><br><br>
+
+    <!-- Outros campos do formulário -->
     <label for="nome">Nome:</label><br>
     <input type="text" id="nome" name="nome" value="" /><br><br>
 
@@ -27,12 +47,46 @@
 </form>
 
 <script>
-// Função para preencher o formulário com dados da API
-function preencherFormulario() {
-    fetch('https://jsonplaceholder.typicode.com/users/1')  // Endpoint da API (exemplo de usuário)
-        .then(response => response.json())  // Converte a resposta para JSON
+function buscarResultados() {
+    const potenciaGerador = document.getElementById('palavra-chave').value;
+    if (potenciaGerador.length > 0) {
+        fetch(`buscar_preco.php?potencia-gerador=${encodeURIComponent(potenciaGerador)}`)
+        .then(response => response.json())
         .then(data => {
-            // Preenche os campos com os dados da API
+            const resultadosDiv = document.getElementById('resultados');
+            resultadosDiv.innerHTML = '';
+            if (data.success) {
+                data.resultados.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'resultado-item';
+                    div.textContent = item.palavrasChave;
+                    div.onclick = () => selecionarItem(item);
+                    resultadosDiv.appendChild(div);
+                });
+            } else {
+                resultadosDiv.innerHTML = 'Nenhum resultado encontrado';
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao buscar resultados:', error);
+            document.getElementById('resultados').innerHTML = 'Erro ao buscar resultados';
+        });
+    } else {
+        document.getElementById('resultados').innerHTML = '';
+        document.getElementById('preco').value = '';
+    }
+}
+
+function selecionarItem(item) {
+    document.getElementById('preco').value = item.precoDoIntegrador;
+    // Você pode preencher outros campos aqui se necessário
+}
+
+// Função para preencher o formulário com dados da API (exemplo)
+function preencherFormulario() {
+    fetch('https://jsonplaceholder.typicode.com/users/1')
+        .then(response => response.json())
+        .then(data => {
             document.getElementById('nome').value = data.name;
             document.getElementById('email').value = data.email;
         })
@@ -42,7 +96,23 @@ function preencherFormulario() {
 }
 
 // Preencher o formulário automaticamente ao carregar a página
-window.onload = preencherFormulario;
+window.onload = function() {
+    preencherFormulario();
+    
+    // Verifica se há parâmetros na URL e preenche os campos
+    const urlParams = new URLSearchParams(window.location.search);
+    for (const [key, value] of urlParams) {
+        const element = document.getElementById(key);
+        if (element) {
+            element.value = value;
+        }
+    }
+    
+    // Se houver um valor no campo palavra-chave, dispara a busca
+    if (document.getElementById('palavra-chave').value) {
+        buscarResultados();
+    }
+};
 </script>
 
 </body>
