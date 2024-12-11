@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Terceira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    $pdf->Image('pg3.png', 0, 0, 210, 297);
     
     // Definir fonte e adicionar conteúdo à terceira página
     $pdf->SetFont('helvetica', 'B', 16);
@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Quarta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    $pdf->Image('pg4.png', 0, 0, 210, 297);
     
     // Definir fonte e adicionar conteúdo à quarta página
     $pdf->SetFont('helvetica', 'B', 16);
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Quinta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    $pdf->Image('pg5.png', 0, 0, 210, 297);
     
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Sexta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    $pdf->Image('pg6.png', 0, 0, 210, 297);
     
     // Definir fonte e adicionar conteúdo à sexta página
     $pdf->SetFont('helvetica', 'B', 16);
@@ -110,33 +110,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Sétima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    $pdf->Image('pg7.png', 0, 0, 210, 297);
     
     // Definir fonte e adicionar conteúdo à sétima página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "Email: $email");
 
     // Oitava Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    $pdf->Image('pg8.png', 0, 0, 210, 297);
     
     // Definir fonte e adicionar conteúdo à oitava página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "Email: $email");
 
     // Nona Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    $pdf->Image('pg9.png', 0, 0, 210, 297);
     
     // Definir fonte e adicionar conteúdo à nona página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "Email: $email");
 
 
     // Salva ou exibe o PDF
