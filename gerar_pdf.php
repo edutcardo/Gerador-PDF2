@@ -8,6 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $valor1 = $_POST['valor1'];
     $valor2 = $_POST['valor2'];
 
+    $resultado = $valor1 + $valor2;
+
 
     // Criação do PDF
     $pdf = new TCPDF();
@@ -21,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(100, 50, "Nome: $valor1 kWh");
+    $pdf->Text(100, 50, "Nome: $resultado kWh");
     $pdf->Text(20, 60, "Email: $email");
 
 
