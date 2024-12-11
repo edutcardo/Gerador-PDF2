@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 
 // Parâmetro de pesquisa
-$potencia_gerador = isset($_GET['potencia-gerador']) ? trim($_GET['potencia-gerador']) : '';
+$potencia_gerador = isset($_GET['potencia-gerador']) ? $_GET['potencia-gerador'] : '';
 
 // Configurações do banco de dados
 $servername = "localhost";
@@ -15,31 +15,16 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Verifica a conexão
 if ($conn->connect_error) {
-    die(json_encode(['success' => false, 'message' => 'Erro na conexão com o banco de dados: ' . $conn->connect_error]));
-}
-
-// Verifica se o parâmetro de pesquisa não está vazio
-if (empty($potencia_gerador)) {
-    echo json_encode(['success' => false, 'message' => 'Parâmetro de pesquisa vazio']);
-    exit;
+    die(json_encode(['success' => false, 'message' => 'Erro na conexão com o banco de dados']));
 }
 
 // Prepara a consulta SQL
 $stmt = $conn->prepare("SELECT palavrasChave, precoDoIntegrador FROM produtos WHERE potenciaGerador LIKE ? LIMIT 10");
-if (!$stmt) {
-    echo json_encode(['success' => false, 'message' => 'Erro na preparação da consulta: ' . $conn->error]);
-    exit;
-}
-
 $searchPattern = '%' . $potencia_gerador . '%';
 $stmt->bind_param("s", $searchPattern);
 
 // Executa a consulta
-if (!$stmt->execute()) {
-    echo json_encode(['success' => false, 'message' => 'Erro na execução da consulta: ' . $stmt->error]);
-    exit;
-}
-
+$stmt->execute();
 $result = $stmt->get_result();
 
 // Verifica se encontrou algum resultado

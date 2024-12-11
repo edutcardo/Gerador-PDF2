@@ -20,10 +20,9 @@
 
 <h1>Formulário de Usuário</h1>
 
-<form id="formulario" action="gerar_pdf.php" method="post" >
+<form id="formulario">
     <label for="palavra-chave">Potência do Gerador:</label><br>
-    <input type="text" id="palavra-chave" name="palavra-chave" /><br>
-    <button type="button" onclick="buscarResultados()">Buscar</button><br><br>
+    <input type="text" id="palavra-chave" name="palavra-chave" oninput="buscarResultados()" /><br><br>
 
     <div id="resultados"></div>
 
@@ -67,10 +66,7 @@ function buscarResultados() {
                 resultadosDiv.innerHTML = 'Nenhum resultado encontrado';
             }
         })
-        .catch(error => {
-            console.error('Erro ao buscar resultados:', error);
-            document.getElementById('resultados').innerHTML = 'Erro ao buscar resultados';
-        });
+        .catch(error => console.error('Erro ao buscar resultados:', error));
     } else {
         document.getElementById('resultados').innerHTML = '';
         document.getElementById('preco').value = '';
@@ -96,23 +92,7 @@ function preencherFormulario() {
 }
 
 // Preencher o formulário automaticamente ao carregar a página
-window.onload = function() {
-    preencherFormulario();
-    
-    // Verifica se há parâmetros na URL e preenche os campos
-    const urlParams = new URLSearchParams(window.location.search);
-    for (const [key, value] of urlParams) {
-        const element = document.getElementById(key);
-        if (element) {
-            element.value = value;
-        }
-    }
-    
-    // Se houver um valor no campo palavra-chave, dispara a busca
-    if (document.getElementById('palavra-chave').value) {
-        buscarResultados();
-    }
-};
+window.onload = preencherFormulario;
 </script>
 
 </body>
