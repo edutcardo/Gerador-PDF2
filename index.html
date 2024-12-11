@@ -42,7 +42,7 @@
     <label for="valor2">Valor 2:</label><br>
     <input type="number" id="valor2" name="valor2" value="" /><br><br>
 
-    <input type="submit" value="Gerar PDF">
+    <button type="button" onclick="gerarPDF()">Gerar PDF</button>
 </form>
 
 <script>
@@ -76,6 +76,27 @@ function buscarResultados() {
 function selecionarItem(item) {
     document.getElementById('preco').value = item.precoDoIntegrador;
     // Você pode preencher outros campos aqui se necessário
+}
+
+function gerarPDF() {
+    const formData = new FormData(document.getElementById('formulario'));
+    
+    fetch('gerar_pdf.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'arquivo_gerado.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => console.error('Erro ao gerar PDF:', error));
 }
 
 // Função para preencher o formulário com dados da API (exemplo)
