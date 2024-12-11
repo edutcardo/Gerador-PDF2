@@ -34,8 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte para texto
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "Email: $email");
+
 
     // Criando um gráfico de barras simples
     // Dados para o gráfico
@@ -46,8 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $barColor = [0, 0, 255];  // Cor Azul
 
     // Posições e tamanho do gráfico
-    $x = 40;  // Posição X para o gráfico
-    $y = 150; // Posição Y para o gráfico (mais para baixo na página)
+    $x = 25;  // Posição X para o gráfico
+    $y = 262; // Posição Y para o gráfico (mais para baixo na página)
     $barWidth = 6; // Largura das barras
     $gap = 12;  // Distância entre as barras
 
@@ -75,8 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à terceira página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "Email: $email");
+
 
     // Quarta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
