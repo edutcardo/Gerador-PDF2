@@ -4,7 +4,7 @@ require_once('vendor/autoload.php'); // Ou o caminho correto, se você não esti
 // Verifica se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome = $_POST['nome'];
-    $email = $_POST['email'];
+    $endereco = $_POST['endereco'];
     $valor1 = $_POST['valor1'];
     $valor2 = $_POST['valor2'];
 
@@ -23,8 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(100, 50, "Nome: $resultado kWh");
-    $pdf->Text(20, 60, "Email: $email");
+    $pdf->Text(20, 50, "Nome: $nome");
+    $pdf->Text(20, 60, "Endereço: $endereco");
 
 
     // Segunda Página (com a imagem genérica e gráfico)
@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "Email: $email");
+    $pdf->Text(20, 60, "endereco: $endereco");
 
     // Quinta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
@@ -96,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "Email: $email");
+    $pdf->Text(20, 60, "endereco: $endereco");
 
     // Sexta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
@@ -106,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "Email: $email");
+    $pdf->Text(20, 60, "endereco: $endereco");
 
     // Sétima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
