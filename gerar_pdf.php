@@ -48,40 +48,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
 
-    // Definir fonte para texto
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
 
-
-    // Criando um gráfico de barras simples
     // Dados para o gráfico
-    $data = [10, 20, 30, 40, 50]; // Valores para as barras
-    $labels = ["Jan", "Feb", "Mar", "Apr", "May"]; // Rótulos (meses)
+    $data = [181, 179, 150, 189, 200, 187, 220, 230, 180, 198, 187, 200]; // Valores para as barras
+    $labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
 
     // Definindo as cores para as barras
     $barColor = [0, 0, 255];  // Cor Azul
 
     // Posições e tamanho do gráfico
-    $x = 25;  // Posição X para o gráfico
-    $y = 262; // Posição Y para o gráfico (mais para baixo na página)
-    $barWidth = 6; // Largura das barras
-    $gap = 12;  // Distância entre as barras
+    $x = 23;  // Posição X para o gráfico
+    $y = 260; // Posição Y para o gráfico (mais para baixo na página)
+    $barWidth = 5; // Largura das barras
+    $gap = 15;  // Distância entre as barras
+    $maxBarHeight = 40; // Altura máxima do gráfico (limite)
 
-    // Desenhando as barras
+    // Determinando o maior valor para escalar as barras
+    $maxValue = max($data);
+
+    // Desenhando as barras e adicionando os valores
     foreach ($data as $index => $value) {
-        // Calculando a altura da barra
-        $barHeight = $value;
+    // Calculando a altura proporcional da barra
+    $barHeight = ($value / $maxValue) * $maxBarHeight;
 
-        // Desenhando cada barra com a função Rect()
-        $pdf->SetFillColor($barColor[0], $barColor[1], $barColor[2]);
-        $pdf->Rect($x + ($index * $gap), $y - $barHeight, $barWidth, $barHeight, 'DF');  // Barra
-    }
+    // Desenhando cada barra
+    $pdf->SetFillColor($barColor[0], $barColor[1], $barColor[2]);
+    $pdf->Rect($x + ($index * $gap), $y - $barHeight, $barWidth, $barHeight, 'DF'); // Barra
 
+    // Adicionando o valor acima da barra
+    $pdf->SetFont('helvetica', '', 10);
+    $pdf->SetTextColor(0, 0, 0);
+    $valueX = $x + ($index * $gap) + ($barWidth / 2) - 5; // Ajuste para centralizar o texto
+    $valueY = $y - $barHeight - 5; // Ajuste para posicionar acima da barra
+    $pdf->Text($valueX, $valueY, (string)$value); // Adiciona o valor como texto
+}
     // Adicionando rótulos nas barras
     $pdf->SetFont('helvetica', '', 10);
     $pdf->SetTextColor(0, 0, 0);
     foreach ($labels as $index => $label) {
-        $pdf->Text($x + ($index * $gap) + 5, $y + 5, $label);  // Rótulo de cada mês
+        // Centralizar os rótulos horizontalmente e posicionar abaixo das barras
+        $labelX = $x + ($index * $gap) + ($barWidth / 2) - (strlen($label) * 1.5); // Ajuste baseado no comprimento do texto
+        $labelY = $y + 5; // Posição logo abaixo da barra
+        $pdf->Text($labelX, $labelY, $label);
     }
 
     // Terceira Página (com a imagem undo.jpeg)
@@ -100,8 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à quarta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "Endereco: $endereco");
+
 
     // Quinta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
@@ -110,8 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "endereco: $endereco");
+
 
     // Sexta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
@@ -120,8 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à sexta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "endereco: $endereco");
+
 
     // Sétima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
