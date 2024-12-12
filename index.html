@@ -152,6 +152,29 @@
             <label for="valor2">Valor 2:</label>
             <input type="number" id="valor2" name="valor2" />
 
+            <!-- Adicionar os campos de entrada para as novas informações -->
+            <label for="codProd">Código do Produto:</label>
+            <input type="text" id="codProd" name="codProd" readonly />
+
+            <label for="marca">Marca:</label>
+            <input type="text" id="marca" name="marca" readonly />
+
+            <label for="fabricante">Fabricante:</label>
+            <input type="text" id="fabricante" name="fabricante" readonly />
+
+            <label for="potenciaInversor">Potência do Inversor:</label>
+            <input type="text" id="potenciaInversor" name="potenciaInversor" readonly />
+
+            <label for="potenciaModulo">Potência do Módulo:</label>
+            <input type="text" id="potenciaModulo" name="potenciaModulo" readonly />
+
+            <label for="tensaoSaida">Tensão de Saída:</label>
+            <input type="text" id="tensaoSaida" name="tensaoSaida" readonly />
+
+            <label for="componentes">Componentes:</label>
+            <input type="text" id="componentes" name="componentes" readonly />
+
+
             <button type="button" onclick="gerarPDF()">Gerar PDF</button>
         </form>
     </div>
@@ -198,7 +221,17 @@
 
 
         function selecionarItem(item) {
+            // Preencher o campo de preço
             document.getElementById('preco').value = item.precoDoIntegrador;
+            
+            // Preencher os novos campos com as informações do item
+            document.getElementById('codProd').value = item.codProd;
+            document.getElementById('marca').value = item.marca;
+            document.getElementById('fabricante').value = item.fabricante;
+            document.getElementById('potenciaInversor').value = item.potenciaInversor;
+            document.getElementById('potenciaModulo').value = item.potenciaModulo;
+            document.getElementById('tensaoSaida').value = item.tensaoSaida;
+            document.getElementById('componentes').value = item.componentes;
         }
 
         function gerarPDF() {
