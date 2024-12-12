@@ -111,6 +111,18 @@
             <label for="palavra-chave">Potência do Gerador:</label>
             <input type="text" id="palavra-chave" name="palavra-chave" oninput="buscarResultados()" />
 
+            <label for="estrutura">Selecione uma Estrutura:</label>
+            <select id="estrutura" name="estrutura" onchange="buscarResultados()">
+                <option value="">Selecione uma estrutura</option>
+                <option value="COLONIAL">COLONIAL</option>
+                <option value="FIBROMADEIRA">FIBROMADEIRA</option>
+                <option value="FIBROMETAL">FIBROMETAL</option>
+                <option value="METALICO">METALICO</option>
+                <option value="S/ESTRUTURA">S/ESTRUTURA</option>
+            </select>
+            
+
+
             <div id="resultados"></div>
 
             <label for="preco">Preço do Integrador:</label>
@@ -147,12 +159,22 @@
     <script>
         function buscarResultados() {
             const potenciaGerador = document.getElementById('palavra-chave').value;
-            if (potenciaGerador.length > 0) {
-                fetch(`buscar_preco.php?potencia-gerador=${encodeURIComponent(potenciaGerador)}`)
+            const estrutura = document.getElementById('estrutura').value;
+            
+            // Verifica se há valores para buscar
+            if (potenciaGerador.length > 0 || estrutura) {
+                // Monta a URL com os parâmetros de busca
+                let url = `buscar_preco.php?potencia-gerador=${encodeURIComponent(potenciaGerador)}`;
+                if (estrutura) {
+                    url += `&estrutura=${encodeURIComponent(estrutura)}`;
+                }
+
+                // Realiza a requisição para buscar os dados filtrados
+                fetch(url)
                     .then(response => response.json())
                     .then(data => {
                         const resultadosDiv = document.getElementById('resultados');
-                        resultadosDiv.innerHTML = '';
+                        resultadosDiv.innerHTML = '';  // Limpa resultados anteriores
                         if (data.success) {
                             data.resultados.slice(0, 10).forEach(item => { // Mostra até 10 resultados
                                 const div = document.createElement('div');
@@ -167,10 +189,13 @@
                     })
                     .catch(error => console.error('Erro ao buscar resultados:', error));
             } else {
+                // Limpa os resultados se não houver pesquisa
                 document.getElementById('resultados').innerHTML = '';
                 document.getElementById('preco').value = '';
             }
         }
+
+
 
         function selecionarItem(item) {
             document.getElementById('preco').value = item.precoDoIntegrador;

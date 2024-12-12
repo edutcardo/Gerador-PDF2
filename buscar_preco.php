@@ -1,8 +1,9 @@
 <?php
 header('Content-Type: application/json');
 
-// Parâmetro de pesquisa
+// Parâmetros de pesquisa
 $potencia_gerador = isset($_GET['potencia-gerador']) ? $_GET['potencia-gerador'] : '';
+$estrutura = isset($_GET['estrutura']) ? $_GET['estrutura'] : '';
 
 // Configurações do banco de dados
 $servername = "localhost";
@@ -19,9 +20,23 @@ if ($conn->connect_error) {
 }
 
 // Prepara a consulta SQL
-$stmt = $conn->prepare("SELECT titulo, precoDoIntegrador FROM produtos WHERE potenciaGerador LIKE ? LIMIT 10");
-$searchPattern = '%' . $potencia_gerador . '%';
-$stmt->bind_param("s", $searchPattern);
+$sql = "SELECT titulo, precoDoIntegrador FROM produtos WHERE potenciaGerador LIKE ?";
+$params = ["%" . $potencia_gerador . "%"];  // Aqui criamos o array com o valor de busca da potência
+
+// Adiciona o filtro de estrutura se necessário
+if ($estrutura) {
+    $sql .= " AND estrutura = ?";
+    $params[] = $estrutura;  // Adiciona o valor de estrutura ao array
+}
+
+// Prepara o statement
+$stmt = $conn->prepare($sql);
+
+// Prepara os tipos de parâmetros para o bind_param
+$types = str_repeat("s", count($params)); // cria uma string de tipos como "ss" para 2 parâmetros
+
+// Faz o bind dos parâmetros
+$stmt->bind_param($types, ...$params);
 
 // Executa a consulta
 $stmt->execute();
