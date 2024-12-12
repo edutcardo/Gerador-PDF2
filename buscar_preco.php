@@ -19,7 +19,7 @@ if ($conn->connect_error) {
 }
 
 // Prepara a consulta SQL
-$stmt = $conn->prepare("SELECT palavrasChave, precoDoIntegrador FROM produtos WHERE potenciaGerador LIKE ? LIMIT 10");
+$stmt = $conn->prepare("SELECT titulo, precoDoIntegrador FROM produtos WHERE potenciaGerador LIKE ? LIMIT 10");
 $searchPattern = '%' . $potencia_gerador . '%';
 $stmt->bind_param("s", $searchPattern);
 

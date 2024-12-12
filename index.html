@@ -157,7 +157,7 @@
                             data.resultados.slice(0, 10).forEach(item => { // Mostra até 10 resultados
                                 const div = document.createElement('div');
                                 div.className = 'resultado-item';
-                                div.textContent = item.palavrasChave;
+                                div.textContent = item.titulo;
                                 div.onclick = () => selecionarItem(item);
                                 resultadosDiv.appendChild(div);
                             });
