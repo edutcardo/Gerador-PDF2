@@ -48,9 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
 
-    
-
-
     // Dados para o gráfico
     $data = [181, 179, 150, 189, 200, 187, 220, 230, 180, 198, 187, 200]; // Valores para as barras
     $labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
@@ -70,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Desenhar a moldura ao redor do gráfico
     $molduraX = $x - 5; // Ajuste para começar um pouco antes das barras
-    $molduraY = $y - $maxBarHeight - 6; // Ajuste para incluir espaço acima das barras
+    $molduraY = $y - $maxBarHeight - 7; // Ajuste para incluir espaço acima das barras
     $molduraWidth = count($data) * $gap; // Largura total baseada no número de barras e espaçamento
     $molduraHeight = $maxBarHeight + 10; // Altura total (incluindo margem superior e inferior)
 
