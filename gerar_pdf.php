@@ -7,9 +7,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $endereco = $_POST['endereco'];
     $valor1 = $_POST['valor1'];
     $valor2 = $_POST['valor2'];
+    $cidade = $_POST['cidade'];
+    $uc = $_POST['uc'];
+    $media = $_POST['media'];
+    $iluminacao = $_POST['iluminacao'];
 
     $resultado = $valor1 + $valor2;
-
 
     // Criação do PDF
     $pdf = new TCPDF();
@@ -21,10 +24,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Image('pg1.png', 0, 0, 210, 297);
 
     // Definir fonte e adicionar conteúdo à primeira página
-    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "Endereço: $endereco");
+    $pdf->Text(21, 94, "Nome: $nome");
+    $pdf->Text(21, 100, "Endereço: $endereco");
+    $pdf->Text(21, 106, "Cidade: $cidade");
+    $pdf->Text(21, 128, "UC $uc");
+
+    $pdf->Text(61.5, 178.75, "$media kWh");
 
 
     // Segunda Página (com a imagem genérica e gráfico)
@@ -86,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(20, 50, "Nome: $nome");
-    $pdf->Text(20, 60, "endereco: $endereco");
+    $pdf->Text(20, 60, "Endereco: $endereco");
 
     // Quinta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
