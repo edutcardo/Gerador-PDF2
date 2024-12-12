@@ -11,8 +11,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $uc = $_POST['uc'];
     $media = $_POST['media'];
     $iluminacao = $_POST['iluminacao'];
+    $potenciaGerador = $_POST['potenciaGerador'];
 
+    // Cálculos iniciais da proposta
     $resultado = $valor1 + $valor2;
+    $geracao = $potenciaGerador * 3.9 * 30;
+
+    
 
     // Criação do PDF
     $pdf = new TCPDF();
@@ -31,7 +36,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
 
+
+    $pdf->Text(63, 172.5, "$potenciaGerador kWp");
     $pdf->Text(61.5, 178.75, "$media kWh");
+    $pdf->Text(57.5, 185, "$geracao kWh");
 
 
     // Segunda Página (com a imagem genérica e gráfico)

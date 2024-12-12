@@ -13,24 +13,26 @@
         }
 
         body {
-            background-color: #f9f9f9;
-            color: #333;
-            line-height: 1.6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            padding: 20px;
-        }
+        background-color: #f9f9f9;
+        color: #333;
+        line-height: 1.6;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Altera de 'center' para 'flex-start' */
+        height: 100vh;
+        padding: 20px;
+        overflow-y: auto; /* Adiciona rolagem vertical ao body */
+    }
 
-        .container {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            width: 100%;
-            padding: 20px;
-        }
+    .container {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+        padding: 20px;
+        /* Remove a restrição de altura fixa */
+    }
 
         h1 {
             text-align: center;
@@ -176,6 +178,10 @@
 
         function gerarPDF() {
             const formData = new FormData(document.getElementById('formulario'));
+                // Adiciona a constante potenciaGerador ao FormData
+            const potenciaGerador = document.getElementById('palavra-chave').value; // ou use a variável diretamente se já existir
+            formData.append('potenciaGerador', potenciaGerador);
+            
             fetch('gerar_pdf.php', {
                 method: 'POST',
                 body: formData
