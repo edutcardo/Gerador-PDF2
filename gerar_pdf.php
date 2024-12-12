@@ -12,6 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $media = $_POST['media'];
     $iluminacao = $_POST['iluminacao'];
     $potenciaGerador = $_POST['potenciaGerador'];
+    
 
     // Cálculos iniciais da proposta
     $resultado = $valor1 + $valor2;
