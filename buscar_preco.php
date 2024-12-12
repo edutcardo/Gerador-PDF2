@@ -20,7 +20,7 @@ if ($conn->connect_error) {
 }
 
 // Prepara a consulta SQL
-$sql = "SELECT titulo, precoDoIntegrador, codProd, marca, fabricante, potenciaInversor, potenciaModulo, tensaoSaida, componentes FROM produtos WHERE potenciaGerador LIKE ?";
+$sql = "SELECT titulo, precoDoIntegrador, codProd, marca, fabricante, potenciaInversor, potenciaModulo, tensaoSaida, componentes, potenciaGerador FROM produtos WHERE potenciaGerador LIKE ?";
 $params = ["%" . $potencia_gerador . "%"];  // Aqui criamos o array com o valor de busca da potência
 
 // Adiciona o filtro de estrutura se necessário
