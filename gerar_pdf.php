@@ -146,6 +146,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
 
+    // Presume-se que o TCPDF já esteja inicializado e você está em uma página ativa
+    // Não incluir `require` ou inicializações repetidas
+
+    // Conteúdo da variável $componentes
+    $componentes = "<table><tr><th>Sku<\/th><th>Quantidade<\/th><th>Descri\u00e7\u00e3o<\/th><\/tr><tr><td>25256 <\/td> <td>2<\/td><td> SUPORTE VERTICAL SKS L PARA MICROINVERSOR<\/td> <\/tr><tr><td>222130 <\/td> <td>1<\/td><td> MICRO INVERSOR 220V DEYE 4MPPT MONOFASICO 2,25KW SUN-M225G4-EU-Q0 WIFI NEW<\/td> <\/tr><tr><td>242687 <\/td> <td>4<\/td><td> MODULO SOLAR RESUN 585W RS8I-585M-F30 144 CELLS MONO N-TYPE TOPCON - 740 UN\/CNTR<\/td> <\/tr><tr><td>286844 <\/td> <td>1<\/td><td> CONECTOR DEYE MICROINVERSOR MACHO - AC TRUNK NEW<\/td> <\/tr><\/table>";
+
+    // Corrigir caracteres especiais do HTML
+    $componentes = html_entity_decode($componentes);
+    $componentes = str_replace(["<\/th>", "<\/td>", "<\/tr>", "<\/table>"], ["</th>", "</td>", "</tr>", "</table>"], $componentes);
+
+    // Extrair os dados da tabela
+    preg_match_all('/<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>/', $componentes, $matches, PREG_SET_ORDER);
+
+    // Definir coordenadas iniciais para a escrita
+    $y = 190; // Começar na coordenada Y (ajuste conforme necessário)
+
+    // Escrever os dados extraídos na página atual
+    if (empty($matches)) {
+        $pdf->Text(10, $y, "Nenhum dado encontrado.");
+    } else {
+        foreach ($matches as $match) {
+            $sku = trim($match[1]);
+            $quantidade = trim($match[2]);
+            $descricao = trim($match[3]);
+
+            // Adicionar as informações em coordenadas específicas
+            $pdf->Text(10, $y, "SKU: $sku");
+            $pdf->Text(50, $y, "Quantidade: $quantidade");
+            $pdf->Text(100, $y, "Descrição: $descricao");
+            $y += 10; // Incrementar a coordenada Y para evitar sobreposição
+        }
+    }
+
+
     
     
     // Definir fonte e adicionar conteúdo à quarta página
