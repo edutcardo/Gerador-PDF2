@@ -13,10 +13,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $iluminacao = $_POST['iluminacao'];
     $potenciaGerador = $_POST['potenciaGerador'];
     $componentes = $_POST['componentes'];
+    $potenciaModulo = $_POST['potenciaModulo'];
 
     // Cálculos iniciais da proposta
     $resultado = $valor1 + $valor2;
     $geracao = $potenciaGerador * 3.9 * 30;
+    $qtdmodulos = ($potenciaGerador*1000)/$potenciaModulo;
+    $qtdmodulosArredondado = round($qtdmodulos);
+    $metrosOcupados = $qtdmodulosArredondado * 2.9;
+
+    // Cálculos pg4
+    $peso = $qtdmodulosArredondado * 33;
+    $percentualSolar = ($geracao / $media) * 100;
+    $percentualSolarArredondado = round($percentualSolar);
+    $mediaArredondado = round($media);
+    $geracaoArredondado = round($geracao);
+
+    // Data atual
+    $formatoData = 'd/m/Y';
+    $dataAtual = date($formatoData);
+
 
     // Criação do PDF
     $pdf = new TCPDF();
@@ -35,10 +51,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
 
-
+    $pdf->Text(114, 160, "$metrosOcupados m²");
+    $pdf->Text(99, 166.25, "$qtdmodulosArredondado Placas");
     $pdf->Text(63, 172.5, "$potenciaGerador kWp");
     $pdf->Text(61.5, 178.75, "$media kWh");
     $pdf->Text(57.5, 185, "$geracao kWh");
+
+    $pdf->SetFont('helvetica', 'B', 12);
+    $pdf->Text(34, 225.5, "$dataAtual");
 
 
     // Segunda Página (com a imagem genérica e gráfico)
@@ -52,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
 
     // Definindo as cores para as barras
-    $barColor = [0, 0, 255];  // Cor Azul
+    $barColor = [1, 133, 56];  // Cor Verde Canal
 
     // Posições e tamanho do gráfico
     $x = 23;  // Posição X para o gráfico
@@ -113,6 +133,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Quarta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('pg4.png', 0, 0, 210, 297);
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(255, 0, 0);
+
+    $pdf->Text(148, 43.5, "$qtdmodulosArredondado X $potenciaModulo W");
+    $pdf->Text(149, 57, "$potenciaGerador kWp");
+    $pdf->Text(152, 71.5, "$metrosOcupados m²");
+    $pdf->Text(152, 85, "$peso kg");
+    $pdf->Text(142, 98.5, "$mediaArredondado kWh mensal");
+    $pdf->Text(142, 112, "$geracaoArredondado kWh mensal");
+
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
+
+    
     
     // Definir fonte e adicionar conteúdo à quarta página
     $pdf->SetFont('helvetica', 'B', 16);

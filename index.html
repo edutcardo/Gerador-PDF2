@@ -243,7 +243,9 @@
             const formData = new FormData(document.getElementById('formulario'));
                 // Adiciona a constante potenciaGerador ao FormData
             const potenciaGerador = document.getElementById('potenciaGerador').value; // ou use a variável diretamente se já existir
+            const potenciaModulo = document.getElementById('potenciaModulo').value;
             formData.append('potenciaGerador', potenciaGerador);
+            formData.append('potenciaModulo', potenciaModulo);
             
             fetch('gerar_pdf.php', {
                 method: 'POST',
