@@ -236,7 +236,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $barHeight = ($value / $maxValue) * $maxBarHeight;
 
     // Desenhando cada barra
-    $pdf->SetFillColor($barColor[0], $barColor[1], $barColor[2]);
+    $pdf->SetFillColor(60, 179, 113); // Verde
     $pdf->Rect($x + ($index * $gap), $y - $barHeight, $barWidth, $barHeight, 'DF'); // Barra
 
     // Adicionando o valor acima da barra
@@ -352,16 +352,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(143, 178, "$retorno25anosRs");
 
     // Dados do Payback
-    $investimentoInicial = 100000; // Investimento inicial
-    $retornoAnual = 10000; // Retorno esperado por ano
     $anos = 25; // Total de anos
 
     // Calcular o retorno acumulado ao longo dos anos
     $dados = [];
     $retornoAcumulado = 0;
     for ($ano = 1; $ano <= $anos; $ano++) {
-        $retornoAcumulado += $retornoAnual;
-        $dados[$ano] = $retornoAcumulado - $investimentoInicial; // Payback acumulado
+        $retornoAcumulado += $diferencaGastosAno;
+        $dados[$ano] = $retornoAcumulado - $precoFinal; // Payback acumulado
     }
 
     // Configurações do gráfico
