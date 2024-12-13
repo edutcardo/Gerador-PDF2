@@ -244,6 +244,7 @@
             document.getElementById('componentes').value = item.componentes;
             document.getElementById('potenciaGerador').value = item.potenciaGerador;
             document.getElementById('numeroDeFases').value = item.numeroDeFases;
+            
         }
 
         function gerarPDF() {
@@ -251,8 +252,10 @@
                 // Adiciona a constante potenciaGerador ao FormData
             const potenciaGerador = document.getElementById('potenciaGerador').value; // ou use a variável diretamente se já existir
             const potenciaModulo = document.getElementById('potenciaModulo').value;
+            const precoKit = document.getElementById('preco').value;
             formData.append('potenciaGerador', potenciaGerador);
             formData.append('potenciaModulo', potenciaModulo);
+            formData.append('precoKit', precoKit);
             
             fetch('gerar_pdf.php', {
                 method: 'POST',

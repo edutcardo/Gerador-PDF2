@@ -15,6 +15,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $componentes = $_POST['componentes'];
     $potenciaModulo = $_POST['potenciaModulo'];
     $numeroDeFases = $_POST['numeroDeFases'];
+    $precoKit = $_POST['precoKit'];
+
+
 
     // Cálculos iniciais da proposta
     $resultado = $valor1 + $valor2;
@@ -98,7 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(21, 94, "Nome: $nome");
+    $pdf->Text(21, 94, "Nome: $precoKit");
     $pdf->Text(21, 100, "Endereço: $endereco");
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
