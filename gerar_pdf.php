@@ -88,6 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $margem = $resultadoComissao['margem'];
     $comissao = $resultadoComissao['comissao'];
     $precoFinal = $precoKit * $margem;
+    $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
 
     
@@ -268,6 +269,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(93, 61.5, "$gastoComGeradorRs");
     $pdf->Text(135, 45, "$diferencaGastosAnoRs");
     $pdf->Text(138, 61.5, "$diferencaGastosRs");
+
+    $pdf->SetFont('helvetica', 'B', 15);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(147, 98.5, "$precoFinalRs");
 
     
     // Definir fonte e adicionar conteúdo à quinta página
