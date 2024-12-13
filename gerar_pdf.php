@@ -126,6 +126,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $valorFixo = calcularFixo($potenciaGerador);
 
+    function calcularParcela($taxa, $nper, $vp, $vf = 0, $tipo = 0) {
+        if ($taxa == 0) {
+            return -($vp + $vf) / $nper;
+        } else {
+            $valorParcela = ($vp * pow(1 + $taxa, $nper) + $vf) * $taxa / ((1 + $taxa * $tipo) * (pow(1 + $taxa, $nper) - 1));
+            return -$valorParcela;
+        }
+    }
+    
+    // Exemplo de uso
+    $taxa = 0.015; // Taxa de juros mensal (1.5% convertido para decimal)
+    $nper = -36;    // Número de períodos
+    $nper2 = -48;    // Número de períodos
+    $nper3 = -60;    // Número de períodos
+    $vp = 36000;   // Valor presente do empréstimo
+    $vf = 0;       // Valor futuro (geralmente 0, se não especificado)
+    $tipo = 0;     // Tipo (0 = fim do período, 1 = início do período)
+    
+    $valorParcela = calcularParcela($taxa, $nper, $vp, $vf, $tipo);
+    $valorParcela2 = calcularParcela($taxa, $nper2, $vp, $vf, $tipo);
+    $valorParcela3 = calcularParcela($taxa, $nper3, $vp, $vf, $tipo);
+    $valorParcelaRs = 'R$ ' . number_format($valorParcela, 2, ',', '.');
+    $valorParcela2Rs = 'R$ ' . number_format($valorParcela2, 2, ',', '.');
+    $valorParcela3Rs = 'R$ ' . number_format($valorParcela3, 2, ',', '.');
+
+
+
+
     $precoFinal = ($precoKit * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo;
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
