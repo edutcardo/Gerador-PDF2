@@ -146,8 +146,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
 
-    // Presume-se que o TCPDF já esteja inicializado e você está em uma página ativa
-
     // Corrigir caracteres especiais do HTML
     $componentes = html_entity_decode($componentes);
     $componentes = str_replace(["<\/th>", "<\/td>", "<\/tr>", "<\/table>"], ["</th>", "</td>", "</tr>", "</table>"], $componentes);
@@ -155,30 +153,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Extrair os dados da tabela
     preg_match_all('/<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>/', $componentes, $matches, PREG_SET_ORDER);
 
-    // Definir coordenadas iniciais para a escrita
-    $y = 170; // Começar na coordenada Y (ajuste conforme necessário)
+    // Configurações iniciais
+    $y = 190; // Posição inicial Y
     $linhaAltura = 8; // Altura de cada linha no PDF
-    $larguraQuantidade = 15; // Largura fixa para o campo Quantidade
-    $larguraDescricao = 170; // Largura fixa para a Descrição (ajuste se necessário)
+    $larguraQuantidade = 15; // Largura para o campo Quantidade
+    $larguraDescricao = 170; // Largura para a Descrição
+    $maxY = 280; // Defina o limite Y da página (ajuste conforme necessário)
 
-    // Escrever os dados extraídos na página atual
+    // Função para adicionar uma nova página se necessário
+    function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
+        if ($y + $linhaAltura > $maxY) {
+            $pdf->AddPage(); // Adiciona uma nova página
+            return 10; // Reseta a posição Y após a nova página (ajuste conforme necessário)
+        }
+        return $y;
+    }
+
+    // Escrever os dados extraídos no PDF
     if (empty($matches)) {
         $pdf->Text(10, $y, "Nenhum dado encontrado.");
     } else {
         foreach ($matches as $match) {
-            $quantidade = trim($match[2]); // Apenas o número da quantidade
-            $descricao = trim($match[3]); // Apenas a descrição
+            $quantidade = trim($match[2]); // Número da quantidade
+            $descricao = trim($match[3]); // Descrição do item
 
-            // Adicionar a quantidade
+            // Verificar se há espaço suficiente para escrever na página
+            $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
+
+            // Adicionar a quantidade (campo fixo)
             $pdf->MultiCell($larguraQuantidade, $linhaAltura, $quantidade, 0, 'L', 0, 0, 10, $y);
 
-            // Adicionar a descrição, com quebra automática de linhas
+            // Atualiza a posição Y após escrever a quantidade
+            $y += $linhaAltura;
+
+            // Verificar novamente a quebra de página antes de escrever a descrição
+            $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
+
+            // Adicionar a descrição com quebra automática de linha
             $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0, 1, 30, $y);
 
-            // Incrementar Y para a próxima linha
+            // Atualizar Y para a próxima linha
             $y += $linhaAltura;
         }
     }
+
 
 
     
