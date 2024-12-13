@@ -34,14 +34,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $demandaMinima = 0; // Inicializa a variável
 
     if ($numeroDeFases == 'mono rural') {
-        $demandaMinima = 40;
+        $demandaMinima = 1;
     } elseif ($numeroDeFases == 'monofasico') {
-        $demandaMinima = 50;
+        $demandaMinima = 30;
     } elseif ($numeroDeFases == 'bifasico') {
-        $demandaMinima = 100;
+        $demandaMinima = 50;
     } elseif ($numeroDeFases == 'trifasico') {
-        $demandaMinima = 150;
+        $demandaMinima = 100;
     }
+    $gastoSemGerador = ($demandaMinima * 0.81) + $iluminacao;
 
     // Data atual
     $formatoData = 'd/m/Y';
@@ -60,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(21, 94, "Nome: $demandaMinima");
+    $pdf->Text(21, 94, "Nome: $nome");
     $pdf->Text(21, 100, "Endereço: $endereco");
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
@@ -208,6 +209,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Quinta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('pg5.png', 0, 0, 210, 297);
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(255, 0, 255);
+
+    $pdf->Text(142, 112, "$gastoSemGerador kWh mensal");
+
     
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
