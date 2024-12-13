@@ -337,10 +337,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(135, 45, "$diferencaGastosAnoRs");
     $pdf->Text(138, 61.5, "$diferencaGastosRs");
 
-    $pdf->SetFont('helvetica', 'B', 15);
+    $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(147, 98.5, "$precoFinalRs");
 
+    $pdf->SetFont('helvetica', 'B', 15);
+    $pdf->Text(26, 123, "36 X $valorParcelaRs");
+    $pdf->Text(85, 123, "48 X $valorParcela2Rs");
+    $pdf->Text(146, 123, "60 X $valorParcela3Rs");
     
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
