@@ -143,6 +143,14 @@
             <label for="media">Média:</label>
             <input type="text" id="media" name="media" />
 
+            <label for="numeroDeFases">Número de fases:</label>
+            <select id="numeroDeFases" name="numeroDeFases">
+                <option value="monofasico">MONOFÁSICO</option>
+                <option value="bifasico">BIFÁSICO</option>
+                <option value="trifasico">TRIFÁSICO</option>
+                <option value="monoRural">MONO RURAL</option>
+            </select>
+
             <label for="iluminacao">Iluminação:</label>
             <input type="text" id="iluminacao" name="iluminacao" />
 
@@ -176,8 +184,6 @@
 
             <label for="potenciaGerador">Potência do Gerador:</label>
             <input type="text" id="potenciaGerador" name="potenciaGerador" readonly />
-
-
 
             <button type="button" onclick="gerarPDF()">Gerar PDF</button>
         </form>
@@ -237,6 +243,7 @@
             document.getElementById('tensaoSaida').value = item.tensaoSaida;
             document.getElementById('componentes').value = item.componentes;
             document.getElementById('potenciaGerador').value = item.potenciaGerador;
+            document.getElementById('numeroDeFases').value = item.numeroDeFases;
         }
 
         function gerarPDF() {
