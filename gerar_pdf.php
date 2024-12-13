@@ -151,11 +151,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $valorParcela2Rs = 'R$ ' . number_format($valorParcela2, 2, ',', '.');
     $valorParcela3Rs = 'R$ ' . number_format($valorParcela3, 2, ',', '.');
 
-
-
-
     $precoFinal = ($precoKit * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo;
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
+
+    $payback = $precoFinal / $diferencaGastosAno;
+    $paybackArredondado = round($payback);
+    $retorno25anos = $diferencaGastosAno * 25;
+    $retorno25anosRs = 'R$ ' . number_format($retorno25anos, 2, ',', '.');
 
 
     
@@ -345,10 +347,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(26, 123, "36 X $valorParcelaRs");
     $pdf->Text(85, 123, "48 X $valorParcela2Rs");
     $pdf->Text(146, 123, "60 X $valorParcela3Rs");
+
+    $pdf->Text(152, 166, "$paybackArredondado anos");
+    $pdf->Text(143, 178, "$retorno25anosRs");
+
+        // Dados para o gráfico
+        $data = [181, 179, 150, 189, 200, 187, 220, 230, 180, 198, 187, 200, 230, 180, 198, 187, 200]; // Valores para as barras
+        $labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
+    
+        // Definindo as cores para as barras
+        $barColor = [1, 133, 56];  // Cor Verde Canal
+    
+        // Posições e tamanho do gráfico
+        $x = 23;  // Posição X para o gráfico
+        $y = 260; // Posição Y para o gráfico (mais para baixo na página)
+        $barWidth = 5; // Largura das barras
+        $gap = 15;  // Distância entre as barras
+        $maxBarHeight = 40; // Altura máxima do gráfico (limite)
+    
+        // Determinando o maior valor para escalar as barras
+        $maxValue = max($data);
+    
+        // Desenhar a moldura ao redor do gráfico
+        $molduraX = $x - 5; // Ajuste para começar um pouco antes das barras
+        $molduraY = $y - $maxBarHeight - 7; // Ajuste para incluir espaço acima das barras
+        $molduraWidth = count($data) * $gap; // Largura total baseada no número de barras e espaçamento
+        $molduraHeight = $maxBarHeight + 10; // Altura total (incluindo margem superior e inferior)
+    
+        $pdf->SetDrawColor(0, 0, 0); // Cor da moldura (preto)
+        $pdf->SetLineWidth(0.006); // Espessura da linha da moldura
+        $pdf->Rect($molduraX, $molduraY, $molduraWidth, $molduraHeight, 'D'); // 'D' para apenas desenhar a linha
+    
+    
+        // Desenhando as barras e adicionando os valores
+        foreach ($data as $index => $value) {
+        // Calculando a altura proporcional da barra
+        $barHeight = ($value / $maxValue) * $maxBarHeight;
+    
+        // Desenhando cada barra
+        $pdf->SetFillColor($barColor[0], $barColor[1], $barColor[2]);
+        $pdf->Rect($x + ($index * $gap), $y - $barHeight, $barWidth, $barHeight, 'DF'); // Barra
+    
+        // Adicionando o valor acima da barra
+        $pdf->SetFont('helvetica', '', 10);
+        $pdf->SetTextColor(0, 0, 0);
+        $valueX = $x + ($index * $gap) + ($barWidth / 2) - 5; // Ajuste para centralizar o texto
+        $valueY = $y - $barHeight - 5; // Ajuste para posicionar acima da barra
+        $pdf->Text($valueX, $valueY, (string)$value); // Adiciona o valor como texto
+    }
+        // Adicionando rótulos nas barras
+        $pdf->SetFont('helvetica', '', 10);
+        $pdf->SetTextColor(0, 0, 0);
+        foreach ($labels as $index => $label) {
+            // Centralizar os rótulos horizontalmente e posicionar abaixo das barras
+            $labelX = $x + ($index * $gap) + ($barWidth / 2) - (strlen($label) * 1.5); // Ajuste baseado no comprimento do texto
+            $labelY = $y + 5; // Posição logo abaixo da barra
+            $pdf->Text($labelX, $labelY, $label);
+        }
+    
     
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
+
 
 
     // Sexta Página (com a imagem undo.jpeg)
