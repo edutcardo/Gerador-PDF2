@@ -63,22 +63,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $comissao = 0;
     
         if ($potenciaGerador >= 0 && $potenciaGerador <= 20) {
-            $margem = 1.27;
+            $margem = 1.4786325;
             $comissao = 0.07;
+            $mobra = 136.76;
         } elseif ($potenciaGerador > 20 && $potenciaGerador <= 60) {
-            $margem = 1.26;
+            $margem = 1.4537815;
             $comissao = 0.07;
+            $mobra = 134.46;
         } elseif ($potenciaGerador > 60 && $potenciaGerador <= 114) {
-            $margem = 1.24;
+            $margem = 1.3643089;
             $comissao = 0.06;
+            $mobra = 250.45;
         } elseif ($potenciaGerador > 114) {
-            $margem = 1.22;
+            $margem = 1.3213386;
             $comissao = 0.05;
+            $mobra = 242.52;
         }
     
         return [
             'margem' => $margem,
-            'comissao' => $comissao
+            'comissao' => $comissao,
+            'mobra' => $mobra
         ];
     }
     // Chama a função e armazena os resultados
@@ -87,7 +92,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Acessa os valores
     $margem = $resultadoComissao['margem'];
     $comissao = $resultadoComissao['comissao'];
-    $precoFinal = $precoKit * $margem;
+    $mobra = $resultadoComissao['mobra'];
+
+    function calcularFixo($potenciaGerador) {
+
+        if ($potenciaGerador >= 0 && $potenciaGerador < 3) {
+            $fixo = 1025.65;
+        } elseif ($potenciaGerador >= 3 && $potenciaGerador < 9) {
+            $fixo = 1367.53;
+        } elseif ($potenciaGerador >= 9 && $potenciaGerador < 10) {
+            $fixo = 1538.47;
+        } elseif ($potenciaGerador >= 10 && $potenciaGerador < 15) {
+            $fixo = 2051.29;
+        } elseif ($potenciaGerador >= 15 && $potenciaGerador < 20) {
+            $fixo = 3418.81;
+        } elseif ($potenciaGerador >= 20 && $potenciaGerador < 30) {
+            $fixo = 7563.03;
+        } elseif ($potenciaGerador >= 30 && $potenciaGerador < 40) {
+            $fixo = 10084.04;
+        } elseif ($potenciaGerador >= 40 && $potenciaGerador < 50) {
+            $fixo = 11764.71;
+        } elseif ($potenciaGerador >= 50 && $potenciaGerador < 60) {
+            $fixo = 13445.38;
+        } elseif ($potenciaGerador >= 60 && $potenciaGerador < 75) {
+            $fixo = 16260.17;
+        } elseif ($potenciaGerador >= 75 && $potenciaGerador < 82) {
+            $fixo = 0;
+        } elseif ($potenciaGerador >= 82 && $potenciaGerador <= 112.2) {
+            $fixo = 0;
+        }
+    
+        return $fixo;
+    }
+    $valorFixo = calcularFixo($potenciaGerador);
+
+    $precoFinal = ($precoKit * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo;
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
 
@@ -112,7 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(21, 94, "Nome: $nome ");
+    $pdf->Text(21, 94, "Nome: $nome");
     $pdf->Text(21, 100, "Endereço: $endereco");
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
