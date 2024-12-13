@@ -147,10 +147,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
 
     // Presume-se que o TCPDF já esteja inicializado e você está em uma página ativa
-    // Não incluir `require` ou inicializações repetidas
-
-    // Conteúdo da variável $componentes
-    $componentes = "<table><tr><th>Sku<\/th><th>Quantidade<\/th><th>Descri\u00e7\u00e3o<\/th><\/tr><tr><td>25256 <\/td> <td>2<\/td><td> SUPORTE VERTICAL SKS L PARA MICROINVERSOR<\/td> <\/tr><tr><td>222130 <\/td> <td>1<\/td><td> MICRO INVERSOR 220V DEYE 4MPPT MONOFASICO 2,25KW SUN-M225G4-EU-Q0 WIFI NEW<\/td> <\/tr><tr><td>242687 <\/td> <td>4<\/td><td> MODULO SOLAR RESUN 585W RS8I-585M-F30 144 CELLS MONO N-TYPE TOPCON - 740 UN\/CNTR<\/td> <\/tr><tr><td>286844 <\/td> <td>1<\/td><td> CONECTOR DEYE MICROINVERSOR MACHO - AC TRUNK NEW<\/td> <\/tr><\/table>";
 
     // Corrigir caracteres especiais do HTML
     $componentes = html_entity_decode($componentes);
@@ -160,22 +156,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     preg_match_all('/<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>/', $componentes, $matches, PREG_SET_ORDER);
 
     // Definir coordenadas iniciais para a escrita
-    $y = 190; // Começar na coordenada Y (ajuste conforme necessário)
+    $y = 170; // Começar na coordenada Y (ajuste conforme necessário)
+    $linhaAltura = 8; // Altura de cada linha no PDF
+    $larguraQuantidade = 15; // Largura fixa para o campo Quantidade
+    $larguraDescricao = 170; // Largura fixa para a Descrição (ajuste se necessário)
 
     // Escrever os dados extraídos na página atual
     if (empty($matches)) {
         $pdf->Text(10, $y, "Nenhum dado encontrado.");
     } else {
         foreach ($matches as $match) {
-            $sku = trim($match[1]);
-            $quantidade = trim($match[2]);
-            $descricao = trim($match[3]);
+            $quantidade = trim($match[2]); // Apenas o número da quantidade
+            $descricao = trim($match[3]); // Apenas a descrição
 
-            // Adicionar as informações em coordenadas específicas
-            $pdf->Text(10, $y, "SKU: $sku");
-            $pdf->Text(50, $y, "Quantidade: $quantidade");
-            $pdf->Text(100, $y, "Descrição: $descricao");
-            $y += 10; // Incrementar a coordenada Y para evitar sobreposição
+            // Adicionar a quantidade
+            $pdf->MultiCell($larguraQuantidade, $linhaAltura, $quantidade, 0, 'L', 0, 0, 10, $y);
+
+            // Adicionar a descrição, com quebra automática de linhas
+            $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0, 1, 30, $y);
+
+            // Incrementar Y para a próxima linha
+            $y += $linhaAltura;
         }
     }
 
