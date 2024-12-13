@@ -46,6 +46,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $gastoSemGeradorRs = 'R$ ' . number_format($gastoSemGerador, 2, ',', '.');
     $gastoSemGeradorAno = $gastoSemGerador * 12;
     $gastoSemGeradorAnoRs = 'R$ ' . number_format($gastoSemGeradorAno, 2, ',', '.');
+    $gastoComGerador = ($demandaMinima * 0.81) + $iluminacao;
+    $gastoComGeradorRs = 'R$ ' . number_format($gastoComGerador, 2, ',', '.');
+    $gastoComGeradorAno = $gastoComGerador * 12;
+    $gastoComGeradorAnoRs = 'R$ ' . number_format($gastoComGeradorAno, 2, ',', '.');
+    $diferencaGastos = $gastoSemGerador - $gastoComGerador;
+    $diferencaGastosRs = 'R$ ' . number_format($diferencaGastos, 2, ',', '.');
+    $diferencaGastosAno = $diferencaGastos * 12;
+    $diferencaGastosAnoRs = 'R$ ' . number_format($diferencaGastosAno, 2, ',', '.');
+    function calcularMargemEComissao($potenciaGerador) {
+        $margem = 0;
+        $comissao = 0;
+    
+        if ($potenciaGerador >= 0 && $potenciaGerador <= 20) {
+            $margem = 1.27;
+            $comissao = 0.07;
+        } elseif ($potenciaGerador > 20 && $potenciaGerador <= 60) {
+            $margem = 1.26;
+            $comissao = 0.07;
+        } elseif ($potenciaGerador > 60 && $potenciaGerador <= 114) {
+            $margem = 1.24;
+            $comissao = 0.06;
+        } elseif ($potenciaGerador > 114) {
+            $margem = 1.22;
+            $comissao = 0.05;
+        }
+    
+        return [
+            'margem' => $margem,
+            'comissao' => $comissao
+        ];
+    }
+    
+
+
 
     // Data atual
     $formatoData = 'd/m/Y';
@@ -217,6 +251,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->Text(45, 45, "$gastoSemGeradorAnoRs");
     $pdf->Text(47.5, 61.5, "$gastoSemGeradorRs");
+    $pdf->Text(91, 45, "$gastoComGeradorAnoRs");
+    $pdf->Text(93, 61.5, "$gastoComGeradorRs");
+    $pdf->Text(135, 45, "$diferencaGastosAnoRs");
+    $pdf->Text(138, 61.5, "$diferencaGastosRs");
 
     
     // Definir fonte e adicionar conteúdo à quinta página
