@@ -44,6 +44,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $gastoSemGerador = ($demandaMinima * 0.81) + $iluminacao + ($media * 0.81);
     $gastoSemGeradorRs = 'R$ ' . number_format($gastoSemGerador, 2, ',', '.');
+    $gastoSemGeradorAno = $gastoSemGerador * 12;
+    $gastoSemGeradorAnoRs = 'R$ ' . number_format($gastoSemGeradorAno, 2, ',', '.');
 
     // Data atual
     $formatoData = 'd/m/Y';
@@ -213,6 +215,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 14);
     $pdf->SetTextColor(255, 255, 255);
 
+    $pdf->Text(45, 45, "$gastoSemGeradorAnoRs");
     $pdf->Text(47.5, 61.5, "$gastoSemGeradorRs");
 
     
