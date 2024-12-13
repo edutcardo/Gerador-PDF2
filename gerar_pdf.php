@@ -23,14 +23,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $qtdmodulosArredondado = round($qtdmodulos);
     $metrosOcupados = $qtdmodulosArredondado * 2.9;
 
-    // Cálculos pg4
+    // Cálculos PG4
     $peso = $qtdmodulosArredondado * 33;
     $percentualSolar = ($geracao / $media) * 100;
     $percentualSolarArredondado = round($percentualSolar);
     $mediaArredondado = round($media);
     $geracaoArredondado = round($geracao);
 
-    //Cálculos pg5
+    //Cálculos PG5
     $demandaMinima = 0; // Inicializa a variável
 
     if ($numeroDeFases == 'mono rural') {
@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif ($numeroDeFases == 'trifasico') {
         $demandaMinima = 100;
     }
-    $gastoSemGerador = ($demandaMinima * 0.81) + $iluminacao;
+    $gastoSemGerador = ($demandaMinima * 0.81) + $iluminacao + ($media * 0.81);
     $gastoSemGeradorRs = 'R$ ' . number_format($gastoSemGerador, 2, ',', '.');
 
     // Data atual
