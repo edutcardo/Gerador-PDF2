@@ -43,6 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $demandaMinima = 100;
     }
     $gastoSemGerador = ($demandaMinima * 0.81) + $iluminacao;
+    $gastoSemGeradorRs = 'R$ ' . number_format($gastoSemGerador, 2, ',', '.');
 
     // Data atual
     $formatoData = 'd/m/Y';
@@ -210,9 +211,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('pg5.png', 0, 0, 210, 297);
     $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(255, 0, 255);
+    $pdf->SetTextColor(255, 255, 255);
 
-    $pdf->Text(142, 112, "$gastoSemGerador kWh mensal");
+    $pdf->Text(47.5, 61.5, "$gastoSemGeradorRs");
 
     
     // Definir fonte e adicionar conteúdo à quinta página
