@@ -57,6 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $diferencaGastosRs = 'R$ ' . number_format($diferencaGastos, 2, ',', '.');
     $diferencaGastosAno = $diferencaGastos * 12;
     $diferencaGastosAnoRs = 'R$ ' . number_format($diferencaGastosAno, 2, ',', '.');
+
     function calcularMargemEComissao($potenciaGerador) {
         $margem = 0;
         $comissao = 0;
@@ -80,6 +81,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'comissao' => $comissao
         ];
     }
+    // Chama a função e armazena os resultados
+    $resultadoComissao = calcularMargemEComissao($potenciaGerador);
+
+    // Acessa os valores
+    $margem = $resultadoComissao['margem'];
+    $comissao = $resultadoComissao['comissao'];
+
+
+
     
 
 
@@ -101,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(21, 94, "Nome: $precoKit");
+    $pdf->Text(21, 94, "Nome: $margem ");
     $pdf->Text(21, 100, "Endereço: $endereco");
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
