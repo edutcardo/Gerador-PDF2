@@ -153,11 +153,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Extrair os dados da tabela
     preg_match_all('/<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>/', $componentes, $matches, PREG_SET_ORDER);
 
-    // Configurações iniciais
-    $y = 190; // Posição inicial Y
+    // Ajuste na altura da descrição
+    $y = 176; // Posição inicial Y
     $linhaAltura = 8; // Altura de cada linha no PDF
-    $larguraQuantidade = 15; // Largura para o campo Quantidade
-    $larguraDescricao = 170; // Largura para a Descrição
+    $larguraDescricao = 180; // Largura para a Descrição
     $maxY = 280; // Defina o limite Y da página (ajuste conforme necessário)
 
     // Função para adicionar uma nova página se necessário
@@ -171,31 +170,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Escrever os dados extraídos no PDF
     if (empty($matches)) {
-        $pdf->Text(10, $y, "Nenhum dado encontrado.");
+        $pdf->Text(10, $y+3, "Nenhum dado encontrado.");
     } else {
         foreach ($matches as $match) {
-            $quantidade = trim($match[2]); // Número da quantidade
             $descricao = trim($match[3]); // Descrição do item
 
             // Verificar se há espaço suficiente para escrever na página
             $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
 
-            // Adicionar a quantidade (campo fixo)
-            $pdf->MultiCell($larguraQuantidade, $linhaAltura, $quantidade, 0, 'L', 0, 0, 10, $y);
-
-            // Atualiza a posição Y após escrever a quantidade
-            $y += $linhaAltura;
-
-            // Verificar novamente a quebra de página antes de escrever a descrição
-            $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
-
             // Adicionar a descrição com quebra automática de linha
-            $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0, 1, 30, $y);
+            $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0, 1, 16.5, $y);
 
-            // Atualizar Y para a próxima linha
-            $y += $linhaAltura;
+            // Atualizar Y para a próxima linha após a descrição
+            $y += $pdf->getY() - $y; // Ajuste a posição Y com base na altura real do texto
         }
     }
+
+
+
 
 
 
