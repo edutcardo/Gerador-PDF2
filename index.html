@@ -134,8 +134,11 @@
             <label for="endereco">Endereço:</label>
             <input type="text" id="endereco" name="endereco" />
 
+            <label for="cep">CEP:</label>
+            <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" />
+
             <label for="cidade">Cidade:</label>
-            <input type="text" id="cidade" name="cidade" />
+            <input type="text" id="cidade" name="cidade" readonly />
 
             <label for="uc">Unidade Consumidora:</label>
             <input type="text" id="uc" name="uc" />
@@ -284,6 +287,25 @@
                 .catch(error => {
                     console.log('Erro ao buscar dados da API:', error);
                 });
+        }
+
+        window.onload = preencherFormulario;
+
+        function buscarCidadePorCEP() {
+            const cep = document.getElementById('cep').value;
+            if (cep.length === 8) { // Valida se o CEP possui 8 dígitos
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            document.getElementById('cidade').value = data.localidade;
+                        } else {
+                            alert('CEP não encontrado!');
+                            document.getElementById('cidade').value = '';
+                        }
+                    })
+                    .catch(error => console.error('Erro ao buscar cidade pelo CEP:', error));
+            }
         }
 
         window.onload = preencherFormulario;
