@@ -121,6 +121,47 @@
         .hidden {
             display: none;
         }
+        .slider {
+            width: 100%; /* Deixa o slider ocupar toda a largura disponível */
+            height: 20px; /* Aumenta a altura do slider */
+            appearance: none; /* Remove o estilo padrão do navegador */
+            background: #ddd; /* Define a cor de fundo do slider */
+            border-radius: 10px; /* Deixa as bordas arredondadas */
+            outline: none; /* Remove a borda ao focar no slider */
+            transition: background 0.3s ease; /* Adiciona uma transição suave ao hover */
+        }
+
+        .slider:hover {
+            background: #ccc; /* Muda o fundo quando o slider é hoverado */
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none; /* Remove o estilo padrão do botão do slider */
+            width: 25px; /* Largura do botão */
+            height: 25px; /* Altura do botão */
+            background: #007bff; /* Cor do botão */
+            border-radius: 50%; /* Deixa o botão redondo */
+            cursor: pointer; /* Mostra que o botão é clicável */
+            transition: background 0.3s ease; /* Suaviza a mudança de cor */
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            background: #0056b3; /* Cor do botão ao passar o mouse */
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .slider::-moz-range-thumb:hover {
+            background: #0056b3;
+        }
+
     </style>
 </head>
 <body>
@@ -163,8 +204,9 @@
             <input type="text" id="iluminacao" name="iluminacao" />
 
             <label for="palavra-chave">Potência do Gerador:</label>
-            <input type="text" id="palavra-chave" name="palavra-chave" oninput="buscarResultados(); calcularResultado()" />
-            
+            <input type="range" id="palavra-chave" name="palavra-chave" min="0" max="116" value="0" step="1" class="slider" oninput="atualizarSlider(this.value); buscarResultados(); calcularResultado()" />
+            <span id="slider-value">0</span>
+
             <input type="text" id="resultado" name="resultado" readonly />
 
 
@@ -372,6 +414,9 @@
             } else {
                 document.getElementById('resultado').value = ''; // Limpa o campo se o input for inválido
             }
+        }
+        function atualizarSlider(valor) {
+            document.getElementById('slider-value').textContent = valor; // Exibe o valor do slider ao lado do controle
         }
 
         
