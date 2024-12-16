@@ -318,6 +318,12 @@
             const precoKit = document.getElementById('preco').value;
             const numeroDeFases = document.getElementById('numeroDeFases').value;
             const irradiacao = document.getElementById('irradiacao').value;
+            const marca = document.getElementById('marca').value;
+            const fabricante = document.getElementById('fabricante').value;
+            const potenciaInversor = document.getElementById('potenciaInversor').value;
+            formData.append('marca', marca);
+            formData.append('fabricante', fabricante);
+            formData.append('potenciaInversor', potenciaInversor);
             formData.append('numeroDeFases', numeroDeFases);
             formData.append('irradiacao', irradiacao);
             formData.append('potenciaGerador', potenciaGerador);

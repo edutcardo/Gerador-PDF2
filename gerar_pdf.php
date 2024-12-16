@@ -15,7 +15,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $numeroDeFases = $_POST['numeroDeFases'];
     $precoKit = $_POST['precoKit'];
     $irradiacao = $_POST['irradiacao'];
-    
+    $marca = $_POST['marca'];
+    $fabricante = $_POST['fabricante'];
+    $potenciaInversor = $_POST['potenciaInversor'];
+
+
 
 
 
@@ -477,8 +481,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Image('pg6.png', 0, 0, 210, 297);
     
     // Definir fonte e adicionar conteúdo à sexta página
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
+    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->SetTextColor(255, 255, 255);
+    $pdf->Text(90, 50, "$fabricante $potenciaInversor kW");
+    $pdf->Text(155, 50, "10 ANOS");
+    $pdf->SetFont('helvetica', 'B', 9);
+    $pdf->Text(75,67, "$marca $potenciaModulo W");
+    $pdf->Text(146, 90, "$valorParcela3Rs");
 
 
     // Sétima Página (com a imagem undo.jpeg)
