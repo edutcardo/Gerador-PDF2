@@ -161,10 +161,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $retorno25anos = $diferencaGastosAno * 25;
     $retorno25anosRs = 'R$ ' . number_format($retorno25anos, 2, ',', '.');
 
+    $irradiacao = [5888, 5792, 5219, 4544, 3636, 3333, 3529, 4451, 4683, 5311, 5969, 6327];
 
-    
+    $jan = $irradiacao[0];
+    $fev = $irradiacao[1];
+    $mar = $irradiacao[2];
+    $abr = $irradiacao[3];
+    $mai = $irradiacao[4];
+    $jun = $irradiacao[5];
+    $jul = $irradiacao[6];
+    $ago = $irradiacao[7];
+    $set = $irradiacao[8];
+    $out = $irradiacao[9];
+    $nov = $irradiacao[10];
+    $dez = $irradiacao[11];
 
+    $jan1 = $jan * 1.076687117 / 5265 * 4 * 0.95;
+    $fev1 = $fev * 1.076687117 / 5265 * 4 * 0.95;
+    $mar1 = $mar * 1.076687117 / 5265 * 4 * 0.95;
+    $abr1 = $abr * 1.076687117 / 5265 * 4 * 0.95;
+    $mai1 = $mai * 1.076687117 / 5265 * 4 * 0.95;
+    $jun1 = $jun * 1.076687117 / 5265 * 4 * 0.95;
+    $jul1 = $jul * 1.076687117 / 5265 * 4 * 0.95;
+    $ago1 = $ago * 1.076687117 / 5265 * 4 * 0.95;
+    $set1 = $set * 1.076687117 / 5265 * 4 * 0.95;
+    $out1 = $out * 1.076687117 / 5265 * 4 * 0.95;
+    $nov1 = $nov * 1.076687117 / 5265 * 4 * 0.95;
+    $dez1 = $dez * 1.076687117 / 5265 * 4 * 0.95;
 
+    $jan2 = $jan1 * $potenciaGerador * 30;
+    $fev2 = $fev1 * $potenciaGerador * 30;
+    $mar2 = $mar1 * $potenciaGerador * 30;
+    $abr2 = $abr1 * $potenciaGerador * 30;
+    $mai2 = $mai1 * $potenciaGerador * 30;
+    $jun2 = $jun1 * $potenciaGerador * 30;
+    $jul2 = $jul1 * $potenciaGerador * 30;
+    $ago2 = $ago1 * $potenciaGerador * 30;
+    $set2 = $set1 * $potenciaGerador * 30;
+    $out2 = $out1 * $potenciaGerador * 30;
+    $nov2 = $nov1 * $potenciaGerador * 30;
+    $dez2 = $dez1 * $potenciaGerador * 30;
+
+    $jan3 = number_format($jan2 / 1000, 3, '.', '');
+    $fev3 = number_format($fev2 / 1000, 3, '.', '');
+    $mar3 = number_format($mar2 / 1000, 3, '.', '');
+    $abr3 = number_format($abr2 / 1000, 3, '.', '');
+    $mai3 = number_format($mai2 / 1000, 3, '.', '');
+    $jun3 = number_format($jun2 / 1000, 3, '.', '');
+    $jul3 = number_format($jul2 / 1000, 3, '.', '');
+    $ago3 = number_format($ago2 / 1000, 3, '.', '');
+    $set3 = number_format($set2 / 1000, 3, '.', '');
+    $out3 = number_format($out2 / 1000, 3, '.', '');
+    $nov3 = number_format($nov2 / 1000, 3, '.', '');
+    $dez3 = number_format($dez2 / 1000, 3, '.', '');
 
     // Data atual
     $formatoData = 'd/m/Y';
@@ -187,6 +236,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(21, 100, "Endereço: $endereco");
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
+    
 
     $pdf->Text(114, 160, "$metrosOcupados m²");
     $pdf->Text(99, 166.25, "$qtdmodulosArredondado Placas");
@@ -205,7 +255,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
 
     // Dados para o gráfico
-    $data = [181, 179, 150, 189, 200, 187, 220, 230, 180, 198, 187, 200]; // Valores para as barras
+    $data = [$jan3, $fev3, $mar3, $abr3, $mai3, $jun3, $jul3, $ago3, $set3, $out3, $nov3, $dez3]; // Valores para as barras
     $labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
 
     // Definindo as cores para as barras
