@@ -163,7 +163,11 @@
             <input type="text" id="iluminacao" name="iluminacao" />
 
             <label for="palavra-chave">Potência do Gerador:</label>
-            <input type="text" id="palavra-chave" name="palavra-chave" oninput="buscarResultados()" />
+            <input type="text" id="palavra-chave" name="palavra-chave" oninput="buscarResultados(); calcularResultado()" />
+
+            <label for="resultado">Resultado:</label>
+            <input type="text" id="resultado" name="resultado" readonly />
+
 
             <label for="estrutura">Selecione uma Estrutura:</label>
             <select id="estrutura" name="estrutura" onchange="buscarResultados()">
@@ -361,6 +365,16 @@
             document.querySelectorAll('.readonly').forEach(input => {
             input.classList.add('hidden');
         });
+        function calcularResultado() {
+            const potencia = parseFloat(document.getElementById('palavra-chave').value); // Pega o valor digitado
+            if (!isNaN(potencia)) {
+                const resultado = potencia * 3.9 * 30; // Faz o cálculo
+                document.getElementById('resultado').value = resultado.toFixed(2); // Exibe o resultado com 2 casas decimais
+            } else {
+                document.getElementById('resultado').value = ''; // Limpa o campo se o input for inválido
+            }
+        }
+
         
     </script>
 </body>
