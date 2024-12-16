@@ -120,8 +120,6 @@
                 <option value="METALICO">METALICO</option>
                 <option value="S/ESTRUTURA">S/ESTRUTURA</option>
             </select>
-            
-
 
             <div id="resultados"></div>
 
@@ -138,7 +136,13 @@
             <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" />
 
             <label for="cidade">Cidade:</label>
-            <input type="text" id="cidade" name="cidade" readonly />
+            <input type="text" id="cidade" name="cidade" />
+
+            <label for="irradiacao">Irradiação:</label>
+            <input type="text" id="irradiacao" name="irradiacao" readonly />
+
+            <button type="button" onclick="buscarIrradiacao()">Buscar Irradiação</button>
+
 
             <label for="uc">Unidade Consumidora:</label>
             <input type="text" id="uc" name="uc" />
@@ -309,6 +313,25 @@
         }
 
         window.onload = preencherFormulario;
+
+        function buscarIrradiacao() {
+        const cidade = document.getElementById('cidade').value;
+        
+        if (cidade) {
+            fetch(`buscar_irradiacao.php?cidade=${encodeURIComponent(cidade)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('irradiacao').value = data.irradiacao;
+                    } else {
+                        alert(data.message || 'Erro desconhecido');
+                    }
+                })
+                .catch(error => console.error('Erro ao buscar irradiação:', error));
+        } else {
+            alert('Por favor, insira um nome de cidade válido.');
+        }
+    }
     </script>
 </body>
 </html>
