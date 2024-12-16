@@ -32,7 +32,6 @@
             max-width: 600px;
             width: 100%;
             padding: 30px;
-            margin-left: 0; /* Remove margens que possam causar sobreposição */
         }
 
         h1 {
@@ -183,9 +182,9 @@
         }
 
         .sidebar:hover {
-        width: 100%;
-        }
+            width: 200px;
 
+        }
         .sidebar a {
             display: flex; /* Ativa o layout flexível */
             align-items: center; /* Centraliza verticalmente o conteúdo */
@@ -254,13 +253,6 @@
             padding: 0px;
             padding-top: 8px;
         }
-        @media (max-width: 768px) {
-        .sidebar {
-            width: 100%;
-            position: relative;
-            height: auto;
-        }
-    }
 
     </style>
 </head>
@@ -280,7 +272,7 @@
         <a href="index.html">
             <i class="fa-solid fa-gauge icon"></i> <span class="text">Cocamar</span>
         </a>
-        <a href="att.php">
+        <a href="index.html">
             <i class="fa-solid fa-paste icon"></i><span class="text">Cooperados</span>
         </a>
     </div>
