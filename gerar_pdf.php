@@ -16,6 +16,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $potenciaModulo = $_POST['potenciaModulo'];
     $numeroDeFases = $_POST['numeroDeFases'];
     $precoKit = $_POST['precoKit'];
+    $irradiacao = $_POST['irradiacao'];
+    
 
 
 
