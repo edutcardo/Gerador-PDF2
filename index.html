@@ -312,24 +312,34 @@
 
         window.onload = preencherFormulario;
 
+
         function buscarIrradiacao() {
-        const cidade = document.getElementById('cidade').value;
-        
-        if (cidade) {
-            fetch(`buscar_irradiacao.php?cidade=${encodeURIComponent(cidade)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('irradiacao').value = data.irradiacao;
-                    } else {
-                        alert(data.message || 'Erro desconhecido');
-                    }
-                })
-                .catch(error => console.error('Erro ao buscar irradiação:', error));
-        } else {
-            alert('Por favor, insira um nome de cidade válido.');
+            const cidade = document.getElementById('cidade').value.trim();
+            
+            if (cidade !== "") {
+                fetch(`buscar_irradiacao.php?cidade=${encodeURIComponent(cidade)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('irradiacao').value = data.irradiacao;
+                        } else {
+                            document.getElementById('irradiacao').value = ''; // Limpa o campo se não encontrado
+                            console.warn(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar irradiação:', error);
+                        document.getElementById('irradiacao').value = '';
+                    });
+            } else {
+                document.getElementById('irradiacao').value = ''; // Limpa o campo se não houver input
+            }
         }
-    }
     </script>
 </body>
 </html>
