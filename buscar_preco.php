@@ -2,8 +2,11 @@
 header('Content-Type: application/json');
 
 // Parâmetros de pesquisa
-$potencia_gerador = isset($_GET['potencia-gerador']) ? $_GET['potencia-gerador'] : '';
+$potencia_gerador = isset($_GET['potencia-gerador']) ? floatval($_GET['potencia-gerador']) : null;
 $estrutura = isset($_GET['estrutura']) ? $_GET['estrutura'] : '';
+
+// Defina a margem de tolerância
+$tolerancia = 0.5;
 
 // Configurações do banco de dados
 $servername = "srv1781.hstgr.io";
@@ -19,16 +22,14 @@ if ($conn->connect_error) {
     die(json_encode(['success' => false, 'message' => 'Erro na conexão com o banco de dados: ' . $conn->connect_error]));
 }
 
-// Criação da query SQL
+// Criação da query SQL com intervalo de tolerância
 $sql = "SELECT titulo, precoDoIntegrador, codProd, marca, fabricante, potenciaInversor, potenciaModulo, tensaoSaida, componentes, potenciaGerador 
         FROM produtos 
-        WHERE potenciaGerador LIKE ?";
-$params = ["%$potencia_gerador%"];
+        WHERE potenciaGerador BETWEEN ? AND ?";
 
 // Adiciona o filtro de estrutura se necessário
 if (!empty($estrutura)) {
     $sql .= " AND estrutura = ?";
-    $params[] = $estrutura; // Adiciona ao array de parâmetros
 }
 
 // Prepara o statement
@@ -37,11 +38,16 @@ if (!$stmt) {
     die(json_encode(['success' => false, 'message' => 'Erro na preparação da consulta: ' . $conn->error]));
 }
 
-// Prepara os tipos de parâmetros para o bind_param
-$types = str_repeat("s", count($params));
+// Calcula os limites inferior e superior para a busca
+$limite_inferior = $potencia_gerador - $tolerancia;
+$limite_superior = $potencia_gerador + $tolerancia;
 
-// Faz o bind dos parâmetros
-$stmt->bind_param($types, ...$params);
+// Vincula os parâmetros de forma correta
+if (!empty($estrutura)) {
+    $stmt->bind_param("dds", $limite_inferior, $limite_superior, $estrutura);
+} else {
+    $stmt->bind_param("dd", $limite_inferior, $limite_superior);
+}
 
 // Executa a consulta
 $stmt->execute();
