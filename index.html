@@ -121,6 +121,8 @@
                 <option value="S/ESTRUTURA">S/ESTRUTURA</option>
             </select>
             
+
+
             <div id="resultados"></div>
 
             <label for="preco">Preço do Integrador:</label>
@@ -128,13 +130,12 @@
 
             <label for="nome">Nome:</label>
             <input type="text" id="nome" name="nome" />
-            
+
             <label for="endereco">Endereço:</label>
             <input type="text" id="endereco" name="endereco" />
 
-            <input type="text" id="cep" placeholder="Digite o CEP">
-            <button type="button" onclick="buscarCidade()">Buscar Cidade</button>
-            <input type="text" id="cidadeOutput" readonly placeholder="Cidade">
+            <label for="cidade">Cidade:</label>
+            <input type="text" id="cidade" name="cidade" />
 
             <label for="uc">Unidade Consumidora:</label>
             <input type="text" id="uc" name="uc" />
@@ -286,37 +287,6 @@
         }
 
         window.onload = preencherFormulario;
-
-        function buscarCidade() {
-            const cep = document.getElementById('cep').value.trim();
-            
-            // Validação do formato do CEP
-            if (!/^\d{8}$/.test(cep)) {
-                alert('Por favor, insira um CEP válido com 8 dígitos.');
-                return;
-            }
-
-            const url = `https://viacep.com.br/ws/${cep}/json/`;
-
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro na rede');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.erro) {
-                        alert('CEP inválido');
-                    } else {
-                        document.getElementById('cidadeOutput').value = data.localidade;
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro na consulta:', error);
-                    alert('Erro ao buscar cidade');
-                });
-        }
     </script>
 </body>
 </html>
