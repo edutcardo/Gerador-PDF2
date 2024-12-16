@@ -171,29 +171,29 @@
         <form id="formulario">
 
             <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" />
+            <input type="text" id="nome" name="nome" required/>
 
             <label for="endereco">Endereço:</label>
-            <input type="text" id="endereco" name="endereco" />
+            <input type="text" id="endereco" name="endereco" required/>
 
             <label for="cep">CEP:</label>
-            <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" />
+            <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" required/>
 
             <label for="cidade">Cidade:</label>
-            <input type="text" id="cidade" name="cidade" oninput="buscarIrradiacao()" />
+            <input type="text" id="cidade" name="cidade" oninput="buscarIrradiacao()" required/>
 
             <label for="irradiacao" class="readonly">Irradiação:</label>
-            <input type="text" id="irradiacao" name="irradiacao" readonly  class="readonly"/>
+            <input type="text" id="irradiacao" name="irradiacao" readonly  class="readonly"required/>
 
 
             <label for="uc">Unidade Consumidora:</label>
-            <input type="text" id="uc" name="uc" />
+            <input type="text" id="uc" name="uc" required/>
 
             <label for="media">Média:</label>
-            <input type="text" id="media" name="media" />
+            <input type="text" id="media" name="media" required/>
 
             <label for="numeroDeFases">Número de fases:</label>
-            <select id="numeroDeFases" name="numeroDeFases">
+            <select id="numeroDeFases" name="numeroDeFases" required>
                 <option value="monofasico">MONOFÁSICO</option>
                 <option value="bifasico">BIFÁSICO</option>
                 <option value="trifasico">TRIFÁSICO</option>
@@ -201,17 +201,17 @@
             </select>
 
             <label for="iluminacao">Iluminação:</label>
-            <input type="text" id="iluminacao" name="iluminacao" />
+            <input type="text" id="iluminacao" name="iluminacao" required/>
 
             <label for="palavra-chave">Potência do Gerador:</label>
-            <input type="range" id="palavra-chave" name="palavra-chave" min="0" max="116" value="0" step="1" class="slider" oninput="atualizarSlider(this.value); buscarResultados(); calcularResultado()" />
+            <input type="range" id="palavra-chave" name="palavra-chave" min="0" max="116" value="0" step="1" class="slider" oninput="atualizarSlider(this.value); buscarResultados(); calcularResultado()" required/>
             <span id="slider-value">0</span>
 
-            <input type="text" id="resultado" name="resultado" readonly />
+            <input type="text" id="resultado" name="resultado" readonly required/>
 
 
             <label for="estrutura">Selecione uma Estrutura:</label>
-            <select id="estrutura" name="estrutura" onchange="buscarResultados()">
+            <select id="estrutura" name="estrutura" onchange="buscarResultados()" required>
                 <option value="">Selecione uma estrutura</option>
                 <option value="COLONIAL">COLONIAL</option>
                 <option value="FIBROMADEIRA">FIBROMADEIRA</option>
@@ -220,7 +220,7 @@
                 <option value="S/ESTRUTURA">S/ESTRUTURA</option>
             </select>
 
-            <div id="resultados"></div>
+            <div id="resultados" required></div>
 
             <label for="preco" class="readonly">Preço do Integrador:</label>
             <input type="text" id="preco" name="preco" readonly  class="readonly"/>
@@ -250,7 +250,7 @@
             <label for="potenciaGerador" class="readonly">Potência do Gerador:</label>
             <input type="text" id="potenciaGerador" name="potenciaGerador" readonly  class="readonly"/>
 
-            <button type="button" onclick="gerarPDF()">Gerar PDF</button>
+            <button type="button" onclick="gerarPDF()" id="btnGerarPDF" disabled>Gerar PDF</button>
         </form>
     </div>
 
@@ -410,7 +410,7 @@
             const potencia = parseFloat(document.getElementById('palavra-chave').value); // Pega o valor digitado
             if (!isNaN(potencia)) {
                 const resultado = potencia * 3.9 * 30; // Faz o cálculo
-                document.getElementById('resultado').value = `A geração digitada é: ${resultado.toFixed(0)} kWh - Selecione um kit abaixo`; // Exibe o resultado com 2 casas decimais
+                document.getElementById('resultado').value = `A geração selecionada é: ${resultado.toFixed(0)} kWh - Selecione um kit abaixo`; // Exibe o resultado com 2 casas decimais
             } else {
                 document.getElementById('resultado').value = ''; // Limpa o campo se o input for inválido
             }
@@ -419,7 +419,24 @@
             document.getElementById('slider-value').textContent = valor; // Exibe o valor do slider ao lado do controle
         }
 
-        
+                // Função que verifica se todos os campos obrigatórios estão preenchidos
+        function verificarFormulario() {
+            const formulario = document.getElementById('formulario');
+            const btnGerarPDF = document.getElementById('btnGerarPDF');
+            
+            // Verifica se o formulário é válido
+            if (formulario.checkValidity()) {
+                btnGerarPDF.disabled = false; // Habilita o botão
+            } else {
+                btnGerarPDF.disabled = true; // Desabilita o botão
+            }
+        }
+
+        // Chama a função de verificação sempre que o conteúdo do formulário mudar
+        document.getElementById('formulario').addEventListener('input', verificarFormulario);
+
+        // Chama a função de verificação ao carregar a página
+        window.onload = verificarFormulario;
     </script>
 </body>
 </html>
