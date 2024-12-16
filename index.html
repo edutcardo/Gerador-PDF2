@@ -101,11 +101,14 @@
         button:hover {
             background-color: #0056b3;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Formulário de Usuário</h1>
+        <h1>Proposta Autoconsumo</h1>
 
         <form id="formulario">
 
@@ -160,36 +163,30 @@
             <label for="preco">Preço do Integrador:</label>
             <input type="text" id="preco" name="preco" readonly />
 
-            <label for="valor1">Valor 1:</label>
-            <input type="number" id="valor1" name="valor1" />
-
-            <label for="valor2">Valor 2:</label>
-            <input type="number" id="valor2" name="valor2" />
-
             <!-- Adicionar os campos de entrada para as novas informações -->
-            <label for="codProd">Código do Produto:</label>
-            <input type="text" id="codProd" name="codProd" readonly />
+            <label for="codProd" class="readonly">Código do Produto:</label>
+            <input type="text" id="codProd" name="codProd" readonly  class="readonly"/>
 
-            <label for="marca">Marca:</label>
-            <input type="text" id="marca" name="marca" readonly />
+            <label for="marca" class="readonly">Marca:</label>
+            <input type="text" id="marca" name="marca" readonly  class="readonly"/>
 
-            <label for="fabricante">Fabricante:</label>
-            <input type="text" id="fabricante" name="fabricante" readonly />
+            <label for="fabricante" class="readonly">Fabricante:</label>
+            <input type="text" id="fabricante" name="fabricante" readonly  class="readonly"/>
 
-            <label for="potenciaInversor">Potência do Inversor:</label>
-            <input type="text" id="potenciaInversor" name="potenciaInversor" readonly />
+            <label for="potenciaInversor" class="readonly">Potência do Inversor:</label>
+            <input type="text" id="potenciaInversor" name="potenciaInversor" readonly  class="readonly"/>
 
-            <label for="potenciaModulo">Potência do Módulo:</label>
-            <input type="text" id="potenciaModulo" name="potenciaModulo" readonly />
+            <label for="potenciaModulo" class="readonly">Potência do Módulo:</label>
+            <input type="text" id="potenciaModulo" name="potenciaModulo" readonly  class="readonly"/>
 
-            <label for="tensaoSaida">Tensão de Saída:</label>
-            <input type="text" id="tensaoSaida" name="tensaoSaida" readonly />
+            <label for="tensaoSaida" class="readonly">Tensão de Saída:</label>
+            <input type="text" id="tensaoSaida" name="tensaoSaida" readonly  class="readonly"/>
 
-            <label for="componentes">Componentes:</label>
-            <input type="text" id="componentes" name="componentes" readonly />
+            <label for="componentes" class="readonly">Componentes:</label>
+            <input type="text" id="componentes" name="componentes" readonly  class="readonly"/>
 
-            <label for="potenciaGerador">Potência do Gerador:</label>
-            <input type="text" id="potenciaGerador" name="potenciaGerador" readonly />
+            <label for="potenciaGerador" class="readonly">Potência do Gerador:</label>
+            <input type="text" id="potenciaGerador" name="potenciaGerador" readonly  class="readonly"/>
 
             <button type="button" onclick="gerarPDF()">Gerar PDF</button>
         </form>
@@ -343,6 +340,10 @@
                 document.getElementById('irradiacao').value = ''; // Limpa o campo se não houver input
             }
         }
+        // Adiciona a classe 'hidden' a todos os inputs com a classe 'readonly'
+            document.querySelectorAll('.readonly').forEach(input => {
+            input.classList.add('hidden');
+        });
         
     </script>
 </body>

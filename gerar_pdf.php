@@ -5,8 +5,6 @@ require_once('vendor/autoload.php'); // Ou o caminho correto, se você não esti
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome = $_POST['nome'];
     $endereco = $_POST['endereco'];
-    $valor1 = $_POST['valor1'];
-    $valor2 = $_POST['valor2'];
     $cidade = $_POST['cidade'];
     $uc = $_POST['uc'];
     $media = $_POST['media'];
@@ -22,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     // Cálculos iniciais da proposta
-    $resultado = $valor1 + $valor2;
+
     $geracao = $potenciaGerador * 3.9 * 30;
     $qtdmodulos = ($potenciaGerador*1000)/$potenciaModulo;
     $qtdmodulosArredondado = round($qtdmodulos);
