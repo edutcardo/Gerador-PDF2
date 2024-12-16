@@ -161,10 +161,117 @@
         .slider::-moz-range-thumb:hover {
             background: #0056b3;
         }
+        .sidebar:hover .logo {
+            width: 80px; /* Tamanho maior quando expandido */
+            height: 80px;
+            padding: 8px;
+        }
+        .sidebar {
+            width: 60px;
+            background-color: #006b3c;
+            transition: width 0.3s;
+            overflow: hidden;
+            position: fixed; /* Torna a sidebar fixa */
+            z-index: 2; /* Mantém a sidebar acima de outros elementos */
+            height: 100vh; /* Altura total da tela */
+            top: 0; /* Começa do topo */
+            left: 0; /* Fixa na lateral esquerda */
+        }
+
+        .sidebar:hover {
+            width: 200px;
+
+        }
+        .sidebar a {
+            display: flex; /* Ativa o layout flexível */
+            align-items: center; /* Centraliza verticalmente o conteúdo */
+            justify-content: flex-start; /* Centraliza horizontalmente (altere para `center` se necessário) */
+            padding: 10px; /* Ajusta o espaçamento interno */
+            color: #333;
+            text-decoration: none;
+            position: relative;
+            z-index: 2;
+            gap: 10px; /* Espaço entre ícone e texto */
+            margin-left: 8px;
+            margin-top: 24px;
+        }
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+        .sidebar a .text {
+            display: none; /* Oculta o texto por padrão */
+            margin-left: 10px; /* Adiciona espaçamento entre ícone e texto */
+        }
+        .sidebar:hover a .text {
+            display: inline-block; /* Exibe o texto quando a barra está em hover */ 
+            font-weight: bold; /* Negrito */
+            color: white; /* Cor branca */
+        }
+        .sidebar:hover .span {
+            text-decoration: none;
+            text-align: center;
+            margin: 0;
+        }
+        .sidebar img {
+            width: 100%; /* Adapta a largura ao contêiner */
+            height: 40px; /* Mantém a proporção da altura */
+            transition: transform 0.3s, filter 0.3s; /* Suaviza a transição */
+            object-fit: contain; /* Garante que a imagem seja ajustada sem distorção */
+        }
+
+        .sidebar:hover img {
+            content: url('logohover.png'); /* Substitui a imagem por outra */
+            filter: brightness(1.2); /* Torna a imagem um pouco mais brilhante (opcional) */
+            transform: scale(1.9); /* Aumenta a imagem de forma proporcional (opcional) */
+        }
+        .sidebar:hover ~ .topbar {
+            margin-left: 200px; /* Alinha com a sidebar expandida */
+            width: calc(100% - 200px); /* Ajusta a largura para o novo espaço disponível */
+        }
+        .sidebar:hover ~ .content {
+            margin-left: 200px; /* Ajusta para acompanhar a largura expandida da sidebar */
+        }
+        .icon{
+            color: white;
+        }
+        .containerlogo{
+            width: 100%; /* Define o tamanho inicial da logo */
+            height: 130px; /* Ajuste as dimensões conforme necessário */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+        .logo {
+            width: 40px; /* Define o tamanho inicial da logo */
+            height: 40px; /* Ajuste as dimensões conforme necessário */
+            margin: 10px 0;
+            transition: width 0.3s, height 0.3s;
+            padding: 0px;
+            padding-top: 8px;
+        }
 
     </style>
 </head>
 <body>
+    <div class="sidebar" id="sidebar">
+        <div class="toggle-btn" onclick="toggleSidebar()"></div>
+        <div class="containerlogo"> 
+            <img src="logo.png" alt="Logo" class="logo"> 
+        </div> 
+        <a href="painel.php" class="home">
+            <i class="fa-solid fa-coins icon"></i> <span class="text">DRE</span>
+        </a>
+        <a href="reports.php">
+            <i class="fa-solid fa-solar-panel icon"></i><span class="text">Usinas</span>
+        </a>
+        <a href="calendar.php">
+            <i class="fa-solid fa-gauge icon"></i> <span class="text">Dashboard</span>
+        </a>
+        <a href="help.php">
+            <i class="fa-solid fa-paste icon"></i><span class="text">Documentos</span>
+        </a>
+    </div>
     <div class="container">
         <h1>Proposta Autoconsumo</h1>
 
