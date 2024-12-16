@@ -34,10 +34,10 @@ if (isset($_POST['execute'])) {
     $jwtToken = $response;
 
     // Configurações do banco de dados
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "apiedeltec";
+    $servername = "srv1781.hstgr.io";
+    $username = "u345670158_eduardotcardo";
+    $password = "Rtz6ngqr@";
+    $dbname = "u345670158_apiedeltec";
 
     // Conecta ao banco de dados
     $conn = new mysqli($servername, $username, $password, $dbname);
