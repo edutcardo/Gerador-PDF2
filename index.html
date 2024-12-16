@@ -11,6 +11,9 @@
             box-sizing: border-box;
             font-family: 'Roboto', sans-serif;
         }
+        a,p {
+            font-family: Epilogue !important;
+        }
 
         body {
             background-color: #f3f4f6;
@@ -253,23 +256,24 @@
 
     </style>
 </head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <body>
     <div class="sidebar" id="sidebar">
         <div class="toggle-btn" onclick="toggleSidebar()"></div>
         <div class="containerlogo"> 
             <img src="logo.png" alt="Logo" class="logo"> 
         </div> 
-        <a href="painel.php" class="home">
-            <i class="fa-solid fa-coins icon"></i> <span class="text">DRE</span>
+        <a href="index.html" class="home">
+            <i class="fa-solid fa-coins icon"></i> <span class="text">Autoconsumo</span>
         </a>
-        <a href="reports.php">
-            <i class="fa-solid fa-solar-panel icon"></i><span class="text">Usinas</span>
+        <a href="index.html">
+            <i class="fa-solid fa-solar-panel icon"></i><span class="text">Investimentos</span>
         </a>
-        <a href="calendar.php">
-            <i class="fa-solid fa-gauge icon"></i> <span class="text">Dashboard</span>
+        <a href="index.html">
+            <i class="fa-solid fa-gauge icon"></i> <span class="text">Cocamar</span>
         </a>
-        <a href="help.php">
-            <i class="fa-solid fa-paste icon"></i><span class="text">Documentos</span>
+        <a href="index.html">
+            <i class="fa-solid fa-paste icon"></i><span class="text">Cooperados</span>
         </a>
     </div>
     <div class="container">
@@ -310,13 +314,6 @@
             <label for="iluminacao">Iluminação:</label>
             <input type="text" id="iluminacao" name="iluminacao" required/>
 
-            <label for="palavra-chave">Potência do Gerador:</label>
-            <input type="range" id="palavra-chave" name="palavra-chave" min="0" max="116" value="0" step="1" class="slider" oninput="atualizarSlider(this.value); buscarResultados(); calcularResultado()" required/>
-            <span id="slider-value">0</span>
-
-            <input type="text" id="resultado" name="resultado" readonly required/>
-
-
             <label for="estrutura">Selecione uma Estrutura:</label>
             <select id="estrutura" name="estrutura" onchange="buscarResultados()" required>
                 <option value="">Selecione uma estrutura</option>
@@ -326,6 +323,12 @@
                 <option value="METALICO">METALICO</option>
                 <option value="S/ESTRUTURA">S/ESTRUTURA</option>
             </select>
+
+            <label for="palavra-chave">Potência do Gerador:</label>
+            <input type="range" id="palavra-chave" name="palavra-chave" min="0" max="116" value="0" step="1" class="slider" oninput="atualizarSlider(this.value); buscarResultados(); calcularResultado()" required/>
+            <span id="slider-value">0</span>
+
+            <input type="text" id="resultado" name="resultado" readonly required/>
 
             <div id="resultados" required></div>
 
