@@ -217,10 +217,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $irradiacao = [5888, 5792, 5219, 4544, 3636, 3333, 3529, 4451, 4683, 5311, 5969, 6327];
 
-
-
-
-
     //Cálculo de irradiação
     $jan = $irradiacao[0];
     $fev = $irradiacao[1];
