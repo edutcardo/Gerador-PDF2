@@ -473,7 +473,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $xInicial = 20; // Posição X do gráfico
     $yInicial = 213; // Posição Y do gráfico
     $larguraGrafico = 160; // Largura total do gráfico
-    $alturaGrafico = 40; // Altura total do gráfico
+    $alturaGrafico = 30; // Altura total do gráfico
     $larguraBarra = 5; // Largura de cada barra
     $espacoEntreBarras = 2; // Espaço entre as barras
     $linhaBase = $yInicial + $alturaGrafico; // Posição da linha base (eixo X)
