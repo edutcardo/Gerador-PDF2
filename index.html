@@ -320,9 +320,9 @@
             <label for="desconto">Desconto:</label>
             <select id="desconto" name="desconto">
                 <option value="">Selecione um desconto</option>
-                <option value="umporc">1%</option>
-                <option value="doisporc">2%</option>
-                <option value="tresporc">3%</option>
+                <option value="1%">1%</option>
+                <option value="2%">2%</option>
+                <option value="3%">3%</option>
             </select>
 
             <label for="padrao">Padrão entrada:</label>
@@ -456,6 +456,12 @@
             const marca = document.getElementById('marca').value;
             const fabricante = document.getElementById('fabricante').value;
             const potenciaInversor = document.getElementById('potenciaInversor').value;
+            const padrao = document.getElementById('padrao').value;
+            const desconto = document.getElementById('desconto').value;
+            const valoramais = document.getElementById('valoramais').value;
+            formData.append('padrao', padrao);
+            formData.append('desconto', desconto);
+            formData.append('valoramais', valoramais);
             formData.append('marca', marca);
             formData.append('fabricante', fabricante);
             formData.append('potenciaInversor', potenciaInversor);

@@ -18,6 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $marca = $_POST['marca'];
     $fabricante = $_POST['fabricante'];
     $potenciaInversor = $_POST['potenciaInversor'];
+    $padrao = $_POST['padrao'];
+    $desconto = $_POST['desconto'];
+    $valoramais = $_POST['valoramais'];
 
 
 
@@ -234,7 +237,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(21, 94, "Nome: $nome");
+    $pdf->Text(21, 94, "Nome: $nome $padrao $desconto $valoramais");
     $pdf->Text(21, 100, "Endereço: $endereco");
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
