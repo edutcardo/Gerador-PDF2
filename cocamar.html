@@ -257,6 +257,12 @@
         .sidebar:hover ~ .container {
             margin-left: 200px; /* Adicione esta linha para quando a sidebar estiver expandida */
         }
+        .selecionado {
+            background-color: #007bff;
+            color: #fff;
+            transform: scale(1.05);
+            border: 2px solid #0056b3;
+        }
 
     </style>
 </head>
@@ -435,10 +441,16 @@
 
 
         function selecionarItem(item) {
-            // Preencher o campo de preço
+            // Remover a classe 'selecionado' de todos os itens
+            const itens = document.querySelectorAll('.resultado-item');
+            itens.forEach(it => it.classList.remove('selecionado'));
+
+            // Adicionar a classe 'selecionado' ao item clicado
+            const itemSelecionado = event.currentTarget;
+            itemSelecionado.classList.add('selecionado');
+
+            // Preencher o campo de preço e os novos campos com as informações do item
             document.getElementById('preco').value = item.precoDoIntegrador;
-            
-            // Preencher os novos campos com as informações do item
             document.getElementById('codProd').value = item.codProd;
             document.getElementById('marca').value = item.marca;
             document.getElementById('fabricante').value = item.fabricante;
