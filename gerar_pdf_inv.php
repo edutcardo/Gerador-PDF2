@@ -300,7 +300,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(34.6, 185, "Geração Estimada: $geracao kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(46, 214, "$dataAtual");
+    $pdf->Text(46, 223, "$dataAtual");
 
 
     // Segunda Página (com a imagem genérica e gráfico)
