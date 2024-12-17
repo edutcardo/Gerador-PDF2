@@ -287,20 +287,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(21, 94, "Nome: $nome");
-    $pdf->Text(21, 100, "Endereço: $endereco");
-    $pdf->Text(21, 106, "Cidade: $cidade");
-    $pdf->Text(21, 128, "UC $uc");
+    $pdf->Text(33, 94, "Nome: $nome");
+    $pdf->Text(33, 100, "Endereço: $endereco");
+    $pdf->Text(33, 106, "Cidade: $cidade");
+    $pdf->Text(33, 128, "UC $uc");
     
 
-    $pdf->Text(114, 160, "$metrosOcupados m²");
-    $pdf->Text(99, 166.25, "$qtdmodulosArredondado Placas");
-    $pdf->Text(63, 172.5, "$potenciaGerador kWp");
-    $pdf->Text(61.5, 178.75, "$media kWh");
-    $pdf->Text(57.5, 185, "$geracao kWh");
+    $pdf->Text(33, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
+    $pdf->Text(33, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
+    $pdf->Text(33, 172.5, "Potência do Projeto: $potenciaGerador kWp");
+    $pdf->Text(33, 178.75, "Média de Consumo: $media kWh");
+    $pdf->Text(33, 185, "Geração Estimada: $geracao kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(34, 225.5, "$dataAtual");
+    $pdf->Text(43, 225.5, "$dataAtual");
 
 
     // Segunda Página (com a imagem genérica e gráfico)
