@@ -371,7 +371,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
 
-
     // Quarta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCV4.png', 0, 0, 210, 297);
@@ -381,17 +380,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
 
-
     // Definir fonte e adicionar conteúdo à quarta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-
 
     // Quinta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCV5.png', 0, 0, 210, 297);
     $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(255, 255, 255);
+    $pdf->SetTextColor(0, 0, 0);
 
     // Corrigir caracteres especiais do HTML
     $componentes = html_entity_decode($componentes);
@@ -401,10 +398,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     preg_match_all('/<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>/', $componentes, $matches, PREG_SET_ORDER);
 
     // Ajuste na altura da descrição
-    $y = 176; // Posição inicial Y
+    $y = 72; // Posição inicial Y
     $linhaAltura = 8; // Altura de cada linha no PDF
     $larguraDescricao = 180; // Largura para a Descrição
-    $maxY = 280; // Defina o limite Y da página (ajuste conforme necessário)
+    $maxY = 280; // Defina o limite Y da página (aajuste conforme necessário)
 
     // Função para adicionar uma nova página se necessário
     function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
@@ -436,12 +433,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(147, 180, "$precoFinalRs");
+    $pdf->Text(152, 164, "$precoFinalRs");
 
     $pdf->SetFont('helvetica', 'B', 15);
-    $pdf->Text(26, 195, "36 X $valorParcelaRs");
-    $pdf->Text(85, 195, "48 X $valorParcela2Rs");
-    $pdf->Text(146, 195, "60 X $valorParcela3Rs");
+    $pdf->Text(26, 180, "36 X $valorParcelaRs");
+    $pdf->Text(85, 180, "48 X $valorParcela2Rs");
+    $pdf->Text(146, 180, "60 X $valorParcela3Rs");
+
+    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->SetTextColor(0, 0, 0);
+
+    $pdf->Text(59, 46, "$qtdmodulosArredondado");
+    $pdf->Text(85, 46, "$potenciaInversor kW");
+    $pdf->Text(111, 46, "$$potenciaGerador kWp");
+    $pdf->Text(137, 46, "$geracao");
+    $pdf->Text(163, 46, "$mediaArredondado");
+
 
     // Dados do Payback
     $anos = 25; // Total de anos
@@ -455,10 +462,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Configurações do gráfico
-    $xInicial = 20; // Posição X do gráfico
-    $yInicial = 213; // Posição Y do gráfico
+    $xInicial = 17; // Posição X do gráfico
+    $yInicial = 228; // Posição Y do gráfico
     $larguraGrafico = 160; // Largura total do gráfico
-    $alturaGrafico = 40; // Altura total do gráfico
+    $alturaGrafico = 30; // Altura total do gráfico
     $larguraBarra = 5; // Largura de cada barra
     $espacoEntreBarras = 2; // Espaço entre as barras
     $linhaBase = $yInicial + $alturaGrafico; // Posição da linha base (eixo X)
@@ -505,14 +512,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Título do gráfico
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text($xInicial, $yInicial - 10, 'Gráfico de Payback (25 anos)');
+    $pdf->Text($xInicial, $yInicial - 10, '');
 
-    
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-
-
 
     // Sexta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
