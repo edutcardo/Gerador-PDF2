@@ -20,7 +20,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $potenciaInversor = $_POST['potenciaInversor'];
     $padrao = $_POST['padrao'];
     $desconto = $_POST['desconto'];
-    $valoramais = $_POST['valoramais'];
+    $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
+
 
     // Cálculos iniciais da proposta
 
@@ -155,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $valorParcela3Rs = 'R$ ' . number_format($valorParcela3, 2, ',', '.');
 
         // Cálculo do desconto no preço do kit
-        if ($desconto == "" || $desconto == "Selecione um desconto") {
+        if ($desconto == "" || $desconto == "selecione um desconto") {
             $desconto = 1;
         } elseif ($desconto == "1%") {
             $desconto = 0.99;
@@ -197,7 +198,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $padrao = 12969.57;
             break;
         case "":
-        case "Selecione um padrao":
+        case "selecione um padrao":
             $padrao = 0;
             break;
         default:
