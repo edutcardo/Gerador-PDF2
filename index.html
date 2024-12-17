@@ -314,6 +314,31 @@
             <label for="iluminacao">Iluminação:</label>
             <input type="text" id="iluminacao" name="iluminacao" required/>
 
+            <label for="valoramais">Acrescentar valor:</label>
+            <input type="text" id="valoramais" name="valoramais"/>
+
+            <label for="desconto">Desconto:</label>
+            <select id="desconto" name="desconto">
+                <option value="">Selecione um desconto</option>
+                <option value="umporc">1%</option>
+                <option value="doisporc">2%</option>
+                <option value="tresporc">3%</option>
+            </select>
+
+            <label for="padrao">Padrão entrada:</label>
+            <select id="padrao" name="padrao">
+                <option value="">Selecione um padrão</option>
+                <option value="2x50A">2x50A</option>
+                <option value="3x50A">3x50A</option>
+                <option value="3x63A">3x63A</option>
+                <option value="3x80A">3x80A</option>
+                <option value="3x100A">3x100A</option>
+                <option value="3x125A">3x125A</option>
+                <option value="3x150A">3x150A</option>
+                <option value="3x175A">3x175A</option>
+                <option value="3x200A">3x200A</option>
+            </select>
+
             <label for="estrutura">Selecione uma Estrutura:</label>
             <select id="estrutura" name="estrutura" onchange="buscarResultados()" required>
                 <option value="">Selecione uma estrutura</option>
