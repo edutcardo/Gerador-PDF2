@@ -22,10 +22,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $desconto = $_POST['desconto'];
     $valoramais = $_POST['valoramais'];
 
-
-
-
-
     // Cálculos iniciais da proposta
 
     $geracao = $potenciaGerador * 3.9 * 30;
@@ -158,7 +154,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $valorParcela2Rs = 'R$ ' . number_format($valorParcela2, 2, ',', '.');
     $valorParcela3Rs = 'R$ ' . number_format($valorParcela3, 2, ',', '.');
 
-    $precoFinal = ($precoKit * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo;
+        // Cálculo do desconto no preço do kit
+        if ($desconto == "" || $desconto == "Selecione um desconto") {
+            $desconto = 1;
+        } elseif ($desconto == "1%") {
+            $desconto = 0.99;
+        } elseif ($desconto == "2%") {
+            $desconto = 0.98;
+        } elseif ($desconto == "3%") {
+            $desconto = 0.97;
+        } else {
+            $desconto = 1; // Valor padrão caso nenhum caso corresponda
+        }
+
+            // Condicional do preço do padrão de energia
+    switch ($padrao) {
+        case "2x50A":
+            $padrao = 2512.88;
+            break;
+        case "3x50A":
+            $padrao = 2941.22;
+            break;
+        case "3x63A":
+            $padrao = 2815.24;
+            break;
+        case "3x80A":
+            $padrao = 3190.17;
+            break;
+        case "3x100A":
+            $padrao = 4870.36;
+            break;
+        case "3x125A":
+            $padrao = 8539.65;
+            break;
+        case "3x150A":
+            $padrao = 10366.42;
+            break;
+        case "3x175A":
+            $padrao = 11279.8;
+            break;
+        case "3x200A":
+            $padrao = 12969.57;
+            break;
+        case "":
+        case "Selecione um padrao":
+            $padrao = 0;
+            break;
+        default:
+            $padrao = 0; // Caso não corresponda a nenhuma opção válida
+            break;
+    }
+
+
+    $precoFinal =(($precoKit * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto ;
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
     $payback = $precoFinal / $diferencaGastosAno;
@@ -168,6 +216,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $irradiacao = [5888, 5792, 5219, 4544, 3636, 3333, 3529, 4451, 4683, 5311, 5969, 6327];
 
+
+
+
+
+    //Cálculo de irradiação
     $jan = $irradiacao[0];
     $fev = $irradiacao[1];
     $mar = $irradiacao[2];
@@ -237,7 +290,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(21, 94, "Nome: $nome $padrao $desconto $valoramais");
+    $pdf->Text(21, 94, "Nome: $nome");
     $pdf->Text(21, 100, "Endereço: $endereco");
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
