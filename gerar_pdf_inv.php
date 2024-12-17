@@ -36,6 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $percentualSolarArredondado = round($percentualSolar);
     $mediaArredondado = round($media);
     $geracaoArredondado = round($geracao);
+    $geracaoAnual = $geracaoArredondado * 12;
 
     //Cálculos PGCV5
     $demandaMinima = 0; // Inicializa a variável
@@ -445,9 +446,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->Text(59, 46, "$qtdmodulosArredondado");
     $pdf->Text(85, 46, "$potenciaInversor kW");
-    $pdf->Text(111, 46, "$$potenciaGerador kWp");
-    $pdf->Text(137, 46, "$geracao");
-    $pdf->Text(163, 46, "$mediaArredondado");
+    $pdf->Text(110, 46, "$potenciaGerador kWp");
+    $pdf->Text(139, 46, "$geracaoArredondado kWh");
+    $pdf->Text(167, 46, "$geracaoAnual kWh");
 
 
     // Dados do Payback
