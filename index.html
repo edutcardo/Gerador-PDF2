@@ -32,6 +32,7 @@
             max-width: 600px;
             width: 100%;
             padding: 30px;
+            margin-left: 60px; /* Adicione essa linha */
         }
 
         h1 {
@@ -252,6 +253,9 @@
             transition: width 0.3s, height 0.3s;
             padding: 0px;
             padding-top: 8px;
+        }
+        .sidebar:hover ~ .container {
+            margin-left: 200px; /* Adicione esta linha para quando a sidebar estiver expandida */
         }
 
     </style>
