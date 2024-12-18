@@ -481,6 +481,8 @@
             const padrao = document.getElementById('padrao').value;
             const desconto = document.getElementById('desconto').value;
             const valoramais = document.getElementById('valoramais').value;
+            const inputConcessionaria = document.getElementById('inputConcessionaria').value;
+            const inputValorCompensavel = document.getElementById('inputValorCompensavel').value;
             formData.append('padrao', padrao);
             formData.append('desconto', desconto);
             formData.append('valoramais', valoramais);
@@ -492,6 +494,9 @@
             formData.append('potenciaGerador', potenciaGerador);
             formData.append('potenciaModulo', potenciaModulo);
             formData.append('precoKit', precoKit);
+            formData.append('inputConcessionaria', inputConcessionaria);
+            formData.append('inputValorCompensavel', inputValorCompensavel);
+
             
             fetch('gerar_pdf_inv.php', {
                 method: 'POST',

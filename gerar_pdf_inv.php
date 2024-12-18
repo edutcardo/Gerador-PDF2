@@ -21,6 +21,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $padrao = $_POST['padrao'];
     $desconto = $_POST['desconto'];
     $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
+    $inputConcessionaria = $_POST['inputConcessionaria'];
+    $inputValorCompensavel = $_POST['inputValorCompensavel'];
 
 
     // Cálculos iniciais da proposta
@@ -62,6 +64,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $diferencaGastosRs = 'R$ ' . number_format($diferencaGastos, 2, ',', '.');
     $diferencaGastosAno = $diferencaGastos * 12;
     $diferencaGastosAnoRs = 'R$ ' . number_format($diferencaGastosAno, 2, ',', '.');
+
+    //Cálculos cooperativa
+
 
     function calcularMargemEComissao($potenciaGerador) {
         $margem = 0;
