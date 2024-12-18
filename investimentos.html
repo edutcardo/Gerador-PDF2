@@ -612,11 +612,13 @@
 
             if (cidade !== "") {
                 fetch(`buscar_dados.php?cidade=${encodeURIComponent(cidade)}`)
-                .then(response => response.json())
+                    .then(response => response.json())
                     .then(data => {
                         console.log(data); // Log de depuração
                         if (data.success) {
-                            document.getElementById('inputConcessionaria').value = data.concessionaria;
+                            const inputConcessionaria = document.getElementById('inputConcessionaria');
+                            inputConcessionaria.value = data.concessionaria;
+                            buscarValorCompensavel(); // Chame a função após definir o valor
                         } else {
                             document.getElementById('inputConcessionaria').value = 'Erro: ' + data.message;
                         }
@@ -629,9 +631,36 @@
                 document.getElementById('inputConcessionaria').value = 'Informe uma cidade';
             }
         }
+        function buscarValorCompensavel() {
+            const concessionaria = document.getElementById('inputConcessionaria').value.trim(); // Use .value para obter o valor
+
+            console.log("Concessionária:", concessionaria); // Log para depuração
+
+            if (concessionaria !== "") {
+                fetch(`buscar_compensavel.php?sigla=${encodeURIComponent(concessionaria)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('inputValorCompensavel').value = data.compensavel;
+                        } else {
+                            document.getElementById('inputValorCompensavel').value = 'Erro: ' + data.message;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar valor compensável:', error);
+                        document.getElementById('inputValorCompensavel').value = 'Erro de rede';
+                    });
+            } else {
+                document.getElementById('inputValorCompensavel').value = 'Informe uma concessionária';
+            }
+        }
+
+        document.getElementById('inputConcessionaria').addEventListener('input', buscarValorCompensavel);
+
         function atualizarDados() {
             buscarIrradiacao();
             buscarDados();
+            buscarValorCompensavel();
         }
     </script>
 </body>
