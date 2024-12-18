@@ -65,8 +65,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $diferencaGastosAno = $diferencaGastos * 12;
     $diferencaGastosAnoRs = 'R$ ' . number_format($diferencaGastosAno, 2, ',', '.');
 
-    //Cálculos cooperativa
-
 
     function calcularMargemEComissao($potenciaGerador) {
         $margem = 0;
@@ -220,6 +218,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $paybackArredondado = round($payback);
     $retorno25anos = $diferencaGastosAno * 25;
     $retorno25anosRs = 'R$ ' . number_format($retorno25anos, 2, ',', '.');
+
+    
+    //Cálculos cooperativa
+    $bandeiraAmarela = $inputValorCompensavel + 0.01885;
+    $bandeiraVermelha = $inputValorCompensavel + 0.04463;
+    $bandeiraVermelhaP1 = $inputValorCompensavel + 0.07877;
+    $retornoVerde = $geracao * $inputValorCompensavel;
+    $retornoAmarelo = $geracao * $bandeiraAmarela;
+    $retornoVermelho = $geracao * $bandeiraVermelhaP1;
+    $retornoVermelhoP1 = $geracao * $bandeiraVermelhaP1;
+    $rentabilidadeVerde = ($retornoVerde / $precoFinal) * 100;
+    $rentabilidadeAmarela = ($retornoAmarelo / $precoFinal) * 100;
+    $rentabilidadeVermelha = ($retornoVermelho / $precoFinal)* 100;
+    $rentabilidadeVermelhaP1 = ($retornoVermelhoP1 / $precoFinal) * 100;
 
     $irradiacao = [5888, 5792, 5219, 4544, 3636, 3333, 3529, 4451, 4683, 5311, 5969, 6327];
 
@@ -527,17 +539,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Sexta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCV6.png', 0, 0, 210, 297);
+
+    $retornoVerdeRs = 'R$ ' . number_format($retornoVerde, 2, ',', '.');
+    $retornoAmareloRs = 'R$ ' . number_format($retornoAmarelo, 2, ',', '.');
+    $retornoVermelhoRs = 'R$ ' . number_format($retornoVermelho, 2, ',', '.');
+    $retornoVermelhoP1Rs = 'R$ ' . number_format($retornoVermelhoP1, 2, ',', '.');
+    $rentabilidadeVerdeRs = number_format($rentabilidadeVerde, 2, ',', '.') . '%';
+    $rentabilidadeAmarelaRs = number_format($rentabilidadeAmarela, 2, ',', '.') . '%';
+    $rentabilidadeVermelhaRs = number_format($rentabilidadeVermelha, 2, ',', '.') . '%';
+    $rentabilidadeVermelhaP1Rs = number_format($rentabilidadeVermelhaP1, 2, ',', '.') . '%';
     
-    // Definir fonte e adicionar conteúdo à sexta página
-    $pdf->SetFont('helvetica', 'B', 13);
-    $pdf->SetTextColor(255, 255, 255);
-    $pdf->Text(90, 50, "$fabricante $potenciaInversor kW");
-    $pdf->Text(155, 50, "10 ANOS");
-    $pdf->SetFont('helvetica', 'B', 9);
-    $pdf->Text(75,67, "$marca $potenciaModulo W");
-    $pdf->Text(146, 90, "$valorParcela3Rs");
-
-
+    $pdf->Text(60, 120, "$retornoVerdeRs");
+    $pdf->Text(90, 120, "$retornoAmareloRs");
+    $pdf->Text(120, 120, "$retornoVermelhoRs");
+    $pdf->Text(150, 120, "$retornoVermelhoP1Rs");
+    $pdf->Text(60, 180, "$rentabilidadeVerdeRs");
+    $pdf->Text(90, 180, "$rentabilidadeAmarelaRs");
+    $pdf->Text(120, 180, "$rentabilidadeVermelhaRs");
+    $pdf->Text(150, 180, "$rentabilidadeVermelhaP1Rs");
+    
     // Sétima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCV7.png', 0, 0, 210, 297);
