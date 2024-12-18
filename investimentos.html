@@ -301,7 +301,13 @@
             <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" required/>
 
             <label for="cidade">Cidade:</label>
-            <input type="text" id="cidade" name="cidade" oninput="buscarIrradiacao()" required/>
+            <input type="text" id="cidade" name="cidade" oninput="atualizarDados()" required/>
+
+            <label for="inputConcessionaria">Concessionária:</label>
+            <input type="text" id="inputConcessionaria" readonly />
+
+            <label for="inputValorCompensavel">Valor Compensável:</label>
+            <input type="text" id="inputValorCompensavel" readonly />
 
             <label for="irradiacao" class="readonly">Irradiação:</label>
             <input type="text" id="irradiacao" name="irradiacao" readonly  class="readonly"required/>
@@ -600,6 +606,33 @@
 
         // Chama a função de verificação ao carregar a página
         window.onload = verificarFormulario;
+
+        function buscarDados() {
+            const cidade = document.getElementById('cidade').value.trim();
+
+            if (cidade !== "") {
+                fetch(`buscar_dados.php?cidade=${encodeURIComponent(cidade)}`)
+                .then(response => response.json())
+                    .then(data => {
+                        console.log(data); // Log de depuração
+                        if (data.success) {
+                            document.getElementById('inputConcessionaria').value = data.concessionaria;
+                        } else {
+                            document.getElementById('inputConcessionaria').value = 'Erro: ' + data.message;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar dados:', error);
+                        document.getElementById('inputConcessionaria').value = 'Erro de rede';
+                    });
+            } else {
+                document.getElementById('inputConcessionaria').value = 'Informe uma cidade';
+            }
+        }
+        function atualizarDados() {
+            buscarIrradiacao();
+            buscarDados();
+        }
     </script>
 </body>
 </html>
