@@ -533,13 +533,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text($xInicial, $yInicial - 10, '');
 
     // Definir fonte e adicionar conteúdo à quinta página
-    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
 
     // Sexta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCV6.png', 0, 0, 210, 297);
-
     $retornoVerdeRs = 'R$ ' . number_format($retornoVerde, 2, ',', '.');
     $retornoAmareloRs = 'R$ ' . number_format($retornoAmarelo, 2, ',', '.');
     $retornoVermelhoRs = 'R$ ' . number_format($retornoVermelho, 2, ',', '.');
@@ -549,14 +548,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rentabilidadeVermelhaRs = number_format($rentabilidadeVermelha, 2, ',', '.') . '%';
     $rentabilidadeVermelhaP1Rs = number_format($rentabilidadeVermelhaP1, 2, ',', '.') . '%';
     
-    $pdf->Text(60, 120, "$retornoVerdeRs");
-    $pdf->Text(90, 120, "$retornoAmareloRs");
-    $pdf->Text(120, 120, "$retornoVermelhoRs");
-    $pdf->Text(150, 120, "$retornoVermelhoP1Rs");
-    $pdf->Text(60, 180, "$rentabilidadeVerdeRs");
-    $pdf->Text(90, 180, "$rentabilidadeAmarelaRs");
-    $pdf->Text(120, 180, "$rentabilidadeVermelhaRs");
-    $pdf->Text(150, 180, "$rentabilidadeVermelhaP1Rs");
+    $pdf->Text(61, 122, "$retornoVerdeRs");
+    $pdf->Text(98, 122, "$retornoAmareloRs");
+    $pdf->Text(135, 122, "$retornoVermelhoRs");
+    $pdf->Text(172, 122, "$retornoVermelhoP1Rs");
+    $pdf->Text(66, 180, "$rentabilidadeVerdeRs");
+    $pdf->Text(103, 180, "$rentabilidadeAmarelaRs");
+    $pdf->Text(141, 180, "$rentabilidadeVermelhaRs");
+    $pdf->Text(177, 180, "$rentabilidadeVermelhaP1Rs");
     
     // Sétima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
