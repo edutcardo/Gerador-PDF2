@@ -16,7 +16,7 @@
         }
 
         body {
-            background-color: #f3f4f6;
+            background-color: #c6f3df;
             color: #333;
             display: flex;
             justify-content: center;
@@ -287,7 +287,7 @@
         </a>
     </div>
     <div class="container">
-        <h1>Proposta Cocamar</h1>
+        <h1>Proposta Investimento</h1>
 
         <form id="formulario">
 
@@ -301,7 +301,13 @@
             <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" required/>
 
             <label for="cidade">Cidade:</label>
-            <input type="text" id="cidade" name="cidade" oninput="buscarIrradiacao()" required/>
+            <input type="text" id="cidade" name="cidade" oninput="atualizarDados()" required/>
+
+            <label for="inputConcessionaria">Concessionária (caso não retorne o valor esperado, escreva manualmente até que o valor da tarifa apareça):</label>
+            <input type="text" id="inputConcessionaria"/>
+
+            <label for="inputValorCompensavel">Valor Compensável:</label>
+            <input type="text" id="inputValorCompensavel" readonly />
 
             <label for="irradiacao" class="readonly">Irradiação:</label>
             <input type="text" id="irradiacao" name="irradiacao" readonly  class="readonly"required/>
@@ -475,6 +481,8 @@
             const padrao = document.getElementById('padrao').value;
             const desconto = document.getElementById('desconto').value;
             const valoramais = document.getElementById('valoramais').value;
+            const inputConcessionaria = document.getElementById('inputConcessionaria').value;
+            const inputValorCompensavel = document.getElementById('inputValorCompensavel').value;
             formData.append('padrao', padrao);
             formData.append('desconto', desconto);
             formData.append('valoramais', valoramais);
@@ -486,8 +494,11 @@
             formData.append('potenciaGerador', potenciaGerador);
             formData.append('potenciaModulo', potenciaModulo);
             formData.append('precoKit', precoKit);
+            formData.append('inputConcessionaria', inputConcessionaria);
+            formData.append('inputValorCompensavel', inputValorCompensavel);
+
             
-            fetch('gerar_pdf_coc.php', {
+            fetch('gerar_pdf_inv.php', {
                 method: 'POST',
                 body: formData
             })
@@ -600,6 +611,62 @@
 
         // Chama a função de verificação ao carregar a página
         window.onload = verificarFormulario;
+
+        function buscarDados() {
+            const cidade = document.getElementById('cidade').value.trim();
+
+            if (cidade !== "") {
+                fetch(`buscar_dados.php?cidade=${encodeURIComponent(cidade)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data); // Log de depuração
+                        if (data.success) {
+                            const inputConcessionaria = document.getElementById('inputConcessionaria');
+                            inputConcessionaria.value = data.concessionaria;
+                            buscarValorCompensavel(); // Chame a função após definir o valor
+                        } else {
+                            document.getElementById('inputConcessionaria').value = 'Erro: ' + data.message;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar dados:', error);
+                        document.getElementById('inputConcessionaria').value = 'Erro de rede';
+                    });
+            } else {
+                document.getElementById('inputConcessionaria').value = 'Informe uma cidade';
+            }
+        }
+        function buscarValorCompensavel() {
+            const concessionaria = document.getElementById('inputConcessionaria').value.trim(); // Use .value para obter o valor
+
+            console.log("Concessionária:", concessionaria); // Log para depuração
+
+            if (concessionaria !== "") {
+                fetch(`buscar_compensavel.php?sigla=${encodeURIComponent(concessionaria)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('inputValorCompensavel').value = data.compensavel;
+                        } else {
+                            document.getElementById('inputValorCompensavel').value = 'Erro: ' + data.message;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar valor compensável:', error);
+                        document.getElementById('inputValorCompensavel').value = 'Erro de rede';
+                    });
+            } else {
+                document.getElementById('inputValorCompensavel').value = 'Informe uma concessionária';
+            }
+        }
+
+        document.getElementById('inputConcessionaria').addEventListener('input', buscarValorCompensavel);
+
+        function atualizarDados() {
+            buscarIrradiacao();
+            buscarDados();
+            buscarValorCompensavel();
+        }
     </script>
 </body>
 </html>

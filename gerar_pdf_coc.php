@@ -21,7 +21,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $padrao = $_POST['padrao'];
     $desconto = $_POST['desconto'];
     $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
+    $inputConcessionaria = $_POST['inputConcessionaria'];
+    $inputValorCompensavel = $_POST['inputValorCompensavel'];
 
+    //Tributação
+    function calcularTributario($potenciaInversor) {
+        if ($potenciaInversor <= 75) {
+            $tributario = "MEI";
+        } elseif ($potenciaInversor > 75 && $potenciaInversor <= 350) {
+            $tributario = "SIMPLES NACIONAL 7,3%";
+        } elseif ($potenciaInversor > 350 && $potenciaInversor <= 720) {
+            $tributario = "SIMPLES NACIONAL 9,5%";
+        } elseif ($potenciaInversor > 720) {
+            $tributario = "LUCRO PRESUMIDO";
+        } else {
+            $tributario = false; // Este caso não deve ser alcançado com base na lógica.
+        }
+    
+        return $tributario;
+    }
+    $tributario = calcularTributario($potenciaInversor);
+
+    $precoDemanda = 50; // Preço da demanda
+    $qtdDemanda = 3; // Quantidade de demanda
+
+    function calcularDemanda($potenciaInversor, $precoDemanda, $qtdDemanda, $iluminacao, $media) {
+        // Valores fixos definidos
+        $AA12 = 1; // Equivalente a 'PLANILHA RESUMO'!AA12
+        $TUSDG = 8.6760; // Equivalente a 'PLANILHA RESUMO'!R26
+        $Q77 = 0; // Valor de Q77 não foi especificado, ajuste conforme necessário
+        $S77 = 0; // Valor de S77 não foi especificado, ajuste conforme necessário
+    
+        // Cálculo principal
+        if ($AA12 * $potenciaInversor <= 75) {
+            $resultado = ($media * 0.83) + $iluminacao;
+        } else {
+            $resultado = ($potenciaInversor * $AA12 * $TUSDG) + $S77;
+        }
+    
+        // Subtrações
+        $demanda = $resultado - ($precoDemanda * $qtdDemanda);
+    
+        return $demanda;
+    }
+    
+    $demanda = calcularDemanda($potenciaInversor, $precoDemanda, $qtdDemanda, $iluminacao, $media);
 
     // Cálculos iniciais da proposta
 
@@ -36,6 +80,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $percentualSolarArredondado = round($percentualSolar);
     $mediaArredondado = round($media);
     $geracaoArredondado = round($geracao);
+    $geracaoAnual = $geracaoArredondado * 12;
+
+    function calcularManutencao($qtdmodulosArredondado) {
+        if ($qtdmodulosArredondado >= 10) {
+            $manutencao = (150 / pow($qtdmodulosArredondado, 0.485) + 10 - 20 / $qtdmodulosArredondado) * $qtdmodulosArredondado;
+        } else {
+            $manutencao = (150 / pow(10, 0.485) + 10 - 20 / 10) * 10;
+        }
+    
+        return $manutencao / 12; // Divide o resultado por 12 conforme a fórmula original
+    }
+
+    $manutencao = calcularManutencao($qtdmodulosArredondado);
 
     //Cálculos PGCV5
     $demandaMinima = 0; // Inicializa a variável
@@ -49,6 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif ($numeroDeFases == 'trifasico') {
         $demandaMinima = 100;
     }
+
     $gastoSemGerador = ($demandaMinima * 0.81) + $iluminacao + ($media * 0.81);
     $gastoSemGeradorRs = 'R$ ' . number_format($gastoSemGerador, 2, ',', '.');
     $gastoSemGeradorAno = $gastoSemGerador * 12;
@@ -61,6 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $diferencaGastosRs = 'R$ ' . number_format($diferencaGastos, 2, ',', '.');
     $diferencaGastosAno = $diferencaGastos * 12;
     $diferencaGastosAnoRs = 'R$ ' . number_format($diferencaGastosAno, 2, ',', '.');
+
 
     function calcularMargemEComissao($potenciaGerador) {
         $margem = 0;
@@ -215,6 +274,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $retorno25anos = $diferencaGastosAno * 25;
     $retorno25anosRs = 'R$ ' . number_format($retorno25anos, 2, ',', '.');
 
+    //Cálculos investidor
+    $bandeiraAmarela = $inputValorCompensavel + 0.01885;
+    $bandeiraVermelha = $inputValorCompensavel + 0.04463;
+    $bandeiraVermelhaP1 = $inputValorCompensavel + 0.07877;
+    $retornoVerde = $geracao * $inputValorCompensavel;
+    $retornoAmarelo = $geracao * $bandeiraAmarela;
+    $retornoVermelho = $geracao * $bandeiraVermelha;
+    $retornoVermelhoP1 = $geracao * $bandeiraVermelhaP1;
+    $rentabilidadeVerde = ($retornoVerde / $precoFinal) * 100;
+    $rentabilidadeAmarela = ($retornoAmarelo / $precoFinal) * 100;
+    $rentabilidadeVermelha = ($retornoVermelho / $precoFinal)* 100;
+    $rentabilidadeVermelhaP1 = ($retornoVermelhoP1 / $precoFinal) * 100;
+    $liquidoVerde = $retornoVerde - $seguro - $manutencao - $imposto - $demanda;
+    $liquidoAmarelo = $retornoAmarelo - $seguro - $manutencao - $imposto - $demanda;
+    $liquidoVermelho = $retornoVermelho - $seguro - $manutencao - $imposto - $demanda;
+    $liquidoVermelhoP1 = $retornoVermelhoP1 - $seguro - $manutencao - $imposto - $demanda;
+
+    
+    function calcularImposto($tributario, $retornoVerde) {
+        $imposto = 0; // Inicializa a variável para evitar erros
+    
+        switch ($tributario) {
+            case "MEI":
+                $imposto = 76.6;
+                break;
+            case "SIMPLES NACIONAL 7,3%":
+                $imposto = $retornoVerde * 0.073;
+                break;
+            case "SIMPLES NACIONAL 9,5%":
+                $imposto = $retornoVerde * 0.095;
+                break;
+            case "LUCRO PRESUMIDO":
+                $imposto = $retornoVerde * 0.113;
+                break;
+            default:
+                $imposto = false; // Caso o valor de $tributario não seja reconhecido
+                break;
+        }
+    
+        return $imposto;
+    }
+    $imposto = calcularImposto($tributario, $retornoVerde);
+    $seguro = ($precoFinal * 0.007) /12;
+
     $irradiacao = [5888, 5792, 5219, 4544, 3636, 3333, 3529, 4451, 4683, 5311, 5969, 6327];
 
     //Cálculo de irradiação
@@ -270,6 +373,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nov3 = number_format($nov2 / 1000, 3, '.', '');
     $dez3 = number_format($dez2 / 1000, 3, '.', '');
 
+    function calcularVPL($precoFinal, $fluxoCaixaAnual, $taxaDesconto, $periodoAnos) {
+        $VPL = -$precoFinal; // Começa com o investimento inicial como um fluxo negativo
+        for ($ano = 1; $ano <= $periodoAnos; $ano++) {
+            $VPL += $fluxoCaixaAnual / pow(1 + $taxaDesconto, $ano);
+        }
+        return $VPL;
+    }
+    
+    // Assumindo valores aproximados
+    $fluxoCaixaAnual = 72000; // Exemplo de um fluxo de caixa médio anual
+    $taxaDesconto = 0.08; // Exemplo de taxa de desconto anual de 8%
+    $periodoAnos = 25; // Considerando a vida útil do projeto
+    
+    // Calcular o VPL
+    $VPL = calcularVPL($precoFinal, $fluxoCaixaAnual, $taxaDesconto, $periodoAnos);
+    $VPLP = 'R$ ' . number_format($VPL, 2, ',', '.');
+
+    // Estimação de Payback
+    $fluxoCaixaAnual = 7200; // Exemplo de fluxo de caixa anual
+
+    $payback = $precoFinal / $fluxoCaixaAnual; // Payback estimado em anos
+
+    // Estimação de porcentagem do payback com relação aos 25 anos
+    $percentualPayback = ($payback / 25) * 100; // Porcentagem do payback no total de 25 anos
+
+    // Agora, para a TIR, podemos considerar a porcentagem do payback como um valor aproximado da TIR
+    // Isso é uma aproximação simples, pois o tempo de payback e TIR não são diretamente proporcionais, mas podemos usar essa lógica para um valor aproximado.
+    $TIR = $percentualPayback; // Converte a porcentagem em valor decimal para TIR
+    $TIRP  = number_format($TIR, 2, ',', '.') . '%';
+
+    // Exemplo de receita anual usando a bandeira verde
+    $receitasAnuais = $retornoVerde * 12; // Receita mensal vezes 12 meses
+
+    // Exemplo de custo anual
+    $custosAnuais = ($manutencao + $seguro + $imposto + $demanda) * 12;
+
+    // Calcular lucratividade
+    $lucratividade = (($receitasAnuais - $custosAnuais) / $receitasAnuais) * 100;
+
+    // Formatando a lucratividade como porcentagem
+    $lucratividadeFormatada = number_format($lucratividade, 2, ',', '.') . '%';
+
+    // Função para calcular o ROI
+    function calcularROI($retornoVerde, $precoFinal) {
+        return ((($retornoVerde*12*25) - $precoFinal) / $precoFinal) * 100;
+    }
+
+    // Calcula o ROI e armazena na variável $ROI
+    $ROI = calcularROI($retornoVerde, $precoFinal);
+
+    // Formatação do ROI para apresentação
+    $ROIPorcentagem = number_format($ROI, 2, ',', '.') . '%';
+
     // Data atual
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
@@ -287,20 +443,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(21, 94, "Nome: $nome");
-    $pdf->Text(21, 100, "Endereço: $endereco");
-    $pdf->Text(21, 106, "Cidade: $cidade");
-    $pdf->Text(21, 128, "UC $uc");
+    $pdf->Text(34.2, 98, "Nome: $nome");
+    $pdf->Text(34.2, 104, "Endereço: $endereco");
+    $pdf->Text(34.2, 110, "Cidade: $cidade");
+    $pdf->Text(34.2, 138, "UC $uc");
     
-
-    $pdf->Text(114, 160, "$metrosOcupados m²");
-    $pdf->Text(99, 166.25, "$qtdmodulosArredondado Placas");
-    $pdf->Text(63, 172.5, "$potenciaGerador kWp");
-    $pdf->Text(61.5, 178.75, "$media kWh");
-    $pdf->Text(57.5, 185, "$geracao kWh");
+    $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
+    $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
+    $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador kWp");
+    $pdf->Text(34.6, 178.75, "Média de Consumo: $media kWh");
+    $pdf->Text(34.6, 185, "Geração Estimada: $geracao kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(34, 225.5, "$dataAtual");
+    $pdf->Text(46, 223, "$dataAtual");
 
 
     // Segunda Página (com a imagem genérica e gráfico)
@@ -371,22 +526,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
 
-
     // Quarta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCV4.png', 0, 0, 210, 297);
     $pdf->SetFont('helvetica', 'B', 14);
     $pdf->SetTextColor(255, 0, 0);
 
-    $pdf->Text(148, 43.5, "$qtdmodulosArredondado X $potenciaModulo W");
-    $pdf->Text(149, 57, "$potenciaGerador kWp");
-    $pdf->Text(152, 71.5, "$metrosOcupados m²");
-    $pdf->Text(152, 85, "$peso kg");
-    $pdf->Text(142, 98.5, "$mediaArredondado kWh mensal");
-    $pdf->Text(142, 112, "$geracaoArredondado kWh mensal");
-
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
+
+    // Definir fonte e adicionar conteúdo à quarta página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+
+    // Quinta Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('PGCV5.png', 0, 0, 210, 297);
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(0, 0, 0);
 
     // Corrigir caracteres especiais do HTML
     $componentes = html_entity_decode($componentes);
@@ -396,10 +553,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     preg_match_all('/<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>/', $componentes, $matches, PREG_SET_ORDER);
 
     // Ajuste na altura da descrição
-    $y = 176; // Posição inicial Y
+    $y = 72; // Posição inicial Y
     $linhaAltura = 8; // Altura de cada linha no PDF
     $larguraDescricao = 180; // Largura para a Descrição
-    $maxY = 280; // Defina o limite Y da página (ajuste conforme necessário)
+    $maxY = 280; // Defina o limite Y da página (aajuste conforme necessário)
 
     // Função para adicionar uma nova página se necessário
     function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
@@ -428,52 +585,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // Definir fonte e adicionar conteúdo à quarta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-
-
-    // Quinta Página (com a imagem undo.jpeg)
-    $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV5.png', 0, 0, 210, 297);
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(255, 255, 255);
-
-    $pdf->Text(45, 45, "$gastoSemGeradorAnoRs");
-    $pdf->Text(47.5, 61.5, "$gastoSemGeradorRs");
-    $pdf->Text(91, 45, "$gastoComGeradorAnoRs");
-    $pdf->Text(93, 61.5, "$gastoComGeradorRs");
-    $pdf->Text(135, 45, "$diferencaGastosAnoRs");
-    $pdf->Text(138, 61.5, "$diferencaGastosRs");
-
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(147, 98.5, "$precoFinalRs");
+    $pdf->Text(152, 164, "$precoFinalRs");
 
     $pdf->SetFont('helvetica', 'B', 15);
-    $pdf->Text(26, 123, "36 X $valorParcelaRs");
-    $pdf->Text(85, 123, "48 X $valorParcela2Rs");
-    $pdf->Text(146, 123, "60 X $valorParcela3Rs");
+    $pdf->Text(26, 180, "36 X $valorParcelaRs");
+    $pdf->Text(85, 180, "48 X $valorParcela2Rs");
+    $pdf->Text(146, 180, "60 X $valorParcela3Rs");
 
-    $pdf->Text(152, 166, "$paybackArredondado anos");
-    $pdf->Text(143, 178, "$retorno25anosRs");
+    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->SetTextColor(0, 0, 0);
+
+    $pdf->Text(59, 46, "$qtdmodulosArredondado");
+    $pdf->Text(85, 46, "$potenciaInversor kW");
+    $pdf->Text(110, 46, "$potenciaGerador kWp");
+    $pdf->Text(139, 46, "$geracaoArredondado kWh");
+    $pdf->Text(167, 46, "$geracaoAnual kWh");
 
     // Dados do Payback
     $anos = 25; // Total de anos
 
-    // Calcular o retorno acumulado ao longo dos anos
+    // Calcular o retorno verde anual
+    $retornoAnualVerde = $retornoVerde * 12;
+
+    // Inicializar o acumulado de retorno
     $dados = [];
     $retornoAcumulado = 0;
+
+    // Calcular o retorno acumulado ao longo dos anos
     for ($ano = 1; $ano <= $anos; $ano++) {
-        $retornoAcumulado += $diferencaGastosAno;
-        $dados[$ano] = $retornoAcumulado - $precoFinal; // Payback acumulado
+        $retornoAcumulado += $retornoAnualVerde;
+        $dados[$ano] = $retornoAcumulado - $precoFinal; // Payback acumulado ao final de cada ano
     }
 
     // Configurações do gráfico
-    $xInicial = 20; // Posição X do gráfico
-    $yInicial = 213; // Posição Y do gráfico
+    $xInicial = 17; // Posição X do gráfico
+    $yInicial = 228; // Posição Y do gráfico
     $larguraGrafico = 160; // Largura total do gráfico
-    $alturaGrafico = 40; // Altura total do gráfico
+    $alturaGrafico = 30; // Altura total do gráfico
     $larguraBarra = 5; // Largura de cada barra
     $espacoEntreBarras = 2; // Espaço entre as barras
     $linhaBase = $yInicial + $alturaGrafico; // Posição da linha base (eixo X)
@@ -520,42 +670,134 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Título do gráfico
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text($xInicial, $yInicial - 10, 'Gráfico de Payback (25 anos)');
+    $pdf->Text($xInicial, $yInicial - 10, '');
 
-    
     // Definir fonte e adicionar conteúdo à quinta página
-    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetFont('helvetica','B', 12);
     $pdf->SetTextColor(0, 0, 0);
-
-
 
     // Sexta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCV6.png', 0, 0, 210, 297);
-    
-    // Definir fonte e adicionar conteúdo à sexta página
-    $pdf->SetFont('helvetica', 'B', 13);
-    $pdf->SetTextColor(255, 255, 255);
-    $pdf->Text(90, 50, "$fabricante $potenciaInversor kW");
-    $pdf->Text(155, 50, "10 ANOS");
-    $pdf->SetFont('helvetica', 'B', 9);
-    $pdf->Text(75,67, "$marca $potenciaModulo W");
-    $pdf->Text(146, 90, "$valorParcela3Rs");
+    $retornoVerdeRs = 'R$ ' . number_format($retornoVerde, 2, ',', '.');
+    $retornoAmareloRs = 'R$ ' . number_format($retornoAmarelo, 2, ',', '.');
+    $retornoVermelhoRs = 'R$ ' . number_format($retornoVermelho, 2, ',', '.');
+    $retornoVermelhoP1Rs = 'R$ ' . number_format($retornoVermelhoP1, 2, ',', '.');
+    $rentabilidadeVerdeRs = number_format($rentabilidadeVerde, 2, ',', '.') . '%';
+    $rentabilidadeAmarelaRs = number_format($rentabilidadeAmarela, 2, ',', '.') . '%';
+    $rentabilidadeVermelhaRs = number_format($rentabilidadeVermelha, 2, ',', '.') . '%';
+    $rentabilidadeVermelhaP1Rs = number_format($rentabilidadeVermelhaP1, 2, ',', '.') . '%';
 
+    $seguroRs = 'R$ ' . number_format($seguro, 2, ',', '.');
+    $manutencaoRs = 'R$ ' . number_format($manutencao, 2, ',', '.');
+    $impostoRs = 'R$ ' . number_format($imposto, 2, ',', '.');
+    $demandaRs = 'R$ ' . number_format($demanda, 2, ',', '.');
+    $liquidoVerdeRs = 'R$ ' . number_format($liquidoVerde, 2, ',', '.');
+    $liquidoAmareloRs = 'R$ ' . number_format($liquidoAmarelo, 2, ',', '.');
+    $liquidoVermelhoRs = 'R$ ' . number_format($liquidoVermelho, 2, ',', '.');
+    $liquidoVermelhoP1Rs = 'R$ ' . number_format($liquidoVermelhoP1, 2, ',', '.');
+    $mediaLiquido = ($liquidoVerde + $liquidoAmarelo + $liquidoVermelho + $liquidoVermelhoP1) / 4;
+    $mediaLiquidoRs =  'R$ ' . number_format($mediaLiquido, 2, ',', '.');
+    
+    $pdf->Text(61, 122, "$retornoVerdeRs");
+    $pdf->Text(98, 122, "$retornoAmareloRs");
+    $pdf->Text(135, 122, "$retornoVermelhoRs");
+    $pdf->Text(172, 122, "$retornoVermelhoP1Rs");
+
+    $pdf->Text(64, 134.5, "$seguroRs");
+    $pdf->Text(101, 134.5, "$seguroRs");
+    $pdf->Text(138, 134.5, "$seguroRs");
+    $pdf->Text(175, 134.5, "$seguroRs");
+
+    $pdf->Text(63, 145, "$manutencaoRs");
+    $pdf->Text(100, 145, "$manutencaoRs");
+    $pdf->Text(137, 145, "$manutencaoRs");
+    $pdf->Text(174, 145, "$manutencaoRs");
+
+    $pdf->Text(64, 156.5, "$impostoRs");
+    $pdf->Text(101, 156.5, "$impostoRs");
+    $pdf->Text(138, 156.5, "$impostoRs");
+    $pdf->Text(175, 156.5, "$impostoRs");
+
+    $pdf->Text(63, 167.5, "$demandaRs");
+    $pdf->Text(100, 167.5, "$demandaRs");
+    $pdf->Text(137, 167.5, "$demandaRs");
+    $pdf->Text(174, 167.5, "$demandaRs");
+
+    $pdf->Text(66, 180, "$rentabilidadeVerdeRs");
+    $pdf->Text(103, 180, "$rentabilidadeAmarelaRs");
+    $pdf->Text(141, 180, "$rentabilidadeVermelhaRs");
+    $pdf->Text(177, 180, "$rentabilidadeVermelhaP1Rs");
+
+    $pdf->SetTextColor(255, 255, 255);
+    $pdf->Text(61, 192.2, "$liquidoVerdeRs");
+    $pdf->Text(98, 192.2, "$liquidoAmareloRs");
+    $pdf->Text(135, 192.2, "$liquidoVermelhoRs");
+    $pdf->Text(172, 192.2, "$liquidoVermelhoP1Rs");
+
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(172, 203.5, "$mediaLiquidoRs");
+
+    $pdf->Text(27, 220, "$VPLP");
+    $pdf->Text(80, 220, "$TIRP");
+    $pdf->Text(127, 220, "$lucratividadeFormatada");
+    $pdf->Text(172, 220, "$ROIPorcentagem");
+    $pdf->Text(80, 98, "Tributação vigente: $tributario");
+
+    // Dados para o gráfico
+    $values = [$retornoVerde, $liquidoVerde, $imposto, $demanda, $seguro, $manutencao];
+    $labels = ['Receita', 'Líquido', 'Impostos', 'Demanda', 'Seguro', 'Opex/Limpeza'];
+
+    // Configurações do gráfico
+    $x = 27; // Margem inicial
+    $y = 240; // Posição vertical inicial
+    $barWidth = 15; // Largura das barras
+    $maxBarHeight = 30; // Altura máxima das barras
+    $gap = 10;
+    $pageWidth = 170; // Largura total da área utilizável (A4 menos margens)
+
+    // Ajustar espaçamento entre barras dinamicamente
+    $chartWidth = (count($values) * $barWidth); 
+    $gap = ($pageWidth - $chartWidth) / (count($values) - 1);
+
+    // Limite superior do gráfico (valor máximo representado)
+    $limitValue = max($values) > 0 ? max($values) : 1; // Evitar divisão por zero
+    $scalingFactor = $maxBarHeight / $limitValue;
+
+    // Cores das barras
+    $colors = [
+        [70, 130, 180], // Blue
+        [220, 20, 60],  // Red
+        [85, 107, 47],  // Green
+        [128, 0, 128],  // Purple
+        [0, 128, 128],  // Teal
+        [255, 165, 0]   // Orange
+    ];
+
+    // Desenhar barras
+    foreach ($values as $index => $value) {
+        $barHeight = $value * $scalingFactor; // Altura da barra proporcional ao valor
+        $pdf->SetFillColor($colors[$index][0], $colors[$index][1], $colors[$index][2]);
+        $pdf->Rect($x, $y + ($maxBarHeight - $barHeight), $barWidth, $barHeight, 'DF'); // Desenhar barra
+
+        // Adicionar valor acima da barra
+        $pdf->SetFont('helvetica', 'B', 10);
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->Text($x, $y + ($maxBarHeight - $barHeight) - 7, 'R$' . number_format($value, 2, ',', '.'));
+
+        // Adicionar rótulo abaixo da barra
+        $pdf->SetFont('helvetica', '', 8);
+        $pdf->Text($x, $y + $maxBarHeight + 5, $labels[$index]);
+
+        // Incrementar posição horizontal
+        $x += $barWidth + $gap;
+    }
 
     // Sétima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCV7.png', 0, 0, 210, 297);
     
     // Definir fonte e adicionar conteúdo à sétima página
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-
-    // Oitava Página (com a imagem undo.jpeg)
-    $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV8.png', 0, 0, 210, 297);
-    
-    // Definir fonte e adicionar conteúdo à oitava página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
 
