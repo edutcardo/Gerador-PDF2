@@ -740,7 +740,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->Text(27, 220, "$VPLP");
     $pdf->Text(80, 220, "$TIRP");
-    $pdf->Text(126, 220, "$lucratividadeFormatada");
+    $pdf->Text(127, 220, "$lucratividadeFormatada");
     $pdf->Text(172, 220, "$ROIPorcentagem");
 
     // Dados para o gráfico
