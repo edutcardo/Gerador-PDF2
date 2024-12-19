@@ -605,12 +605,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Dados do Payback
     $anos = 25; // Total de anos
 
-    // Calcular o retorno acumulado ao longo dos anos
+    // Calcular o retorno verde anual
+    $retornoAnualVerde = $retornoVerde * 12;
+
+    // Inicializar o acumulado de retorno
     $dados = [];
     $retornoAcumulado = 0;
+
+    // Calcular o retorno acumulado ao longo dos anos
     for ($ano = 1; $ano <= $anos; $ano++) {
-        $retornoAcumulado += $diferencaGastosAno;
-        $dados[$ano] = $retornoAcumulado - $precoFinal; // Payback acumulado
+        $retornoAcumulado += $retornoAnualVerde;
+        $dados[$ano] = $retornoAcumulado - $precoFinal; // Payback acumulado ao final de cada ano
     }
 
     // Configurações do gráfico
