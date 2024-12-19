@@ -763,13 +763,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
 
-    // Oitava Página (com a imagem undo.jpeg)
-    $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV8.png', 0, 0, 210, 297);
-    
-    // Definir fonte e adicionar conteúdo à oitava página
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
+
 
     // Nona Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
