@@ -388,6 +388,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Calcular o VPL
     $VPL = calcularVPL($precoFinal, $fluxoCaixaAnual, $taxaDesconto, $periodoAnos);
+    $VPLP = 'R$ ' . number_format($VPL, 2, ',', '.');
 
     // Estimação de Payback
     $fluxoCaixaAnual = 7200; // Exemplo de fluxo de caixa anual
@@ -406,7 +407,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $receitasAnuais = $retornoVerde * 12; // Receita mensal vezes 12 meses
 
     // Exemplo de custo anual
-    $custosAnuais = ($manutencao + $seguro + $imposto + $demanda) * 12 + $precoFinal;
+    $custosAnuais = ($manutencao + $seguro + $imposto + $demanda) * 12;
 
     // Calcular lucratividade
     $lucratividade = (($receitasAnuais - $custosAnuais) / $receitasAnuais) * 100;
@@ -415,12 +416,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $lucratividadeFormatada = number_format($lucratividade, 2, ',', '.') . '%';
 
     // Função para calcular o ROI
-    function calcularROI($retornoVerdeAnual, $precoFinal) {
-        return ((($retornoVerdeAnual*25) - $precoFinal) / $precoFinal) * 100;
+    function calcularROI($retornoVerde, $precoFinal) {
+        return ((($retornoVerde*12*25) - $precoFinal) / $precoFinal) * 100;
     }
 
     // Calcula o ROI e armazena na variável $ROI
-    $ROI = calcularROI($retornoVerdeAnual, $precoFinal);
+    $ROI = calcularROI($retornoVerde, $precoFinal);
 
     // Formatação do ROI para apresentação
     $ROIPorcentagem = number_format($ROI, 2, ',', '.') . '%';
@@ -737,7 +738,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(172, 203.5, "$mediaLiquidoRs");
 
-    $pdf->Text(50, 210, "$VPL");
+    $pdf->Text(50, 210, "$VPLP");
     $pdf->Text(90, 210, "$TIRP");
     $pdf->Text(110, 210, "$lucratividadeFormatada");
     $pdf->Text(172, 210, "$ROIPorcentagem");
