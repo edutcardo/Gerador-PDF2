@@ -673,7 +673,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text($xInicial, $yInicial - 10, '');
 
     // Definir fonte e adicionar conteúdo à quinta página
-    $pdf->SetFont('helvetica', 'B', 12);
+    $pdf->SetFont('helvetica','B', 12);
     $pdf->SetTextColor(0, 0, 0);
 
     // Sexta Página (com a imagem undo.jpeg)
@@ -742,6 +742,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(80, 220, "$TIRP");
     $pdf->Text(127, 220, "$lucratividadeFormatada");
     $pdf->Text(172, 220, "$ROIPorcentagem");
+    $pdf->Text(80, 98, "Tributação vigente: $tributario");
 
     // Dados para o gráfico
     $values = [$retornoVerde, $liquidoVerde, $imposto, $demanda, $seguro, $manutencao];
