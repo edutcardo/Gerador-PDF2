@@ -318,9 +318,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $imposto = calcularImposto($tributario, $retornoVerde);
     $seguro = ($precoFinal * 0.007) /12;
 
-
-
-
     $irradiacao = [5888, 5792, 5219, 4544, 3636, 3333, 3529, 4451, 4683, 5311, 5969, 6327];
 
     //Cálculo de irradiação
@@ -405,6 +402,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $TIR = $percentualPayback; // Converte a porcentagem em valor decimal para TIR
     $TIRP  = number_format($TIR, 2, ',', '.') . '%';
 
+    // Exemplo de receita anual usando a bandeira verde
+    $receitasAnuais = $retornoVerde * 12; // Receita mensal vezes 12 meses
+
+    // Exemplo de custo anual
+    $custosAnuais = ($manutencao + $seguro + $imposto + $demanda) * 12 + $precoFinal;
+
+    // Calcular lucratividade
+    $lucratividade = (($receitasAnuais - $custosAnuais) / $receitasAnuais) * 100;
+
+    // Formatando a lucratividade como porcentagem
+    $lucratividadeFormatada = number_format($lucratividade, 2, ',', '.') . '%';
+
+    // Função para calcular o ROI
+    function calcularROI($retornoVerdeAnual, $precoFinal) {
+        return ((($retornoVerdeAnual*25) - $precoFinal) / $precoFinal) * 100;
+    }
+
+    // Calcula o ROI e armazena na variável $ROI
+    $ROI = calcularROI($retornoVerdeAnual, $precoFinal);
+
+    // Formatação do ROI para apresentação
+    $ROIPorcentagem = number_format($ROI, 2, ',', '.') . '%';
+
     // Data atual
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
@@ -427,7 +447,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
     
-
     $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
     $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
     $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador kWp");
@@ -565,7 +584,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(152, 164, "$precoFinalRs");
@@ -583,7 +601,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(110, 46, "$potenciaGerador kWp");
     $pdf->Text(139, 46, "$geracaoArredondado kWh");
     $pdf->Text(167, 46, "$geracaoAnual kWh");
-
 
     // Dados do Payback
     $anos = 25; // Total de anos
@@ -717,8 +734,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->Text(50, 210, "$VPL");
     $pdf->Text(90, 210, "$TIRP");
-    $pdf->Text(110, 210, "$TIRP");
-    $pdf->Text(172, 210, "$TIRP");
+    $pdf->Text(110, 210, "$lucratividadeFormatada");
+    $pdf->Text(172, 210, "$ROIPorcentagem");
 
     // Dados para o gráfico
     $values = [$retornoVerde, $liquidoVerde, $imposto, $demanda, $seguro, $manutencao];
@@ -769,9 +786,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $x += $barWidth + $gap;
     }
 
-
-    
-    
     // Sétima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCV7.png', 0, 0, 210, 297);
@@ -779,8 +793,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à sétima página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-
-
 
     // Nona Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
