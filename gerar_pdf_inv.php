@@ -44,10 +44,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $tributario = calcularTributario($potenciaInversor);
 
-
-    
-
-
     // Cálculos iniciais da proposta
 
     $geracao = $potenciaGerador * 3.9 * 30;
