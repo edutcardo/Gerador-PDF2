@@ -738,10 +738,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(172, 203.5, "$mediaLiquidoRs");
 
-    $pdf->Text(50, 210, "$VPLP");
-    $pdf->Text(90, 210, "$TIRP");
-    $pdf->Text(110, 210, "$lucratividadeFormatada");
-    $pdf->Text(172, 210, "$ROIPorcentagem");
+    $pdf->Text(27, 220, "$VPLP");
+    $pdf->Text(80, 220, "$TIRP");
+    $pdf->Text(126, 220, "$lucratividadeFormatada");
+    $pdf->Text(172, 220, "$ROIPorcentagem");
 
     // Dados para o gráfico
     $values = [$retornoVerde, $liquidoVerde, $imposto, $demanda, $seguro, $manutencao];
