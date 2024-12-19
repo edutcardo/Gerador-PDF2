@@ -691,12 +691,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $labels = ['Receita', 'Líquido', 'Impostos', 'Demanda', 'Seguro', 'Opex/Limpeza'];
 
     // Configurações do gráfico
-    $x = 13; // Margem inicial
+    $x = 23; // Margem inicial
     $y = 240; // Posição vertical inicial
     $barWidth = 15; // Largura das barras
     $maxBarHeight = 30; // Altura máxima das barras
     $gap = 10;
-    $pageWidth = 190; // Largura total da área utilizável (A4 menos margens)
+    $pageWidth = 170; // Largura total da área utilizável (A4 menos margens)
 
     // Ajustar espaçamento entre barras dinamicamente
     $chartWidth = (count($values) * $barWidth); 
