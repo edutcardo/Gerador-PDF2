@@ -57,6 +57,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $geracaoArredondado = round($geracao);
     $geracaoAnual = $geracaoArredondado * 12;
 
+    function calcularManutencao($qtdmodulosArredondado) {
+        if ($qtdmodulosArredondado >= 10) {
+            $manutencao = (150 / pow($qtdmodulosArredondado, 0.485) + 10 - 20 / $qtdmodulosArredondado) * $qtdmodulosArredondado;
+        } else {
+            $manutencao = (150 / pow(10, 0.485) + 10 - 20 / 10) * 10;
+        }
+    
+        return $manutencao / 12; // Divide o resultado por 12 conforme a fórmula original
+    }
+
+    $manutencao = calcularManutencao($qtdmodulosArredondado);
+
     //Cálculos PGCV5
     $demandaMinima = 0; // Inicializa a variável
 
@@ -275,6 +287,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         return $imposto;
     }
     $imposto = calcularImposto($tributario, $retornoVerde);
+    $seguro = ($precoFinal * 0.007) /12;
+
 
 
 
@@ -350,7 +364,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome $tributario $imposto");
+    $pdf->Text(34.2, 98, "Nome: $nome $manutencao $seguro $imposto $tributario");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
