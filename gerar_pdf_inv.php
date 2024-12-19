@@ -691,7 +691,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $labels = ['Receita', 'Líquido', 'Impostos', 'Demanda', 'Seguro', 'Opex/Limpeza'];
 
     // Configurações do gráfico
-    $x = 23; // Margem inicial
+    $x = 27; // Margem inicial
     $y = 240; // Posição vertical inicial
     $barWidth = 15; // Largura das barras
     $maxBarHeight = 30; // Altura máxima das barras
@@ -735,8 +735,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $x += $barWidth + $gap;
     }
 
-    // Exibir o PDF no navegador
-    $pdf->Output('arquivo_gerado.pdf', 'I');
+
     
     
     // Sétima Página (com a imagem undo.jpeg)
