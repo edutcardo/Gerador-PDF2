@@ -42,6 +42,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $tributario = calcularTributario($potenciaInversor);
 
+    $precoDemanda = 50; // Preço da demanda
+    $qtdDemanda = 3; // Quantidade de demanda
+
+    function calcularDemanda($potenciaInversor, $precoDemanda, $qtdDemanda, $iluminacao, $media) {
+        // Valores fixos definidos
+        $AA12 = 1; // Equivalente a 'PLANILHA RESUMO'!AA12
+        $TUSDG = 8.6760; // Equivalente a 'PLANILHA RESUMO'!R26
+        $Q77 = 0; // Valor de Q77 não foi especificado, ajuste conforme necessário
+        $S77 = 0; // Valor de S77 não foi especificado, ajuste conforme necessário
+    
+        // Cálculo principal
+        if ($AA12 * $potenciaInversor <= 75) {
+            $resultado = ($media * 0.83) + $iluminacao;
+        } else {
+            $resultado = ($potenciaInversor * $AA12 * $TUSDG) + $S77;
+        }
+    
+        // Subtrações
+        $demanda = $resultado - ($precoDemanda * $qtdDemanda);
+    
+        return $demanda;
+    }
+    
+    $demanda = calcularDemanda($potenciaInversor, $precoDemanda, $qtdDemanda, $iluminacao, $media);
+
     // Cálculos iniciais da proposta
 
     $geracao = $potenciaGerador * 3.9 * 30;
@@ -364,7 +389,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome $manutencao $seguro $imposto $tributario");
+    $pdf->Text(34.2, 98, "Nome: $nome");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
