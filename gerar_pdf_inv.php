@@ -684,7 +684,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(172, 192.2, "$liquidoVermelhoP1Rs");
 
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(172, 204.7, "$mediaLiquidoRs");
+    $pdf->Text(172, 203.5, "$mediaLiquidoRs");
+
+    // Dados para o gráfico
+    $values = [$retornoVerde, $liquidoVerde, $imposto, $demanda, $seguro, $manutencao];
+    $labels = ['Receita', 'Líquido', 'Impostos', 'Demanda', 'Seguro', 'Opex/Limpeza'];
+
+    // Configurações do gráfico
+    $x = 13; // Margem inicial
+    $y = 240; // Posição vertical inicial
+    $barWidth = 15; // Largura das barras
+    $maxBarHeight = 30; // Altura máxima das barras
+    $gap = 10;
+    $pageWidth = 190; // Largura total da área utilizável (A4 menos margens)
+
+    // Ajustar espaçamento entre barras dinamicamente
+    $chartWidth = (count($values) * $barWidth); 
+    $gap = ($pageWidth - $chartWidth) / (count($values) - 1);
+
+    // Limite superior do gráfico (valor máximo representado)
+    $limitValue = max($values) > 0 ? max($values) : 1; // Evitar divisão por zero
+    $scalingFactor = $maxBarHeight / $limitValue;
+
+    // Cores das barras
+    $colors = [
+        [70, 130, 180], // Blue
+        [220, 20, 60],  // Red
+        [85, 107, 47],  // Green
+        [128, 0, 128],  // Purple
+        [0, 128, 128],  // Teal
+        [255, 165, 0]   // Orange
+    ];
+
+    // Desenhar barras
+    foreach ($values as $index => $value) {
+        $barHeight = $value * $scalingFactor; // Altura da barra proporcional ao valor
+        $pdf->SetFillColor($colors[$index][0], $colors[$index][1], $colors[$index][2]);
+        $pdf->Rect($x, $y + ($maxBarHeight - $barHeight), $barWidth, $barHeight, 'DF'); // Desenhar barra
+
+        // Adicionar valor acima da barra
+        $pdf->SetFont('helvetica', 'B', 10);
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->Text($x, $y + ($maxBarHeight - $barHeight) - 7, 'R$' . number_format($value, 2, ',', '.'));
+
+        // Adicionar rótulo abaixo da barra
+        $pdf->SetFont('helvetica', '', 8);
+        $pdf->Text($x, $y + $maxBarHeight + 5, $labels[$index]);
+
+        // Incrementar posição horizontal
+        $x += $barWidth + $gap;
+    }
+
+    // Exibir o PDF no navegador
+    $pdf->Output('arquivo_gerado.pdf', 'I');
+    
     
     // Sétima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
