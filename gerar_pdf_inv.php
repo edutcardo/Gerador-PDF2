@@ -24,7 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $inputConcessionaria = $_POST['inputConcessionaria'];
     $inputValorCompensavel = $_POST['inputValorCompensavel'];
 
+    $potenciaInversor = 400;
 
+    //Tributação
     function calcularTributario($potenciaInversor) {
         if ($potenciaInversor <= 75) {
             $tributario = "MEI";
@@ -41,6 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         return $tributario;
     }
     $tributario = calcularTributario($potenciaInversor);
+
+
     
 
 
@@ -71,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif ($numeroDeFases == 'trifasico') {
         $demandaMinima = 100;
     }
-    
+
     $gastoSemGerador = ($demandaMinima * 0.81) + $iluminacao + ($media * 0.81);
     $gastoSemGeradorRs = 'R$ ' . number_format($gastoSemGerador, 2, ',', '.');
     $gastoSemGeradorAno = $gastoSemGerador * 12;
@@ -252,6 +256,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rentabilidadeVermelha = ($retornoVermelho / $precoFinal)* 100;
     $rentabilidadeVermelhaP1 = ($retornoVermelhoP1 / $precoFinal) * 100;
 
+    
+    function calcularImposto($tributario, $retornoVerde) {
+        $imposto = 0; // Inicializa a variável para evitar erros
+    
+        switch ($tributario) {
+            case "MEI":
+                $imposto = 76.6;
+                break;
+            case "SIMPLES NACIONAL 7,3%":
+                $imposto = $retornoVerde * 0.073;
+                break;
+            case "SIMPLES NACIONAL 9,5%":
+                $imposto = $retornoVerde * 0.095;
+                break;
+            case "LUCRO PRESUMIDO":
+                $imposto = $retornoVerde * 0.113;
+                break;
+            default:
+                $imposto = false; // Caso o valor de $tributario não seja reconhecido
+                break;
+        }
+    
+        return $imposto;
+    }
+    $imposto = calcularImposto($tributario, $retornoVerde);
+
 
 
     $irradiacao = [5888, 5792, 5219, 4544, 3636, 3333, 3529, 4451, 4683, 5311, 5969, 6327];
@@ -326,10 +356,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome $potenciaInversor");
+    $pdf->Text(34.2, 98, "Nome: $nome $tributario $imposto");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
-    $pdf->Text(34.2, 138, "UC $tributario");
+    $pdf->Text(34.2, 138, "UC $uc");
     
 
     $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
