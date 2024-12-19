@@ -280,12 +280,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $bandeiraVermelhaP1 = $inputValorCompensavel + 0.07877;
     $retornoVerde = $geracao * $inputValorCompensavel;
     $retornoAmarelo = $geracao * $bandeiraAmarela;
-    $retornoVermelho = $geracao * $bandeiraVermelhaP1;
+    $retornoVermelho = $geracao * $bandeiraVermelha;
     $retornoVermelhoP1 = $geracao * $bandeiraVermelhaP1;
     $rentabilidadeVerde = ($retornoVerde / $precoFinal) * 100;
     $rentabilidadeAmarela = ($retornoAmarelo / $precoFinal) * 100;
     $rentabilidadeVermelha = ($retornoVermelho / $precoFinal)* 100;
     $rentabilidadeVermelhaP1 = ($retornoVermelhoP1 / $precoFinal) * 100;
+    $liquidoVerde = $retornoVerde - $seguro - $manutencao - $imposto - $demanda;
+    $liquidoAmarelo = $retornoAmarelo - $seguro - $manutencao - $imposto - $demanda;
+    $liquidoVermelho = $retornoVermelho - $seguro - $manutencao - $imposto - $demanda;
+    $liquidoVermelhoP1 = $retornoVermelhoP1 - $seguro - $manutencao - $imposto - $demanda;
 
     
     function calcularImposto($tributario, $retornoVerde) {
@@ -631,15 +635,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rentabilidadeAmarelaRs = number_format($rentabilidadeAmarela, 2, ',', '.') . '%';
     $rentabilidadeVermelhaRs = number_format($rentabilidadeVermelha, 2, ',', '.') . '%';
     $rentabilidadeVermelhaP1Rs = number_format($rentabilidadeVermelhaP1, 2, ',', '.') . '%';
+
+    $seguroRs = 'R$ ' . number_format($seguro, 2, ',', '.');
+    $manutencaoRs = 'R$ ' . number_format($manutencao, 2, ',', '.');
+    $impostoRs = 'R$ ' . number_format($imposto, 2, ',', '.');
+    $demandaRs = 'R$ ' . number_format($demanda, 2, ',', '.');
+    $liquidoVerdeRs = 'R$ ' . number_format($liquidoVerde, 2, ',', '.');
+    $liquidoAmareloRs = 'R$ ' . number_format($liquidoAmarelo, 2, ',', '.');
+    $liquidoVermelhoRs = 'R$ ' . number_format($liquidoVermelho, 2, ',', '.');
+    $liquidoVermelhoP1Rs = 'R$ ' . number_format($liquidoVermelhoP1, 2, ',', '.');
+    $mediaLiquido = ($liquidoVerde + $liquidoAmarelo + $liquidoVermelho + $liquidoVermelhoP1) / 4;
+    $mediaLiquidoRs =  'R$ ' . number_format($mediaLiquido, 2, ',', '.');
     
     $pdf->Text(61, 122, "$retornoVerdeRs");
     $pdf->Text(98, 122, "$retornoAmareloRs");
     $pdf->Text(135, 122, "$retornoVermelhoRs");
     $pdf->Text(172, 122, "$retornoVermelhoP1Rs");
+
+    $pdf->Text(64, 134.5, "$seguroRs");
+    $pdf->Text(101, 134.5, "$seguroRs");
+    $pdf->Text(138, 134.5, "$seguroRs");
+    $pdf->Text(175, 134.5, "$seguroRs");
+
+    $pdf->Text(63, 145, "$manutencaoRs");
+    $pdf->Text(100, 145, "$manutencaoRs");
+    $pdf->Text(137, 145, "$manutencaoRs");
+    $pdf->Text(174, 145, "$manutencaoRs");
+
+    $pdf->Text(64, 156.5, "$impostoRs");
+    $pdf->Text(101, 156.5, "$impostoRs");
+    $pdf->Text(138, 156.5, "$impostoRs");
+    $pdf->Text(175, 156.5, "$impostoRs");
+
+    $pdf->Text(63, 167.5, "$demandaRs");
+    $pdf->Text(100, 167.5, "$demandaRs");
+    $pdf->Text(137, 167.5, "$demandaRs");
+    $pdf->Text(174, 167.5, "$demandaRs");
+
     $pdf->Text(66, 180, "$rentabilidadeVerdeRs");
     $pdf->Text(103, 180, "$rentabilidadeAmarelaRs");
     $pdf->Text(141, 180, "$rentabilidadeVermelhaRs");
     $pdf->Text(177, 180, "$rentabilidadeVermelhaP1Rs");
+
+    $pdf->SetTextColor(255, 255, 255);
+    $pdf->Text(61, 192.2, "$liquidoVerdeRs");
+    $pdf->Text(98, 192.2, "$liquidoAmareloRs");
+    $pdf->Text(135, 192.2, "$liquidoVermelhoRs");
+    $pdf->Text(172, 192.2, "$liquidoVermelhoP1Rs");
+
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(172, 204.7, "$mediaLiquidoRs");
     
     // Sétima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
