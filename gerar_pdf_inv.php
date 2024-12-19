@@ -376,6 +376,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nov3 = number_format($nov2 / 1000, 3, '.', '');
     $dez3 = number_format($dez2 / 1000, 3, '.', '');
 
+    function calcularVPL($precoFinal, $fluxoCaixaAnual, $taxaDesconto, $periodoAnos) {
+        $VPL = -$precoFinal; // Começa com o investimento inicial como um fluxo negativo
+        for ($ano = 1; $ano <= $periodoAnos; $ano++) {
+            $VPL += $fluxoCaixaAnual / pow(1 + $taxaDesconto, $ano);
+        }
+        return $VPL;
+    }
+    
+    // Assumindo valores aproximados
+    $fluxoCaixaAnual = 72000; // Exemplo de um fluxo de caixa médio anual
+    $taxaDesconto = 0.08; // Exemplo de taxa de desconto anual de 8%
+    $periodoAnos = 25; // Considerando a vida útil do projeto
+    
+    // Calcular o VPL
+    $VPL = calcularVPL($precoFinal, $fluxoCaixaAnual, $taxaDesconto, $periodoAnos);
+
+
     // Data atual
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
@@ -393,7 +410,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome");
+    $pdf->Text(34.2, 98, "Nome: $nome $VPL");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
