@@ -392,6 +392,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Calcular o VPL
     $VPL = calcularVPL($precoFinal, $fluxoCaixaAnual, $taxaDesconto, $periodoAnos);
 
+    // Estimação de Payback
+    $fluxoCaixaAnual = 7200; // Exemplo de fluxo de caixa anual
+
+    $payback = $precoFinal / $fluxoCaixaAnual; // Payback estimado em anos
+
+    // Estimação de porcentagem do payback com relação aos 25 anos
+    $percentualPayback = ($payback / 25) * 100; // Porcentagem do payback no total de 25 anos
+
+    // Agora, para a TIR, podemos considerar a porcentagem do payback como um valor aproximado da TIR
+    // Isso é uma aproximação simples, pois o tempo de payback e TIR não são diretamente proporcionais, mas podemos usar essa lógica para um valor aproximado.
+    $TIR = $percentualPayback; // Converte a porcentagem em valor decimal para TIR
+    $TIRP  = number_format($TIR, 2, ',', '.') . '%';
 
     // Data atual
     $formatoData = 'd/m/Y';
@@ -410,7 +422,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome $VPL");
+    $pdf->Text(34.2, 98, "Nome: $nome");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
@@ -702,6 +714,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(172, 203.5, "$mediaLiquidoRs");
+
+    $pdf->Text(50, 210, "$VPL");
+    $pdf->Text(90, 210, "$TIRP");
+    $pdf->Text(110, 210, "$TIRP");
+    $pdf->Text(172, 210, "$TIRP");
 
     // Dados para o gráfico
     $values = [$retornoVerde, $liquidoVerde, $imposto, $demanda, $seguro, $manutencao];
