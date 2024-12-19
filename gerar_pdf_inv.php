@@ -24,8 +24,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $inputConcessionaria = $_POST['inputConcessionaria'];
     $inputValorCompensavel = $_POST['inputValorCompensavel'];
 
-    $potenciaInversor = 400;
-
     //Tributação
     function calcularTributario($potenciaInversor) {
         if ($potenciaInversor <= 75) {
