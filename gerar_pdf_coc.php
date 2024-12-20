@@ -455,7 +455,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(34.6, 185, "Geração Estimada: $geracao kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(46, 223, "$dataAtual");
+    $pdf->Text(180, 295, "$dataAtual");
 
 
     // Segunda Página (com a imagem genérica e gráfico)
@@ -520,165 +520,78 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Terceira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV3.png', 0, 0, 210, 297);
-    
-    // Definir fonte e adicionar conteúdo à terceira página
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Image('PGCOC3.png', 0, 0, 210, 297);
 
-    // Quarta Página (com a imagem undo.jpeg)
-    $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV4.png', 0, 0, 210, 297);
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(255, 0, 0);
+    // Definir fonte e adicionar conteúdo à sexta página
+    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->SetTextColor(255, 255, 255);
+    $pdf->SetFont('helvetica', 'B', 9);
+    $pdf->Text(39, 169, "$fabricante $potenciaInversor kW");
+    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->Text(112, 168, "10 ANOS");
+    $pdf->SetFont('helvetica', 'B', 8.5);
+    $pdf->Text(39,184, "$marca $potenciaModulo W");
+    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->Text(112, 183, "12 ANOS");
 
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
 
-    // Definir fonte e adicionar conteúdo à quarta página
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-
-    // Quinta Página (com a imagem undo.jpeg)
-    $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV5.png', 0, 0, 210, 297);
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(0, 0, 0);
-
-    // Corrigir caracteres especiais do HTML
-    $componentes = html_entity_decode($componentes);
-    $componentes = str_replace(["<\/th>", "<\/td>", "<\/tr>", "<\/table>"], ["</th>", "</td>", "</tr>", "</table>"], $componentes);
-
-    // Extrair os dados da tabela
-    preg_match_all('/<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>/', $componentes, $matches, PREG_SET_ORDER);
-
-    // Ajuste na altura da descrição
-    $y = 72; // Posição inicial Y
-    $linhaAltura = 8; // Altura de cada linha no PDF
-    $larguraDescricao = 180; // Largura para a Descrição
-    $maxY = 280; // Defina o limite Y da página (aajuste conforme necessário)
-
-    // Função para adicionar uma nova página se necessário
-    function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
-        if ($y + $linhaAltura > $maxY) {
-            $pdf->AddPage(); // Adiciona uma nova página
-            return 10; // Reseta a posição Y após a nova página (ajuste conforme necessário)
-        }
-        return $y;
-    }
-
-    // Escrever os dados extraídos no PDF
-    if (empty($matches)) {
-        $pdf->Text(10, $y+3, "Nenhum dado encontrado.");
-    } else {
-        foreach ($matches as $match) {
-            $descricao = trim($match[3]); // Descrição do item
-
-            // Verificar se há espaço suficiente para escrever na página
-            $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
-
-            // Adicionar a descrição com quebra automática de linha
-            $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0, 1, 16.5, $y);
-
-            // Atualizar Y para a próxima linha após a descrição
-            $y += $pdf->getY() - $y; // Ajuste a posição Y com base na altura real do texto
-        }
-    }
-
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(152, 164, "$precoFinalRs");
-
-    $pdf->SetFont('helvetica', 'B', 15);
-    $pdf->Text(26, 180, "36 X $valorParcelaRs");
-    $pdf->Text(85, 180, "48 X $valorParcela2Rs");
-    $pdf->Text(146, 180, "60 X $valorParcela3Rs");
 
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(0, 0, 0);
 
-    $pdf->Text(59, 46, "$qtdmodulosArredondado");
-    $pdf->Text(85, 46, "$potenciaInversor kW");
-    $pdf->Text(110, 46, "$potenciaGerador kWp");
-    $pdf->Text(139, 46, "$geracaoArredondado kWh");
-    $pdf->Text(167, 46, "$geracaoAnual kWh");
+    $pdf->Text(65, 233, "$qtdmodulosArredondado");
+    $pdf->Text(92, 233, "$potenciaInversor kW");
+    $pdf->Text(116, 233, "$potenciaGerador kWp");
+    $pdf->Text(145, 233, "$geracaoArredondado kWh");
+    $pdf->Text(174.5, 233, "$geracaoAnual kWh");
 
-    // Dados do Payback
-    $anos = 25; // Total de anos
+    $pdf->SetFont('helvetica', 'B', 7);
 
-    // Calcular o retorno verde anual
-    $retornoAnualVerde = $retornoVerde * 12;
-
-    // Inicializar o acumulado de retorno
-    $dados = [];
-    $retornoAcumulado = 0;
-
-    // Calcular o retorno acumulado ao longo dos anos
-    for ($ano = 1; $ano <= $anos; $ano++) {
-        $retornoAcumulado += $retornoAnualVerde;
-        $dados[$ano] = $retornoAcumulado - $precoFinal; // Payback acumulado ao final de cada ano
-    }
-
-    // Configurações do gráfico
-    $xInicial = 17; // Posição X do gráfico
-    $yInicial = 228; // Posição Y do gráfico
-    $larguraGrafico = 160; // Largura total do gráfico
-    $alturaGrafico = 30; // Altura total do gráfico
-    $larguraBarra = 5; // Largura de cada barra
-    $espacoEntreBarras = 2; // Espaço entre as barras
-    $linhaBase = $yInicial + $alturaGrafico; // Posição da linha base (eixo X)
-
-    // Determinar o maior e menor valor
-    $min = min($dados);
-    $max = max($dados);
-    $escalaY = $alturaGrafico / ($max - $min); // Escala de altura por unidade
-
-    // Desenhar eixo X e Y
-    $pdf->SetDrawColor(0, 0, 0); // Preto
-    $pdf->Line($xInicial, $linhaBase, $xInicial + $larguraGrafico, $linhaBase); // Eixo X
-    $pdf->Line($xInicial, $linhaBase - $alturaGrafico, $xInicial, $linhaBase); // Eixo Y
-
-    // Desenhar as barras do gráfico
-    $xPos = $xInicial; // Posição inicial no eixo X
-    foreach ($dados as $ano => $valor) {
-        // Calcular altura da barra
-        $barHeight = abs($valor * $escalaY);
-
-        // Determinar a posição Y da barra
-        if ($valor >= 0) {
-            $yBarra = $linhaBase - $barHeight; // Barra positiva
+        // Corrigir caracteres especiais do HTML
+        $componentes = html_entity_decode($componentes);
+        $componentes = str_replace(["<\/th>", "<\/td>", "<\/tr>", "<\/table>"], ["</th>", "</td>", "</tr>", "</table>"], $componentes);
+    
+        // Extrair os dados da tabela
+        preg_match_all('/<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>/', $componentes, $matches, PREG_SET_ORDER);
+    
+        // Ajuste na altura da descrição
+        $y = 242.5; // Posição inicial Y
+        $linhaAltura = 4; // Altura de cada linha no PDF
+        $larguraDescricao = 180; // Largura para a Descrição
+        $maxY = 280; // Defina o limite Y da página (aajuste conforme necessário)
+    
+        // Função para adicionar uma nova página se necessário
+        function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
+            if ($y + $linhaAltura > $maxY) {
+                $pdf->AddPage(); // Adiciona uma nova página
+                return 10; // Reseta a posição Y após a nova página (ajuste conforme necessário)
+            }
+            return $y;
+        }
+    
+        // Escrever os dados extraídos no PDF
+        if (empty($matches)) {
+            $pdf->Text(15, $y+3, "Nenhum dado encontrado.");
         } else {
-            $yBarra = $linhaBase; // Barra negativa
+            foreach ($matches as $match) {
+                $descricao = trim($match[3]); // Descrição do item
+    
+                // Verificar se há espaço suficiente para escrever na página
+                $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
+    
+                // Adicionar a descrição com quebra automática de linha
+                $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0, 1, 22, $y);
+    
+                // Atualizar Y para a próxima linha após a descrição
+                $y += $pdf->getY() - $y; // Ajuste a posição Y com base na altura real do texto
+            }
         }
 
-        // Desenhar barra
-        $pdf->SetFillColor(60, 179, 113); // Verde
-        $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF'); // 'DF' para desenhar e preencher
-
-        // Adicionar o ano abaixo da barra
-        $pdf->SetFont('helvetica', '', 8);
-        $pdf->Text($xPos - 1, $linhaBase + 3, (string)$ano);
-
-        // Adicionar o valor na barra
-        $valorTexto = number_format($valor, 0, ',', '.');
-        $yTexto = $valor >= 0 ? $yBarra - 5 : $yBarra + $barHeight + 3;
-        $pdf->Text($xPos - 2, $yTexto, $valorTexto);
-
-        // Avançar posição X
-        $xPos += $larguraBarra + $espacoEntreBarras;
-    }
-
-    // Título do gráfico
-    $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text($xInicial, $yInicial - 10, '');
-
-    // Definir fonte e adicionar conteúdo à quinta página
-    $pdf->SetFont('helvetica','B', 12);
-    $pdf->SetTextColor(0, 0, 0);
-
-    // Sexta Página (com a imagem undo.jpeg)
-    $pdf->AddPage();  // Adiciona a primeira página
+    // Quarta Página
+    $pdf->AddPage();  // Adiciona a quarta página
     $pdf->Image('PGCOC4.png', 0, 0, 210, 297);
+
+    $pdf->SetFont('helvetica', 'B', 12);
     $retornoVerdeRs = 'R$ ' . number_format($retornoVerde, 2, ',', '.');
     $retornoAmareloRs = 'R$ ' . number_format($retornoAmarelo, 2, ',', '.');
     $retornoVermelhoRs = 'R$ ' . number_format($retornoVermelho, 2, ',', '.');
@@ -742,7 +655,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(80, 220, "$TIRP");
     $pdf->Text(127, 220, "$lucratividadeFormatada");
     $pdf->Text(172, 220, "$ROIPorcentagem");
-    $pdf->Text(80, 98, "Tributação vigente: $tributario");
+    $pdf->Text(80, 99, "Tributação vigente: $tributario");
 
     // Dados para o gráfico
     $values = [$retornoVerde, $liquidoVerde, $imposto, $demanda, $seguro, $manutencao];
@@ -792,20 +705,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Incrementar posição horizontal
         $x += $barWidth + $gap;
     }
-
-    // Sétima Página (com a imagem undo.jpeg)
+    // Quinta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCOC7.png', 0, 0, 210, 297);
+    $pdf->Image('PGCOC5.png', 0, 0, 210, 297);
     
-    // Definir fonte e adicionar conteúdo à sétima página
+    // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
 
-    // Nona Página (com a imagem undo.jpeg)
+    // Quinta Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('PGCOC6.png', 0, 0, 210, 297);
+    
+    // Definir fonte e adicionar conteúdo à quinta página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+
+    // Sexta Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('PGCOC7.png', 0, 0, 210, 297);
+    
+    // Definir fonte e adicionar conteúdo à sexta página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+
+    // Setima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCOC8.png', 0, 0, 210, 297);
     
-    // Definir fonte e adicionar conteúdo à nona página
+    // Definir fonte e adicionar conteúdo à setima página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
 
