@@ -717,17 +717,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCOC6.png', 0, 0, 210, 297);
     
-    // Definir fonte e adicionar conteúdo à quinta página
-    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetFont('helvetica', 'B', 20);
     $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(125, 64, "$precoFinalRs");
+    $pdf->Text(40, 64, "$potenciaGerador kWp");
 
     // Sexta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCOC7.png', 0, 0, 210, 297);
-    
-    // Definir fonte e adicionar conteúdo à sexta página
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
 
     // Setima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
