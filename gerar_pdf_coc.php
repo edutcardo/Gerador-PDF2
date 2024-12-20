@@ -438,7 +438,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV1.png', 0, 0, 210, 297);
+    $pdf->Image('PGCOC1.png', 0, 0, 210, 297);
 
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
@@ -460,7 +460,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Segunda Página (com a imagem genérica e gráfico)
     $pdf->AddPage();  // Adiciona a segunda página
-    $pdf->Image('PGCV2.png', 0, 0, 210, 297);
+    $pdf->Image('PGCOC2.png', 0, 0, 210, 297);
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
 
@@ -678,7 +678,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Sexta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV6.png', 0, 0, 210, 297);
+    $pdf->Image('PGCOC4.png', 0, 0, 210, 297);
     $retornoVerdeRs = 'R$ ' . number_format($retornoVerde, 2, ',', '.');
     $retornoAmareloRs = 'R$ ' . number_format($retornoAmarelo, 2, ',', '.');
     $retornoVermelhoRs = 'R$ ' . number_format($retornoVermelho, 2, ',', '.');
@@ -795,7 +795,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Sétima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV7.png', 0, 0, 210, 297);
+    $pdf->Image('PGCOC7.png', 0, 0, 210, 297);
     
     // Definir fonte e adicionar conteúdo à sétima página
     $pdf->SetFont('helvetica', 'B', 16);
@@ -803,33 +803,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Nona Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV9.png', 0, 0, 210, 297);
+    $pdf->Image('PGCOC8.png', 0, 0, 210, 297);
     
     // Definir fonte e adicionar conteúdo à nona página
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-
-    // Decima página Página (com a imagem undo.jpeg)
-    $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV10.png', 0, 0, 210, 297);
-    
-    // Definir fonte e adicionar conteúdo à decima página
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-
-    // Decima primeira página Página (com a imagem undo.jpeg)
-    $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV11.png', 0, 0, 210, 297);
-    
-    // Definir fonte e adicionar conteúdo à Decima primeira página
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-
-    // Decima segunda página Página (com a imagem undo.jpeg)
-    $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV12.png', 0, 0, 210, 297);
-    
-    // Definir fonte e adicionar conteúdo à Decima segunda página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
 
