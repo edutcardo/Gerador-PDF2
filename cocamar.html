@@ -291,35 +291,35 @@
 
         <form id="formulario">
 
-            <label for="nome">Nome:</label>
+            <label for="nome">Nome<b>*</b>:</label>
             <input type="text" id="nome" name="nome" required/>
 
-            <label for="endereco">Endereço:</label>
+            <label for="endereco">Endereço<b>*</b>:</label>
             <input type="text" id="endereco" name="endereco" required/>
 
-            <label for="cep">CEP:</label>
+            <label for="cep">CEP<b>*</b>:</label>
             <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" required/>
 
-            <label for="cidade">Cidade:</label>
+            <label for="cidade">Cidade<b>*</b>:</label>
             <input type="text" id="cidade" name="cidade" oninput="atualizarDados()" required/>
 
-            <label for="inputConcessionaria">Concessionária (caso não retorne o valor esperado, escreva manualmente até que o valor da tarifa apareça):</label>
+            <label for="inputConcessionaria">Concessionária<b>*</b> (caso não retorne o valor esperado, escreva manualmente até que o valor da tarifa apareça):</label>
             <input type="text" id="inputConcessionaria"/>
 
-            <label for="inputValorCompensavel">Valor Compensável:</label>
+            <label for="inputValorCompensavel">Valor Compensável<b>*</b>:</label>
             <input type="text" id="inputValorCompensavel" readonly />
 
             <label for="irradiacao" class="readonly">Irradiação:</label>
             <input type="text" id="irradiacao" name="irradiacao" readonly  class="readonly"required/>
 
 
-            <label for="uc">Unidade Consumidora:</label>
+            <label for="uc">Unidade Consumidora<b>*</b>:</label>
             <input type="text" id="uc" name="uc" required/>
 
-            <label for="media">Média:</label>
+            <label for="media">Média<b>*</b>:</label>
             <input type="text" id="media" name="media" required/>
 
-            <label for="numeroDeFases">Número de fases:</label>
+            <label for="numeroDeFases">Número de fases<b>*</b>:</label>
             <select id="numeroDeFases" name="numeroDeFases" required>
                 <option value="monofasico">MONOFÁSICO</option>
                 <option value="bifasico">BIFÁSICO</option>
@@ -327,7 +327,7 @@
                 <option value="monoRural">MONO RURAL</option>
             </select>
 
-            <label for="iluminacao">Iluminação:</label>
+            <label for="iluminacao">Iluminação<b>*</b>:</label>
             <input type="text" id="iluminacao" name="iluminacao" required/>
 
             <label for="valoramais">Acrescentar valor:</label>
@@ -355,7 +355,7 @@
                 <option value="3x200A">3x200A</option>
             </select>
 
-            <label for="estrutura">Selecione uma Estrutura:</label>
+            <label for="estrutura">Selecione uma Estrutura<b>*</b>:</label>
             <select id="estrutura" name="estrutura" onchange="buscarResultados()" required>
                 <option value="">Selecione uma estrutura</option>
                 <option value="COLONIAL">COLONIAL</option>
@@ -365,7 +365,7 @@
                 <option value="S/ESTRUTURA">S/ESTRUTURA</option>
             </select>
 
-            <label for="palavra-chave">Potência do Gerador:</label>
+            <label for="palavra-chave">Potência do Gerador<b>*</b>:</label>
             <input type="range" id="palavra-chave" name="palavra-chave" min="0" max="116" value="0" step="1" class="slider" oninput="atualizarSlider(this.value); buscarResultados(); calcularResultado()" required/>
             <span id="slider-value">0</span>
 
@@ -373,14 +373,14 @@
 
             <div id="resultados" required></div>
 
-            <label for="qtdSafras">Quantidade de safras:</label>
-            <input type="text" id="qtdSafras" name="qtdSafras"/>
+            <label for="qtdSafras">Quantidade de safras<b>*</b>:</label>
+            <input type="text" id="qtdSafras" name="qtdSafras" required/>
 
-            <label for="valorSafras">Valor das safras:</label>
-            <input type="text" id="valorSafras" name="valorSafras"/>
+            <label for="valorSafras">Valor das safras<b>*</b>:</label>
+            <input type="text" id="valorSafras" name="valorSafras" required/>
 
-            <label for="dataSafras">Datas das safras:</label>
-            <input type="text" id="dataSafras" name="dataSafras"/>
+            <label for="dataSafras">Datas das safras<b>*</b>:</label>
+            <input type="text" id="dataSafras" name="dataSafras" required/>
 
             <label for="preco" class="readonly">Preço do Integrador:</label>
             <input type="text" id="preco" name="preco" readonly  class="readonly"/>
