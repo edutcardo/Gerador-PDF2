@@ -23,6 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
     $inputConcessionaria = $_POST['inputConcessionaria'];
     $inputValorCompensavel = $_POST['inputValorCompensavel'];
+    $valorSafras = $_POST['valorSafras'];
+    $qtdSafras = $_POST['qtdSafras'];
 
     //Tributação
     function calcularTributario($potenciaInversor) {
@@ -705,7 +707,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Incrementar posição horizontal
         $x += $barWidth + $gap;
     }
-    // Quinta Página (com a imagem undo.jpeg)
+    // Quinta Página 
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCOC5.png', 0, 0, 210, 297);
     
@@ -713,7 +715,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
 
-    // Quinta Página (com a imagem undo.jpeg)
+    // Quinta Página 
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCOC6.png', 0, 0, 210, 297);
     
@@ -721,12 +723,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(125, 64, "$precoFinalRs");
     $pdf->Text(40, 64, "$potenciaGerador kWp");
+    $pdf->Text(110, 80, "$qtdSafras");
+    $pdf->Text(110, 80, "$valorSafras");
 
-    // Sexta Página (com a imagem undo.jpeg)
+    // Sexta Página 
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCOC7.png', 0, 0, 210, 297);
 
-    // Setima Página (com a imagem undo.jpeg)
+    // Setima Página 
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCOC8.png', 0, 0, 210, 297);
     
