@@ -274,7 +274,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
 
-
     // Criação do PDF
     $pdf = new TCPDF();
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
@@ -521,13 +520,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Título do gráfico
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text($xInicial, $yInicial - 10, 'Gráfico de Payback (25 anos)');
-
     
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-
-
 
     // Sexta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
