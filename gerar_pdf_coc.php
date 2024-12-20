@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $inputValorCompensavel = $_POST['inputValorCompensavel'];
     $valorSafras = $_POST['valorSafras'];
     $qtdSafras = $_POST['qtdSafras'];
-
+    $dataSafras = $_POST['dataSafras'];
     //Tributação
     function calcularTributario($potenciaInversor) {
         if ($potenciaInversor <= 75) {
@@ -723,8 +723,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(125, 64, "$precoFinalRs");
     $pdf->Text(40, 64, "$potenciaGerador kWp");
-    $pdf->Text(110, 80, "$qtdSafras");
-    $pdf->Text(110, 80, "$valorSafras");
+
+    $valorSafrasRs =  'R$ ' . number_format($valorSafras, 2, ',', '.');
+    $pdf->Text(90, 150, "$qtdSafras Safra(s)");
+    $pdf->Text(70, 160, "Pelo valor de: $valorSafrasRs");
+    $pdf->Text(60, 170, "Datado em: $dataSafras");
 
     // Sexta Página 
     $pdf->AddPage();  // Adiciona a primeira página

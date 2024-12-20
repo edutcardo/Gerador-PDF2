@@ -376,8 +376,11 @@
             <label for="qtdSafras">Quantidade de safras:</label>
             <input type="text" id="qtdSafras" name="qtdSafras"/>
 
-            <label for="valorSafras">Valor das Safras:</label>
+            <label for="valorSafras">Valor das safras:</label>
             <input type="text" id="valorSafras" name="valorSafras"/>
+
+            <label for="dataSafras">Datas das safras:</label>
+            <input type="text" id="dataSafras" name="dataSafras"/>
 
             <label for="preco" class="readonly">Preço do Integrador:</label>
             <input type="text" id="preco" name="preco" readonly  class="readonly"/>
@@ -491,6 +494,7 @@
             const inputValorCompensavel = document.getElementById('inputValorCompensavel').value;
             const qtdSafras = document.getElementById('qtdSafras').value;
             const valorSafras = document.getElementById('valorSafras').value;
+            const dataSafras = document.getElementById('dataSafras').value;
             formData.append('padrao', padrao);
             formData.append('desconto', desconto);
             formData.append('valoramais', valoramais);
@@ -506,6 +510,7 @@
             formData.append('inputValorCompensavel', inputValorCompensavel);
             formData.append('qtdSafras', qtdSafras);
             formData.append('valorSafras', valorSafras);
+            formData.append('dataSafras', dataSafras);
 
             fetch('gerar_pdf_coc.php', {
                 method: 'POST',
