@@ -549,45 +549,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->SetFont('helvetica', 'B', 7);
 
-        // Corrigir caracteres especiais do HTML
-        $componentes = html_entity_decode($componentes);
-        $componentes = str_replace(["<\/th>", "<\/td>", "<\/tr>", "<\/table>"], ["</th>", "</td>", "</tr>", "</table>"], $componentes);
+    $componentes = html_entity_decode($componentes);
+    $componentes = str_replace(
+        ["<\/th>", "<\/td>", "<\/tr>", "<\/table>"], 
+        ["</th>", "</td>", "</tr>", "</table>"], 
+        $componentes
+    );
     
-        // Extrair os dados da tabela
-        preg_match_all('/<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>/', $componentes, $matches, PREG_SET_ORDER);
+    // Extrair os dados da tabela
+    preg_match_all('/<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>/', $componentes, $matches, PREG_SET_ORDER);
     
-        // Ajuste na altura da descrição
-        $y = 242.5; // Posição inicial Y
-        $linhaAltura = 4; // Altura de cada linha no PDF
-        $larguraDescricao = 180; // Largura para a Descrição
-        $maxY = 280; // Defina o limite Y da página (aajuste conforme necessário)
+    // Ajuste na altura da descrição
+    $y = 176; // Posição inicial Y
+    $linhaAltura = 8; // Altura de cada linha no PDF
+    $larguraDescricao = 180; // Ajuste para a largura da descrição
+    $larguraQuantidade = 20; // Ajuste para a largura da quantidade
+    $maxY = 280; // Limite Y da página
     
-        // Função para adicionar uma nova página se necessário
-        function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
-            if ($y + $linhaAltura > $maxY) {
-                $pdf->AddPage(); // Adiciona uma nova página
-                return 10; // Reseta a posição Y após a nova página (ajuste conforme necessário)
-            }
-            return $y;
+    // Função para adicionar uma nova página se necessário
+    function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
+        if ($y + $linhaAltura > $maxY) {
+            $pdf->AddPage(); // Adiciona uma nova página
+            return 10; // Reseta a posição Y após a nova página
         }
+        return $y;
+    }
     
-        // Escrever os dados extraídos no PDF
-        if (empty($matches)) {
-            $pdf->Text(15, $y+3, "Nenhum dado encontrado.");
-        } else {
-            foreach ($matches as $match) {
-                $descricao = trim($match[3]); // Descrição do item
+    // Escrever os dados extraídos no PDF
+    if (empty($matches)) {
+        $pdf->Text(10, $y + 3, "Nenhum dado encontrado.");
+    } else {
+        foreach ($matches as $match) {
+            $sku = trim($match[1]);
+            $quantidade = trim($match[2]);
+            $descricao = trim($match[3]);
     
-                // Verificar se há espaço suficiente para escrever na página
-                $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
+            // Verificar se há espaço suficiente para escrever na página
+            $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
     
-                // Adicionar a descrição com quebra automática de linha
-                $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0, 1, 22, $y);
+            // Adicionar quantidade, com ajuste para subir um pouco
+            $pdf->SetXY(16, $y - 0.9); // Ajuste para subir um pouco a posição Y
+            $pdf->Cell($larguraQuantidade, $linhaAltura, $quantidade, 0, 0, 'L'); // Alinhamento à esquerda
     
-                // Atualizar Y para a próxima linha após a descrição
-                $y += $pdf->getY() - $y; // Ajuste a posição Y com base na altura real do texto
-            }
+            // Adicionar a descrição com quebra automática de linha
+            $pdf->SetXY(27, $y); // Ajuste a posição X para alinhar a descrição
+            $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0);
+    
+            // Atualizar Y para a próxima linha somente após o MultiCell
+            $y += max($linhaAltura, $pdf->GetY() - $y);
         }
+    }
 
     // Quarta Página
     $pdf->AddPage();  // Adiciona a quarta página
