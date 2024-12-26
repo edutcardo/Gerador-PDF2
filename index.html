@@ -306,7 +306,6 @@
             <label for="irradiacao" class="readonly">Irradiação:</label>
             <input type="text" id="irradiacao" name="irradiacao" readonly  class="readonly"required/>
 
-
             <label for="uc">Unidade Consumidora<b>*</b>:</label>
             <input type="text" id="uc" name="uc" required/>
 
@@ -600,6 +599,25 @@
 
         // Chama a função de verificação ao carregar a página
         window.onload = verificarFormulario;
+
+        function travarDesconto() {
+            const valoramaisInput = document.getElementById('valoramais');
+            const descontoSelect = document.getElementById('desconto');
+
+            valoramaisInput.addEventListener('input', function() {
+                if (valoramaisInput.value.trim() !== "") {
+                    descontoSelect.disabled = true;
+                } else {
+                    descontoSelect.disabled = false;
+                }
+            });
+        }
+
+        // Chama a função para travar o desconto ao carregar a página
+        window.onload = function() {
+            travarDesconto();
+            verificarFormulario(); // Certifique-se de chamar as outras funções necessárias aqui
+        };
     </script>
 </body>
 </html>

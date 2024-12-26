@@ -667,6 +667,24 @@
             buscarDados();
             buscarValorCompensavel();
         }
+        function travarDesconto() {
+            const valoramaisInput = document.getElementById('valoramais');
+            const descontoSelect = document.getElementById('desconto');
+
+            valoramaisInput.addEventListener('input', function() {
+                if (valoramaisInput.value.trim() !== "") {
+                    descontoSelect.disabled = true;
+                } else {
+                    descontoSelect.disabled = false;
+                }
+            });
+        }
+
+        // Chama a função para travar o desconto ao carregar a página
+        window.onload = function() {
+            travarDesconto();
+            verificarFormulario(); // Certifique-se de chamar as outras funções necessárias aqui
+        };
     </script>
 </body>
 </html>
