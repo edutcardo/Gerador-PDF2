@@ -556,7 +556,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     preg_match_all('/<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>/', $componentes, $matches, PREG_SET_ORDER);
     
     // Ajuste na altura da descrição
-    $y = 176; // Posição inicial Y
+    $y = 66; // Posição inicial Y
     $linhaAltura = 8; // Altura de cada linha no PDF
     $larguraDescricao = 180; // Ajuste para a largura da descrição
     $larguraQuantidade = 20; // Ajuste para a largura da quantidade
