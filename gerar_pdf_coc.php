@@ -560,8 +560,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     preg_match_all('/<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>/', $componentes, $matches, PREG_SET_ORDER);
     
     // Ajuste na altura da descrição
-    $y = 176; // Posição inicial Y
-    $linhaAltura = 8; // Altura de cada linha no PDF
+    $y = 243; // Posição inicial Y
+    $linhaAltura = 2; // Altura de cada linha no PDF
     $larguraDescricao = 180; // Ajuste para a largura da descrição
     $larguraQuantidade = 20; // Ajuste para a largura da quantidade
     $maxY = 280; // Limite Y da página
@@ -577,7 +577,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Escrever os dados extraídos no PDF
     if (empty($matches)) {
-        $pdf->Text(10, $y + 3, "Nenhum dado encontrado.");
+        $pdf->Text(10, $y + 1.5, "Nenhum dado encontrado.");
     } else {
         foreach ($matches as $match) {
             $sku = trim($match[1]);
@@ -588,11 +588,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
     
             // Adicionar quantidade, com ajuste para subir um pouco
-            $pdf->SetXY(16, $y - 0.9); // Ajuste para subir um pouco a posição Y
+            $pdf->SetXY(22, $y); // Ajuste para subir um pouco a posição Y
             $pdf->Cell($larguraQuantidade, $linhaAltura, $quantidade, 0, 0, 'L'); // Alinhamento à esquerda
     
             // Adicionar a descrição com quebra automática de linha
-            $pdf->SetXY(27, $y); // Ajuste a posição X para alinhar a descrição
+            $pdf->SetXY(29, $y); // Ajuste a posição X para alinhar a descrição
             $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0);
     
             // Atualizar Y para a próxima linha somente após o MultiCell
