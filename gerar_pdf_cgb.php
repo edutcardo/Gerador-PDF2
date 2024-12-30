@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    $pdf->Image('esteconomia.png', 0, 0, 210, 297);
 
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
