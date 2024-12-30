@@ -349,34 +349,22 @@
         function gerarPDF() {
             const formData = new FormData(document.getElementById('formulario'));
                 // Adiciona a constante potenciaGerador ao FormData
-            const potenciaGerador = document.getElementById('potenciaGerador').value; // ou use a variável diretamente se já existir
-            const potenciaModulo = document.getElementById('potenciaModulo').value;
-            const precoKit = document.getElementById('preco').value;
-            const numeroDeFases = document.getElementById('numeroDeFases').value;
-            const irradiacao = document.getElementById('irradiacao').value;
-            const marca = document.getElementById('marca').value;
-            const fabricante = document.getElementById('fabricante').value;
-            const potenciaInversor = document.getElementById('potenciaInversor').value;
-            const padrao = document.getElementById('padrao').value;
-            const desconto = document.getElementById('desconto').value;
-            const valoramais = document.getElementById('valoramais').value;
-            const inputConcessionaria = document.getElementById('inputConcessionaria').value;
+            const nome = document.getElementById('nome').value; // ou use a variável diretamente se já existir
+            const endereco = document.getElementById('endereco').value;
+            const cep = document.getElementById('cep').value;
+            const cidade = document.getElementById('cidade').value;
             const inputValorCompensavel = document.getElementById('inputValorCompensavel').value;
-            formData.append('padrao', padrao);
-            formData.append('desconto', desconto);
-            formData.append('valoramais', valoramais);
-            formData.append('marca', marca);
-            formData.append('fabricante', fabricante);
-            formData.append('potenciaInversor', potenciaInversor);
-            formData.append('numeroDeFases', numeroDeFases);
-            formData.append('irradiacao', irradiacao);
-            formData.append('potenciaGerador', potenciaGerador);
-            formData.append('potenciaModulo', potenciaModulo);
-            formData.append('precoKit', precoKit);
-            formData.append('inputConcessionaria', inputConcessionaria);
-            formData.append('inputValorCompensavel', inputValorCompensavel);
+            const inputValorFiob = document.getElementById('inputValorFiob').value;
+            const inputValorTarifaCrua = document.getElementById('inputValorTarifaCrua').value;
+            const uc = document.getElementById('uc').value;
+            const desconto = document.getElementById('desconto').value;
+            const media = document.getElementById('media').value;
+            const iluminacao = document.getElementById('iluminacao').value;
+
+
+            formData.append('nome', nome);
             
-            fetch('gerar_pdf_inv.php', {
+            fetch('gerar_pdf_cgb.php', {
                 method: 'POST',
                 body: formData
             })
