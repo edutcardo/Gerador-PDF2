@@ -15,8 +15,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $iluminacao = $_POST['iluminacao'];
     $desconto = $_POST['desconto'];
 
-    $kwhSemImpostos = $inputValorTarifaCrua - ($inputValorFiob*0.3);
-    $kwhCooperado = $kwhSemImpostos * $media;
+    $kwhSemImpostos = $inputValorTarifaCrua - ($inputValorFiob * 0.3);
+    $kwhComDesconto = $kwhSemImpostos * 0.85;
+    $precoFatura = (($kwhComDesconto* 1.19 * 1.0925) * $media) + $iluminacao;
+    $kwhCopel = $inputValorTarifaCrua * 1.19 * 1.0925;
+    $precoCopel = ($kwhCopel * $media) + $iluminacao;
+    $economia = $precoCopel - $precoFatura;
 
 
     // Criação do PDF
@@ -31,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(72, 72, "$cep $cidade $inputValorCompensavel $inputValorCompensavel $inputValorTarifaCrua");
+    $pdf->Text(72, 72, "$kwhComDesconto $kwhSemImpostos $precoFatura $precoCopel $economia");
     $pdf->Text(81, 76.87, "$uc");
     
     // Salva ou exibe o PDF
