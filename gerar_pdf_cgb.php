@@ -15,10 +15,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $iluminacao = $_POST['iluminacao'];
     $desconto = $_POST['desconto'];
 
+    $kwhSemImpostos = $inputValorTarifaCrua - ($inputValorFiob*0.3);
+    $kwhCooperado = $kwhSemImpostos * $media;
 
-    // Data atual
-    $formatoData = 'd/m/Y';
-    $dataAtual = date($formatoData);
 
     // Criação do PDF
     $pdf = new TCPDF();
@@ -27,17 +26,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('esteconomia.png', 0, 0, 210, 297);
+    $pdf->Image('esteconomia.png', 7, 0, 210, 297);
 
     // Definir fonte e adicionar conteúdo à primeira página
-    $pdf->SetFont('helvetica', 16);
+    $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(21, 94, "Nome: $nome");
-    $pdf->Text(21, 100, "Endereço: $endereco");
-    $pdf->Text(21, 106, "Cidade: $cidade");
-    $pdf->Text(21, 128, "UC $uc");
+    $pdf->Text(72, 72, "$cep $cidade $inputValorCompensavel $inputValorCompensavel $inputValorTarifaCrua");
+    $pdf->Text(81, 76.87, "$uc");
     
-
     // Salva ou exibe o PDF
     $pdf->Output('arquivo_gerado.pdf', 'I');  // 'I' para exibir no navegador
     

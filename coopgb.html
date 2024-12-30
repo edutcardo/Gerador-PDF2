@@ -360,9 +360,17 @@
             const desconto = document.getElementById('desconto').value;
             const media = document.getElementById('media').value;
             const iluminacao = document.getElementById('iluminacao').value;
-
-
             formData.append('nome', nome);
+            formData.append('endereco', endereco);
+            formData.append('cep', cep);
+            formData.append('cidade', cidade);
+            formData.append('inputValorCompensavel', inputValorCompensavel);
+            formData.append('inputValorFiob', inputValorFiob);
+            formData.append('inputValorTarifaCrua', inputValorTarifaCrua);
+            formData.append('desconto', desconto);
+            formData.append('uc', uc);
+            formData.append('media', media);
+            formData.append('iluminacao', iluminacao);
             
             fetch('gerar_pdf_cgb.php', {
                 method: 'POST',
