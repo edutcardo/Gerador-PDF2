@@ -19,12 +19,17 @@ if (isset($_GET['sigla'])) {
     }
 
     // Consulta ao banco de dados
-    $stmt = $pdo->prepare("SELECT compensavel FROM tarifas WHERE Sigla = :sigla");
+    $stmt = $pdo->prepare("SELECT compensavel, fiob, tarifacrua FROM tarifas WHERE Sigla = :sigla");
     $stmt->bindParam(':sigla', $sigla);
     if ($stmt->execute()) {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
-            echo json_encode(['success' => true, 'compensavel' => $result['compensavel']]);
+            echo json_encode([
+                'success' => true,
+                'compensavel' => $result['compensavel'],
+                'fiob' => $result['fiob'],
+                'tarifacrua' => $result['tarifacrua']
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Nenhum resultado encontrado']);
         }

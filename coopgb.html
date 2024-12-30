@@ -316,6 +316,12 @@
             <label for="inputValorCompensavel">Valor Compensável<b>*</b>:</label>
             <input type="text" id="inputValorCompensavel" readonly />
 
+            <label for="inputValorFiob">Valor Fiob<b>*</b>:</label>
+            <input type="text" id="inputValorFiob" readonly />
+
+            <label for="inputValorTarifaCrua">Valor Tarifa Crua<b>*</b>:</label>
+            <input type="text" id="inputValorTarifaCrua" readonly />
+
             <label for="uc">Unidade Consumidora<b>*</b>:</label>
             <input type="text" id="uc" name="uc" required/>
 
@@ -369,7 +375,6 @@
             formData.append('precoKit', precoKit);
             formData.append('inputConcessionaria', inputConcessionaria);
             formData.append('inputValorCompensavel', inputValorCompensavel);
-
             
             fetch('gerar_pdf_inv.php', {
                 method: 'POST',
@@ -510,35 +515,45 @@
             }
         }
         function buscarValorCompensavel() {
-            const concessionaria = document.getElementById('inputConcessionaria').value.trim(); // Use .value para obter o valor
+                const concessionaria = document.getElementById('inputConcessionaria').value.trim();
 
-            console.log("Concessionária:", concessionaria); // Log para depuração
+                console.log("Concessionária:", concessionaria); // Log para depuração
 
-            if (concessionaria !== "") {
-                fetch(`buscar_compensavel.php?sigla=${encodeURIComponent(concessionaria)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            document.getElementById('inputValorCompensavel').value = data.compensavel;
-                        } else {
-                            document.getElementById('inputValorCompensavel').value = 'Erro: ' + data.message;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro ao buscar valor compensável:', error);
-                        document.getElementById('inputValorCompensavel').value = 'Erro de rede';
-                    });
-            } else {
-                document.getElementById('inputValorCompensavel').value = 'Informe uma concessionária';
+                if (concessionaria !== "") {
+                    fetch(`buscar_compensavel.php?sigla=${encodeURIComponent(concessionaria)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data); // Verifique a resposta no console
+                            if (data.success) {
+                                document.getElementById('inputValorCompensavel').value = data.compensavel || 'N/A';
+                                document.getElementById('inputValorFiob').value = data.fiob || 'N/A';
+                                document.getElementById('inputValorTarifaCrua').value = data.tarifacrua || 'N/A';
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erro ao buscar dados:', error);
+                            document.getElementById('inputValorCompensavel').value = 'Erro de rede';
+                            document.getElementById('inputValorFiob').value = 'Erro de rede';
+                            document.getElementById('inputValorTarifaCrua').value = 'Erro de rede';
+                        });
+                } else {
+                    document.getElementById('inputValorCompensavel').value = 'Informe uma concessionária';
+                    document.getElementById('inputValorFiob').value = 'Informe uma concessionária';
+                    document.getElementById('inputValorTarifaCrua').value = 'Informe uma concessionária';
+                }
             }
-        }
 
+            // Garanta que o evento de input dispare a função correta
+            document.getElementById('inputConcessionaria').addEventListener('input', buscarValorCompensavel);
         document.getElementById('inputConcessionaria').addEventListener('input', buscarValorCompensavel);
 
         function atualizarDados() {
             buscarIrradiacao();
             buscarDados();
             buscarValorCompensavel();
+
         }
         function travarDesconto() {
             const valoramaisInput = document.getElementById('valoramais');
@@ -558,6 +573,32 @@
             travarDesconto();
             verificarFormulario(); // Certifique-se de chamar as outras funções necessárias aqui
         };
+
+
+        function buscarDadosCompletos() {
+            const concessionaria = document.getElementById('inputConcessionaria').value.trim();
+
+            if (concessionaria !== "") {
+                fetch(`buscar_compensavel.php?sigla=${encodeURIComponent(concessionaria)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data); // Verifique a resposta no console
+
+                        if (data.success) {
+                            document.getElementById('inputValorCompensavel').value = data.compensavel || 'N/A';
+                            document.getElementById('inputValorFiob').value = data.fiob || 'N/A';
+                            document.getElementById('inputValorTarifaCrua').value = data.tarifacrua || 'N/A';
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar dados:', error);
+                    });
+            } else {
+                alert('Informe uma concessionária');
+            }
+        }
     </script>
 </body>
 </html>
