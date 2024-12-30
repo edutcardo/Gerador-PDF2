@@ -407,6 +407,8 @@
 
         window.onload = preencherFormulario;
 
+        let buscaTimeout;
+
         function buscarCidadePorCEP() {
             const cep = document.getElementById('cep').value;
             if (cep.length === 8) { // Valida se o CEP possui 8 dígitos
@@ -415,6 +417,7 @@
                     .then(data => {
                         if (!data.erro) {
                             document.getElementById('cidade').value = data.localidade;
+                            buscarDados(); // Atualiza dados após obter a cidade
                         } else {
                             alert('CEP não encontrado!');
                             document.getElementById('cidade').value = '';
@@ -492,18 +495,16 @@
 
         function buscarDados() {
             const cidade = document.getElementById('cidade').value.trim();
-
             if (cidade !== "") {
                 fetch(`buscar_dados.php?cidade=${encodeURIComponent(cidade)}`)
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data); // Log de depuração
                         if (data.success) {
-                            const inputConcessionaria = document.getElementById('inputConcessionaria');
-                            inputConcessionaria.value = data.concessionaria;
+                            document.getElementById('inputConcessionaria').value = data.concessionaria;
                             buscarValorCompensavel(); // Chame a função após definir o valor
                         } else {
-                            document.getElementById('inputConcessionaria').value = 'Erro: ' + data.message;
+                            // Remova ou comente a linha abaixo para não mostrar a mensagem toda vez
+                            // document.getElementById('inputConcessionaria').value = 'Erro: ' + data.message;
                         }
                     })
                     .catch(error => {
@@ -514,10 +515,17 @@
                 document.getElementById('inputConcessionaria').value = 'Informe uma cidade';
             }
         }
+
+        // Adicionando debounce em busca de cidade
+        function debounceBuscarDados() {
+            clearTimeout(buscaTimeout);
+            buscaTimeout = setTimeout(buscarDados, 300); // Aguarda 300ms após o usuário parar de digitar
+        }
+
+        document.getElementById('cidade').addEventListener('input', debounceBuscarDados);
         function buscarValorCompensavel() {
                 const concessionaria = document.getElementById('inputConcessionaria').value.trim();
 
-                console.log("Concessionária:", concessionaria); // Log para depuração
 
                 if (concessionaria !== "") {
                     fetch(`buscar_compensavel.php?sigla=${encodeURIComponent(concessionaria)}`)
@@ -574,31 +582,6 @@
             verificarFormulario(); // Certifique-se de chamar as outras funções necessárias aqui
         };
 
-
-        function buscarDadosCompletos() {
-            const concessionaria = document.getElementById('inputConcessionaria').value.trim();
-
-            if (concessionaria !== "") {
-                fetch(`buscar_compensavel.php?sigla=${encodeURIComponent(concessionaria)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data); // Verifique a resposta no console
-
-                        if (data.success) {
-                            document.getElementById('inputValorCompensavel').value = data.compensavel || 'N/A';
-                            document.getElementById('inputValorFiob').value = data.fiob || 'N/A';
-                            document.getElementById('inputValorTarifaCrua').value = data.tarifacrua || 'N/A';
-                        } else {
-                            alert(data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro ao buscar dados:', error);
-                    });
-            } else {
-                alert('Informe uma concessionária');
-            }
-        }
     </script>
 </body>
 </html>
