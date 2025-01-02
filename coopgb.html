@@ -264,6 +264,9 @@
             transform: scale(1.05);
             border: 2px solid #0056b3;
         }
+        .hidden{
+            display: none;
+        }
 
     </style>
 </head>
@@ -314,13 +317,13 @@
             <label for="inputConcessionaria">Concessionária<b>*</b> (caso não retorne o valor esperado, escreva manualmente até que o valor da tarifa apareça):</label>
             <input type="text" id="inputConcessionaria"/>
 
-            <label for="inputValorCompensavel">Valor Compensável<b>*</b>:</label>
-            <input type="text" id="inputValorCompensavel" readonly />
+            <label for="inputValorCompensavel" class="hidden" >Valor Compensável<b>*</b>:</label>
+            <input type="text" id="inputValorCompensavel" class="hidden" readonly />
 
-            <label for="inputValorFiob">Valor Fiob<b>*</b>:</label>
-            <input type="text" id="inputValorFiob" readonly />
+            <label for="inputValorFiob" class="hidden" >Valor Fiob<b>*</b>:</label>
+            <input type="text" id="inputValorFiob" class="hidden" readonly />
 
-            <label for="inputValorTarifaCrua">Valor Tarifa Crua<b>*</b>:</label>
+            <label for="inputValorTarifaCrua" >Valor Tarifa Crua<b>*</b>:</label>
             <input type="text" id="inputValorTarifaCrua" readonly />
 
             <label for="uc">Unidade Consumidora<b>*</b>:</label>
@@ -350,7 +353,7 @@
             <input type="text" id="iluminacao" name="iluminacao" required/>
 
             <button type="button" onclick="gerarPDF()" id="btnGerarPDF" disabled>Gerar PDF</button>
-            <button type="button" onclick="window.open('contrato.html', '_blank')">Gerar contrato</button>
+            <button type="button">Gerar contrato</button>
             
         </form>
     </div>
