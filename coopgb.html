@@ -267,6 +267,48 @@
         .hidden{
             display: none;
         }
+        .modal {
+            display: none; /* Escondido por padrão */
+            position: fixed;
+            z-index: 1000; /* Fica acima de outros conteúdos */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4); /* Preto com opacidade */
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .input{
+            margin-top: 16px;
+        }
+
+
 
     </style>
 </head>
@@ -353,9 +395,31 @@
             <input type="text" id="iluminacao" name="iluminacao" required/>
 
             <button type="button" onclick="gerarPDF()" id="btnGerarPDF" disabled>Gerar PDF</button>
-            <button type="button">Gerar contrato</button>
+            <button type="button" id="btnContrato">Gerar contrato</button>
             
         </form>
+    </div>
+    <div id="modalContrato" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Dados do titular (informe os dados do titular para contrato)</h2>
+            <form id="formContrato">
+                <div>&nbsp;</div>
+                <label for="campo1" class="input1">Nome do titular:</label>
+                <input type="text" id="nomeTitular" name="nomeTitular" required>
+
+                <label for="campo2">CPF ou CNPJ do titular:</label>
+                <input type="text" id="CPFCNPJTitular" name="CPFCNPJTitular" required>
+
+                <label for="campo3">Endereço do Titular:</label>
+                <input type="text" id="enderecoTitular" name="enderecoTitular" required>
+
+                <label for="campo4">Whatsapp (44999999999):</label>
+                <input type="text" id="Whatsapp" name="Whatsapp" required>
+
+                <button type="button" onclick="salvarContrato()">Salvar</button>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -586,6 +650,31 @@
                     descontoSelect.disabled = false;
                 }
             });
+        }
+        // Função para abrir o modal
+        document.getElementById('btnContrato').onclick = function() {
+        document.getElementById('modalContrato').style.display = "block";
+        }
+
+        // Função para fechar o modal
+        document.querySelector('.close').onclick = function() {
+            document.getElementById('modalContrato').style.display = "none";
+        }
+
+        // Fecha o modal se o usuário clicar fora dele
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('modalContrato')) {
+                document.getElementById('modalContrato').style.display = "none";
+            }
+        }
+
+        function salvarContrato() {
+            // Função para processar dados do modal
+            const form = document.getElementById('formContrato');
+            const dados = new FormData(form);
+            // Exemplo de processamento dos dados
+            console.log('Dados do contrato salvos:', Object.fromEntries(dados));
+            document.getElementById('modalContrato').style.display = "none"; // Fecha o modal após salvar
         }
         
 
