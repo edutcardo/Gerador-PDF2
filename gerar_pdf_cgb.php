@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $kwhSemImpostos = $inputValorTarifaCrua - ($inputValorFiob * 0.3);
-    $precoFatura = (((100*0.82) + $iluminacao + (($media - $demandaMinima)* $kwhSemImpostos)) + ($demandaMinima * $kwhCopel))+$iluminacao;
+    $precoFatura = ((($demandaMinima*0.82) + $iluminacao + (($media - $demandaMinima)* $kwhSemImpostos)) + (($demandaMinima * $kwhCopel)+ $iluminacao));
     $kwhCopel = $inputValorTarifaCrua * 1.19 * 1.0925;
     $precoCopel = ($kwhCopel * $media) + $iluminacao;
     $economia = $precoCopel - $precoFatura;
