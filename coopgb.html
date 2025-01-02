@@ -368,6 +368,7 @@
             const desconto = document.getElementById('desconto').value;
             const media = document.getElementById('media').value;
             const iluminacao = document.getElementById('iluminacao').value;
+            const numeroDeFases = document.getElementById('numeroDeFases').value;
             formData.append('nome', nome);
             formData.append('endereco', endereco);
             formData.append('cep', cep);
@@ -379,6 +380,7 @@
             formData.append('uc', uc);
             formData.append('media', media);
             formData.append('iluminacao', iluminacao);
+            formData.append('numeroDeFases', numeroDeFases);
             
             fetch('gerar_pdf_cgb.php', {
                 method: 'POST',
