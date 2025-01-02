@@ -14,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $media = $_POST['media'];
     $iluminacao = $_POST['iluminacao'];
     $desconto = $_POST['desconto'];
+    $numeroDeFases = $_POST['numeroDeFases'];
 
     if ($numeroDeFases == 'mono rural') {
         $demandaMinima = 1;
@@ -26,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $kwhSemImpostos = $inputValorTarifaCrua - ($inputValorFiob * 0.3);
-    $precoFatura = (((($kwhSemImpostos * $media * 0.85)* 1.19 * 1.0925)) + $iluminacao) + ($demandaMinima * 0.04);
+    $precoFatura = (((100*0.82) + $iluminacao + (($media - $demandaMinima)* $kwhSemImpostos)) + ($demandaMinima * $kwhCopel))+$iluminacao;
     $kwhCopel = $inputValorTarifaCrua * 1.19 * 1.0925;
     $precoCopel = ($kwhCopel * $media) + $iluminacao;
     $economia = $precoCopel - $precoFatura;
@@ -44,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(72, 72, "$kwhSemImpostos $precoFatura $precoCopel $economia $demandaMinima");
+    $pdf->Text(72, 72, "$precoFatura $precoCopel $economia $demandaMinima");
     $pdf->Text(81, 76.87, "$uc");
     
     // Salva ou exibe o PDF
