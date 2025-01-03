@@ -687,13 +687,13 @@
         function enviarDadosD4sign() {
             const formData = new FormData(document.getElementById('formulario'));
             const dados = {
-                name_document: "Nome do Documento", // Substitua com o nome desejado
+                name_document: "Nome do Documento",
                 templates: {
                     MTU4MTY2: {
                         nome: formData.get('nome') || "1",
-                        cpf: "12345678901", // Exemplo de dado estático
+                        cpf: "12345678901",
                         logradouro: formData.get('endereco') || "1",
-                        nr: "1", // Dado estático para teste
+                        nr: "1",
                         cep: formData.get('cep') || "1",
                         cidade: formData.get('cidade') + " - UF" || "1 - UF",
                         kwp: "1",
@@ -710,7 +710,7 @@
                         logradourouc: "1",
                         nruc: "1",
                         cepuc: "1",
-                        cidadeuc: "1 - UF",
+                        cidadeuc: "1",
                         telefone: "1",
                         responsável: "1",
                         uc2: "1",
@@ -736,6 +736,8 @@
                 }
             };
 
+            console.log('Enviando dados para D4sign:', JSON.stringify(dados));
+
             fetch('https://secure.d4sign.com.br/api/v1/documents/88b7ed6f-368d-4801-85d1-56f94b75f7cb/makedocumentbytemplateword?tokenAPI=live_52449bbd01229efbbeaaf4ce6ee511df175bef8707b57ff35604039dc7714c48&cryptKey=live_crypt_rwJd9DYWs28IYUI1bPhhWDnVtJg5yeb8', {
                 method: 'POST',
                 headers: {
@@ -743,15 +745,18 @@
                 },
                 body: JSON.stringify(dados)
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Sucesso:', data);
-                alert('Documento gerado com sucesso!');
-            })
-            .catch((error) => {
-                console.error('Erro:', error);
-                alert('Erro ao gerar documento.');
-            });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
+                }
+                return response.json();
+                })
+                .then(data => {
+                console.log('Resposta de sucesso:', data);
+                })
+                .catch(error => {
+                console.error('Erro ao enviar dados:', error.message);
+                });
         }
         
     </script>
