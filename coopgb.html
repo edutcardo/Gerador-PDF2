@@ -425,7 +425,7 @@
                 <label for="Whatsapp">Whatsapp (44999999999):</label>
                 <input type="text" id="Whatsapp" name="Whatsapp" required>
 
-                <button type="button" onclick="salvarContrato()">Salvar</button>
+                <button type="button" onclick="salvarContrato(); enviarDadosD4sign();">Salvar</button>
             </form>
         </div>
     </div>
@@ -684,9 +684,76 @@
             console.log('Dados do contrato salvos:', Object.fromEntries(dados));
             document.getElementById('modalContrato').style.display = "none"; // Fecha o modal após salvar
         }
+        function enviarDadosD4sign() {
+            const formData = new FormData(document.getElementById('formulario'));
+            const dados = {
+                name_document: "Nome do Documento", // Substitua com o nome desejado
+                templates: {
+                    MTU4MTY2: {
+                        nome: formData.get('nome') || "1",
+                        cpf: "12345678901", // Exemplo de dado estático
+                        logradouro: formData.get('endereco') || "1",
+                        nr: "1", // Dado estático para teste
+                        cep: formData.get('cep') || "1",
+                        cidade: formData.get('cidade') + " - UF" || "1 - UF",
+                        kwp: "1",
+                        qtdmodulos: "1",
+                        kwhmes: "1",
+                        _: "1",
+                        uc: formData.get('uc') || "1",
+                        cpf_cnpj: "1",
+                        consumo: "1",
+                        data: new Date().toISOString().slice(0,10), // Data atual
+                        id: "1",
+                        nomeficha: "1",
+                        cpfficha: "1",
+                        logradourouc: "1",
+                        nruc: "1",
+                        cepuc: "1",
+                        cidadeuc: "1 - UF",
+                        telefone: "1",
+                        responsável: "1",
+                        uc2: "1",
+                        logradouro2: "1",
+                        consumo2: "1",
+                        uc3: "1",
+                        logradouro3: "1",
+                        consumo3: "1",
+                        uc4: "1",
+                        logradouro4: "1",
+                        consumo4: "1",
+                        uc5: "1",
+                        logradouro5: "1",
+                        consumo5: "1",
+                        uc6: "1",
+                        logradouro6: "1",
+                        consumo6: "1",
+                        uc7: "1",
+                        logradouro7: "1",
+                        consumo7: "1",
+                        totalconsumo: "1"
+                    }
+                }
+            };
+
+            fetch('https://secure.d4sign.com.br/api/v1/documents/88b7ed6f-368d-4801-85d1-56f94b75f7cb/makedocumentbytemplateword?tokenAPI=live_52449bbd01229efbbeaaf4ce6ee511df175bef8707b57ff35604039dc7714c48&cryptKey=live_crypt_rwJd9DYWs28IYUI1bPhhWDnVtJg5yeb8', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Sucesso:', data);
+                alert('Documento gerado com sucesso!');
+            })
+            .catch((error) => {
+                console.error('Erro:', error);
+                alert('Erro ao gerar documento.');
+            });
+        }
         
-
-
     </script>
 </body>
 </html>
