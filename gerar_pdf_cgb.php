@@ -42,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $economiaRsx12 = 'R$ ' . number_format($economiax12, 2, ',', '.');
     $diferencaAnual = $precoCopelx12 - $precoFaturax12;
     $diferencaAnualRs =  'R$ ' . number_format($diferencaAnual, 2, ',', '.');
+    $mediax12 = $media * 12;
 
     // Criação do PDF
     $pdf = new TCPDF();
@@ -62,6 +63,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(49, 96, "$economiaRs");
     $pdf->Text(124, 96, "$economiaRsx12");
 
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->Text(92, 136.3, "$media kWh");
+    $pdf->Text(156.5, 136.6, "$mediax12 kWh");
+
+    $pdf->SetFont('helvetica', 'B', 15);
     $pdf->Text(68, 128, "$precoCopelRs");
     $pdf->Text(133, 128, "$precoCopelRsx12");
     $pdf->Text(68, 161, "$precoFaturaRs");
