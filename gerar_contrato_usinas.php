@@ -8,8 +8,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cidade = $_POST['cidade'];
     $uc = $_POST['uc'];
 
-
-
     // Criação do PDF
     $pdf = new TCPDF();
     $pdf->setCellPaddings(0, 0, 0, 0); // Remove quaisquer preenchimentos extras
@@ -24,9 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS");
-    $pdf->Text(34.2, 104, "Por este Instrumento,");
-    
+    $pdf->Text(34.2, 5, "CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS");
+    $pdf->Text(34.2, 15, "Por este Instrumento,");
     
     // Texto a ser exibido
     $text = "Por este instrumento, PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, neste ato representada por seu representante legal, doravante denominada DISTRIBUIDORA.";
@@ -61,8 +58,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $y += $lineHeight; // Próxima linha
     }
 
-    $pdf->Text(34.2, 138, "NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA, pessoa jurídica devidamente inscrita no CNPJ ");
-    
+        // Texto a ser exibido
+    $text = "NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA, pessoa jurídica devidamente inscrita no CNPJ sob o n° 32.608.889/0001-80, com sede e foro na Av. Colombo n.º 5088, zona 07, na cidade de Maringá/PR – CEP 87.030-121, neste ato representada por seu representante legal, doravante denominada CONTRATADA.";
+
+
+
+    // Define o layout
+    $cellWidth = 180;
+    $lineHeight = 6;
+    $x = 15;
+    $y = 50;
+
+    // Renderiza o texto
+    foreach (wrapText($pdf, $text, $cellWidth) as $i => $line) {
+        $align = ($i === count(wrapText($pdf, $text, $cellWidth)) - 1) ? 'L' : 'J'; // Última linha à esquerda
+        $pdf->MultiCell($cellWidth, $lineHeight, $line, 0, $align, false, 1, $x, $y);
+        $y += $lineHeight; // Próxima linha
+    }
+
     $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
     $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
     $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador kWp");
