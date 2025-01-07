@@ -16,19 +16,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
 
-    // Primeira Página (com a imagem undo.jpeg)
-    $pdf->AddPage();  // Adiciona a primeira página
-
-    // Definir fonte e adicionar conteúdo à primeira página
-    $pdf->SetFont('helvetica', 16);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 5, "CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS");
-    $pdf->Text(34.2, 15, "Por este Instrumento,");
+    function renderTextWithBold($pdf, $text, $cellWidth, $lineHeight, $x, $y) {
+        // Divide o texto em partes normais e com negrito
+        $fragments = preg_split('/(\*\*.+?\*\*)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
     
-    // Texto a ser exibido
-    $text = "Por este instrumento, PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, neste ato representada por seu representante legal, doravante denominada DISTRIBUIDORA.";
+        foreach ($fragments as $fragment) {
+            if (preg_match('/\*\*(.+?)\*\*/', $fragment, $matches)) {
+                // Aplica fonte em negrito para o texto capturado entre ** **
+                $pdf->SetFont('helvetica', 'B', 12);
+                $fragment = $matches[1];
+            } else {
+                // Aplica fonte normal
+                $pdf->SetFont('helvetica', '', 12);
+            }
+    
+            // Renderiza o fragmento na célula
+            $pdf->MultiCell($cellWidth, $lineHeight, $fragment, 0, 'L', false, 1, $x, $y);
+            $y += $lineHeight; // Incrementa a posição vertical
+        }
+    
+        return $y; // Retorna a nova posição Y
+    }
 
-    // Função para dividir o texto em linhas
+        // Função para dividir o texto em linhas
     function wrapText($pdf, $text, $width) {
         $lines = [];
         $currentLine = '';
@@ -45,42 +55,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         return $lines;
     }
 
-    // Define o layout
-    $cellWidth = 180;
-    $lineHeight = 6;
-    $x = 15;
-    $y = 20;
+    // Primeira Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
 
-    // Renderiza o texto
-    foreach (wrapText($pdf, $text, $cellWidth) as $i => $line) {
-        $align = ($i === count(wrapText($pdf, $text, $cellWidth)) - 1) ? 'L' : 'J'; // Última linha à esquerda
-        $pdf->MultiCell($cellWidth, $lineHeight, $line, 0, $align, false, 1, $x, $y);
-        $y += $lineHeight; // Próxima linha
+    // Definir fonte e adicionar conteúdo à primeira página
+    $pdf->SetFont('helvetica', 16);
+    $pdf->SetTextColor(0, 0, 0);
+
+
+    // Defina os textos dos parágrafos
+    $paragraphs = [
+        "CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS",
+        "Por este instrumento,",
+        "PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade Maringá/PR - CEP 87.030-121, neste ato representada por seu representante legal, doravante denominada DISTRIBUIDORA.",
+        "NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA, pessoa jurídica devidamente inscrita no CNPJ sob o n.º 12.345.678/0001-90, com sede à Rua Exemplo, 123, na cidade de Maringá/PR - CEP 87.000-000, neste ato representada por seu representante legal, doravante denominada CONTRATANTE.",
+        "As partes têm entre si justo e acertado o presente Contrato de Venda e Instalação de Equipamentos Solares Fotovoltaicos, que será regido pelas cláusulas seguintes e pelas condições descritas abaixo."
+    ];
+
+    // Configuração de layout
+    $cellWidth = 180;    // Largura do texto
+    $lineHeight = 6;     // Altura entre linhas
+    $paragraphSpacing = 10; // Espaçamento entre parágrafos
+    $x = 15;             // Margem esquerda
+    $y = 140;            // Margem inicial superior
+
+
+    // Função para renderizar um parágrafo
+    function renderParagraph($pdf, $text, $width, $lineHeight, $x, $y) {
+        // Divide o texto em linhas
+        $lines = wrapText($pdf, $text, $width);
+
+        foreach ($lines as $i => $line) {
+            // Define o alinhamento: última linha à esquerda, demais justificadas
+            $align = ($i === count($lines) - 1) ? 'L' : 'J';
+
+            // Renderiza a linha
+            $pdf->MultiCell($width, $lineHeight, $line, 0, $align, false, 1, $x, $y);
+            $y += $lineHeight; // Próxima linha
+        }
+
+        return $y; // Retorna a nova posição Y
     }
 
-        // Texto a ser exibido
-    $text = "NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA, pessoa jurídica devidamente inscrita no CNPJ sob o n° 32.608.889/0001-80, com sede e foro na Av. Colombo n.º 5088, zona 07, na cidade de Maringá/PR – CEP 87.030-121, neste ato representada por seu representante legal, doravante denominada CONTRATADA.";
-
-
-
-    // Define o layout
-    $cellWidth = 180;
-    $lineHeight = 6;
-    $x = 15;
-    $y = 50;
-
-    // Renderiza o texto
-    foreach (wrapText($pdf, $text, $cellWidth) as $i => $line) {
-        $align = ($i === count(wrapText($pdf, $text, $cellWidth)) - 1) ? 'L' : 'J'; // Última linha à esquerda
-        $pdf->MultiCell($cellWidth, $lineHeight, $line, 0, $align, false, 1, $x, $y);
-        $y += $lineHeight; // Próxima linha
+    // Renderiza os parágrafos
+    foreach ($paragraphs as $paragraph) {
+        $y = renderParagraph($pdf, $paragraph, $cellWidth, $lineHeight, $x, $y);
+        $y += $paragraphSpacing; // Adiciona espaçamento entre parágrafos
     }
 
-    $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
-    $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
-    $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador kWp");
-    $pdf->Text(34.6, 178.75, "Média de Consumo: $media kWh");
-    $pdf->Text(34.6, 185, "Geração Estimada: $geracao kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text(46, 223, "$dataAtual");
@@ -248,6 +270,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à nona página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
+
+    $pdf->Text(15, 5, "CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS");
+    $pdf->Text(15, 15, "Por este Instrumento,");
+    
+    // Texto a ser exibido
+    $text = "Por este instrumento, PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, neste ato representada por seu representante legal, doravante denominada DISTRIBUIDORA.";
+
+    // Define o layout
+    $cellWidth = 180;
+    $lineHeight = 6;
+    $x = 15;
+    $y = 20;
+
+    // Renderiza o texto
+    foreach (wrapText($pdf, $text, $cellWidth) as $i => $line) {
+        $align = ($i === count(wrapText($pdf, $text, $cellWidth)) - 1) ? 'L' : 'J'; // Última linha à esquerda
+        $pdf->MultiCell($cellWidth, $lineHeight, $line, 0, $align, false, 1, $x, $y);
+        $y += $lineHeight; // Próxima linha
+    }
+
+        // Texto a ser exibido
+    $text = "NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA, pessoa jurídica devidamente inscrita no CNPJ sob o n° 32.608.889/0001-80, com sede e foro na Av. Colombo n.º 5088, zona 07, na cidade de Maringá/PR – CEP 87.030-121, neste ato representada por seu representante legal, doravante denominada CONTRATADA.";
+
+
+
+    // Define o layout
+    $cellWidth = 180;
+    $lineHeight = 6;
+    $x = 15;
+    $y = 50;
+
+    // Renderiza o texto
+    foreach (wrapText($pdf, $text, $cellWidth) as $i => $line) {
+        $align = ($i === count(wrapText($pdf, $text, $cellWidth)) - 1) ? 'L' : 'J'; // Última linha à esquerda
+        $pdf->MultiCell($cellWidth, $lineHeight, $line, 0, $align, false, 1, $x, $y);
+        $y += $lineHeight; // Próxima linha
+    }
+    
 
     $pdf->Output('arquivo_gerado.pdf', 'I');  // 'I' para exibir no navegador
     
