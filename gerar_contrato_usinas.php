@@ -13,29 +13,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->setCellPaddings(0, 0, 0, 0); // Remove quaisquer preenchimentos extras
     $pdf->setPrintHeader(false);
     $pdf->setPrintFooter(false);
-    $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
-    $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
+    $pdf->SetMargins(15, 20, 15); // Margens esquerda, superior e direita
+    $pdf->SetAutoPageBreak(TRUE, 20); // Quebra automática com 20 unidades na margem inferior
 
-    function renderTextWithBold($pdf, $text, $cellWidth, $lineHeight, $x, $y) {
-        // Divide o texto em partes normais e com negrito
+    function renderTextWithBold($pdf, $text, $cellWidth) {
+        // Divide o texto em partes para aplicar negrito a trechos marcados com **
         $fragments = preg_split('/(\*\*.+?\*\*)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
     
-        foreach ($fragments as $fragment) {
+        foreach ($fragments as $index => $fragment) {
             if (preg_match('/\*\*(.+?)\*\*/', $fragment, $matches)) {
-                // Aplica fonte em negrito para o texto capturado entre ** **
-                $pdf->SetFont('helvetica', 'B', 12);
+                $pdf->SetFont('helvetica', 'B', 12); // Fonte em negrito
                 $fragment = $matches[1];
             } else {
-                // Aplica fonte normal
-                $pdf->SetFont('helvetica', '', 12);
+                $pdf->SetFont('helvetica', '', 12); // Fonte normal
             }
     
-            // Renderiza o fragmento na célula
-            $pdf->MultiCell($cellWidth, $lineHeight, $fragment, 0, 'L', false, 1, $x, $y);
-            $y += $lineHeight; // Incrementa a posição vertical
-        }
+            // Verifica se é o último fragmento para alinhar à esquerda ou justificado
+            $align = ($index === count($fragments) - 1) ? 'J' : 'J'; // Corrigido para justificar tudo
     
-        return $y; // Retorna a nova posição Y
+            // Renderiza o trecho com gerenciamento automático de quebra de página
+            $pdf->MultiCell(
+                $cellWidth,    // Largura da célula
+                0,             // Altura automática
+                $fragment,     // Texto
+                0,             // Sem borda
+                $align,        // Alinhamento
+                false,         // Não preencher o fundo
+                1              // Move o cursor verticalmente para nova linha
+            );
+        }
+    }
+    // Renderização de todos os parágrafos
+    foreach ($paragraphs as $paragraph) {
+        renderTextWithBold($pdf, $paragraph, $cellWidth);
+        $pdf->Ln(5); // Espaçamento entre parágrafos
     }
 
         // Função para dividir o texto em linhas
@@ -208,28 +219,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $x = 15;             // Margem esquerda
     $y = 25;            // Margem inicial superior
 
-
     // Função para renderizar um parágrafo
     function renderParagraph($pdf, $text, $width, $lineHeight, $x, $y) {
         // Divide o texto em linhas
         $lines = wrapText($pdf, $text, $width);
-
+        
         foreach ($lines as $i => $line) {
-            // Define o alinhamento: última linha à esquerda, demais justificadas
-            $align = ($i === count($lines) - 1) ? 'L' : 'J';
-
+            // Ajuste o alinhamento conforme necessário
+            $align = ($i === count($lines) - 1) ? 'J' : 'J'; // Corrigido para justificar tudo exceto a última linha
+    
             // Renderiza a linha
             $pdf->MultiCell($width, $lineHeight, $line, 0, $align, false, 1, $x, $y);
             $y += $lineHeight; // Próxima linha
         }
-
+        
         return $y; // Retorna a nova posição Y
     }
 
     // Renderiza os parágrafos
+// Renderiza todos os parágrafos
     foreach ($paragraphs as $paragraph) {
-        $y = renderParagraph($pdf, $paragraph, $cellWidth, $lineHeight, $x, $y);
-        $y += $paragraphSpacing; // Adiciona espaçamento entre parágrafos
+        renderTextWithBold($pdf, $paragraph, $cellWidth);
+        $pdf->Ln(5); // Espaçamento entre parágrafos
     }
 
 
@@ -412,9 +423,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $x = 15;
     $y = 20;
 
-    // Renderiza o texto
     foreach (wrapText($pdf, $text, $cellWidth) as $i => $line) {
-        $align = ($i === count(wrapText($pdf, $text, $cellWidth)) - 1) ? 'L' : 'J'; // Última linha à esquerda
+        $align = ($i === count(wrapText($pdf, $text, $cellWidth)) - 1) ? 'J' : 'L'; // Corrigido para justificar
         $pdf->MultiCell($cellWidth, $lineHeight, $line, 0, $align, false, 1, $x, $y);
         $y += $lineHeight; // Próxima linha
     }
