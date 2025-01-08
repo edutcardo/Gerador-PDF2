@@ -336,12 +336,10 @@
         function gerarPDF() {
             const formData = new FormData(document.getElementById('formulario'));
 
-            const padrao = document.getElementById('valoramais').value;
+            const padrao = document.getElementById('telefone').value;
 
-            formData.append('valoramais', padrao);
+            formData.append('telefone', padrao);
 
-
-            
             fetch('gerar_contrato_usinas.php', {
                 method: 'POST',
                 body: formData
