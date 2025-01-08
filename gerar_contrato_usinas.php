@@ -202,6 +202,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $lines = wrapText($pdf, $text, $width);
         
         foreach ($lines as $i => $line) {
+            // Verifique se a próxima linha ultrapassará a página
+            if ($y + $lineHeight > $pdf->getPageHeight() - 20) { // Ajuste conforme a margem inferior
+                $pdf->AddPage();
+                $y = 25; // Reinicie o Y no topo da nova página
+            }
+            
             $align = ($i === count($lines) - 1) ? 'L' : 'J';
             $pdf->MultiCell($width, $lineHeight, $line, 0, $align, false, 1, $x, $y);
             $y += $lineHeight;
@@ -226,7 +232,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $lines[] = trim($currentLine);
         return $lines;
     }
-    // Inicialize as coordenadas de início
+// Inicialize as coordenadas de início
     $y = 25;
     $x = 15;
 
