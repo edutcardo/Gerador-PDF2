@@ -208,28 +208,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (preg_match('/\*\*(.+?)\*\*/', $fragment, $matches)) {
                 $pdf->SetFont('helvetica', 'B', 12);  // Fonte negrito
                 $fragment = $matches[1];
+    
+                // Quebrar manualmente o texto em linhas
+                $words = explode(' ', $fragment);
+                $line = '';
+                
+                foreach ($words as $word) {
+                    $testLine = $line . ' ' . $word;
+                    if ($pdf->GetStringWidth(trim($testLine)) > $width) {
+                        $pdf->MultiCell($width, $lineHeight, trim($line), 0, 'L', false, 1, $x, $y);
+                        $y += $lineHeight;
+                        $line = $word;
+                    } else {
+                        $line = $testLine;
+                    }
+                }
+    
+                // Renderizar qualquer linha restante
+                if (trim($line) !== '') {
+                    $pdf->MultiCell($width, $lineHeight, trim($line), 0, 'L', false, 1, $x, $y);
+                    $y += $lineHeight;
+                }
             } else {
                 $pdf->SetFont('helvetica', '', 12);  // Fonte normal
-            }
-            
-            $lines = wrapText($pdf, $fragment, $width);
-            
-            foreach ($lines as $i => $line) {
-                // Verifique se a próxima linha ultrapassará a página
-                if ($y + $lineHeight > $pdf->getPageHeight() - 20) {
-                    $pdf->AddPage();
-                    $y = 25;
+                $lines = wrapText($pdf, $fragment, $width);
+    
+                foreach ($lines as $i => $line) {
+                    $align = ($i === count($lines) - 1) ? 'L' : 'J';
+                    if ($y + $lineHeight > $pdf->getPageHeight() - 20) {
+                        $pdf->AddPage();
+                        $y = 25;
+                    }
+                    $pdf->MultiCell($width, $lineHeight, $line, 0, $align, false, 1, $x, $y);
+                    $y += $lineHeight;
                 }
-                
-                $align = ($i === count($lines) - 1) ? 'L' : 'J';
-                $pdf->MultiCell($width, $lineHeight, $line, 0, $align, false, 1, $x, $y);
-                $y += $lineHeight;
+            }
+    
+            // Verifique se o próximo fragmento ultrapassará a página
+            if ($y + $lineHeight > $pdf->getPageHeight() - 20) {
+                $pdf->AddPage();
+                $y = 25;
             }
         }
     
         return $y + 10; // Espaçamento entre parágrafos
     }
-
     // Função para dividir o texto em linhas
     function wrapText($pdf, $text, $width) {
         $lines = [];
