@@ -208,15 +208,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <p><strong>Cláusula 14ª – Do caso fortuito e da força maior</strong></p>
     <p>14.1. As obrigações do presente contrato suspender-se-ão sempre que ocorrerem circunstâncias alheias à vontade, controle e ação das partes, causadas por motivo de força maior ou caso fortuito, na forma do Código Civil, desde que sua ocorrência seja alegada e comprovada no prazo de 48 (quarenta e oito) horas.</p>
     <p>14.2. Serão considerados casos fortuitos ou de força maior, para efeito de rescisão contratual unilateral ou não aplicação de multas, os inadimplementos decorrentes das situações a seguir, quando vierem a afetar a realização da entrega do objeto do contrato no local indicado:</p>
-     <ul>
-        <li>a) Greve geral no país;</li>
-        <li>b) Calamidade pública;</li>
-        <li>c) Interrupção dos meios normais de transportes que impeça a locomoção do pessoal;</li>
-        <li>d) Acidentes, sem culpa da CONTRATADA, que impliquem em retardamento da execução da atividade;</li>
-        <li>e) Consequências, devidamente comprovadas, de condições meteorológicas excepcionalmente prejudiciais e não passíveis de previsão;</li>
-        <li>f) Eventuais atrasos decorrentes de dificuldades técnicas que venham a requerer a modificação do(s)Projeto(s) e Especificações, desde que exigidas pela engenharia ou órgão oficiais;</li>
-        <li>g) Outros casos que se enquadrem no art. 393, parágrafo único, do Código Civil Brasileiro.</li>
-    </ul>        
+    <ol type="a">
+        <li> Greve geral no país;</li>
+        <li> Calamidade pública;</li>
+        <li> Interrupção dos meios normais de transportes que impeça a locomoção do pessoal;</li>
+        <li> Acidentes, sem culpa da CONTRATADA, que impliquem em retardamento da execução da atividade;</li>
+        <li> Consequências, devidamente comprovadas, de condições meteorológicas excepcionalmente prejudiciais e não passíveis de previsão;</li>
+        <li> Eventuais atrasos decorrentes de dificuldades técnicas que venham a requerer a modificação do(s)Projeto(s) e Especificações, desde que exigidas pela engenharia ou órgão oficiais;</li>
+        <li> Outros casos que se enquadrem no art. 393, parágrafo único, do Código Civil Brasileiro.</li>
+    </ol>        
     <p><strong>Cláusula 15ª – Da rescisão</strong></p>
     <p>15.1. Constituirá justa causa para a rescisão deste contrato a parte que deixar de cumprir com qualquer cláusula ou condição contratual, após ter sido notificada do fato e não ter sanado integralmente seu inadimplemento no prazo de 30 (trinta) dias a partir da data de recebimento da notificação.</p>
     <p>15.1.1. A rescisão, por dolo ou culpa de uma das partes, lhe acarretará a responsabilidade pelas perdas e danos a que der causa, sem prejuízo das demais sanções contratuais e/ou legais aplicáveis. </p>
@@ -248,21 +248,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <p><strong>'.$nome.'</strong></p>
     <p>(Contratante)</p>
 
-
-
-
-
-
-    <p>________________________________________________________</p>
-    <p>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</p>
-    <p>(Contratada)</p>
-    <p>________________________________________________________</p>
-    <p>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</p>
-    <p>(Contratada)</p>
-    <p>________________________________________________________</p>
-    <p>WILLIAM DE AZEVEDO</p>
-    <p>CPF n.º 009.425.209-20</p>
-    <p>(Contratante)</p>
 ';
 
     $pdf->writeHTMLCell(0, 0, 15, 15, $htmlContent, 0, 1, 0, true, 'J', true);
