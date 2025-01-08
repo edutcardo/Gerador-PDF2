@@ -23,6 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
+
+    
     function renderTextWithBold($pdf, $paragraphs, $cellWidth) {
         $fragments = preg_split('/(\*\*.+?\*\*)/', $paragraphs, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
     
@@ -54,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Defina os textos dos parágrafos
     $paragraphs = [
-        "CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS",
+        "**CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS**",
         "Por este instrumento,",
         "PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade Maringá/PR - CEP 87.030-121, neste ato representada por seu representante legal, doravante denominada DISTRIBUIDORA.",
         "NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA, pessoa jurídica devidamente inscrita no CNPJ sob o n.º 12.345.678/0001-90, com sede à Rua Exemplo, 123, na cidade de Maringá/PR - CEP 87.000-000, neste ato representada por seu representante legal, doravante denominada CONTRATANTE.",
@@ -198,21 +200,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Função para renderizar um parágrafo
     function renderParagraph($pdf, $text, $width, $lineHeight, $x, $y) {
-        $pdf->SetFont('helvetica', '', 12);
-        $lines = wrapText($pdf, $text, $width);
-        
-        foreach ($lines as $i => $line) {
-            // Verifique se a próxima linha ultrapassará a página
-            if ($y + $lineHeight > $pdf->getPageHeight() - 20) { // Ajuste conforme a margem inferior
-                $pdf->AddPage();
-                $y = 25; // Reinicie o Y no topo da nova página
+        // Fragmentar o texto em partes negritadas e não-negritadas
+        $fragments = preg_split('/(\*\*.+?\*\*)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+    
+        foreach ($fragments as $fragment) {
+            // Verificar se o fragmento deve ser negrito
+            if (preg_match('/\*\*(.+?)\*\*/', $fragment, $matches)) {
+                $pdf->SetFont('helvetica', 'B', 12);  // Fonte negrito
+                $fragment = $matches[1];
+            } else {
+                $pdf->SetFont('helvetica', '', 12);  // Fonte normal
             }
             
-            $align = ($i === count($lines) - 1) ? 'L' : 'J';
-            $pdf->MultiCell($width, $lineHeight, $line, 0, $align, false, 1, $x, $y);
-            $y += $lineHeight;
+            $lines = wrapText($pdf, $fragment, $width);
+            
+            foreach ($lines as $i => $line) {
+                // Verifique se a próxima linha ultrapassará a página
+                if ($y + $lineHeight > $pdf->getPageHeight() - 20) {
+                    $pdf->AddPage();
+                    $y = 25;
+                }
+                
+                $align = ($i === count($lines) - 1) ? 'L' : 'J';
+                $pdf->MultiCell($width, $lineHeight, $line, 0, $align, false, 1, $x, $y);
+                $y += $lineHeight;
+            }
         }
-        
+    
         return $y + 10; // Espaçamento entre parágrafos
     }
 
