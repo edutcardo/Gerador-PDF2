@@ -58,8 +58,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $paragraphs = [
         "**CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS**",
         "Por este instrumento,",
-        "PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade Maringá/PR - CEP 87.030-121, neste ato representada por seu representante legal, doravante denominada DISTRIBUIDORA.",
-        "NEO MARINGÁ **ENGENHARIA** ELÉTRICA LTDA, pessoa jurídica devidamente inscrita no CNPJ sob o n.º 12.345.678/0001-90, com sede à Rua Exemplo, 123, na cidade de Maringá/PR - CEP 87.000-000, neste ato representada por seu representante legal, doravante denominada CONTRATANTE.",
+        "PALLADIUM **IMPORTADORA** DE EQUIPAMENTOS LTDA, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade Maringá/PR - CEP 87.030-121, neste ato representada por seu representante legal, doravante denominada DISTRIBUIDORA.",
+        "NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA, pessoa jurídica devidamente inscrita no CNPJ sob o n.º 12.345.678/0001-90, com sede à Rua Exemplo, 123, na cidade de Maringá/PR - CEP 87.000-000, neste ato representada por seu representante legal, doravante denominada CONTRATANTE.",
         "WILLIAM DE AZEVEDO, brasileiro, portador do RG n.º 8397325-0 SESP/PR, inscrito no CPF n.º 009.425.209-20, residente e domiciliado na Rua Pioneiro Alcides de Araújo Vargas, n.º 219, Vila Esperança, na cidade de Maringá/PR - CEP: 87.020-620, correio eletrônico: willazevedo@gmail.com, contato: (44) 9-9951-4331, doravante denominada CONTRATANTE.",
         "Considerando que:",
         "1. A Palladium (Distribuidora) é responsável pelo fornecimento de equipamentos e materiais necessários para a instalação dos equipamentos solares fotovoltaicos.",
@@ -212,18 +212,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $pdf->SetFont('helvetica', '', 12);  // Fonte normal
             }
             
-            // Quebrar o texto em linhas
             $lines = wrapText($pdf, $fragment, $width);
             
-            foreach ($lines as $line) {
+            foreach ($lines as $i => $line) {
                 // Verifique se a próxima linha ultrapassará a página
                 if ($y + $lineHeight > $pdf->getPageHeight() - 20) {
                     $pdf->AddPage();
                     $y = 25;
                 }
                 
-                // Alinhar todas as linhas à esquerda para evitar espaçamento excessivo
-                $pdf->MultiCell($width, $lineHeight, $line, 0, 'L', false, 1, $x, $y);
+                $align = ($i === count($lines) - 1) ? 'L' : 'J';
+                $pdf->MultiCell($width, $lineHeight, $line, 0, $align, false, 1, $x, $y);
                 $y += $lineHeight;
             }
         }
