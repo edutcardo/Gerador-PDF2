@@ -172,28 +172,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <li>d)	Empregar na execução dos serviços apenas profissionais capacitados e qualificados para essas funções;</li>
         <li>e)	Apresentar ao CONTRATANTE, quando for o caso, a relação nominal dos profissionais que adentrarão em suas instalações;</li>
         <li>f)	Obedecer às normas técnicas, de saúde, de higiene e de segurança do trabalho, de acordo com as normas do Ministério do Trabalho e Emprego (MTE);</li>
-        <li>g) Outros casos que se enquadrem no art. 393, parágrafo único, do Código Civil Brasileiro.</li>
+        <li>g)	Assumir a responsabilidade pelos atos e/ou omissões praticados por si e por seus subordinados, bem como pelos danos que venham a causar para a CONTRATANTE, desde que comprovados, em decorrência da prestação dos serviços prestados;</li>
+        <li>h)  Arcar devidamente, nos termos da legislação trabalhista, com a remuneração e demais verbas laborais devidas a seus subordinados, inclusive, encargos fiscais e previdenciários referentes às relações de trabalho;</li>
+        <li>i)	Arcar com todas as despesas de natureza tributária decorrentes dos serviços especificados neste contrato;</li>
+        <li>j)	Relatar à CONTRATANTE toda e qualquer irregularidade verificada no decorrer da prestação dos serviços;</li>
+        <li>k)	Guardar sigilo sobre todas as informações obtidas em decorrência do cumprimento do contrato;</li>
+        <li>l)	 Providenciar junto ao CREA as Anotações de Responsabilidade Técnica (ART), referentes ao objeto do contrato e especialidades, nos termos das normas pertinentes.</li>
     </ul>
-    <p><strong>Cláusula 14ª – Da rescisão</strong></p>
-    <p>14.1. Constituirá justa causa para a rescisão deste contrato a parte que deixar de cumprir com qualquer cláusula ou condição contratual, após ter sido notificada do fato e não ter sanado integralmente seu inadimplemento no prazo de 30 (trinta) dias, a contar da data de recebimento da notificação.</p>
-    <p>14.1.1. A rescisão, por dolo ou culpa de uma das partes, lhe acarretará a responsabilidade pelas perdas e danos a que der causa, sem prejuízo das demais sanções contratuais e/ou legais aplicáveis.</p>
-    <p>14.2. Após a ocorrência de 30 (trinta) dias de atraso de pagamento pelo CONTRATANTE e não saneamento de seu inadimplemento no prazo de 05 (cinco) dias após o recebimento da notificação, a CONTRATADA poderá rescindir este contrato, sem prejuízo das perdas e danos, com o cancelamento do Projeto junto a Concessionária local e, se for o caso, com o bloqueio do Sistema de Compensação de Energia Elétrica (SCEE).</p>
-    <p><strong>Cláusula 15ª – Das penalidades</strong></p>
-    <p>15.1. A violação das cláusulas deste Instrumento enseja a aplicação de multa correspondente a 20% (vinte por cento) sobre o valor do contrato, a ser corrigido no momento de sua aplicação, conforme variação do IGP-M (Fundação Getúlio Vargas) no período, sem prejuízo de demais cominações legais cabíveis.</p>
-    <p>15.2. Além das multas contratuais, será devida indenização suplementar pelas perdas, danos, lucros cessantes, danos indiretos e quaisquer outros prejuízos patrimoniais ou morais percebidos pela parte contrária.</p>
-    <p>15.3. A mera tolerância de uma das partes em relação ao descumprimento das cláusulas contidas neste instrumento não importa em renúncia, perdão, novação ou alteração da norma infringida.</p>
-    <p><strong>Cláusula 16ª – Das disposições gerais</strong></p>
-    <p>16.1. O CONTRATANTE declara ter recebido esclarecimentos sobre os equipamentos solares fotovoltaicos e não possui dúvidas quanto à sua finalidade e modo de funcionamento.</p>
-    <p>16.2. Este Contrato reflete o único e integral acordo entre as partes, substituindo todos os outros eventuais documentos, cartas, memorandos, contratos, compromissos, promessas e/ou propostas entre as Partes, sejam orais ou escritos, firmados e/ou acordados antes da data do presente Instrumento.</p>
-    <p>16.3. As modificações de quaisquer cláusulas deste instrumento deverão ser realizadas por meio de Aditivo Contratual, desde que feita por escrito e assinada por ambas as partes.</p>
-    <p>16.4. Todos os avisos, notificações e comunicações enviados no âmbito deste contrato deverão ser feitos por escrito, preferencialmente via e-mail, com aviso de recebimento, para o endereço eletrônico das pessoas indicada pelas partes.</p>
-    <p>16.5. Em caso de nulidade, total ou parcial, de uma disposição do contrato, as restantes disposições não serão afetadas pela disposição nula, valendo as demais cláusulas que não foram afetadas.</p>
-    <p>16.6. Declaram as partes, outrossim, terem plena ciência do teor do presente Contrato e que o mesmo tem validade de título executivo extrajudicial, nos termos do artigo 784 do Código de Processo Civil.</p>
-    <p>16.7. As partes reconhecem por meio do presente Instrumento, a validade da assinatura eletrônica, nos termos do art. 10, § 2º, da Medida Provisória n.º 2.200-2/2001 e Lei Geral de Proteção de Dados, bem como de que a referida assinatura eletrônica não implicará em qualquer alteração, desqualificação ou desnaturação de quaisquer deveres ou obrigações aqui previstas, os quais as partes continuam obrigadas a cumprir.</p>
-    <p><strong>Cláusula 17ª – Do foro</strong></p>
-    <p>17.1. Para a resolução de eventuais litígios que se refiram a direitos ou a obrigações decorrentes deste contrato, fica eleito o foro da comarca da cidade de Maringá/PR em que será assinado este instrumento.</p>
-    <p>Por estarem de justo acordo, as partes assinam o presente contrato, em 02 (duas) vias de idêntico teor e forma.</p>
-    <p>Maringá, 23 de dezembro de 2024.</p>
+    <p><strong>Cláusula 11ª – Das obrigações do Contratante</strong></p>
+    <p>11.1. Sem prejuízo de outras disposições deste contrato, constituem obrigações do CONTRATANTE:</p>
+     <ul>
+        <li>a)	É imperativo adquirir um serviço de internet que satisfaça os critérios mínimos de velocidade e estabilidade necessários para o monitoramento eficaz do gerador fotovoltaico. A falta de conexão com a internet inviabiliza o monitoramento da energia, comprometendo a eficácia da gestão energética. Sem acesso à internet, não há possibilidade de monitoramento;</li>
+        <li>b)	Manter e acompanhar o monitoramento do gerador fotovoltaico (por aplicativo ou site) para conferir a performance energética. Qualquer inconsistência, acionar o canal de suporte da CONTRATADA.</li>
+        <li>c)	Notificar imediatamente a CONTRATADA em caso de suspeitas ou problemas relacionados a geração de energia solar fotovoltaica;</li>
+        <li>d) Realizar a manutenção preventiva e limpezas periódicas dos equipamentos fotovoltaicos instalados (recomenda-se realizar de três a quatro limpezas dos painéis por ano). A falta dessas manutenções pode resultar em perda de desempenho do sistema e, consequentemente, na redução da produção de energia;</li>
+        <li>e) Avaliar a necessidade de contratação de empresa de seguro contra furtos e/ou roubos;</li>
+        <li>f) Efetuar o pagamento na data e nos termos definidos neste contrato;</li>
+        <li>g) Fornecer todos os dados e informações pertinentes ao desenvolvimento dos trabalhos, objeto deste Contrato;</li>
+        <li>h) Facilitar o acesso dos trabalhadores da CONTRATADA ao local da obra, caso seja necessário;</li>
+        <li>i) Garantir a segurança dos trabalhadores da CONTRATADA, mantendo animais de estimação presos em local adequado durante a instalação dos equipamentos solares fotovoltaicos;</li>
+        <li>j) Afastar outras condições que estejam sob seu controle e que possam trazer riscos à segurança e saúde dos trabalhadores envolvidos na execução dos serviços;</li>
+        <li>k) Retirar do local de instalação quaisquer objetos de decoração ou aparelhos sensíveis que possam sofrer dano caso;</li>
+        <li>l) Notificar a CONTRATADA, por escrito, da ocorrência de eventuais imperfeições, falhas ou irregularidades constatadas no curso da execução dos serviços;</li>
+        <li>m) Realizar a segurança e preservação do sistema solar fotovoltaico, após a instalação;</li>
+        <li>n) Realizar a manutenção preventiva do sistema fotovoltaico e da estrutura de sustentação, seguindo as normas de engenharia durante toda a vida útil do sistema de geração, após a conclusão da instalação.</li>
+    </ul>
+    <p><strong>Cláusula 12ª – Da proteção de dados pessoais</strong></p>
+    <p>12.1. Em observação às determinações constantes da Lei n.º 13.709/18 – Lei Geral de Proteção de Dados (LGPD) -, o CONTRATANTE e a CONTRATADA se comprometem a proteger os direitos fundamentais de liberdade e de privacidade e o livre desenvolvimento da personalidade da pessoa natural, relativos ao tratamento de dados pessoais, inclusive nos meios digitais..</p>
+    <p>12.2. A coleta e o tratamento de dados pessoais pelas partes ocorrerão quando estritamente necessário para a prestação dos serviços objeto deste contrato ou nas demais hipóteses, previstas nos arts. 7º e/ou 11 da Lei n.º 13.709/2018 e, em hipótese alguma, poderão ser compartilhados ou utilizados para outros fins.</p>
+    <p>12.3. A CONTRATADA se compromete a responder todos os questionamentos feitos pela CONTRATANTE que envolvam dados pessoais repassados e a LGPD, no prazo de 5 (cinco) dias úteis, sem prejuízos dos demais deveres ajustados neste instrumento.</p>
+    <p>12.4. A CONTRATADA deverá comunicar imediatamente a CONTRATANTE a ocorrência de qualquer incidente que implique violação ou risco de violação de dados pessoais, devendo adotar todas as medidas cabíveis, inclusive, técnicas para minimizar ou cessar o incidente com a maior brevidade possível. </p>
+    <p>12.5. Encerrada a vigência do contrato ou não havendo mais necessidade de utilização dos dados pessoais, a CONTRATADA interromperá o tratamento dos dados pessoais disponibilizados pela CONTRATANTE e, em no máximo 30 (trinta) dias, eliminará todos os dados e cópias porventura existentes (formato digital ou físico), salvo quando a CONTRATADA tenha que manter os dados para cumprimento de obrigação legal ou outra hipótese da LGPD.</p>
+    <p><strong>Cláusula 13ª – Normas da contratada</strong></p>
+    <p>13.1. A CONTRATADA observará todas as exigências legais federais, estaduais e municipais relativas à segurança, higiene e medicina do trabalho; ao meio ambiente e aos requisitos sociais, está nos seguintes requisitos: trabalho infantil, trabalho forçado, saúde e segurança, liberdade de associação e direito à negociação coletiva, discriminação, práticas disciplinares, horários de trabalho e remuneração.</p>
+    <p><strong>Cláusula 14ª – Do caso fortuito e da força maior</strong></p>
+    <p>14.1. As obrigações do presente contrato suspender-se-ão sempre que ocorrerem circunstâncias alheias à vontade, controle e ação das partes, causadas por motivo de força maior ou caso fortuito, na forma do Código Civil, desde que sua ocorrência seja alegada e comprovada no prazo de 48 (quarenta e oito) horas.</p>
+    <p>14.2. Serão considerados casos fortuitos ou de força maior, para efeito de rescisão contratual unilateral ou não aplicação de multas, os inadimplementos decorrentes das situações a seguir, quando vierem a afetar a realização da entrega do objeto do contrato no local indicado:</p>
+     <ul>
+        <li>a) Greve geral no país;</li>
+        <li>b) Calamidade pública;</li>
+        <li>c) Interrupção dos meios normais de transportes que impeça a locomoção do pessoal;</li>
+        <li>d) Acidentes, sem culpa da CONTRATADA, que impliquem em retardamento da execução da atividade;</li>
+        <li>e) Consequências, devidamente comprovadas, de condições meteorológicas excepcionalmente prejudiciais e não passíveis de previsão;</li>
+        <li>f) Eventuais atrasos decorrentes de dificuldades técnicas que venham a requerer a modificação do(s)Projeto(s) e Especificações, desde que exigidas pela engenharia ou órgão oficiais;</li>
+        <li>g) Outros casos que se enquadrem no art. 393, parágrafo único, do Código Civil Brasileiro.</li>
+    </ul>        
+    <p><strong>Cláusula 15ª – Da rescisão</strong></p>
+    <p>15.1. Constituirá justa causa para a rescisão deste contrato a parte que deixar de cumprir com qualquer cláusula ou condição contratual, após ter sido notificada do fato e não ter sanado integralmente seu inadimplemento no prazo de 30 (trinta) dias a partir da data de recebimento da notificação.</p>
+    <p>15.1.1. A rescisão, por dolo ou culpa de uma das partes, lhe acarretará a responsabilidade pelas perdas e danos a que der causa, sem prejuízo das demais sanções contratuais e/ou legais aplicáveis. </p>
+    <p>15.2. Após a ocorrência de 30 (trinta) dias de atraso de pagamento pelo CONTRATANTE e não saneamento de seu inadimplemento no prazo de 05 (cinco) dias após o recebimento da notificação, a CONTRATADA poderá rescindir este contrato, sem prejuízo das perdas e danos, com o cancelamento do Projeto junto a Concessionária local e, se for o caso, com o bloqueio do Sistema de Compensação de Energia Elétrica (SCEE).</p>
+    <p><strong>Cláusula 16ª – Das penalidades</strong></p>
+    <p>16.1. A violação das cláusulas deste Instrumento enseja a aplicação de multa correspondente a 20% (vinte por cento) sobre o valor do contrato, a ser corrigido no momento de sua aplicação, conforme variação do IGP-M (Fundação Getúlio Vargas) no período, sem prejuízo de demais cominações legais cabíveis.</p>
+    <p>16.2. Além das multas contratuais, será devida indenização suplementar pelas perdas, danos, lucros cessantes, danos indiretos e quaisquer outros prejuízos patrimoniais ou morais percebidos pela parte contrária.</p>
+    <p>16.3. A mera tolerância de uma das partes em relação ao descumprimento das cláusulas contidas neste instrumento não importa em renúncia, perdão, novação ou alteração da norma infringida.</p>
+    <p><strong>Cláusula 17ª – Das disposições gerais</strong></p>
+    <p>17.1. O CONTRATANTE declara ter recebido esclarecimentos sobre os equipamentos solares fotovoltaicos e não possui dúvidas quanto à sua finalidade e modo de funcionamento.</p>
+    <p>17.2. Este Contrato reflete o único e integral acordo entre as partes, substituindo todos os outros eventuais documentos, cartas, memorandos, contratos, compromissos, promessas e/ou propostas entre as Partes, sejam orais ou escritos, firmados e/ou acordados antes da data do presente Instrumento.</p>
+    <p>16.1. A violação das cláusulas deste Instrumento enseja a aplicação de multa correspondente a 20% (vinte por cento) sobre o valor do contrato, a ser corrigido no momento de sua aplicação, conforme variação do IGP-M (Fundação Getúlio Vargas) no período, sem prejuízo de demais cominações legais cabíveis.</p>
+    <p>16.1. A violação das cláusulas deste Instrumento enseja a aplicação de multa correspondente a 20% (vinte por cento) sobre o valor do contrato, a ser corrigido no momento de sua aplicação, conforme variação do IGP-M (Fundação Getúlio Vargas) no período, sem prejuízo de demais cominações legais cabíveis.</p>
+
+
+
+
+
     <p>________________________________________________________</p>
     <p>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</p>
     <p>(Contratada)</p>
