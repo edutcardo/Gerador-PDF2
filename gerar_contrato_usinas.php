@@ -53,6 +53,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Conteúdo HTML
     $htmlContent = '
+    <table border="1" cellpadding="5" cellspacing="0" width="100%">
+        <tr>
+            <th width="20%"><b>QUANTIDADE</b></th>
+            <th width="80%"><b>ITEM</b></th>
+        </tr>
+        <tr>
+            <td>Incluso</td>
+            <td>MATERIAL ELÉTRICO;</td>
+        </tr>
+        <tr>
+            <td>Incluso</td>
+            <td>PROJETO SOLAR FOTOVOLTAICO;</td>
+        </tr>
+        <tr>
+            <td>Incluso</td>
+            <td>ART DE PROJETO E EXECUÇÃO;</td>
+        </tr>
+        <tr>
+            <td>Incluso</td>
+            <td>ACOMPANHAMENTO JUNTO A CONCESSIONÁRIA LOCAL;</td>
+        </tr>
+        <tr>
+            <td>17</td>
+            <td>MÓDULOS SOLARES SINE TOPCON 585W;</td>
+        </tr>
+        <tr>
+            <td>50</td>
+            <td>CABOS SOLARES PV 1.8KVCC 6MM VERMELHO NBR 16612;</td>
+        </tr>
+        <tr>
+            <td>50</td>
+            <td>CABOS SOLARES PV 1.8KVCC 6MM PRETO NBR 16612;</td>
+        </tr>
+        <tr>
+            <td>06</td>
+            <td>CONECTORES MC4 MACHO/FÊMEA 1000V TI-LANE;</td>
+        </tr>
+        <tr>
+            <td>01</td>
+            <td>INVERSOR 220V SAJ MONOFÁSICO 6KW;</td>
+        </tr>
+        <tr>
+            <td>05</td>
+            <td>ESTRUTURAS P/ 4 MOD. SOLAR COLONIAL;</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>PERFIS TUBULARES DE ALUMÍNIO 4,80M;</td>
+        </tr>
+    </table>
     <p><strong>' .$nome. 'CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS</strong></p>
     <p>Por este instrumento,</p>
     <p>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade Maringá/PR - CEP 87.030-121, neste ato representada por seu representante legal, doravante denominada DISTRIBUIDORA.</p>
