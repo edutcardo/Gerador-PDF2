@@ -16,55 +16,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetMargins(15, 20, 15); // Margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(TRUE, 20); // Quebra automática com 20 unidades na margem inferior
 
-    function renderTextWithBold($pdf, $text, $cellWidth) {
-        // Divide o texto em partes para aplicar negrito a trechos marcados com **
-        $fragments = preg_split('/(\*\*.+?\*\*)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-    
-        foreach ($fragments as $index => $fragment) {
-            if (preg_match('/\*\*(.+?)\*\*/', $fragment, $matches)) {
-                $pdf->SetFont('helvetica', 'B', 12); // Fonte em negrito
-                $fragment = $matches[1];
-            } else {
-                $pdf->SetFont('helvetica', '', 12); // Fonte normal
-            }
-    
-            // Verifica se é o último fragmento para alinhar à esquerda ou justificado
-            $align = ($index === count($fragments) - 1) ? 'J' : 'J'; // Corrigido para justificar tudo
-    
-            // Renderiza o trecho com gerenciamento automático de quebra de página
-            $pdf->MultiCell(
-                $cellWidth,    // Largura da célula
-                0,             // Altura automática
-                $fragment,     // Texto
-                0,             // Sem borda
-                $align,        // Alinhamento
-                false,         // Não preencher o fundo
-                1              // Move o cursor verticalmente para nova linha
-            );
-        }
-    }
-    // Renderização de todos os parágrafos
-    foreach ($paragraphs as $paragraph) {
-        renderTextWithBold($pdf, $paragraph, $cellWidth);
-        $pdf->Ln(5); // Espaçamento entre parágrafos
-    }
-
-        // Função para dividir o texto em linhas
-    function wrapText($pdf, $text, $width) {
-        $lines = [];
-        $currentLine = '';
-        foreach (explode(' ', $text) as $word) {
-            $testLine = $currentLine . ' ' . $word;
-            if ($pdf->GetStringWidth(trim($testLine)) > $width) {
-                $lines[] = trim($currentLine);
-                $currentLine = $word;
-            } else {
-                $currentLine = $testLine;
-            }
-        }
-        $lines[] = trim($currentLine); // Adiciona a última linha
-        return $lines;
-    }
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
@@ -72,6 +23,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
+    function renderTextWithBold($pdf, $paragraphs, $cellWidth) {
+        $fragments = preg_split('/(\*\*.+?\*\*)/', $paragraphs, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+    
+        foreach ($fragments as $index => $fragment) {
+            if (preg_match('/\*\*(.+?)\*\*/', $fragment, $matches)) {
+                $pdf->SetFont('helvetica', 'B', 12);
+                $fragment = $matches[1];
+            } else {
+                $pdf->SetFont('helvetica', '', 12);
+            }
+    
+            // Alinhamento: última linha à esquerda
+            $align = ($index === count($fragments) - 1) ? 'L' : 'J';
+    
+            $pdf->MultiCell(
+                $cellWidth,
+                0,
+                $fragment,
+                0,
+                $align,
+                false,
+                1
+            );
+        }
+    }
+
+
 
 
     // Defina os textos dos parágrafos
@@ -212,37 +190,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     ];
 
-    // Configuração de layout
-    $cellWidth = 180;    // Largura do texto
-    $lineHeight = 6;     // Altura entre linhas
-    $paragraphSpacing = 10; // Espaçamento entre parágrafos
-    $x = 15;             // Margem esquerda
-    $y = 25;            // Margem inicial superior
+
+    $cellWidth = 180;
+    $lineHeight = 6;
+    $x = 15;
+    $y = 25;
 
     // Função para renderizar um parágrafo
     function renderParagraph($pdf, $text, $width, $lineHeight, $x, $y) {
-        // Divide o texto em linhas
+        $pdf->SetFont('helvetica', '', 12);
         $lines = wrapText($pdf, $text, $width);
         
         foreach ($lines as $i => $line) {
-            // Ajuste o alinhamento conforme necessário
-            $align = ($i === count($lines) - 1) ? 'J' : 'J'; // Corrigido para justificar tudo exceto a última linha
-    
-            // Renderiza a linha
+            $align = ($i === count($lines) - 1) ? 'L' : 'J';
             $pdf->MultiCell($width, $lineHeight, $line, 0, $align, false, 1, $x, $y);
-            $y += $lineHeight; // Próxima linha
+            $y += $lineHeight;
         }
         
-        return $y; // Retorna a nova posição Y
+        return $y + 10; // Espaçamento entre parágrafos
     }
 
-    // Renderiza os parágrafos
-// Renderiza todos os parágrafos
+    // Função para dividir o texto em linhas
+    function wrapText($pdf, $text, $width) {
+        $lines = [];
+        $currentLine = '';
+        foreach (explode(' ', $text) as $word) {
+            $testLine = $currentLine . ' ' . $word;
+            if ($pdf->GetStringWidth(trim($testLine)) > $width) {
+                $lines[] = trim($currentLine);
+                $currentLine = $word;
+            } else {
+                $currentLine = $testLine;
+            }
+        }
+        $lines[] = trim($currentLine);
+        return $lines;
+    }
+    // Inicialize as coordenadas de início
+    $y = 25;
+    $x = 15;
+
+    // Renderiza cada parágrafo
     foreach ($paragraphs as $paragraph) {
-        renderTextWithBold($pdf, $paragraph, $cellWidth);
-        $pdf->Ln(5); // Espaçamento entre parágrafos
-    }
+        $y = renderParagraph($pdf, $paragraph, $cellWidth, $lineHeight, $x, $y);
 
+        // Verifique se a próxima posição Y está além do limite da página
+        if ($y + $lineHeight > $pdf->getPageHeight() - 20) { // Ajuste 20 para considerar a margem inferior
+            $pdf->AddPage();
+            $y = 25; // Reinicia Y para a margem superior na nova página
+        }
+    }
 
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text(46, 223, "$dataAtual");
