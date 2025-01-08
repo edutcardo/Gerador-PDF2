@@ -228,8 +228,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <p><strong>Cláusula 17ª – Das disposições gerais</strong></p>
     <p>17.1. O CONTRATANTE declara ter recebido esclarecimentos sobre os equipamentos solares fotovoltaicos e não possui dúvidas quanto à sua finalidade e modo de funcionamento.</p>
     <p>17.2. Este Contrato reflete o único e integral acordo entre as partes, substituindo todos os outros eventuais documentos, cartas, memorandos, contratos, compromissos, promessas e/ou propostas entre as Partes, sejam orais ou escritos, firmados e/ou acordados antes da data do presente Instrumento.</p>
-    <p>16.1. A violação das cláusulas deste Instrumento enseja a aplicação de multa correspondente a 20% (vinte por cento) sobre o valor do contrato, a ser corrigido no momento de sua aplicação, conforme variação do IGP-M (Fundação Getúlio Vargas) no período, sem prejuízo de demais cominações legais cabíveis.</p>
-    <p>16.1. A violação das cláusulas deste Instrumento enseja a aplicação de multa correspondente a 20% (vinte por cento) sobre o valor do contrato, a ser corrigido no momento de sua aplicação, conforme variação do IGP-M (Fundação Getúlio Vargas) no período, sem prejuízo de demais cominações legais cabíveis.</p>
+    <p>17.3. As modificações de quaisquer cláusulas deste instrumento deverão ser realizadas por meio de Aditivo Contratual, desde que feita por escrito e assinada por ambas as partes.</p>
+    <p>17.4. Todos os avisos, notificações e comunicações enviados no âmbito deste contrato deverão ser feitos por escrito, preferencialmente via e-mail, com aviso de recebimento, para o endereço eletrônico das pessoas indicada pelas partes.</p>
+    <p>17.5. Em caso de nulidade, total ou parcial, de uma disposição do contrato, as restantes disposições não serão afetadas pela disposição nula, valendo as demais clausulas que não foram afetadas. </p>
+    <p>17.6. Declaram as partes, outrossim, terem plena ciência do teor do presente Contrato e que o mesmo tem validade de título executivo extrajudicial, nos termos do artigo 784 do Código de Processo Civil.</p>
+    <p>17.7. As partes reconhecem por meio do presente Instrumento, a validade da assinatura eletrônica, nos termos do artigo 10, § 2º, da Medida Provisória n.º 2.200-2/2001 e Lei Geral de Proteção de Dados, bem como de que a referida assinatura eletrônica não implicará em qualquer alteração, desqualificação ou desnaturação de quaisquer deveres ou obrigações aqui previstas, os quais as partes continuam obrigadas a cumprir.</p>
+    <p>17.8. Considera-se data da assinatura do contrato, para todos os efeitos, a data da aposição da última assinatura digital no presente instrumento.</p>
+    <p><strong>Cláusula 18ª – Do foro</strong></p>
+    <p>18.1. Considera-se data da assinatura do contrato, para todos os efeitos, a data da aposição da última assinatura digital no presente instrumento.</p>
+    <p>E, para firmeza e como prova de assim haverem entre si, ajustado e contratado, assinam o presente, em 02 (duas) vias de igual teor e forma, para que produza os seus legais e jurídicos efeitos.</p>
+    <p>Maringá, 25 de novembro de 2024.</p>
+    <p>________________________________________________________</p>
+    <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong></p>
+    <p>(Distribuidora)</p>
+    <p>________________________________________________________</p>
+    <p><strong>CANAL VERDE - GESTÃO DE EMPREENDIMENTOS LTDA</strong></p>
+    <p>(Contratada)</p>
+    <p>________________________________________________________</p>
+    <p><strong>'.$nome.'</strong></p>
+    <p>(Contratante)</p>
+
 
 
 
