@@ -1,73 +1,74 @@
 <?php
 require_once('vendor/autoload.php'); // Ou o caminho correto, se você não estiver usando o Composer
-class CustomPDF extends TCPDF {
-private $backgroundImage;
+class CustomPDF extends TCPDF
+{
+    private $backgroundImage;
 
-public function __construct() {
-parent::__construct();
-// Carrega o caminho da imagem de fundo no construtor
-$this->backgroundImage = dirname(__FILE__) . '/timbradocompra.png';
-}
+    public function __construct()
+    {
+        parent::__construct();
+        // Carrega o caminho da imagem de fundo no construtor
+        $this->backgroundImage = dirname(__FILE__) . '/timbradocompra.png';
+    }
 
-// Sobrescreve o método Header para adicionar uma imagem de fundo
-public function Header() {
-// Obtém as dimensões da página
-$pageWidth = $this->getPageWidth();
-$pageHeight = $this->getPageHeight();
+    // Sobrescreve o método Header para adicionar uma imagem de fundo
+    public function Header()
+    {
+        // Obtém as dimensões da página
+        $pageWidth = $this->getPageWidth();
+        $pageHeight = $this->getPageHeight();
 
-// Verifica em qual página está
-$currentPage = $this->getPage();
+        // Verifica em qual página está
+        $currentPage = $this->getPage();
 
-// Se for a primeira página, define margem diferente
-if ($currentPage == 1) {
-$topMargin = 70; // Margem da primeira página
-} else {
-$topMargin = 40; // Margem das páginas subsequentes
-}
+        // Se for a primeira página, define margem diferente
+        if ($currentPage == 1) {
+            $topMargin = 70; // Margem da primeira página
+        } else {
+            $topMargin = 40; // Margem das páginas subsequentes
+        }
 
-// Para todas as páginas
-$this->SetMargins(0, 0, 0);
-$this->SetAutoPageBreak(false, 0);
+        // Para todas as páginas
+        $this->SetMargins(0, 0, 0);
+        $this->SetAutoPageBreak(false, 0);
 
-// Adiciona a imagem de fundo estendida para cobrir toda a página
-$this->Image(
-$this->backgroundImage, 
-0,    // Posição X
-0,    // Posição Y
-$pageWidth,   // Largura 
-$pageHeight,  // Altura
-'',   // Tipo
-'',   // Link
-'',   // Alinhamento
-false,// Redimensionar
-300,  // DPI
-'',   // Alinhamento
-false,// Máscaras
-false // Transparência
-);
+        // Adiciona a imagem de fundo estendida para cobrir toda a página
+        $this->Image(
+            $this->backgroundImage,
+            0,    // Posição X
+            0,    // Posição Y
+            $pageWidth,   // Largura 
+            $pageHeight,  // Altura
+            '',   // Tipo
+            '',   // Link
+            '',   // Alinhamento
+            false,// Redimensionar
+            300,  // DPI
+            '',   // Alinhamento
+            false,// Máscaras
+            false // Transparência
+        );
 
-// Restaura a quebra automática de página com margem inferior
-$this->SetAutoPageBreak(true, 20);
+        // Restaura a quebra automática de página com margem inferior
+        $this->SetAutoPageBreak(true, 20);
 
-// Define a margem de conteúdo
-$this->SetMargins(15, $topMargin, 15);
-}
+        // Define a margem de conteúdo
+        $this->SetMargins(15, $topMargin, 15);
+    }
 }
 
 
 // Verifica se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-$nome = $_POST['nome'];
-$endereco = $_POST['endereco'];
-$cidade = $_POST['cidade'];
-$uc = $_POST['uc'];
-$quantidades = $_POST['quantidade']; // Contém as quantidades
-$itens = $_POST['item']; // Contém os itens
-$telefone = $_POST['telefone']; // Contém os itens
-$potencia = $_POST['potencia']; // Contém os itens
-$precoFinal = $_POST['precoFinal']; // Contém os itens
-$entrada = $_POST['entrada']; // Contém os itens
-$formasPagamento = $_POST['formasPagamento']; // Contém os itens
+    $nome = $_POST['nome'];
+    $endereco = $_POST['endereco'];
+    $cidade = $_POST['cidade'];
+    $uc = $_POST['uc'];
+    $quantidades = $_POST['quantidade']; // Contém as quantidades
+    $itens = $_POST['item']; // Contém os itens
+    $telefone = $_POST['telefone']; // Contém os itens
+    $potencia = $_POST['potencia']; // Contém os itens
+    $precoFinal = $_POST['precoFinal']; // Contém os itens
     $valores_pagamento = $_POST['valor_pagamento'];
     $datas_pagamento = $_POST['data_pagamento'];
     $bancos = $_POST['banco'];
@@ -79,94 +80,90 @@ $formasPagamento = $_POST['formasPagamento']; // Contém os itens
         $banco = $bancos[$index];
         $agencia = $agencias[$index];
         $contaCorrente = $contas_corrente[$index];
-    
+
         // Usar essas variáveis para compor o conteúdo do PDF conforme necessário
     }
 
-if (isset($_POST['quantidade']) && isset($_POST['item'])) {
-$quantidades = $_POST['quantidade'];
-$itens = $_POST['item'];
-}
-$primeiraQuantidade = $quantidades[0];
-$primeiroItem = $itens[0];
-$segundaQuantidade = $quantidades[1];
-$segundoItem = $itens[1];
-$terceiraQuantidade = $quantidades[2];
-$terceiroItem = $itens[2];
-$quartaQuantidade = $quantidades[3];
-$quartoItem = $itens[3];
-$quintaQuantidade = $quantidades[4];
-$quintoItem = $itens[4];
-$sextaQuantidade = $quantidades[5];
-$sextoItem = $itens[5];
-$setimaQuantidade = $quantidades[6];
-$setimoItem = $itens[6];
-$oitavaQuantidade = $quantidades[7];
-$oitavoItem = $itens[7];
-$nonaQuantidade = $quantidades[8];
-$nonoItem = $itens[8];
-$decimaQuantidade = $quantidades[9];
-$decimoItem = $itens[9];
+    if (isset($_POST['quantidade']) && isset($_POST['item'])) {
+        $quantidades = $_POST['quantidade'];
+        $itens = $_POST['item'];
+    }
+    $primeiraQuantidade = $quantidades[0];
+    $primeiroItem = $itens[0];
+    $segundaQuantidade = $quantidades[1];
+    $segundoItem = $itens[1];
+    $terceiraQuantidade = $quantidades[2];
+    $terceiroItem = $itens[2];
+    $quartaQuantidade = $quantidades[3];
+    $quartoItem = $itens[3];
+    $quintaQuantidade = $quantidades[4];
+    $quintoItem = $itens[4];
+    $sextaQuantidade = $quantidades[5];
+    $sextoItem = $itens[5];
+    $setimaQuantidade = $quantidades[6];
+    $setimoItem = $itens[6];
+    $oitavaQuantidade = $quantidades[7];
+    $oitavoItem = $itens[7];
+    $nonaQuantidade = $quantidades[8];
+    $nonoItem = $itens[8];
+    $decimaQuantidade = $quantidades[9];
+    $decimoItem = $itens[9];
 
-$precoRestante = $precoFinal - $entrada;
-$vezes = isset($_POST['formasPagamento']) ? intval($_POST['formasPagamento']) : 0;
-$parcelas = $precoRestante / $vezes;
-
-$precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
-$precoRestanteRs = 'R$ ' . number_format($precoRestante, 2, ',', '.');
-$entradaRs = 'R$ ' . number_format($entrada, 2, ',', '.');
+    $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
 
-// Criação do PDF
-$pdf = new CustomPDF();
-$pdf->setCellPaddings(0, 0, 0, 0); // Remove quaisquer preenchimentos extras
-$pdf->setPrintHeader(true);
-$pdf->setPrintFooter(false);
-$pdf->SetMargins(15, 70, 15); // Margens esquerda, superior e direita
-$pdf->SetAutoPageBreak(TRUE, 20); // Quebra automática com 20 unidades na margem inferior
+
+    // Criação do PDF
+    $pdf = new CustomPDF();
+    $pdf->setCellPaddings(0, 0, 0, 0); // Remove quaisquer preenchimentos extras
+    $pdf->setPrintHeader(true);
+    $pdf->setPrintFooter(false);
+    $pdf->SetMargins(15, 70, 15); // Margens esquerda, superior e direita
+    $pdf->SetAutoPageBreak(TRUE, 20); // Quebra automática com 20 unidades na margem inferior
 
 
-// Primeira Página (com a imagem undo.jpeg)
-$pdf->AddPage();  // Adiciona a primeira página
+    // Primeira Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
 
-// Definir fonte e adicionar conteúdo à primeira página
-$pdf->SetFont('helvetica', 16);
-$pdf->SetTextColor(0, 0, 0);
+    // Definir fonte e adicionar conteúdo à primeira página
+    $pdf->SetFont('helvetica', 16);
+    $pdf->SetTextColor(0, 0, 0);
 
 
-function renderTextWithBold($pdf, $paragraphs, $cellWidth) {
-$fragments = preg_split('/(\*\*.+?\*\*)/', $paragraphs, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+    function renderTextWithBold($pdf, $paragraphs, $cellWidth)
+    {
+        $fragments = preg_split('/(\*\*.+?\*\*)/', $paragraphs, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-foreach ($fragments as $index => $fragment) {
-if (preg_match('/\*\*(.+?)\*\*/', $fragment, $matches)) {
-$pdf->SetFont('helvetica', 'B', 12);
-$fragment = $matches[1];
-} else {
-$pdf->SetFont('helvetica', '', 12);
-}
+        foreach ($fragments as $index => $fragment) {
+            if (preg_match('/\*\*(.+?)\*\*/', $fragment, $matches)) {
+                $pdf->SetFont('helvetica', 'B', 12);
+                $fragment = $matches[1];
+            } else {
+                $pdf->SetFont('helvetica', '', 12);
+            }
 
-// Alinhamento: última linha à esquerda
-$align = ($index === count($fragments) - 1) ? 'L' : 'J';
+            // Alinhamento: última linha à esquerda
+            $align = ($index === count($fragments) - 1) ? 'L' : 'J';
 
-$pdf->MultiCell(
-$cellWidth,
-0,
-$fragment,
-0,
-$align,
-false,
-1
-);
-}
-}
-$telefone = $_POST['telefone']; // Contém os itens
-$potencia = $_POST['potencia']; // Contém os itens
-$precoFinal = $_POST['precoFinal']; // Contém os itens
-$entrada = $_POST['entrada']; // Contém os itens
-    
+            $pdf->MultiCell(
+                $cellWidth,
+                0,
+                $fragment,
+                0,
+                $align,
+                false,
+                1
+            );
+        }
+    }
+    $telefone = $_POST['telefone']; // Contém os itens
+    $potencia = $_POST['potencia']; // Contém os itens
+    $precoFinal = $_POST['precoFinal']; // Contém os itens
+    $entrada = $_POST['entrada']; // Contém os itens
 
-// Conteúdo HTML
-$htmlContent = '
+
+    // Conteúdo HTML
+    $htmlContent = '
 
     <div style="text-align: center;">
         <p></p>
@@ -177,14 +174,14 @@ $htmlContent = '
    <p>Por este instrumento,</p>
    <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “DISTRIBUIDORA”.</p>
    <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privada, inscrita no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.</p>
-   <p><strong>'.$nome. '</strong>, brasileiro, portador do RG n.º 8397325-0 SESP/PR, inscrito no CPF n.º 009.425.209-20, residente e domiciliado na Rua Pioneiro Alcides de Araújo Vargas, n.º 219, Vila Esperança, na cidade de Maringá/PR - CEP: 87.020-620, correio eletrônico: willazevedo@gmail.com, contato: (44) 9-9951-4331, doravante denominada CONTRATANTE.</p>
+   <p><strong>' . $nome . '</strong>, brasileiro, portador do RG n.º 8397325-0 SESP/PR, inscrito no CPF n.º 009.425.209-20, residente e domiciliado na Rua Pioneiro Alcides de Araújo Vargas, n.º 219, Vila Esperança, na cidade de Maringá/PR - CEP: 87.020-620, correio eletrônico: willazevedo@gmail.com, contato: (44) 9-9951-4331, doravante denominada CONTRATANTE.</p>
    <p>Considerando que:</p>
    <p>1. A Palladium (Distribuidora) é a empresa responsável pelo fornecimento de equipamentos e materiais necessários para a instalação de sistema solar fotovoltaico.</p>
    <p>2. A Canal Verde (Contratada) é a empresa responsável pala instalação, manutenção e suporte técnico do sistema solar fotovoltaico comercializado.</p>
    <p>3. O cliente (Contratante) que realiza a compra e a contratação dos serviços de instalação de sistema solar fotovoltaico em sua propriedade.</p>
    <p>As partes acima identificadas têm, entre si, justas e acertadas o presente Contrato de Venda e Instalação de Equipamentos Solares Fotovoltaicos, conforme cláusulas e condições adiante estipuladas:As partes acima identificadas têm, entre si, justas e acertadas o presente Contrato de Venda e Instalação de Equipamentos Solares Fotovoltaicos, conforme cláusulas e condições adiante estipuladas:</p>
    <p><strong>Cláusula 1ª – Do objeto do contrato</strong></p>
-   <p>1.1.	O presente contrato tem como objeto a venda e implantação de 01 (um) gerador fotovoltaico ON GRID conectado à rede pela CONTRATADA, com potência operacional estimada de '.$potencia.' kWp, me $endereco, conforme condições, quantidades e procedimentos estabelecidos neste Instrumento.</p>
+   <p>1.1.	O presente contrato tem como objeto a venda e implantação de 01 (um) gerador fotovoltaico ON GRID conectado à rede pela CONTRATADA, com potência operacional estimada de ' . $potencia . ' kWp, me $endereco, conforme condições, quantidades e procedimentos estabelecidos neste Instrumento.</p>
    <p>1.2. A contratação inclui:</p>
    <ul>
        <li> Elaboração de Projeto Solar Fotovoltaico;</li>
@@ -221,14 +218,14 @@ $htmlContent = '
            <td>ACOMPANHAMENTO JUNTO A CONCESSIONÁRIA LOCAL;</td>
        </tr>';
 
-// Adiciona itens da lista dinâmica
-for ($i = 0; $i < count($quantidades); $i++) {
-if (!empty($quantidades[$i]) && !empty($itens[$i])) {
-$htmlContent .= '<tr><td>' . htmlspecialchars($quantidades[$i]) . '</td><td>' . htmlspecialchars($itens[$i]) . ';</td></tr>';
-}
-}
+    // Adiciona itens da lista dinâmica
+    for ($i = 0; $i < count($quantidades); $i++) {
+        if (!empty($quantidades[$i]) && !empty($itens[$i])) {
+            $htmlContent .= '<tr><td>' . htmlspecialchars($quantidades[$i]) . '</td><td>' . htmlspecialchars($itens[$i]) . ';</td></tr>';
+        }
+    }
 
-$htmlContent .='</table>
+    $htmlContent .= '</table>
    <p>3.2. Não estão inclusos custos adicionais com obras de rede pela Concessionária local e terraplanagem.</p>
    <p>3.3. O painel fotovoltaico, inversor e demais componentes aplicáveis são aprovados pelo Programa Brasileiro de Etiquetagem (PBE), coordenado pelo Inmetro.</p>
    <p>3.4. Os equipamentos são instalados de acordo com as orientações dos fabricantes e regulamentações fornecidas pela Agência Nacional de Energia Elétrica (ANEEL).</p>
@@ -236,7 +233,7 @@ $htmlContent .='</table>
    <p>4.1. Todo material e/ou equipamento empregado na execução dos serviços será novo e de primeira qualidade.</p>
    <p>4.2. Na eventual falta do produto especificado na Proposta Comercial, a CONTRATADA poderá realizar a substituição por outro de espécie, marca ou modelo similar, desde que este possua potência igual ou superior àquela do produto inicialmente proposto, sem qualquer ônus para o CONTRATANTE.</p>
    <p><strong>Cláusula 5ª – Do preço e forma de pagamento</strong></p>
-   <p>5.1. Pela prestação dos serviços contratados, a CONTRATANTE pagará a CONTRATADA a quantia total de '.$precoFinalRs.', cujo pagamento será realizado da seguinte forma:</p>
+   <p>5.1. Pela prestação dos serviços contratados, a CONTRATANTE pagará a CONTRATADA a quantia total de ' . $precoFinalRs . ', cujo pagamento será realizado da seguinte forma:</p>
 
 
 
@@ -348,15 +345,15 @@ $htmlContent .='</table>
    <p><strong>CANAL VERDE - GESTÃO DE EMPREENDIMENTOS LTDA</strong></p>
    <p>(Contratada)</p>
    <p>________________________________________________________</p>
-   <p><strong>'.$nome.'</strong></p>
+   <p><strong>' . $nome . '</strong></p>
    <p>(Contratante)</p>
 
 ';
 
-$pdf->writeHTMLCell(0, 0, 15, 40, $htmlContent, 0, 1, 0, true, 'J', true);
+    $pdf->writeHTMLCell(0, 0, 15, 40, $htmlContent, 0, 1, 0, true, 'J', true);
 
 
-$pdf->Output('arquivo_gerado.pdf', 'I');  // 'I' para exibir no navegador
+    $pdf->Output('arquivo_gerado.pdf', 'I');  // 'I' para exibir no navegador
 
 
 }
