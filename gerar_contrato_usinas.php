@@ -1,22 +1,59 @@
 <?php
 require_once('vendor/autoload.php'); // Ou o caminho correto, se você não estiver usando o Composer
 class CustomPDF extends TCPDF {
+    private $backgroundImage;
+
+    public function __construct() {
+        parent::__construct();
+        // Carrega o caminho da imagem de fundo no construtor
+        $this->backgroundImage = dirname(__FILE__) . '/timbradocompra.png';
+    }
+
     // Sobrescreve o método Header para adicionar uma imagem de fundo
     public function Header() {
-        // Caminho para a imagem de fundo
-        $imgFile = dirname(__FILE__) . '/timbradocompra.png';
+        // Obtém as dimensões da página
+        $pageWidth = $this->getPageWidth();
+        $pageHeight = $this->getPageHeight();
 
-        // Desativa margens e quebra automática de paginação temporariamente
+        // Verifica em qual página está
+        $currentPage = $this->getPage();
+
+        // Se for a primeira página, define margem diferente
+        if ($currentPage == 1) {
+            $topMargin = 70; // Margem da primeira página
+        } else {
+            $topMargin = 40; // Margem das páginas subsequentes
+        }
+
+        // Para todas as páginas
         $this->SetMargins(0, 0, 0);
         $this->SetAutoPageBreak(false, 0);
 
         // Adiciona a imagem de fundo estendida para cobrir toda a página
-        $this->Image($imgFile, 0, 0, $this->getPageWidth(), $this->getPageHeight(), '', '', '', false, 300, '', false, false, 0);
+        $this->Image(
+            $this->backgroundImage, 
+            0,    // Posição X
+            0,    // Posição Y
+            $pageWidth,   // Largura 
+            $pageHeight,  // Altura
+            '',   // Tipo
+            '',   // Link
+            '',   // Alinhamento
+            false,// Redimensionar
+            300,  // DPI
+            '',   // Alinhamento
+            false,// Máscaras
+            false // Transparência
+        );
 
         // Restaura a quebra automática de página com margem inferior
         $this->SetAutoPageBreak(true, 20);
+
+        // Define a margem de conteúdo
+        $this->SetMargins(15, $topMargin, 15);
     }
 }
+
 
 // Verifica se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -61,6 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetMargins(15, 70, 15); // Margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(TRUE, 20); // Quebra automática com 20 unidades na margem inferior
 
+
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
 
@@ -94,6 +132,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             );
         }
     }
+    
 
     // Conteúdo HTML
     $htmlContent = '
