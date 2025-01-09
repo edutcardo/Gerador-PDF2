@@ -68,6 +68,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $precoFinal = $_POST['precoFinal']; // Contém os itens
     $entrada = $_POST['entrada']; // Contém os itens
     $formasPagamento = $_POST['formasPagamento']; // Contém os itens
+    $valores_pagamento = $_POST['valor_pagamento'];
+    $datas_pagamento = $_POST['data_pagamento'];
+    $bancos = $_POST['banco'];
+    $agencias = $_POST['agencia'];
+    $contas_corrente = $_POST['conta_corrente'];
+
+    foreach ($valores_pagamento as $index => $valor) {
+        $dataPagamento = $datas_pagamento[$index];
+        $banco = $bancos[$index];
+        $agencia = $agencias[$index];
+        $contaCorrente = $contas_corrente[$index];
+    
+        // Usar essas variáveis para compor o conteúdo do PDF conforme necessário
+    }
 
     if (isset($_POST['quantidade']) && isset($_POST['item'])) {
         $quantidades = $_POST['quantidade'];
@@ -149,11 +163,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $potencia = $_POST['potencia']; // Contém os itens
     $precoFinal = $_POST['precoFinal']; // Contém os itens
     $entrada = $_POST['entrada']; // Contém os itens
-    
 
     // Conteúdo HTML
     $htmlContent = '
 
+    <div style="text-align: justify;">
+        <p><strong>CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS</strong></p>
+    </div>
+    <p></p>
+    <p></p>
+    <p></p>
     <p>Por este instrumento,</p>
     <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “DISTRIBUIDORA”.</p>
     <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privada, inscrita no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.</p>
@@ -221,7 +240,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-    
+
     <p>5.1.1.  Caso não ocorra a coincidência entre a data de liberação do financiamento e a data da Proposta Comercial, o CONTRATANTE, em caráter irrevogável e irretratável, autoriza a CONTRATADA a proceder ao pertinente e necessário recálculo da proposta para atualização do valor total do Contrato.</p>
     <p><strong>Cláusula 5ª – Do prazo de entrega e instalação</strong></p>
     <p>5.1.2. Caso o CONTRATANTE dependa exclusivamente de financiamento bancário e este não seja aprovado pelo agente finaceiro para realizar a contratação dos serviços pactuados, o contrato será rescindido de pleno direito, sem que sejam devidas quaisquer multas e/ou indenizações pela CONTRATANTE.</p>

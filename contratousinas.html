@@ -405,6 +405,34 @@
         </div>
         <!-- Botão para adicionar linha -->
         <button type="button" class="add-row-btn" onclick="addRow()">Adicionar Linha</button>
+        <h2>Planos de Pagamento</h2>
+        <div class="table-container">
+            <table id="planosPagamentoTable">
+                <thead>
+                    <tr>
+                        <th>Valor (R$)</th>
+                        <th>Data de Pagamento</th>
+                        <th>Banco</th>
+                        <th>Agência</th>
+                        <th>Conta Corrente</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" name="valor_pagamento[]" placeholder="Digite o valor"></td>
+                        <td><input type="text" name="data_pagamento[]" placeholder="dd/mm/aaaa"></td>
+                        <td><input type="text" name="banco[]" placeholder="Banco"></td>
+                        <td><input type="text" name="agencia[]" placeholder="Agência"></td>
+                        <td><input type="text" name="conta_corrente[]" placeholder="Conta Corrente"></td>
+                        <td><button type="button" class="remove-row-btn" onclick="removePaymentRow(this)">Remover</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Botão para adicionar nova linha de pagamento -->
+        <button type="button" class="add-row-btn" onclick="addPaymentRow()">Adicionar Plano de Pagamento</button>
+
 
             <button type="button" onclick="gerarPDF()" id="btnGerarPDF">Gerar PDF</button>
 
@@ -502,6 +530,26 @@
         }
 
         function removeRow(button) {
+            const row = button.parentElement.parentElement;
+            row.remove();
+        }
+        function addPaymentRow() {
+            const table = document.getElementById('planosPagamentoTable').getElementsByTagName('tbody')[0];
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+                <td><input type="text" name="valor_pagamento[]" placeholder="Digite o valor"></td>
+                <td><input type="text" name="data_pagamento[]" placeholder="dd/mm/aaaa"></td>
+                <td><input type="text" name="banco[]" placeholder="Banco"></td>
+                <td><input type="text" name="agencia[]" placeholder="Agência"></td>
+                <td><input type="text" name="conta_corrente[]" placeholder="Conta Corrente"></td>
+                <td><button type="button" class="remove-row-btn" onclick="removePaymentRow(this)">Remover</button></td>
+            `;
+
+            table.appendChild(newRow);
+        }
+
+        function removePaymentRow(button) {
             const row = button.parentElement.parentElement;
             row.remove();
         }
