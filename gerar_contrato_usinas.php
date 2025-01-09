@@ -83,6 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Usar essas variáveis para compor o conteúdo do PDF conforme necessário
     }
+    $dataPagamento1 = $datas_pagamento[0];
 
     if (isset($_POST['quantidade']) && isset($_POST['item'])) {
         $quantidades = $_POST['quantidade'];
