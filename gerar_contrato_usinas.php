@@ -1,5 +1,22 @@
 <?php
 require_once('vendor/autoload.php'); // Ou o caminho correto, se você não estiver usando o Composer
+class CustomPDF extends TCPDF {
+    // Sobrescreve o método Header para adicionar uma imagem de fundo
+    public function Header() {
+        // Caminho para a imagem de fundo
+        $imgFile = dirname(__FILE__) . '/timbradocompra.png';
+
+        // Desativa margens e quebra automática de paginação temporariamente
+        $this->SetMargins(0, 0, 0);
+        $this->SetAutoPageBreak(false, 0);
+
+        // Adiciona a imagem de fundo estendida para cobrir toda a página
+        $this->Image($imgFile, 0, 0, $this->getPageWidth(), $this->getPageHeight(), '', '', '', false, 300, '', false, false, 0);
+
+        // Restaura a quebra automática de página com margem inferior
+        $this->SetAutoPageBreak(true, 20);
+    }
+}
 
 // Verifica se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -37,9 +54,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     // Criação do PDF
-    $pdf = new TCPDF();
+    $pdf = new CustomPDF();
     $pdf->setCellPaddings(0, 0, 0, 0); // Remove quaisquer preenchimentos extras
-    $pdf->setPrintHeader(false);
+    $pdf->setPrintHeader(true);
     $pdf->setPrintFooter(false);
     $pdf->SetMargins(15, 20, 15); // Margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(TRUE, 20); // Quebra automática com 20 unidades na margem inferior
