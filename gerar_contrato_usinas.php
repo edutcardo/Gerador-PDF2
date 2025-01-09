@@ -14,8 +14,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $quantidades = $_POST['quantidade'];
         $itens = $_POST['item'];
     }
-    $segundaQuantidade = $quantidades[2];
+    $primeiraQuantidade = $quantidades[0];
     $primeiroItem = $itens[0];
+    $segundaQuantidade = $quantidades[1];
+    $segundoItem = $itens[1];
+    $terceiraQuantidade = $quantidades[2];
+    $terceiroItem = $itens[2];
+    $quartaQuantidade = $quantidades[3];
+    $quartoItem = $itens[3];
+    $quintaQuantidade = $quantidades[4];
+    $quintoItem = $itens[4];
+    $sextaQuantidade = $quantidades[5];
+    $sextoItem = $itens[5];
+    $setimaQuantidade = $quantidades[6];
+    $setimoItem = $itens[6];
+    $oitavaQuantidade = $quantidades[7];
+    $oitavoItem = $itens[7];
+    $nonaQuantidade = $quantidades[8];
+    $nonoItem = $itens[8];
+    $decimaQuantidade = $quantidades[9];
+    $decimoItem = $itens[9];
 
 
     // Criação do PDF
@@ -65,7 +83,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Conteúdo HTML
     $htmlContent = '
 
-    <p><strong>CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS</strong></p>
+    <p>CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS</p>
+
     <p>Por este instrumento,</p>
     <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “DISTRIBUIDORA”.</p>
     <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privada, inscrita no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.</p>
@@ -111,36 +130,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <tr>
             <td>Incluso</td>
             <td>ACOMPANHAMENTO JUNTO A CONCESSIONÁRIA LOCAL;</td>
-        </tr>
-        <tr>
-            <td>17</td>
-            <td>MÓDULOS SOLARES SINE TOPCON 585W;</td>
-        </tr>
-        <tr>
-            <td>50</td>
-            <td>CABOS SOLARES PV 1.8KVCC 6MM VERMELHO NBR 16612;</td>
-        </tr>
-        <tr>
-            <td>50</td>
-            <td>CABOS SOLARES PV 1.8KVCC 6MM PRETO NBR 16612;</td>
-        </tr>
-        <tr>
-            <td>06</td>
-            <td>CONECTORES MC4 MACHO/FÊMEA 1000V TI-LANE;</td>
-        </tr>
-        <tr>
-            <td>01</td>
-            <td>INVERSOR 220V SAJ MONOFÁSICO 6KW;</td>
-        </tr>
-        <tr>
-            <td>05</td>
-            <td>ESTRUTURAS P/ 4 MOD. SOLAR COLONIAL;</td>
-        </tr>
-        <tr>
-            <td>10</td>
-            <td>PERFIS TUBULARES DE ALUMÍNIO 4,80M;</td>
-        </tr>
-    </table>
+        </tr>';
+
+            // Adiciona itens da lista dinâmica
+    for ($i = 0; $i < count($quantidades); $i++) {
+        if (!empty($quantidades[$i]) && !empty($itens[$i])) {
+            $htmlContent .= '<tr><td>' . htmlspecialchars($quantidades[$i]) . '</td><td>' . htmlspecialchars($itens[$i]) . ';</td></tr>';
+        }
+    }
+
+    $htmlContent .='</table>
     <p>3.2. Não estão inclusos custos adicionais com obras de rede pela Concessionária local e terraplanagem.</p>
     <p>3.3. O painel fotovoltaico, inversor e demais componentes aplicáveis são aprovados pelo Programa Brasileiro de Etiquetagem (PBE), coordenado pelo Inmetro.</p>
     <p>3.4. Os equipamentos são instalados de acordo com as orientações dos fabricantes e regulamentações fornecidas pela Agência Nacional de Energia Elétrica (ANEEL).</p>
