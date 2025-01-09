@@ -58,13 +58,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->setCellPaddings(0, 0, 0, 0); // Remove quaisquer preenchimentos extras
     $pdf->setPrintHeader(true);
     $pdf->setPrintFooter(false);
-    $pdf->SetMargins(15, 20, 15); // Margens esquerda, superior e direita
+    $pdf->SetMargins(15, 70, 15); // Margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(TRUE, 20); // Quebra automática com 20 unidades na margem inferior
-
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-
 
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
@@ -100,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Conteúdo HTML
     $htmlContent = '
 
-    <p>CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS</p>
+
 
     <p>Por este instrumento,</p>
     <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “DISTRIBUIDORA”.</p>
@@ -276,7 +274,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 ';
 
-    $pdf->writeHTMLCell(0, 0, 15, 15, $htmlContent, 0, 1, 0, true, 'J', true);
+    $pdf->writeHTMLCell(0, 0, 15, 40, $htmlContent, 0, 1, 0, true, 'J', true);
 
 
     $pdf->Output('arquivo_gerado.pdf', 'I');  // 'I' para exibir no navegador
