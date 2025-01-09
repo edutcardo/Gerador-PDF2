@@ -66,8 +66,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $telefone = $_POST['telefone']; // Contém os itens
     $potencia = $_POST['potencia']; // Contém os itens
     $precoFinal = $_POST['precoFinal']; // Contém os itens
-    $entrada = $_POST['entrada']; // Contém os itens
-    $formasPagamento = $_POST['formasPagamento']; // Contém os itens
     $valores_pagamento = $_POST['valor_pagamento'];
     $datas_pagamento = $_POST['data_pagamento'];
     $bancos = $_POST['banco'];
@@ -108,13 +106,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $decimaQuantidade = $quantidades[9];
     $decimoItem = $itens[9];
 
-    $precoRestante = $precoFinal - $entrada;
-    $vezes = isset($_POST['formasPagamento']) ? intval($_POST['formasPagamento']) : 0;
-    $parcelas = $precoRestante / $vezes;
-
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
-    $precoRestanteRs = 'R$ ' . number_format($precoRestante, 2, ',', '.');
-    $entradaRs = 'R$ ' . number_format($entrada, 2, ',', '.');
+
 
 
     // Criação do PDF
