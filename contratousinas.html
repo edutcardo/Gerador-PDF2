@@ -264,6 +264,50 @@
             transform: scale(1.05);
             border: 2px solid #0056b3;
         }
+        /* Estilização da tabela */
+        .table-container {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        table th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        table td input {
+            width: 90%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .add-row-btn, .remove-row-btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .add-row-btn:hover {
+            background-color: #0056b3;
+        }
+        .remove-row-btn {
+            background-color: #dc3545;
+        }
+        .remove-row-btn:hover {
+            background-color: #a71d2a;
+        }
 
     </style>
 </head>
@@ -320,16 +364,44 @@
             <label for="telefone">Telefone:</label>
             <input type="text" id="telefone" name="telefone"/>
 
-            <label for="telefone">Preço Final:</label>
+            <label for="telefone">Preço Final (R$):</label>
             <input type="text" id="telefone" name="telefone"/>
 
-            <label for="numeroDeFases">Formas de pagamento<b>*</b>:</label>
-            <select id="numeroDeFases" name="numeroDeFases" required>
-                <option value="monofasico">MONOFÁSICO</option>
-                <option value="bifasico">BIFÁSICO</option>
-                <option value="trifasico">TRIFÁSICO</option>
-                <option value="monoRural">MONO RURAL</option>
+            <label for="telefone">Entrada (R$):</label>
+            <input type="text" id="telefone" name="telefone"/>
+
+            <label for="formasPagamento">Formas de pagamento<b>*</b>:</label>
+            <select id="formasPagamento" name="formasPagamento" required>
+                <option value="1 Boletos">1 Boleto</option>
+                <option value="2 Boletos">2 Boletos</option>
+                <option value="3 Boletos">3 Boletos</option>
+                <option value="4 Boletos">4 Boletos</option>
+                <option value="5 Boletos">5 Boletos</option>
+                <option value="6 Boletos">6 Boletos</option>
             </select>
+
+            <!-- Tabela de itens -->
+        <h2>Itens do Projeto</h2>
+        <div class="table-container">
+            <table id="dynamicTable">
+                <thead>
+                    <tr>
+                        <th>Quantidade</th>
+                        <th>Item</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" name="quantidade[]" placeholder="Ex: 1, 10, Incluso"></td>
+                        <td><input type="text" name="item[]" placeholder="Digite o item"></td>
+                        <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remover</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Botão para adicionar linha -->
+        <button type="button" class="add-row-btn" onclick="addRow()">Adicionar Linha</button>
 
             <label for="potencia">Potência:</label>
             <input type="text" id="potencia" name="potencia"/>
@@ -407,6 +479,23 @@
             } else {
                 document.getElementById('resultado').value = ''; // Limpa o campo se o input for inválido
             }
+        }
+        function addRow() {
+            const table = document.getElementById('dynamicTable').getElementsByTagName('tbody')[0];
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+                <td><input type="text" name="quantidade[]" placeholder="Ex: 1, 10, Incluso"></td>
+                <td><input type="text" name="item[]" placeholder="Digite o item"></td>
+                <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remover</button></td>
+            `;
+
+            table.appendChild(newRow);
+        }
+
+        function removeRow(button) {
+            const row = button.parentElement.parentElement;
+            row.remove();
         }
 
 
