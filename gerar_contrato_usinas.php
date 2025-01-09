@@ -166,12 +166,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Conteúdo HTML
     $htmlContent = '
-
-    <div style="text-align: justify;">
+    <div style="text-align: center;">
         <p><strong>CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS</strong></p>
     </div>
-    <p></p>
-    <p></p>
     <p></p>
     <p>Por este instrumento,</p>
     <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “DISTRIBUIDORA”.</p>
