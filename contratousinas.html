@@ -420,11 +420,13 @@
             const potencia = document.getElementById('potencia').value;
             const precoFinal = document.getElementById('precoFinal').value;
             const entrada = document.getElementById('entrada').value;
+            const formasPagamento = document.getElementById('formasPagamento').value;
 
             formData.append('telefone', telefone);
             formData.append('potencia', potencia);
             formData.append('precoFinal', precoFinal);
             formData.append('entrada', entrada);
+            formData.append('formasPagamento', formasPagamento);
 
             fetch('gerar_contrato_usinas.php', {
                 method: 'POST',
