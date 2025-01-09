@@ -95,8 +95,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $decimoItem = $itens[9];
 
     $precoRestante = $precoFinal - $entrada;
-    $parcelas = $precoRestante;
     $vezes = isset($_POST['formasPagamento']) ? intval($_POST['formasPagamento']) : 0;
+    $parcelas = $precoRestante / $vezes;
+
+    $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
+    $precoRestanteRs = 'R$ ' . number_format($precoRestante, 2, ',', '.');
+    $entradaRs = 'R$ ' . number_format($entrada, 2, ',', '.');
+
 
     // Criação do PDF
     $pdf = new CustomPDF();
@@ -152,14 +157,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <p>Por este instrumento,</p>
     <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “DISTRIBUIDORA”.</p>
     <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privada, inscrita no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.</p>
-    <p><strong>'.$nome. '</strong>, brasileiro, '.$potencia. 'portador do RG n.º '.$precoFinal. '8397325-0 SESP/PR,'.$entrada. ' inscrito no CPF n.º 009.425.209-20, residente e domiciliado na Rua Pioneiro Alcides de Araújo Vargas, n.º 219, Vila Esperança, na cidade de Maringá/PR - CEP: 87.020-620, correio eletrônico: willazevedo@gmail.com, contato: (44) 9-9951-4331, doravante denominada CONTRATANTE.</p>
+    <p><strong>'.$nome. '</strong>, brasileiro, portador do RG n.º 8397325-0 SESP/PR, inscrito no CPF n.º 009.425.209-20, residente e domiciliado na Rua Pioneiro Alcides de Araújo Vargas, n.º 219, Vila Esperança, na cidade de Maringá/PR - CEP: 87.020-620, correio eletrônico: willazevedo@gmail.com, contato: (44) 9-9951-4331, doravante denominada CONTRATANTE.</p>
     <p>Considerando que:</p>
     <p>1. A Palladium (Distribuidora) é a empresa responsável pelo fornecimento de equipamentos e materiais necessários para a instalação de sistema solar fotovoltaico.</p>
     <p>2. A Canal Verde (Contratada) é a empresa responsável pala instalação, manutenção e suporte técnico do sistema solar fotovoltaico comercializado.</p>
     <p>3. O cliente (Contratante) que realiza a compra e a contratação dos serviços de instalação de sistema solar fotovoltaico em sua propriedade.</p>
     <p>As partes acima identificadas têm, entre si, justas e acertadas o presente Contrato de Venda e Instalação de Equipamentos Solares Fotovoltaicos, conforme cláusulas e condições adiante estipuladas:As partes acima identificadas têm, entre si, justas e acertadas o presente Contrato de Venda e Instalação de Equipamentos Solares Fotovoltaicos, conforme cláusulas e condições adiante estipuladas:</p>
-    <p><strong>Cláusula 1ª – Do objeto</strong></p>
-    <p>1.1. O presente contrato tem como objeto a venda e implantação de 01 (um) gerador fotovoltaico ON GRID conectado à rede pela CONTRATADA, com potência operacional estimada de 63,44 kWp, na Fazenda Santa Fé, rural, na cidade de Iguatemi/MS - CEP: 79.960-000, localização LOCALIZAÇÃO, conforme condições, quantidades e procedimentos estabelecidos neste Instrumento.</p>
+    <p><strong>Cláusula 1ª – Do objeto do contrato</strong></p>
+    <p>1.1.	O presente contrato tem como objeto a venda e implantação de 01 (um) gerador fotovoltaico ON GRID conectado à rede pela CONTRATADA, com potência operacional estimada de '.$potencia.' kWp, me $endereco, conforme condições, quantidades e procedimentos estabelecidos neste Instrumento.</p>
     <p>1.2. A contratação inclui:</p>
     <ul>
         <li> Elaboração de Projeto Solar Fotovoltaico;</li>
@@ -211,8 +216,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <p>4.1. Todo material e/ou equipamento empregado na execução dos serviços será novo e de primeira qualidade.</p>
     <p>4.2. Na eventual falta do produto especificado na Proposta Comercial, a CONTRATADA poderá realizar a substituição por outro de espécie, marca ou modelo similar, desde que este possua potência igual ou superior àquela do produto inicialmente proposto, sem qualquer ônus para o CONTRATANTE.</p>
     <p><strong>Cláusula 5ª – Do preço e forma de pagamento</strong></p>
-    <p>5.1. Pela prestação dos serviços contratados, a CONTRATANTE pagará a CONTRATADA a quantia total de R$ 198.878,84 (cento e noventa e oito mil, oitocentos e setenta e oito reais e oitenta e quatro centavos), cujo pagamento será realizado da seguinte forma:</p>
-    <p>XXXXXXXXXXXXXXXXXXX</p>
+    <p>5.1. Pela prestação dos serviços contratados, a CONTRATANTE pagará a CONTRATADA a quantia total de '.$precoFinalRs.', cujo pagamento será realizado da seguinte forma:</p>
+
+
+
+
+    
     <p>5.1.1.  Caso não ocorra a coincidência entre a data de liberação do financiamento e a data da Proposta Comercial, o CONTRATANTE, em caráter irrevogável e irretratável, autoriza a CONTRATADA a proceder ao pertinente e necessário recálculo da proposta para atualização do valor total do Contrato.</p>
     <p><strong>Cláusula 5ª – Do prazo de entrega e instalação</strong></p>
     <p>5.1.2. Caso o CONTRATANTE dependa exclusivamente de financiamento bancário e este não seja aprovado pelo agente finaceiro para realizar a contratação dos serviços pactuados, o contrato será rescindido de pleno direito, sem que sejam devidas quaisquer multas e/ou indenizações pela CONTRATANTE.</p>
