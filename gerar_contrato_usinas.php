@@ -84,6 +84,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Usar essas variáveis para compor o conteúdo do PDF conforme necessário
     }
     $dataPagamento1 = $datas_pagamento[0];
+    $banco1 = $bancos[0];
+    $agencia1 = $agencias[0];
+    $contaCorrente1 = $contas_corrente[0];
+
+    $dataPagamento2 = $datas_pagamento[1];
+    $banco2 = $bancos[1];
+    $agencia2 = $agencias[1];
+    $contaCorrente2 = $contas_corrente[1];
+
+    $dataPagamento3 = $datas_pagamento[2];
+    $banco3 = $bancos[2];
+    $agencia3 = $agencias[2];
+    $contaCorrente3 = $contas_corrente[2];
+
+    $dataPagamento4 = $datas_pagamento[3];
+    $banco4 = $bancos[3];
+    $agencia4 = $agencias[3];
+    $contaCorrente4 = $contas_corrente[3];
+
+    $dataPagamento5 = $datas_pagamento[4];
+    $banco5 = $bancos[4];
+    $agencia5 = $agencias[4];
+    $contaCorrente5 = $contas_corrente[4];
+
 
     if (isset($_POST['quantidade']) && isset($_POST['item'])) {
         $quantidades = $_POST['quantidade'];
@@ -234,13 +258,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>4.1. Todo material e/ou equipamento empregado na execução dos serviços será novo e de primeira qualidade.</p>
    <p>4.2. Na eventual falta do produto especificado na Proposta Comercial, a CONTRATADA poderá realizar a substituição por outro de espécie, marca ou modelo similar, desde que este possua potência igual ou superior àquela do produto inicialmente proposto, sem qualquer ônus para o CONTRATANTE.</p>
    <p><strong>Cláusula 5ª – Do preço e forma de pagamento</strong></p>
-   <p>5.1. Pela prestação dos serviços contratados, a CONTRATANTE pagará a CONTRATADA a quantia total de ' . $precoFinalRs . ', cujo pagamento será realizado da seguinte forma:</p>
+   <p>5.1. Pela prestação dos serviços contratados, a CONTRATANTE pagará a CONTRATADA a quantia total de ' . $precoFinalRs . ', cujo pagamento será realizado da seguinte forma:</p>';
+   
+    foreach ($valores_pagamento as $index => $valor) {
+        $dataPagamento = $datas_pagamento[$index];
+        $banco = $bancos[$index];
+        $agencia = $agencias[$index];
+        $contaCorrente = $contas_corrente[$index];
 
+        if (!empty($dataPagamento) && !empty($banco) && !empty($agencia) && !empty($contaCorrente)) {
+            $htmlContent .= '<p>';
+            $htmlContent .= 'Pagamento ' . ($index + 1) . ': ' . htmlspecialchars($dataPagamento) . ', ';
+            $htmlContent .= 'Banco: ' . htmlspecialchars($banco) . ', ';
+            $htmlContent .= 'Agência: ' . htmlspecialchars($agencia) . ', ';
+            $htmlContent .= 'Conta Corrente: ' . htmlspecialchars($contaCorrente);
+            $htmlContent .= '</p>';
+        }
+    }
 
-
+   
 
     
-
+   $htmlContent .= '
    <p>5.1.1.  Caso não ocorra a coincidência entre a data de liberação do financiamento e a data da Proposta Comercial, o CONTRATANTE, em caráter irrevogável e irretratável, autoriza a CONTRATADA a proceder ao pertinente e necessário recálculo da proposta para atualização do valor total do Contrato.</p>
    <p><strong>Cláusula 5ª – Do prazo de entrega e instalação</strong></p>
    <p>5.1.2. Caso o CONTRATANTE dependa exclusivamente de financiamento bancário e este não seja aprovado pelo agente finaceiro para realizar a contratação dos serviços pactuados, o contrato será rescindido de pleno direito, sem que sejam devidas quaisquer multas e/ou indenizações pela CONTRATANTE.</p>
