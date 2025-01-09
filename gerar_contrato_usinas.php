@@ -7,6 +7,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $endereco = $_POST['endereco'];
     $cidade = $_POST['cidade'];
     $uc = $_POST['uc'];
+    $quantidades = $_POST['quantidade']; // Contém as quantidades
+    $itens = $_POST['item']; // Contém os itens
+
+    if (isset($_POST['quantidade']) && isset($_POST['item'])) {
+        $quantidades = $_POST['quantidade'];
+        $itens = $_POST['item'];
+    }
+    $segundaQuantidade = $quantidades[2];
+    $primeiroItem = $itens[0];
+
 
     // Criação do PDF
     $pdf = new TCPDF();
@@ -59,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <p>Por este instrumento,</p>
     <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “DISTRIBUIDORA”.</p>
     <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privada, inscrita no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.</p>
-    <p><strong>'.$nome.'</strong>, brasileiro, portador do RG n.º 8397325-0 SESP/PR, inscrito no CPF n.º 009.425.209-20, residente e domiciliado na Rua Pioneiro Alcides de Araújo Vargas, n.º 219, Vila Esperança, na cidade de Maringá/PR - CEP: 87.020-620, correio eletrônico: willazevedo@gmail.com, contato: (44) 9-9951-4331, doravante denominada CONTRATANTE.</p>
+    <p><strong>'.$primeiroItem. '</strong>, brasileiro, '.$segundaQuantidade. 'portador do RG n.º 8397325-0 SESP/PR, inscrito no CPF n.º 009.425.209-20, residente e domiciliado na Rua Pioneiro Alcides de Araújo Vargas, n.º 219, Vila Esperança, na cidade de Maringá/PR - CEP: 87.020-620, correio eletrônico: willazevedo@gmail.com, contato: (44) 9-9951-4331, doravante denominada CONTRATANTE.</p>
     <p>Considerando que:</p>
     <p>1. A Palladium (Distribuidora) é a empresa responsável pelo fornecimento de equipamentos e materiais necessários para a instalação de sistema solar fotovoltaico.</p>
     <p>2. A Canal Verde (Contratada) é a empresa responsável pala instalação, manutenção e suporte técnico do sistema solar fotovoltaico comercializado.</p>
