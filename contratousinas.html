@@ -367,11 +367,11 @@
             <label for="potencia">Potência:</label>
             <input type="text" id="potencia" name="potencia"/>
 
-            <label for="telefone">Preço Final (R$):</label>
-            <input type="text" id="telefone" name="telefone"/>
+            <label for="precoFinal">Preço Final (R$):</label>
+            <input type="text" id="precoFinal" name="precoFinal"/>
 
-            <label for="telefone">Entrada (R$):</label>
-            <input type="text" id="telefone" name="telefone"/>
+            <label for="entrada">Entrada (R$):</label>
+            <input type="text" id="entrada" name="entrada"/>
 
             <label for="formasPagamento">Formas de pagamento<b>*</b>:</label>
             <select id="formasPagamento" name="formasPagamento" required>
@@ -416,9 +416,15 @@
         function gerarPDF() {
             const formData = new FormData(document.getElementById('formulario'));
 
-            const padrao = document.getElementById('telefone').value;
+            const telefone = document.getElementById('telefone').value;
+            const potencia = document.getElementById('potencia').value;
+            const precoFinal = document.getElementById('precoFinal').value;
+            const entrada = document.getElementById('entrada').value;
 
-            formData.append('telefone', padrao);
+            formData.append('telefone', telefone);
+            formData.append('potencia', potencia);
+            formData.append('precoFinal', precoFinal);
+            formData.append('entrada', entrada);
 
             fetch('gerar_contrato_usinas.php', {
                 method: 'POST',
