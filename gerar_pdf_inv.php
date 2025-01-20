@@ -25,6 +25,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $inputValorCompensavel = $_POST['inputValorCompensavel'];
     $multiplicador = $_POST['multiplicador'];
 
+    if (empty($multiplicador)) {
+        $multiplicador = 1; // Valor padrão atribuído
+    }
+
+    $potenciaGerador = $potenciaGerador * $multiplicador;
+    $potenciaInversor = $potenciaInversor * $multiplicador;
+    $precoKit = $precoKit* $multiplicador;
+
     //Tributação
     function calcularTributario($potenciaInversor) {
         if ($potenciaInversor <= 75) {
@@ -70,13 +78,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Cálculos iniciais da proposta
 
-    $geracao = $potenciaGerador * 3.9 * 30;
+    $geracao = ($potenciaGerador * 3.9 * 30);
     $qtdmodulos = ($potenciaGerador*1000)/$potenciaModulo;
-    $qtdmodulosArredondado = round($qtdmodulos);
-    $metrosOcupados = $qtdmodulosArredondado * 2.9;
+    $qtdmodulosArredondado = (round($qtdmodulos));
+    $metrosOcupados = ($qtdmodulosArredondado * 2.9)* $multiplicador;
 
     // Cálculos PGCV4
-    $peso = $qtdmodulosArredondado * 33;
+    $peso = ($qtdmodulosArredondado * 33)* $multiplicador;
     $percentualSolar = ($geracao / $media) * 100;
     $percentualSolarArredondado = round($percentualSolar);
     $mediaArredondado = round($media);
@@ -476,7 +484,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome");
+    $pdf->Text(34.2, 98, "Nome: $nome $margem $comissao $mobra");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
