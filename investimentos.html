@@ -96,13 +96,13 @@
         }
 
         .resultado-item:hover {
-            background: #007bff;
+            background: #2e7d32;
             color: #fff;
             transform: scale(1.05);
         }
 
         button {
-            background-color: #007bff;
+            background-color: #45a049;
             color: white;
             border: none;
             padding: 12px;
@@ -115,7 +115,7 @@
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #2e7d32;
         }
 
         @media (max-width: 768px) {
@@ -144,27 +144,27 @@
             appearance: none; /* Remove o estilo padrão do botão do slider */
             width: 25px; /* Largura do botão */
             height: 25px; /* Altura do botão */
-            background: #007bff; /* Cor do botão */
+            background: #45a049; /* Cor do botão */
             border-radius: 50%; /* Deixa o botão redondo */
             cursor: pointer; /* Mostra que o botão é clicável */
             transition: background 0.3s ease; /* Suaviza a mudança de cor */
         }
 
         .slider::-webkit-slider-thumb:hover {
-            background: #0056b3; /* Cor do botão ao passar o mouse */
+            background: #2e7d32; /* Cor do botão ao passar o mouse */
         }
 
         .slider::-moz-range-thumb {
             width: 25px;
             height: 25px;
-            background: #007bff;
+            background: #45a049;
             border-radius: 50%;
             cursor: pointer;
             transition: background 0.3s ease;
         }
 
         .slider::-moz-range-thumb:hover {
-            background: #0056b3;
+            background: #2e7d32;
         }
         .sidebar:hover .logo {
             width: 80px; /* Tamanho maior quando expandido */
@@ -259,10 +259,74 @@
             margin-left: 200px; /* Adicione esta linha para quando a sidebar estiver expandida */
         }
         .selecionado {
-            background-color: #007bff;
+            background-color: #45a049;
             color: #fff;
             transform: scale(1.05);
-            border: 2px solid #0056b3;
+            border: 2px solid #2e7d32;
+        }
+        /* Estilizando a seção de Multiplicadores */
+        .section {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        /* Contêiner e Botões */
+        .multiplicadores-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* Espaçamento adequado */
+        }
+
+        .multiplicador {
+            width: 60px; 
+            height: 60px; 
+            background: #4CAF50; /* Cor inicial verde */
+            color: white;
+            border-radius: 10px; 
+            text-align: center;
+            line-height: 60px; /* Centraliza o texto verticalmente */
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .multiplicador:hover {
+            background: #1e4c20;
+        }
+
+        /* Botão Selecionado */
+        .multiplicador.selected {
+            background: #2e7d32; /* Verde escuro ao selecionar */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Destaque */
+        }
+
+        @media (max-width: 600px) {
+            /* Responsividade: espaçamento e layout mais compacto */
+            .multiplicadores-container {
+                gap: 10px;
+            }
+
+            .multiplicador {
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                font-size: 14px;
+            }
         }
 
     </style>
@@ -375,6 +439,7 @@
                 <option value="FIBROMETAL">FIBROMETAL</option>
                 <option value="METALICO">METALICO</option>
                 <option value="S/ESTRUTURA">S/ESTRUTURA</option>
+                <option value="SOLO">S/ESTRUTURA</option>
             </select>
 
             <label for="palavra-chave">Potência do Gerador<b>*</b>:</label>
@@ -384,6 +449,18 @@
             <input type="text" id="resultado" name="resultado" readonly required/>
 
             <div id="resultados" required></div>
+
+            <div id="multiplicadores-section" class="section">
+                <h3 class="title">Multiplique seu kit</h3>
+                <p class="subtitle">(para usinas maiores)</p>
+                <div id="multiplicadores" class="multiplicadores-container">
+                    <div class="multiplicador" data-value="2">X2</div>
+                    <div class="multiplicador" data-value="3">X3</div>
+                    <div class="multiplicador" data-value="4">X4</div>
+                </div>
+                <!-- Campo oculto para envio PHP -->
+                <input type="hidden" id="multiplicador" name="multiplicador" value="">
+            </div>
 
             <label for="preco" class="readonly">Preço do Integrador:</label>
             <input type="text" id="preco" name="preco" readonly  class="readonly"/>
@@ -700,6 +777,22 @@
             travarDesconto();
             verificarFormulario(); // Certifique-se de chamar as outras funções necessárias aqui
         };
+        document.querySelectorAll('.multiplicador').forEach(element => {
+            // Adiciona evento de clique a todos os botões
+            element.addEventListener('click', function () {
+                // Remove a seleção de outros botões
+                document.querySelectorAll('.multiplicador').forEach(el => {
+                    el.classList.remove('selected');
+                });
+
+                // Adicionar a classe 'selected' ao botão clicado
+                this.classList.add('selected');
+
+                // Atualizar o valor no campo oculto
+                const multiplicador = this.getAttribute('data-value');
+                document.getElementById('multiplicador').value = multiplicador;
+            });
+        });
     </script>
 </body>
 </html>

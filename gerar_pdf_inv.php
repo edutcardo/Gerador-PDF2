@@ -23,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
     $inputConcessionaria = $_POST['inputConcessionaria'];
     $inputValorCompensavel = $_POST['inputValorCompensavel'];
+    $multiplicador = $_POST['multiplicador'];
 
     //Tributação
     function calcularTributario($potenciaInversor) {
