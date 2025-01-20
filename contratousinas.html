@@ -431,6 +431,18 @@
             <label for="endereco">Endereço<b>*</b>:</label>
             <input type="text" id="endereco" name="endereco" />
 
+            <label for="CPF">CPF ou CNPJ<b>*</b>:</label>
+            <input type="text" id="CPF" name="CPF" />
+
+            <label for="nascimento">Data de Nascimento<b>*</b>:</label>
+            <input type="text" id="nascimento" name="nascimento" />
+
+            <label for="email">Email<b>*</b>:</label>
+            <input type="text" id="email" name="email" />
+
+            <label for="telefone">Telefone<b>*</b>:</label>
+            <input type="text" id="telefone" name="telefone" />
+
             <label for="cidade">Cidade<b>*</b>:</label>
             <input type="text" id="cidade" name="cidade" oninput="atualizarDados()" />
 
@@ -439,12 +451,6 @@
 
             <label for="nr">Número da residência*:</label>
             <input type="text" id="nr" name="nr" />
-
-            <label for="email">Email:</label>
-            <input type="text" id="email" name="email" />
-
-            <label for="telefone">Telefone:</label>
-            <input type="text" id="telefone" name="telefone" />
 
             <label for="potencia">Potência:</label>
             <input type="text" id="potencia" name="potencia" />
@@ -519,8 +525,13 @@
             const potencia = document.getElementById('potencia').value;
             const precoFinal = document.getElementById('precoFinal').value;
             const estado = document.getElementById('estado').value;
+            const CPF = document.getElementById('CPF').value;
+            const nascimento = document.getElementById('nascimento').value;
+            const email = document.getElementById('email').value;
 
-
+            formData.append('CPF', CPF);
+            formData.append('nascimento', nascimento);
+            formData.append('email', email);
             formData.append('estado', estado);
             formData.append('telefone', telefone);
             formData.append('potencia', potencia);
