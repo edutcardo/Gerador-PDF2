@@ -618,7 +618,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         foreach ($matches as $match) {
             $sku = trim($match[1]);
-            $quantidade = trim($match[2]);
+            $quantidade = (trim($match[2])) * $multiplicador;
             $descricao = trim($match[3]);
     
             // Verificar se há espaço suficiente para escrever na página
