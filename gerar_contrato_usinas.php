@@ -146,6 +146,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->setPrintFooter(false);
     $pdf->SetMargins(15, 70, 15); // Margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(TRUE, 20); // Quebra automática com 20 unidades na margem inferior
+    $pdf->setLanguageArray(['a_meta_charset' => 'UTF-8']);
+
 
 
     // Primeira Página (com a imagem undo.jpeg)
@@ -188,6 +190,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $precoFinal = $_POST['precoFinal']; // Contém os itens
     $entrada = $_POST['entrada']; // Contém os itens
 
+    $pdf->SetFont('dejavusans', '', 12);
+
 
     // Conteúdo HTML
     $htmlContent = '
@@ -210,7 +214,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>3. O cliente (Contratante) que realiza a compra e a contratação dos serviços de instalação de sistema solar fotovoltaico em sua propriedade.</p>
    <p>As partes acima identificadas têm, entre si, justas e acertadas o presente Contrato de Venda e Instalação de Equipamentos Solares Fotovoltaicos, conforme cláusulas e condições adiante estipuladas:As partes acima identificadas têm, entre si, justas e acertadas o presente Contrato de Venda e Instalação de Equipamentos Solares Fotovoltaicos, conforme cláusulas e condições adiante estipuladas:</p>
    <p><strong>Cláusula 1ª – Do objeto do contrato</strong></p>
-   <p>1.1.	O presente contrato tem como objeto a venda e implantação de 01 (um) gerador fotovoltaico ON GRID conectado à rede pela CONTRATADA, com potência operacional estimada de ' . $potencia . ' kWp, me $endereco, conforme condições, quantidades e procedimentos estabelecidos neste Instrumento.</p>
+   <p>1.1.	O presente contrato tem como objeto a venda e implantação de 01 (um) gerador fotovoltaico ON GRID conectado à rede pela CONTRATADA, com potência operacional estimada de ' . $potencia . ' kWp, em '. $endereco.', ' .$cidade .' conforme condições, quantidades e procedimentos estabelecidos neste Instrumento.</p>
    <p>1.2. A contratação inclui:</p>
    <ul>
        <li> Elaboração de Projeto Solar Fotovoltaico;</li>
@@ -270,13 +274,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $agencia = $agencias[$index];
         $contaCorrente = $contas_corrente[$index];
 
+        $valor_formatado = 'R$ ' . number_format((float)$valor, 2, ',', '.');
+
+
         if (!empty($dataPagamento) && !empty($banco) && !empty($agencia) && !empty($contaCorrente) && !empty($valor_pagamento)) {
             $htmlContent .= '<p>';
-            $htmlContent .= 'Valor ' . ($index + 1) . ': ' . htmlspecialchars($valor_pagamento) . ', ';
-            $htmlContent .= 'Pagamento ' . ($index + 1) . ': ' . htmlspecialchars($dataPagamento) . ', ';
-            $htmlContent .= 'Banco: ' . htmlspecialchars($banco) . ', ';
-            $htmlContent .= 'Agência: ' . htmlspecialchars($agencia) . ', ';
-            $htmlContent .= 'Conta Corrente: ' . htmlspecialchars($contaCorrente);
+            $htmlContent .= '<b>Valor ' . ($index + 1) . ': ' . htmlspecialchars($valor_formatado) . ', </b>';
+            $htmlContent .= '<b> que será pago na data : ' . htmlspecialchars($dataPagamento) . ', </b>';
+            $htmlContent .= ' através de Boleto que será efetuado na instituição banco <b>' . htmlspecialchars($banco) . ', </b>';
+            $htmlContent .= '<b>Agência: ' . htmlspecialchars($agencia) . ', </b>';
+            $htmlContent .= '<b>Conta Corrente: ' . htmlspecialchars($contaCorrente) . '</b>, em nome de <b>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, 
+            CNPJ nº 49.348.620/0001-05 e PIX chave nº 49.348.620/0001-05</b>. Com os pagamentos dos materiais fotovoltaicos e mão-de-obra da forma combinada
+             entre as partes, onde será efetuado a emissão da nota fiscal total dos produtos.';
             $htmlContent .= '</p>';
         }
     }
@@ -393,7 +402,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 ';
 
-    $pdf->writeHTMLCell(0, 0, 15, 40, $htmlContent, 0, 1, 0, true, 'J', true);
+    $pdf->writeHTMLCell(0, 0, 15, 40, $htmlContent, 0, 2, 0, true, 'J', true);
 
 
     $pdf->Output('arquivo_gerado.pdf', 'I');  // 'I' para exibir no navegador
