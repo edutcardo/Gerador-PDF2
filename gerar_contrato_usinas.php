@@ -87,6 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $banco1 = $bancos[0];
     $agencia1 = $agencias[0];
     $contaCorrente1 = $contas_corrente[0];
+    $valor_pagamento = $valores_pagamento[0];
 
     $dataPagamento2 = $datas_pagamento[1];
     $banco2 = $bancos[1];
@@ -189,7 +190,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Conteúdo HTML
     $htmlContent = '
-
+        <p></p>
+        <p></p>
+        <p></p>
     <div style="text-align: center;">
         <p></p>
         <p></p>
@@ -266,8 +269,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $agencia = $agencias[$index];
         $contaCorrente = $contas_corrente[$index];
 
-        if (!empty($dataPagamento) && !empty($banco) && !empty($agencia) && !empty($contaCorrente)) {
+        if (!empty($dataPagamento) && !empty($banco) && !empty($agencia) && !empty($contaCorrente) && !empty($valor_pagamento)) {
             $htmlContent .= '<p>';
+            $htmlContent .= 'Valor ' . ($index + 1) . ': ' . htmlspecialchars($valor_pagamento) . ', ';
             $htmlContent .= 'Pagamento ' . ($index + 1) . ': ' . htmlspecialchars($dataPagamento) . ', ';
             $htmlContent .= 'Banco: ' . htmlspecialchars($banco) . ', ';
             $htmlContent .= 'Agência: ' . htmlspecialchars($agencia) . ', ';
@@ -276,9 +280,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-   
 
-    
    $htmlContent .= '
    <p>5.1.1.  Caso não ocorra a coincidência entre a data de liberação do financiamento e a data da Proposta Comercial, o CONTRATANTE, em caráter irrevogável e irretratável, autoriza a CONTRATADA a proceder ao pertinente e necessário recálculo da proposta para atualização do valor total do Contrato.</p>
    <p><strong>Cláusula 5ª – Do prazo de entrega e instalação</strong></p>
