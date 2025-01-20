@@ -78,6 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $CPF = $_POST['CPF'];
     $nascimento = $_POST['nascimento'];
+    $cep = $_POST['cep'];
 
     foreach ($valores_pagamento as $index => $valor) {
         $dataPagamento = $datas_pagamento[$index];
@@ -211,7 +212,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>Por este instrumento,</p>
    <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “DISTRIBUIDORA”.</p>
    <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privada, inscrita no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.</p>
-   <p><strong>' . $nome . '</strong>, inscrito no CPF n.º '. $CPF .', residente e domiciliado em '. $endereco .', na cidade de '. $cidade .' - CEP: '. $CEP .', correio eletrônico: '. $email .', contato: '. $telefone .', doravante denominada CONTRATANTE.</p>
+   <p><strong>' . $nome . '</strong>, inscrito no CPF n.º '. $CPF .', residente e domiciliado em '. $endereco .', na cidade de '. $cidade .' - CEP: '. $cep .', correio eletrônico: '. $email .', contato: '. $telefone .', doravante denominada CONTRATANTE.</p>
    <p>Considerando que:</p>
    <p>1. A Palladium (Distribuidora) é a empresa responsável pelo fornecimento de equipamentos e materiais necessários para a instalação de sistema solar fotovoltaico.</p>
    <p>2. A Canal Verde (Contratada) é a empresa responsável pala instalação, manutenção e suporte técnico do sistema solar fotovoltaico comercializado.</p>
