@@ -150,6 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('logodeitada.png', 73, 45, 60, 16);
 
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
