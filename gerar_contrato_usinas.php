@@ -62,6 +62,7 @@ class CustomPDF extends TCPDF
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome = $_POST['nome'];
     $endereco = $_POST['endereco'];
+    $estado = $_POST['estado'];
     $cidade = $_POST['cidade'];
     $uc = $_POST['uc'];
     $quantidades = $_POST['quantidade']; // Contém as quantidades

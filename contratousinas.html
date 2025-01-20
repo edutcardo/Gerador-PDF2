@@ -434,6 +434,9 @@
             <label for="cidade">Cidade<b>*</b>:</label>
             <input type="text" id="cidade" name="cidade" oninput="atualizarDados()" />
 
+            <label for="estado">Estado:</label>
+            <input type="text" id="estado" name="estado" readonly />
+
             <label for="nr">Número da residência*:</label>
             <input type="text" id="nr" name="nr" />
 
@@ -515,8 +518,10 @@
             const telefone = document.getElementById('telefone').value;
             const potencia = document.getElementById('potencia').value;
             const precoFinal = document.getElementById('precoFinal').value;
+            const estado = document.getElementById('estado').value;
 
 
+            formData.append('estado', estado);
             formData.append('telefone', telefone);
             formData.append('potencia', potencia);
             formData.append('precoFinal', precoFinal);
@@ -554,22 +559,24 @@
         window.onload = preencherFormulario;
 
         function buscarCidadePorCEP() {
-            const cep = document.getElementById('cep').value;
-            if (cep.length === 8) { // Valida se o CEP possui 8 dígitos
-                fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.erro) {
-                            document.getElementById('cidade').value = data.localidade;
-                        } else {
-                            alert('CEP não encontrado!');
-                            document.getElementById('cidade').value = '';
-                        }
-                    })
-                    .catch(error => console.error('Erro ao buscar cidade pelo CEP:', error));
-            }
-        }
+    const cep = document.getElementById('cep').value.replace(/\D/g, ''); // Remove caracteres não numéricos mais uma vez!
 
+    if (cep.length === 8) { // Verifique que CEP está com 8 caracteres
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.erro) {
+                    document.getElementById('cidade').value = data.localidade;
+                    document.getElementById('estado').value = data.uf;
+                } else {
+                    alert('CEP não encontrado!');
+                    document.getElementById('cidade').value = '';
+                    document.getElementById('estado').value = '';
+                }
+            })
+            .catch(error => console.error('Erro ao buscar cidade e estado pelo CEP:', error));
+    }
+}
         window.onload = preencherFormulario;
 
 
@@ -618,6 +625,33 @@
         function removePaymentRow(button) {
             const row = button.parentElement.parentElement;
             row.remove();
+        }
+        function atualizarDados() {
+            const cidade = document.getElementById('cidade').value;
+            console.log(`Cidade digitada: ${cidade}`);
+
+            if (cidade.trim() !== "") {
+                // Suposição: Uma API fictícia é usada para demonstração, verifique a API real
+                fetch(`https://api-endpoint-para-cidade-e-estado.com/buscar?cidade=${encodeURIComponent(cidade)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na solicitação');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Dados recebidos da API:', data);
+
+                    if (data.estado) {
+                        document.getElementById('estado').value = data.estado;
+                        console.log(`Estado encontrado: ${data.estado}`);
+                    } else {
+                        document.getElementById('estado').value = 'Estado não encontrado';
+                        console.log('Estado não encontrado.');
+                    }
+                })
+                .catch(error => console.error('Erro ao buscar estado pela cidade:', error));
+            }
         }
 
 
