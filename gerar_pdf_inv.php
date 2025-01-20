@@ -231,31 +231,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     switch ($padrao) {
         case "2x50A":
             $padrao = 2512.88;
+            $descPadrao = "2x50A";
             break;
         case "3x50A":
             $padrao = 2941.22;
+            $descPadrao = "3x50A";
             break;
         case "3x63A":
             $padrao = 2815.24;
+            $descPadrao = "3x63A";
             break;
         case "3x80A":
             $padrao = 3190.17;
+            $descPadrao = "3x80A";
             break;
         case "3x100A":
             $padrao = 4870.36;
+            $descPadrao = "3x100A";
             break;
         case "3x125A":
             $padrao = 8539.65;
+            $descPadrao = "3x125A";
             break;
         case "3x150A":
             $padrao = 10366.42;
+            $descPadrao = "3x150A";
             break;
         case "3x175A":
-            $padrao = 11279.8;
+            $padrao = 11279.80;
+            $descPadrao = "3x175A";
             break;
         case "3x200A":
             $padrao = 12969.57;
+            $descPadrao = "3x200A";
             break;
+        case "TORRE 112,5 KVA":
+            $padrao = 51581.25;
+            $descPadrao = "TORRE 112,5 KVA";
+            break;    
+        case "TORRE 150 KVA":
+            $padrao = 74497.50;
+            $descPadrao = "TORRE 150 KVA";
+            break; 
+        case "TORRE 225 KVA":
+            $padrao = 94445.00;
+            $descPadrao = "TORRE 225 KVA";
+            break; 
+        case "TORRE 300 KVA":
+            $padrao = 110407.50;
+            $descPadrao = "TORRE 300 KVA";
+            break; 
         case "":
         case "selecione um padrao":
             $padrao = 0;
@@ -264,6 +289,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $padrao = 0; // Caso não corresponda a nenhuma opção válida
             break;
     }
+
+    if ($padrao <> 0) {
+        $textoPadrao = "ENTRADA DE ENERGIA ($descPadrao) INCLUSO NO ORÇAMENTO: R$ $padrao";
+    }
+    
 
 
     $precoFinal =(($precoKit * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto ;
@@ -595,6 +625,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $y += max($linhaAltura, $pdf->GetY() - $y);
         }
     }
+
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(16, 155, "$textoPadrao");
 
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
