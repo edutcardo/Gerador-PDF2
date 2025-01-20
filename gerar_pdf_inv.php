@@ -290,10 +290,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             break;
     }
 
+    $padraoRs = 'R$ ' . number_format($padrao, 2, ',', '.');
+
     if ($padrao <> 0) {
-        $textoPadrao = "ENTRADA DE ENERGIA ($descPadrao) INCLUSO NO ORÇAMENTO: R$ $padrao";
+        $textoPadrao = "ENTRADA DE ENERGIA ($descPadrao) INCLUSO NO ORÇAMENTO: R$ $padraoRs";
     }
-    
+
 
 
     $precoFinal =(($precoKit * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto ;
@@ -626,7 +628,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(16, 155, "$textoPadrao");
 
