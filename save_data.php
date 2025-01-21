@@ -9,10 +9,8 @@ if (isset($_POST['execute'])) {
         "secret" => "KHNax/9Lz2lrqwtGZ14AqBjHF9m/l94CPQ84mF/ouXA="
     ];
 
-    // Inicializa a sessão cURL
+    // Inicializa a sessão cURL para obter o token
     $ch = curl_init($url);
-
-    // Configura a requisição cURL
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -116,6 +114,63 @@ if (isset($_POST['execute'])) {
             }
 
             $stmt->close();
+        }
+    }
+
+    // Nova solicitação para produtos sem estrutura especificada
+    $url = "https://api.edeltecsolar.com.br/produtos/integration?limit=5000";
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $jwtToken,
+        'Content-Type: application/json'
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
+    $response = curl_exec($ch);
+    $err = curl_error($ch);
+
+    curl_close($ch);
+
+    if ($response === false) {
+        echo 'Erro ao obter produtos sem estrutura: ' . $err . '<br>';
+    } else {
+        $produtos = json_decode($response, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            echo 'Erro ao decodificar JSON de produtos sem estrutura: ' . json_last_error_msg() . '<br>';
+        } else {
+            if (!isset($produtos['items'])) {
+                echo 'Nenhum produto encontrado sem estrutura.<br>';
+            } else {
+                foreach ($produtos['items'] as $produto) {
+                    $codProd = isset($produto['codProd']) ? $produto['codProd'] : '';
+                    $titulo = isset($produto['titulo']) ? $produto['titulo'] : '';
+                    $marca = isset($produto['marca']) ? $produto['marca'] : '';
+                    $fabricante = isset($produto['fabricante']) ? $produto['fabricante'] : '';
+                    $potenciaInversor = isset($produto['potenciaInversor']) ? $produto['potenciaInversor'] : 0;
+                    $potenciaModulo = isset($produto['potenciaModulo']) ? $produto['potenciaModulo'] : 0;
+                    $tensaoSaida = isset($produto['tensaoSaida']) ? $produto['tensaoSaida'] : 0;
+                    $componentes = isset($produto['componentes']) ? json_encode($produto['componentes']) : '';
+                    $palavrasChave = isset($produto['palavrasChave']) ? $produto['palavrasChave'] : '';
+                    $precoDoIntegrador = isset($produto['precoDoIntegrador']) ? $produto['precoDoIntegrador'] : 0;
+                    $potenciaGerador = isset($produto['potenciaGerador']) ? $produto['potenciaGerador'] : 0;
+                    $estruturaAtual = isset($produto['estrutura']) ? $produto['estrutura'] : '';
+
+                    $stmt = $conn->prepare("INSERT INTO produtos (codProd, titulo, marca, fabricante, potenciaInversor, potenciaModulo, tensaoSaida, componentes, palavrasChave, precoDoIntegrador, potenciaGerador, estrutura) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    $stmt->bind_param("ssssdddsddds", $codProd, $titulo, $marca, $fabricante, $potenciaInversor, $potenciaModulo, $tensaoSaida, $componentes, $palavrasChave, $precoDoIntegrador, $potenciaGerador, $estruturaAtual);
+
+                    if ($stmt->execute() === TRUE) {
+                        echo "Produto inserido com sucesso sem estrutura!<br>";
+                    } else {
+                        echo "Erro ao inserir produto sem estrutura: " . $stmt->error . "<br>";
+                    }
+
+                    $stmt->close();
+                }
+            }
         }
     }
 
