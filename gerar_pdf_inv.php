@@ -25,6 +25,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $inputValorCompensavel = $_POST['inputValorCompensavel'];
     $multiplicador = $_POST['multiplicador'];
 
+        // Função para verificar e ajustar valores
+    function verificarValor($valor) {
+        return $valor == 0 ? 1 : $valor;
+    }
+    function verificarValor2($valor) {
+        return $valor == 0 ? 575 : $valor;
+    }
+
+    // Ajustes necessários para potenciaGerador e potenciaModulo
+    $potenciaGerador = verificarValor($potenciaGerador);
+    $potenciaModulo = verificarValor2($potenciaModulo);
+
     if (empty($multiplicador)) {
         $multiplicador = 1; // Valor padrão atribuído
     }
