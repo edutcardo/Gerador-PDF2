@@ -123,8 +123,17 @@
                 padding: 20px;
             }
         }
+        #resultados.hidden {
+            display: none !important;
+            margin: 0;
+            padding: 0;
+            height: 0;
+        }
         .hidden {
-            display: none;
+            display: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
         }
         .slider {
             width: 100%; /* Deixa o slider ocupar toda a largura disponível */
@@ -328,6 +337,7 @@
                 font-size: 14px;
             }
         }
+        
 
     </style>
 </head>
@@ -507,14 +517,15 @@
         
         function verificarEstrutura() {
             const estrutura = document.getElementById('estrutura').value;
-
-            // Elementos a esconder
+            
+            // Elementos para esconder
             const elementosParaOcultar = [
                 document.querySelector('label[for="palavra-chave"]'),
                 document.getElementById('palavra-chave'),
                 document.getElementById('slider-value'),
                 document.getElementById('resultado'),
-                document.getElementById('multiplicadores-section')
+                document.getElementById('multiplicadores-section'),
+                document.getElementById('resultados') // Incluímos o "balão" aqui
             ];
 
             const novosInputs = [
@@ -524,27 +535,18 @@
                 document.getElementById('potenciaInversorNovo')
             ];
 
-            // Manipulação específica para "resultados"
-            const resultadosDiv = document.getElementById('resultados');
-            
             if (estrutura === 'SOLO') {
                 // Ocultar elementos irrelevantes para "SOLO"
                 elementosParaOcultar.forEach(element => element.classList.add('hidden'));
                 
-                // Mostrar inputs relevantes para "SOLO"
+                // Mostrar campos relevantes para "SOLO"
                 novosInputs.forEach(input => input.classList.remove('hidden'));
-
-                // Especificamente, esconde a div "resultados"
-                resultadosDiv.classList.add('hidden');
             } else {
-                // Mostrar elementos padrão
+                // Mostrar todos os elementos padrão
                 elementosParaOcultar.forEach(element => element.classList.remove('hidden'));
-
-                // Ocultar inputs específicos de "SOLO"
+                
+                // Ocultar campos específicos de "SOLO"
                 novosInputs.forEach(input => input.classList.add('hidden'));
-
-                // Certifique-se de mostrar "resultados" novamente para outras estruturas
-                resultadosDiv.classList.remove('hidden');
             }
 
             console.log("Estrutura verificada:", estrutura);
