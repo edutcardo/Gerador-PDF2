@@ -432,7 +432,7 @@
             </select>
 
             <label for="estrutura">Selecione uma Estrutura<b>*</b>:</label>
-            <select id="estrutura" name="estrutura" onchange="buscarResultados()" required>
+            <select id="estrutura" name="estrutura" onchange="buscarResultados(); verificarEstrutura();" required>
                 <option value="">Selecione uma estrutura</option>
                 <option value="COLONIAL">COLONIAL</option>
                 <option value="FIBROMADEIRA">FIBROMADEIRA</option>
@@ -498,6 +498,22 @@
     </div>
 
     <script>
+    function verificarEstrutura() {
+        const estrutura = document.getElementById('estrutura').value;
+        
+        const elementosParaOcultar = [
+            document.querySelector('label[for="palavra-chave"]'),
+            document.getElementById('palavra-chave'),
+            document.getElementById('slider-value'),
+            document.getElementById('multiplicadores-section')
+        ];
+
+        if (estrutura === 'SOLO') {
+            elementosParaOcultar.forEach(element => element.classList.add('hidden'));
+        } else {
+            elementosParaOcultar.forEach(element => element.classList.remove('hidden'));
+        }
+    }
         
         function buscarResultados() {
             const estrutura = document.getElementById('estrutura').value;
@@ -796,6 +812,10 @@
                 const multiplicador = this.getAttribute('data-value');
                 document.getElementById('multiplicador').value = multiplicador;
             });
+        });
+        document.getElementById('estrutura').addEventListener('change', function() {
+            buscarResultados();
+            verificarEstrutura();
         });
     </script>
 </body>
