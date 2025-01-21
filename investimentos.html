@@ -465,6 +465,12 @@
             <label for="preco" class="readonly">Preço do Integrador:</label>
             <input type="text" id="preco" name="preco" readonly  class="readonly"/>
 
+            <!-- Input de quantidade de placas, inicialmente oculto -->
+            <div id="quantidade-placas-div" class="hidden">
+                <label for="quantidade-placas">Quantidade de Placas:</label>
+                <input type="number" id="quantidade-placas" name="quantidade-placas" min="1" />
+            </div>
+
             <!-- Adicionar os campos de entrada para as novas informações -->
             <label for="codProd" class="readonly">Código do Produto:</label>
             <input type="text" id="codProd" name="codProd" readonly  class="readonly"/>
@@ -509,10 +515,15 @@
             document.getElementById('resultado')
         ];
 
+        const quantidadePlacasDiv = document.getElementById('quantidade-placas-div');
+
+
         if (estrutura === 'SOLO') {
             elementosParaOcultar.forEach(element => element.classList.add('hidden'));
+            quantidadePlacasDiv.classList.remove('hidden');
         } else {
             elementosParaOcultar.forEach(element => element.classList.remove('hidden'));
+            quantidadePlacasDiv.classList.add('hidden');
         }
     }
         
