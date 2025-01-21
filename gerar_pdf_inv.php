@@ -24,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $inputConcessionaria = $_POST['inputConcessionaria'];
     $inputValorCompensavel = $_POST['inputValorCompensavel'];
     $multiplicador = $_POST['multiplicador'];
+    $quantidadePlacas = $_POST['quantidadePlacas'];
 
         // Função para verificar e ajustar valores
     function verificarValor($valor) {
@@ -496,7 +497,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome");
+    $pdf->Text(34.2, 98, "Nome: $nome $quantidadePlacas");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
