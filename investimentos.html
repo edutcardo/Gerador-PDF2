@@ -466,9 +466,9 @@
             <input type="text" id="preco" name="preco" readonly  class="readonly"/>
 
             <!-- Input de quantidade de placas, inicialmente oculto -->
-            <div id="quantidade-placas-div" class="hidden">
-                <label for="quantidade-placas">Quantidade de Placas:</label>
-                <input type="number" id="quantidade-placas" name="quantidade-placas" min="1" />
+            <div id="quantidadePlacas" class="hidden">
+                <label for="quantidadePlacas">Quantidade de Placas:</label>
+                <input type="number" id="quantidadePlacas" name="quantidadePlacas" min="1" />
             </div>
 
             <!-- Adicionar os campos de entrada para as novas informações -->
@@ -515,7 +515,7 @@
             document.getElementById('resultado')
         ];
 
-        const quantidadePlacasDiv = document.getElementById('quantidade-placas-div');
+        const quantidadePlacasDiv = document.getElementById('quantidadePlacas');
 
 
         if (estrutura === 'SOLO') {
@@ -607,6 +607,8 @@
             const valoramais = document.getElementById('valoramais').value;
             const inputConcessionaria = document.getElementById('inputConcessionaria').value;
             const inputValorCompensavel = document.getElementById('inputValorCompensavel').value;
+            const quantidadePlacas = document.getElementById('quantidadePlacas').value;
+            formData.append('quantidadePlacas', quantidadePlacas);
             formData.append('padrao', padrao);
             formData.append('desconto', desconto);
             formData.append('valoramais', valoramais);
