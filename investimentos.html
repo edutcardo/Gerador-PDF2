@@ -462,6 +462,12 @@
                 <input type="hidden" id="multiplicador" name="multiplicador" value="">
             </div>
 
+            <label for="quantidadePlacas" class="hidden">Quantidade de Placas:</label>
+            <input type="number" id="quantidadePlacas" name="quantidadePlacas" class="hidden" placeholder="Quantidade de Placas"/>
+
+            <label for="potenciaInversorNovo" class="hidden">Potência do Inversor:</label>
+            <input type="number" id="potenciaInversorNovo" name="potenciaInversorNovo" class="hidden" placeholder="Potência do Inversor"/>
+
             <label for="preco" class="readonly">Preço do Integrador:</label>
             <input type="text" id="preco" name="preco" readonly  class="readonly"/>
 
@@ -535,6 +541,33 @@
                 document.getElementById('resultados').innerHTML = '';
                 document.getElementById('preco').value = '';
             }
+            function verificarEstrutura() {
+                const estrutura = document.getElementById('estrutura').value;
+                const elementosParaOcultar = [
+                    document.querySelector('label[for="palavra-chave"]'),
+                    document.getElementById('palavra-chave'),
+                    document.getElementById('slider-value'),
+                    document.getElementById('resultado'),
+                    document.getElementById('resultados'),
+                    document.getElementById('multiplicadores-section')
+                ];
+                const novosInputs = [
+                    document.querySelector('label[for="quantidadePlacas"]'),
+                    document.getElementById('quantidadePlacas'),
+                    document.querySelector('label[for="potenciaInversorNovo"]'),
+                    document.getElementById('potenciaInversorNovo')
+                ];
+
+                if (estrutura === 'SOLO') {
+                    elementosParaOcultar.forEach(element => element.classList.add('hidden'));
+                    novosInputs.forEach(input => input.classList.remove('hidden'));
+                } else {
+                    elementosParaOcultar.forEach(element => element.classList.remove('hidden'));
+                    novosInputs.forEach(input => input.classList.add('hidden'));
+                }
+            }
+
+            document.getElementById('estrutura').addEventListener('change', verificarEstrutura);
         }
 
 
@@ -793,6 +826,10 @@
                 const multiplicador = this.getAttribute('data-value');
                 document.getElementById('multiplicador').value = multiplicador;
             });
+        });
+        document.getElementById('estrutura').addEventListener('change', function() {
+            buscarResultados(); // Chamada existente se for necessário ainda
+            verificarEstrutura(); // Nova chamada adicionada
         });
     </script>
 </body>
