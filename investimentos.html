@@ -505,26 +505,73 @@
 
     <script>
         
-        function buscarResultados() {
-            const potenciaGerador = document.getElementById('palavra-chave').value;
+        function verificarEstrutura() {
             const estrutura = document.getElementById('estrutura').value;
+
+            // Elementos a esconder
+            const elementosParaOcultar = [
+                document.querySelector('label[for="palavra-chave"]'),
+                document.getElementById('palavra-chave'),
+                document.getElementById('slider-value'),
+                document.getElementById('resultado'),
+                document.getElementById('multiplicadores-section')
+            ];
+
+            const novosInputs = [
+                document.querySelector('label[for="quantidadePlacas"]'),
+                document.getElementById('quantidadePlacas'),
+                document.querySelector('label[for="potenciaInversorNovo"]'),
+                document.getElementById('potenciaInversorNovo')
+            ];
+
+            // Manipulação específica para "resultados"
+            const resultadosDiv = document.getElementById('resultados');
             
-            // Verifica se há valores para buscar
+            if (estrutura === 'SOLO') {
+                // Ocultar elementos irrelevantes para "SOLO"
+                elementosParaOcultar.forEach(element => element.classList.add('hidden'));
+                
+                // Mostrar inputs relevantes para "SOLO"
+                novosInputs.forEach(input => input.classList.remove('hidden'));
+
+                // Especificamente, esconde a div "resultados"
+                resultadosDiv.classList.add('hidden');
+            } else {
+                // Mostrar elementos padrão
+                elementosParaOcultar.forEach(element => element.classList.remove('hidden'));
+
+                // Ocultar inputs específicos de "SOLO"
+                novosInputs.forEach(input => input.classList.add('hidden'));
+
+                // Certifique-se de mostrar "resultados" novamente para outras estruturas
+                resultadosDiv.classList.remove('hidden');
+            }
+
+            console.log("Estrutura verificada:", estrutura);
+        }
+
+
+    function buscarResultados() {
+        const potenciaGerador = document.getElementById('palavra-chave').value;
+        const estrutura = document.getElementById('estrutura').value;
+        const resultadosDiv = document.getElementById('resultados');
+
+        if (estrutura !== 'SOLO') {
+            console.log('Procurando resultados para estrutura:', estrutura);
+
             if (potenciaGerador.length > 0 || estrutura) {
-                // Monta a URL com os parâmetros de busca
                 let url = `buscar_preco.php?potencia-gerador=${encodeURIComponent(potenciaGerador)}`;
                 if (estrutura) {
                     url += `&estrutura=${encodeURIComponent(estrutura)}`;
                 }
 
-                // Realiza a requisição para buscar os dados filtrados
                 fetch(url)
                     .then(response => response.json())
                     .then(data => {
-                        const resultadosDiv = document.getElementById('resultados');
-                        resultadosDiv.innerHTML = '';  // Limpa resultados anteriores
+                        resultadosDiv.innerHTML = '';
+                        
                         if (data.success) {
-                            data.resultados.slice(0, 10).forEach(item => { // Mostra até 10 resultados
+                            data.resultados.slice(0, 10).forEach(item => {
                                 const div = document.createElement('div');
                                 div.className = 'resultado-item';
                                 div.textContent = item.titulo;
@@ -537,38 +584,13 @@
                     })
                     .catch(error => console.error('Erro ao buscar resultados:', error));
             } else {
-                // Limpa os resultados se não houver pesquisa
-                document.getElementById('resultados').innerHTML = '';
-                document.getElementById('preco').value = '';
+                resultadosDiv.innerHTML = '';
             }
-            function verificarEstrutura() {
-                const estrutura = document.getElementById('estrutura').value;
-                const elementosParaOcultar = [
-                    document.querySelector('label[for="palavra-chave"]'),
-                    document.getElementById('palavra-chave'),
-                    document.getElementById('slider-value'),
-                    document.getElementById('resultado'),
-                    document.getElementById('resultados'),
-                    document.getElementById('multiplicadores-section')
-                ];
-                const novosInputs = [
-                    document.querySelector('label[for="quantidadePlacas"]'),
-                    document.getElementById('quantidadePlacas'),
-                    document.querySelector('label[for="potenciaInversorNovo"]'),
-                    document.getElementById('potenciaInversorNovo')
-                ];
-
-                if (estrutura === 'SOLO') {
-                    elementosParaOcultar.forEach(element => element.classList.add('hidden'));
-                    novosInputs.forEach(input => input.classList.remove('hidden'));
-                } else {
-                    elementosParaOcultar.forEach(element => element.classList.remove('hidden'));
-                    novosInputs.forEach(input => input.classList.add('hidden'));
-                }
-            }
-
-            document.getElementById('estrutura').addEventListener('change', verificarEstrutura);
+        } else {
+            resultadosDiv.classList.add('hidden');
+            console.log('Ocultando resultados para estrutura SOLO.');
         }
+    }
 
 
 
@@ -809,8 +831,9 @@
         // Chama a função para travar o desconto ao carregar a página
         window.onload = function() {
             travarDesconto();
-            verificarFormulario(); // Certifique-se de chamar as outras funções necessárias aqui
-        };
+            verificarFormulario(); 
+            verificarEstrutura(); // Garantir execução na carga
+                };
         document.querySelectorAll('.multiplicador').forEach(element => {
             // Adiciona evento de clique a todos os botões
             element.addEventListener('click', function () {
@@ -827,10 +850,17 @@
                 document.getElementById('multiplicador').value = multiplicador;
             });
         });
-        document.getElementById('estrutura').addEventListener('change', function() {
-            buscarResultados(); // Chamada existente se for necessário ainda
-            verificarEstrutura(); // Nova chamada adicionada
+        document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('estrutura').addEventListener('change', () => {
+            verificarEstrutura();
+            buscarResultados(); // Se for necessário ainda
         });
+
+        // Garantir chamadas de inicialização
+        travarDesconto();
+        verificarFormulario(); 
+        verificarEstrutura(); 
+    });
     </script>
 </body>
 </html>
