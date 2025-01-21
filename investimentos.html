@@ -500,41 +500,44 @@
     <script>
         
         function buscarResultados() {
-            const potenciaGerador = document.getElementById('palavra-chave').value;
             const estrutura = document.getElementById('estrutura').value;
-            
-            // Verifica se há valores para buscar
-            if (potenciaGerador.length > 0 || estrutura) {
-                // Monta a URL com os parâmetros de busca
-                let url = `buscar_preco.php?potencia-gerador=${encodeURIComponent(potenciaGerador)}`;
-                if (estrutura) {
-                    url += `&estrutura=${encodeURIComponent(estrutura)}`;
-                }
+            const resultadosDiv = document.getElementById('resultados');
+            resultadosDiv.innerHTML = ''; 
 
-                // Realiza a requisição para buscar os dados filtrados
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        const resultadosDiv = document.getElementById('resultados');
-                        resultadosDiv.innerHTML = '';  // Limpa resultados anteriores
-                        if (data.success) {
-                            data.resultados.slice(0, 10).forEach(item => { // Mostra até 10 resultados
-                                const div = document.createElement('div');
-                                div.className = 'resultado-item';
-                                div.textContent = item.titulo;
-                                div.onclick = () => selecionarItem(item);
-                                resultadosDiv.appendChild(div);
-                            });
-                        } else {
-                            resultadosDiv.innerHTML = 'Nenhum resultado encontrado';
-                        }
-                    })
-                    .catch(error => console.error('Erro ao buscar resultados:', error));
+            let url;
+            if (estrutura === 'SOLO') {
+                // A consulta apenas por inversores, sem o filtro de potência
+                url = `buscar_preco.php?estrutura=SOLO`;
             } else {
-                // Limpa os resultados se não houver pesquisa
-                document.getElementById('resultados').innerHTML = '';
-                document.getElementById('preco').value = '';
+                // Consulta com filtro de potenciaGerador para outras estruturas
+                const potenciaSlider = document.getElementById('palavra-chave').value;
+                url = `buscar_preco.php?potencia=${encodeURIComponent(potenciaSlider)}&estrutura=${encodeURIComponent(estrutura)}`;
             }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        data.resultados.slice(0, 30).forEach(item => {
+                            const div = document.createElement('div');
+                            div.className = 'resultado-item';
+                            div.textContent = item.titulo;
+                            div.onclick = () => selecionarItem(item);
+                            resultadosDiv.appendChild(div);
+                        });
+                    } else {
+                        resultadosDiv.innerHTML = 'Nenhum resultado encontrado';
+                    }
+                })
+                .catch(error => console.error('Erro ao buscar resultados:', error));
+        }
+
+        function atualizarSlider(valor) {
+            document.getElementById('slider-value').textContent = valor;
+        }
+
+        function selecionarItem(item) {
+            // Manipula a seleção do item - esse trecho não é ajustado, acordo original
         }
 
 
