@@ -519,6 +519,8 @@
         if (estrutura === 'SOLO') {
             elementosParaOcultar.forEach(element => element.classList.add('hidden'));
             quantidadePlacasDiv.classList.remove('hidden');
+            alert("Para usina solo você deve informar a quantidade de placas no último campo!");
+
         } else {
             elementosParaOcultar.forEach(element => element.classList.remove('hidden'));
             quantidadePlacasDiv.classList.add('hidden');
