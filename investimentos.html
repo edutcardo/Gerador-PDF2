@@ -607,6 +607,8 @@
             const inputConcessionaria = document.getElementById('inputConcessionaria').value;
             const inputValorCompensavel = document.getElementById('inputValorCompensavel').value;
             const quantidadePlacas = document.getElementById('quantidadePlacasInput').value;
+            const estrutura = document.getElementById('estrutura').value;
+            formData.append('estrutura', estrutura);
             formData.append('quantidadePlacas', quantidadePlacas);
             formData.append('padrao', padrao);
             formData.append('desconto', desconto);

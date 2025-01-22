@@ -25,6 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $inputValorCompensavel = $_POST['inputValorCompensavel'];
     $multiplicador = $_POST['multiplicador'];
     $quantidadePlacas = $_POST['quantidadePlacas'];
+    $estrutura = $_POST['estrutura'];
 
         // Função para verificar e ajustar valores
     function verificarValor($valor) {
@@ -41,6 +42,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($multiplicador)) {
         $multiplicador = 1; // Valor padrão atribuído
     }
+
+    if ($estrutura === "SOLO") {
+
+        // Define o valor fixo para $potenciaModulo
+        $potenciaModulo = 700;
+        // Atualiza $potenciaGerador de acordo com a nova lógica
+        $potenciaGerador = ($quantidadePlacas * ($potenciaModulo/1000)) * $multiplicador;
+
+    }
+    
 
     $potenciaGerador = $potenciaGerador * $multiplicador;
     $potenciaInversor = $potenciaInversor * $multiplicador;
@@ -497,7 +508,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome $quantidadePlacas");
+    $pdf->Text(34.2, 98, "Nome: $nome");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
@@ -627,7 +638,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Escrever os dados extraídos no PDF
     if (empty($matches)) {
-        $pdf->Text(10, $y + 3, "Nenhum dado encontrado.");
+        $pdf->Text(16, $y + 3, "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO BIFACIAL HJT 700W");
+        $pdf->Text(16, $y + 10, "$multiplicador INVERSOR SOLAR $fabricante DE $potenciaInversor KW");
+        $pdf->Text(16, $y + 17, "ESTRUTURA DE SOLO MONOPOSTE PARA TERRENO HORIZONTAL");
     } else {
         foreach ($matches as $match) {
             $sku = trim($match[1]);
