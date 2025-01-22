@@ -42,11 +42,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($multiplicador)) {
         $multiplicador = 1; // Valor padrão atribuído
     }
-    
-
+    $precoPlaca = 0;
+    $custoEstrutrura = 0;
     $potenciaGerador = $potenciaGerador * $multiplicador;
     $potenciaInversor = $potenciaInversor * $multiplicador;
-    $precoKit = $precoKit* $multiplicador;
+    $precoKit = ($precoKit + $precoPlaca) * $multiplicador;
 
     if ($estrutura === "SOLO") {
 
@@ -54,6 +54,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $potenciaModulo = 700;
         // Atualiza $potenciaGerador de acordo com a nova lógica
         $potenciaGerador = ($quantidadePlacas * ($potenciaModulo/1000)) * $multiplicador;
+
+        $precoPlaca = $quantidadePlacas * 487.50;
+
+        $custoEstrutrura = 175 * $quantidadePlacas;
+
+        $precoKit = ($precoKit + $precoPlaca + $custoEstrutrura) * $multiplicador;
+
 
     }
 
@@ -508,7 +515,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome");
+    $pdf->Text(34.2, 98, "Nome: $nome $precoKit $precoPlaca $precoKit  $precoPlaca  $custoEstrutrura");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
