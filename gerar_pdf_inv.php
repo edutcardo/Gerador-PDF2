@@ -42,6 +42,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($multiplicador)) {
         $multiplicador = 1; // Valor padrão atribuído
     }
+    
+
+    $potenciaGerador = $potenciaGerador * $multiplicador;
+    $potenciaInversor = $potenciaInversor * $multiplicador;
+    $precoKit = $precoKit* $multiplicador;
 
     if ($estrutura === "SOLO") {
 
@@ -51,11 +56,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $potenciaGerador = ($quantidadePlacas * ($potenciaModulo/1000)) * $multiplicador;
 
     }
-    
-
-    $potenciaGerador = $potenciaGerador * $multiplicador;
-    $potenciaInversor = $potenciaInversor * $multiplicador;
-    $precoKit = $precoKit* $multiplicador;
 
     //Tributação
     function calcularTributario($potenciaInversor) {
