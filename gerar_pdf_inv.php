@@ -44,6 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $precoPlaca = 0;
     $custoEstrutrura = 0;
+    $maoObraSolo = 0;
     $potenciaGerador = $potenciaGerador * $multiplicador;
     $potenciaInversor = $potenciaInversor * $multiplicador;
     $precoKit = ($precoKit + $precoPlaca) * $multiplicador;
@@ -54,6 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $potenciaGerador = ($quantidadePlacas * ($potenciaModulo/1000)) * $multiplicador;
         $precoPlaca = $quantidadePlacas * 487.50;
         $custoEstrutrura = 175 * $quantidadePlacas;
+        $maoObraSolo = 125 * $quantidadePlacas;
         $precoKit = ($precoKit + $precoPlaca + $custoEstrutrura) * $multiplicador;
     }
 
@@ -343,7 +345,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-    $precoFinal =((($precoKit + $opcao_adicional) * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto ;
+    $precoFinal =(((($precoKit + $opcao_adicional) * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto) + $maoObraSolo ;
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
     $payback = $precoFinal / $diferencaGastosAno;
