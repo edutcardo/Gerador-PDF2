@@ -35,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     function verificarValor2($valor) {
         return $valor == 0 ? 575 : $valor;
     }
-
     // Ajustes necessários para potenciaGerador e potenciaModulo
     $potenciaGerador = verificarValor($potenciaGerador);
     $potenciaModulo = verificarValor2($potenciaModulo);
@@ -51,18 +50,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($estrutura === "SOLO") {
 
-        // Define o valor fixo para $potenciaModulo
         $potenciaModulo = 700;
-        // Atualiza $potenciaGerador de acordo com a nova lógica
         $potenciaGerador = ($quantidadePlacas * ($potenciaModulo/1000)) * $multiplicador;
-
         $precoPlaca = $quantidadePlacas * 487.50;
-
         $custoEstrutrura = 175 * $quantidadePlacas;
-
         $precoKit = ($precoKit + $precoPlaca + $custoEstrutrura) * $multiplicador;
-
-
     }
 
     //Tributação
@@ -114,6 +106,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $qtdmodulos = ($potenciaGerador*1000)/$potenciaModulo;
     $qtdmodulosArredondado = (round($qtdmodulos));
     $metrosOcupados = ($qtdmodulosArredondado * 2.9)* $multiplicador;
+
+    if (isset($_POST['opcao_adicional'])) {
+        $opcaoAdicional = $_POST['opcao_adicional'];
+        // Determina o valor baseado na opção selecionada
+        if ($opcaoAdicional === "Adicionar alambrado") {
+            $opcao_adicional = (sqrt($metrosocupados) + 8)*4*140;
+        } elseif ($opcaoAdicional === "Adicionar britas") {
+            $opcao_adicional = $metrosOcupados * 2.75;
+        } elseif ($opcaoAdicional === "Adicionar alambrado + britas") {
+            $opcao_adicional = ((sqrt($metrosocupados) + 8) * 4 * 140) + (2.75 * $metrosOcupados);
+        }
+    }
 
     // Cálculos PGCV4
     $peso = ($qtdmodulosArredondado * 33)* $multiplicador;
@@ -339,7 +343,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-    $precoFinal =(($precoKit * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto ;
+    $precoFinal =((($precoKit + $opcao_adicional) * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto ;
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
     $payback = $precoFinal / $diferencaGastosAno;
@@ -516,7 +520,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome $opcao_adicional");
+    $pdf->Text(34.2, 98, "Nome: $nome");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
