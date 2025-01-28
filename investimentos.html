@@ -492,8 +492,8 @@
                 <option value="SOLO">SOLO</option>
             </select>
 
-            <label for="palavra-chave">Potência do Gerador<b>*</b>:</label>
-            <input type="range" id="palavra-chave" name="palavra-chave" min="0" max="116" value="0" step="1" class="slider" oninput="atualizarSlider(this.value); buscarResultados(); calcularResultado()" required/>
+            <label for="potSlider">Potência do Gerador<b>*</b>:</label>
+            <input type="range" id="potSlider" name="potSlider" min="0" max="116" value="0" step="1" class="slider" oninput="atualizarSlider(this.value); buscarResultados(); calcularResultado()" required/>
             <span id="slider-value">0</span>
 
             <input type="text" id="resultado" name="resultado" readonly required/>
@@ -575,8 +575,8 @@
         const estrutura = document.getElementById('estrutura').value;
         
         const elementosParaOcultar = [
-            document.querySelector('label[for="palavra-chave"]'),
-            document.getElementById('palavra-chave'),
+            document.querySelector('label[for="potSlider"]'),
+            document.getElementById('potSlider'),
             document.getElementById('slider-value'),
             document.getElementById('resultado')
         ];
@@ -611,7 +611,7 @@
                 url = `buscar_preco.php?estrutura=SOLO`;
             } else {
                 // Consulta com filtro de potenciaGerador para outras estruturas
-                const potenciaSlider = document.getElementById('palavra-chave').value;
+                const potenciaSlider = document.getElementById('potSlider').value;
                 url = `buscar_preco.php?potencia=${encodeURIComponent(potenciaSlider)}&estrutura=${encodeURIComponent(estrutura)}`;
             }
 
@@ -787,7 +787,7 @@
             input.classList.add('hidden');
         });
         function calcularResultado() {
-            const potencia = parseFloat(document.getElementById('palavra-chave').value); // Pega o valor digitado
+            const potencia = parseFloat(document.getElementById('potSlider').value); // Pega o valor digitado
             if (!isNaN(potencia)) {
                 const resultado = potencia * 3.9 * 30; // Faz o cálculo
                 document.getElementById('resultado').value = `A geração selecionada é: ${resultado.toFixed(0)} kWh - Selecione um kit abaixo`; // Exibe o resultado com 2 casas decimais
@@ -958,11 +958,18 @@
             const campoEstrutura = document.getElementById('estrutura');
             if (estruturas[selecao]) {
                 campoEstrutura.value = estruturas[selecao];
-                // Lógica adicional ou eventos disparam aqui
                 verificarEstrutura(); // Atualiza campos dependentes da estrutura
                 buscarResultados();
             } else {
                 campoEstrutura.value = '';
+            }
+
+            // Define o valor do potSlider se a usina for "75kwTelhado"
+            const potSlider = document.getElementById('potSlider');
+            if (selecao === '75kwTelhado') {
+                potSlider.value = 112;
+                atualizarSlider(112); // Atualiza imediatamente a exibição do slider
+                buscarResultados();
             }
         }
     </script>
