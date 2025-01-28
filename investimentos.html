@@ -356,13 +356,14 @@
         }
         .imagem-usina {
             margin-top: 20px;
+            margin-bottom: 50px;
             width: 300px; /* Define a largura fixa */
             height: 200px; /* Define a altura fixa */
             object-fit: cover; /* Adapta a imagem ao contêiner, cortando quando necessário para manter a proporcionalidade */
             border: 2px solid #ddd;
             border-radius: 10px;
             display: none; /* Inicializa escondida */
-            margin-left: 20px;
+            margin-left: 60px;
         }
 
     </style>
@@ -590,7 +591,6 @@
             quantidadePlacasDiv.classList.remove('hidden');
             adicionaisDiv.classList.remove('hidden');
             adicionaisLabel.classList.remove('hidden');
-            alert("Para usina solo você deve informar a quantidade de placas, um inversor e se precisa de alambrado ou britas!");
 
         } else {
             elementosParaOcultar.forEach(element => element.classList.remove('hidden'));
@@ -926,13 +926,43 @@
                 '1mwTelhado': '1mwtelhado.png'
             };
 
+            const padroes = {
+                '75kwSolo': '3x200A',
+                '75kwTelhado': '3x200A'
+            };
+
+            const estruturas = {
+                '75kwSolo': 'SOLO',
+                '75kwTelhado': 'FIBROMETAL'
+            };
+
+            // Defina a imagem
             if (imagens[selecao]) {
                 imagem.src = imagens[selecao];
-                imagem.style.display = 'block'; // Mostra a imagem
-                console.log(`Caminho da imagem: ${imagens[selecao]}`); // Debug
+                imagem.style.display = 'block';
+                console.log(`Caminho da imagem: ${imagens[selecao]}`);
             } else {
                 imagem.style.display = 'none';
                 console.warn('Nenhuma imagem disponível para esta seleção.');
+            }
+
+            // Define o valor de Padrão
+            const campoPadrao = document.getElementById('padrao');
+            if (padroes[selecao]) {
+                campoPadrao.value = padroes[selecao];
+            } else {
+                campoPadrao.value = '';
+            }
+
+            // Define o valor de Estrutura e executa lógica específica
+            const campoEstrutura = document.getElementById('estrutura');
+            if (estruturas[selecao]) {
+                campoEstrutura.value = estruturas[selecao];
+                // Lógica adicional ou eventos disparam aqui
+                verificarEstrutura(); // Atualiza campos dependentes da estrutura
+                buscarResultados();
+            } else {
+                campoEstrutura.value = '';
             }
         }
     </script>
