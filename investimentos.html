@@ -479,6 +479,7 @@
                 <option value="TORRE 150 KVA">TORRE 150 KVA</option>
                 <option value="TORRE 225 KVA">TORRE 225 KVA</option>
                 <option value="TORRE 300 KVA">TORRE 300 KVA</option>
+                <option value="TORRE 1 MVA">TORRE 1 MVA</option>
             </select>
 
             <label for="estrutura">Selecione uma Estrutura<b>*</b>:</label>
@@ -970,6 +971,66 @@
                 potSlider.value = 112;
                 atualizarSlider(112); // Atualiza imediatamente a exibição do slider
                 buscarResultados();
+            }
+        }
+        function buscarResultados() {
+    const estrutura = document.getElementById('estrutura').value;
+    const resultadosDiv = document.getElementById('resultados');
+    resultadosDiv.innerHTML = '';
+
+    let url;
+    if (estrutura === 'SOLO') {
+        url = `buscar_preco.php?estrutura=SOLO`;
+    } else {
+        const potenciaSlider = document.getElementById('potSlider').value;
+        url = `buscar_preco.php?potencia=${encodeURIComponent(potenciaSlider)}&estrutura=${encodeURIComponent(estrutura)}`;
+    }
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.resultados.length > 0) {
+                data.resultados.slice(0, 90).forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'resultado-item';
+                    div.textContent = item.titulo;
+                    div.onclick = () => selecionarItem(item, div);
+                    resultadosDiv.appendChild(div);
+                    
+                    // Selecionar o primeiro item automaticamente
+                    if (index === 0) {
+                        selecionarItem(item, div);
+                    }
+                });
+            } else {
+                resultadosDiv.innerHTML = 'Nenhum resultado encontrado';
+            }
+        })
+        .catch(error => console.error('Erro ao buscar resultados:', error));
+}
+
+        function selecionarItem(item, element) {
+            // Limpar seleção de outros itens
+            const itens = document.querySelectorAll('.resultado-item');
+            itens.forEach(it => it.classList.remove('selecionado'));
+
+            // Marcar o item atual como selecionado
+            if (element) {
+                element.classList.add('selecionado');
+            }
+
+            // Preencher os campos com informações do item selecionado
+            if (item) {
+                console.log('Item selecionado:', item.titulo);
+                document.getElementById('preco').value = item.precoDoIntegrador;
+                document.getElementById('codProd').value = item.codProd;
+                document.getElementById('marca').value = item.marca;
+                document.getElementById('fabricante').value = item.fabricante;
+                document.getElementById('potenciaInversor').value = item.potenciaInversor;
+                document.getElementById('potenciaModulo').value = item.potenciaModulo;
+                document.getElementById('tensaoSaida').value = item.tensaoSaida;
+                document.getElementById('componentes').value = item.componentes;
+                document.getElementById('potenciaGerador').value = item.potenciaGerador;
             }
         }
     </script>
