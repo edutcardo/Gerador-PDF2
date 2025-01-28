@@ -354,6 +354,16 @@
         .hidden {
             display: none;
         }
+        .imagem-usina {
+            margin-top: 20px;
+            width: 300px; /* Define a largura fixa */
+            height: 200px; /* Define a altura fixa */
+            object-fit: cover; /* Adapta a imagem ao contêiner, cortando quando necessário para manter a proporcionalidade */
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            display: none; /* Inicializa escondida */
+            margin-left: 20px;
+        }
 
     </style>
 </head>
@@ -413,6 +423,19 @@
 
             <label for="uc">Unidade Consumidora<b>*</b>:</label>
             <input type="text" id="uc" name="uc" required/>
+
+            <label for="usina">Selecione sua usina:<b>*</b>:</label>
+            <select id="usina" name="usina" required onchange="exibirImagem()">
+                <option value="vazio">Escolha uma opção</option>
+                <option value="75kwSolo">USINA 75KW SOLO</option>
+                <option value="75kwTelhado">USINA 75KW TELHADO</option>
+                <option value="300kwSolo">USINA 300KW SOLO</option>
+                <option value="300kwTelhado">USINA 300KW TELHADO</option>
+                <option value="1mwSolo">USINA 1MW SOLO</option>
+                <option value="1mwTelhado">USINA 1MW TELHADO</option>
+            </select>
+
+            <img id="imagem-usina" class="imagem-usina" alt="Imagem da usina">
 
             <label for="media">Média<b>*</b>:</label>
             <input type="text" id="media" name="media" required/>
@@ -888,6 +911,30 @@
             buscarResultados();
             verificarEstrutura();
         });
+
+        function exibirImagem() {
+            const select = document.getElementById('usina');
+            const imagem = document.getElementById('imagem-usina');
+            const selecao = select.value;
+
+            const imagens = {
+                '75kwSolo': '75kwsolo.png',
+                '75kwTelhado': '75kwtelhado.png',
+                '300kwSolo': '300kwsolo.png',
+                '300kwTelhado': '300kwtelhado.png',
+                '1mwSolo': '1mwsolo.png',
+                '1mwTelhado': '1mwtelhado.png'
+            };
+
+            if (imagens[selecao]) {
+                imagem.src = imagens[selecao];
+                imagem.style.display = 'block'; // Mostra a imagem
+                console.log(`Caminho da imagem: ${imagens[selecao]}`); // Debug
+            } else {
+                imagem.style.display = 'none';
+                console.warn('Nenhuma imagem disponível para esta seleção.');
+            }
+        }
     </script>
 </body>
 </html>
