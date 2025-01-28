@@ -918,97 +918,119 @@
             const imagem = document.getElementById('imagem-usina');
             const selecao = select.value;
 
-            const imagens = {
-                '75kwSolo': '75kwsolo.png',
-                '75kwTelhado': '75kwtelhado.png',
-                '300kwSolo': '300kwsolo.png',
-                '300kwTelhado': '300kwtelhado.png',
-                '1mwSolo': '1mwsolo.png',
-                '1mwTelhado': '1mwtelhado.png'
+            const configs = {
+                '75kwSolo': {
+                    imagem: '75kwsolo.png',
+                    padrao: '3x200A',
+                    estrutura: 'SOLO',
+                    quantidadePlacas: 160
+                },
+                '75kwTelhado': {
+                    imagem: '75kwtelhado.png',
+                    padrao: '3x200A',
+                    estrutura: 'FIBROMETAL'
+                },
+                '300kwSolo': {
+                    imagem: '300kwsolo.png',
+                    padrao: 'TORRE 300 KVA',
+                    estrutura: 'SOLO',
+                    quantidadePlacas: 640,
+                    multiplicador: 4
+                },
+                '300kwTelhado': {
+                    imagem: '300kwtelhado.png',
+                    padrao: 'TORRE 300 KVA',
+                    estrutura: 'FIBROMETAL',
+                    quantidadePlacas: 640,
+                    multiplicador: 4
+                },
+                '1mwSolo': {
+                    imagem: '1mwsolo.png',
+                    padrao: 'TORRE 1 MVA',
+                    estrutura: 'SOLO',
+                    quantidadePlacas: 2080,
+                    multiplicador: 13
+                },
+                '1mwTelhado': {
+                    imagem: '1mwtelhado.png',
+                    padrao: 'TORRE 1 MVA',
+                    estrutura: 'FIBROMETAL',
+                    quantidadePlacas: 2080,
+                    multiplicador: 13
+                }
             };
 
-            const padroes = {
-                '75kwSolo': '3x200A',
-                '75kwTelhado': '3x200A'
-            };
+            const config = configs[selecao];
 
-            const estruturas = {
-                '75kwSolo': 'SOLO',
-                '75kwTelhado': 'FIBROMETAL'
-            };
-
-            // Defina a imagem
-            if (imagens[selecao]) {
-                imagem.src = imagens[selecao];
+            if (config) {
+                imagem.src = config.imagem;
                 imagem.style.display = 'block';
-                console.log(`Caminho da imagem: ${imagens[selecao]}`);
+                console.log(`Caminho da imagem: ${config.imagem}`);
+
+                document.getElementById('padrao').value = config.padrao || '';
+                document.getElementById('estrutura').value = config.estrutura || '';
+                
+                verificarEstrutura(); // Altera visibilidade de elementos dependendo de `estrutura`
+                
+                // Preenchimento adicional
+                if (config.quantidadePlacas) {
+                    document.getElementById('quantidadePlacasInput').value = config.quantidadePlacas;
+                }
+
+                if (config.multiplicador) {
+                    document.getElementById('multiplicador').value = config.multiplicador;
+                }
+
+                // Atualizar resultados depois de ajustar todos os parâmetros
+                buscarResultados();
+
             } else {
                 imagem.style.display = 'none';
-                console.warn('Nenhuma imagem disponível para esta seleção.');
-            }
+                console.warn('Nenhuma configuração disponível para esta seleção.');
+                
+                // Zerar campos ao deselecionar usinas
+                document.getElementById('padrao').value = '';
+                document.getElementById('estrutura').value = '';
 
-            // Define o valor de Padrão
-            const campoPadrao = document.getElementById('padrao');
-            if (padroes[selecao]) {
-                campoPadrao.value = padroes[selecao];
-            } else {
-                campoPadrao.value = '';
-            }
-
-            // Define o valor de Estrutura e executa lógica específica
-            const campoEstrutura = document.getElementById('estrutura');
-            if (estruturas[selecao]) {
-                campoEstrutura.value = estruturas[selecao];
-                verificarEstrutura(); // Atualiza campos dependentes da estrutura
-                buscarResultados();
-            } else {
-                campoEstrutura.value = '';
-            }
-
-            // Define o valor do potSlider se a usina for "75kwTelhado"
-            const potSlider = document.getElementById('potSlider');
-            if (selecao === '75kwTelhado') {
-                potSlider.value = 112;
-                atualizarSlider(112); // Atualiza imediatamente a exibição do slider
-                buscarResultados();
             }
         }
         function buscarResultados() {
-    const estrutura = document.getElementById('estrutura').value;
-    const resultadosDiv = document.getElementById('resultados');
-    resultadosDiv.innerHTML = '';
+            const estrutura = document.getElementById('estrutura').value;
+            const resultadosDiv = document.getElementById('resultados');
+            resultadosDiv.innerHTML = '';
 
-    let url;
-    if (estrutura === 'SOLO') {
-        url = `buscar_preco.php?estrutura=SOLO`;
-    } else {
-        const potenciaSlider = document.getElementById('potSlider').value;
-        url = `buscar_preco.php?potencia=${encodeURIComponent(potenciaSlider)}&estrutura=${encodeURIComponent(estrutura)}`;
-    }
-
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.resultados.length > 0) {
-                data.resultados.slice(0, 90).forEach((item, index) => {
-                    const div = document.createElement('div');
-                    div.className = 'resultado-item';
-                    div.textContent = item.titulo;
-                    div.onclick = () => selecionarItem(item, div);
-                    resultadosDiv.appendChild(div);
-                    
-                    // Selecionar o primeiro item automaticamente
-                    if (index === 0) {
-                        selecionarItem(item, div);
-                    }
-                });
+            let url;
+            if (estrutura === 'SOLO') {
+                // URL quando estrutura é SOLO
+                url = `buscar_preco.php?estrutura=SOLO`;
             } else {
-                resultadosDiv.innerHTML = 'Nenhum resultado encontrado';
+                // URL quando há outras estruturas especificadas
+                const potenciaSlider = document.getElementById('potSlider').value;
+                url = `buscar_preco.php?potencia=${encodeURIComponent(potenciaSlider)}&estrutura=${encodeURIComponent(estrutura)}`;
             }
-        })
-        .catch(error => console.error('Erro ao buscar resultados:', error));
-}
 
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.resultados.length > 0) {
+                        data.resultados.slice(0, 90).forEach((item, index) => {
+                            const div = document.createElement('div');
+                            div.className = 'resultado-item';
+                            div.textContent = item.titulo;
+                            div.onclick = () => selecionarItem(item, div);
+                            resultadosDiv.appendChild(div);
+                            
+                            // Selecionar o primeiro item automaticamente para qualquer estrutura
+                            if (index === 0) {
+                                selecionarItem(item, div);
+                            }
+                        });
+                    } else {
+                        resultadosDiv.innerHTML = 'Nenhum resultado encontrado';
+                    }
+                })
+                .catch(error => console.error('Erro ao buscar resultados:', error));
+        }
         function selecionarItem(item, element) {
             // Limpar seleção de outros itens
             const itens = document.querySelectorAll('.resultado-item');
