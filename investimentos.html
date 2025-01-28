@@ -425,8 +425,7 @@
             <label for="uc">Unidade Consumidora<b>*</b>:</label>
             <input type="text" id="uc" name="uc" required/>
 
-            <label for="usina">Selecione sua usina:<b>*</b>:</label>
-            <select id="usina" name="usina" required onchange="exibirImagem()">
+            <select id="usina" name="usina" required onchange="exibirImagem(); simularCalculo();">
                 <option value="vazio">Escolha uma opção</option>
                 <option value="75kwSolo">USINA 75KW SOLO</option>
                 <option value="75kwTelhado">USINA 75KW TELHADO</option>
@@ -563,6 +562,9 @@
 
             <label for="potenciaGerador" class="readonly">Potência do Gerador:</label>
             <input type="text" id="potenciaGerador" name="potenciaGerador" readonly  class="readonly"/>
+
+            <label for="precoSimulacaoInput" class="readonly">Preço Final Simulado:</label>
+            <input type="text" id="precoSimulacaoInput" name="precoSimulacaoInput" value="Sem informações" style="color: red;"/>
 
             <button type="button" onclick="gerarPDF()" id="btnGerarPDF" disabled>Gerar PDF</button>
             <button type="button" onclick="window.location.href='contratousinas.html'" style="background-color: red; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
@@ -1055,6 +1057,34 @@
                 document.getElementById('potenciaGerador').value = item.potenciaGerador;
             }
         }
+        function simularCalculo() {
+            console.log("Chamando simularCalculo");
+            const formData = new FormData(document.getElementById('formulario'));
+            formData.append('simular', true);  // Indicação distinta para reconhecimento no PHP
+
+            fetch('simular_inv.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const precoSimulacaoElement = document.getElementById('precoSimulacaoInput');
+                if (data.success) {
+                    precoSimulacaoElement.value = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.precoFinal);
+                } else {
+                    precoSimulacaoElement.value = "Erro na simulação";
+                }
+            })
+            .catch((error) => {
+                console.error("Erro de rede ao chamar simulação:", error);
+                precoSimulacaoElement.value = "Erro de rede";
+            });
+        }
+
+        document.getElementById('usina').addEventListener('change', function() {
+            exibirImagem();
+            simularCalculo();
+        });
     </script>
 </body>
 </html>
