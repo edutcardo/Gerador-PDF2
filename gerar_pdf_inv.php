@@ -227,9 +227,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } elseif ($potenciaGerador >= 60 && $potenciaGerador < 75) {
             $fixo = 16260.17;
         } elseif ($potenciaGerador >= 75 && $potenciaGerador < 82) {
-            $fixo = 0;
-        } elseif ($potenciaGerador >= 82 && $potenciaGerador <= 112.2) {
-            $fixo = 0;
+            $fixo = 14000;
+        } elseif ($potenciaGerador >= 82) {
+            $fixo = 14000;
         }
     
         return $fixo;
@@ -522,7 +522,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome");
+    $pdf->Text(34.2, 98, "Nome: $nome $precoKit $padrao $opcao_adicional");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
