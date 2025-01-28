@@ -26,7 +26,7 @@ $sql = "SELECT titulo, precoDoIntegrador, codProd, marca, fabricante, potenciaIn
 // Modifica a lógica com base na estrutura selecionada
 if (strtoupper($estrutura) === 'SOLO') {
     // Apenas filtra por inversores
-    $sql .= " WHERE titulo REGEXP '[[:<:]]inversor[[:>:]]' LIMIT 200";
+    $sql .= " WHERE titulo REGEXP '[[:<:]]75kw[[:>:]]' LIMIT 200";
     $stmt = $conn->prepare($sql);
 } else {
     // Define margem de tolerância e prepara 'where' pela potencia verbal
