@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário com Pesquisa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        a,p {
+            font-family: Epilogue !important;
+        }
+
+        body {
+            background-color: #c6f3df;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+            margin-left: 60px; /* Adicione essa linha */
+        }
+
+        h1 {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: block;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        input[readonly],
+        input.hidden {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        #resultados {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+
+        .resultado-item {
+            cursor: pointer;
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 6px;
+            text-align: center;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .resultado-item:hover {
+            background: #2e7d32;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        button {
+            background-color: #45a049;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 8px;
+        }
+
+        button:hover {
+            background-color: #2e7d32;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+        }
+        .hidden {
+            display: none;
+        }
+        .slider {
+            width: 100%; /* Deixa o slider ocupar toda a largura disponível */
+            height: 20px; /* Aumenta a altura do slider */
+            appearance: none; /* Remove o estilo padrão do navegador */
+            background: #ddd; /* Define a cor de fundo do slider */
+            border-radius: 10px; /* Deixa as bordas arredondadas */
+            outline: none; /* Remove a borda ao focar no slider */
+            transition: background 0.3s ease; /* Adiciona uma transição suave ao hover */
+        }
+
+        .slider:hover {
+            background: #ccc; /* Muda o fundo quando o slider é hoverado */
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none; /* Remove o estilo padrão do botão do slider */
+            width: 25px; /* Largura do botão */
+            height: 25px; /* Altura do botão */
+            background: #45a049; /* Cor do botão */
+            border-radius: 50%; /* Deixa o botão redondo */
+            cursor: pointer; /* Mostra que o botão é clicável */
+            transition: background 0.3s ease; /* Suaviza a mudança de cor */
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            background: #2e7d32; /* Cor do botão ao passar o mouse */
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #45a049;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .slider::-moz-range-thumb:hover {
+            background: #2e7d32;
+        }
+        .sidebar:hover .logo {
+            width: 80px; /* Tamanho maior quando expandido */
+            height: 80px;
+            padding: 8px;
+        }
+        .sidebar {
+            width: 60px;
+            background-color: #006b3c;
+            transition: width 0.3s;
+            overflow: hidden;
+            position: fixed; /* Torna a sidebar fixa */
+            z-index: 2; /* Mantém a sidebar acima de outros elementos */
+            height: 100vh; /* Altura total da tela */
+            top: 0; /* Começa do topo */
+            left: 0; /* Fixa na lateral esquerda */
+        }
+
+        .sidebar:hover {
+            width: 200px;
+
+        }
+        .sidebar a {
+            display: flex; /* Ativa o layout flexível */
+            align-items: center; /* Centraliza verticalmente o conteúdo */
+            justify-content: flex-start; /* Centraliza horizontalmente (altere para `center` se necessário) */
+            padding: 10px; /* Ajusta o espaçamento interno */
+            color: #333;
+            text-decoration: none;
+            position: relative;
+            z-index: 2;
+            gap: 10px; /* Espaço entre ícone e texto */
+            margin-left: 8px;
+            margin-top: 24px;
+        }
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+        .sidebar a .text {
+            display: none; /* Oculta o texto por padrão */
+            margin-left: 10px; /* Adiciona espaçamento entre ícone e texto */
+        }
+        .sidebar:hover a .text {
+            display: inline-block; /* Exibe o texto quando a barra está em hover */ 
+            font-weight: bold; /* Negrito */
+            color: white; /* Cor branca */
+        }
+        .sidebar:hover .span {
+            text-decoration: none;
+            text-align: center;
+            margin: 0;
+        }
+        .sidebar img {
+            width: 100%; /* Adapta a largura ao contêiner */
+            height: 40px; /* Mantém a proporção da altura */
+            transition: transform 0.3s, filter 0.3s; /* Suaviza a transição */
+            object-fit: contain; /* Garante que a imagem seja ajustada sem distorção */
+        }
+
+        .sidebar:hover img {
+            content: url('logohover.png'); /* Substitui a imagem por outra */
+            filter: brightness(1.2); /* Torna a imagem um pouco mais brilhante (opcional) */
+            transform: scale(1.9); /* Aumenta a imagem de forma proporcional (opcional) */
+        }
+        .sidebar:hover ~ .topbar {
+            margin-left: 200px; /* Alinha com a sidebar expandida */
+            width: calc(100% - 200px); /* Ajusta a largura para o novo espaço disponível */
+        }
+        .sidebar:hover ~ .content {
+            margin-left: 200px; /* Ajusta para acompanhar a largura expandida da sidebar */
+        }
+        .icon{
+            color: white;
+        }
+        .containerlogo{
+            width: 100%; /* Define o tamanho inicial da logo */
+            height: 130px; /* Ajuste as dimensões conforme necessário */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+        .logo {
+            width: 40px; /* Define o tamanho inicial da logo */
+            height: 40px; /* Ajuste as dimensões conforme necessário */
+            margin: 10px 0;
+            transition: width 0.3s, height 0.3s;
+            padding: 0px;
+            padding-top: 8px;
+        }
+        .sidebar:hover ~ .container {
+            margin-left: 200px; /* Adicione esta linha para quando a sidebar estiver expandida */
+        }
+        .selecionado {
+            background-color: #45a049;
+            color: #fff;
+            transform: scale(1.05);
+            border: 2px solid #2e7d32;
+        }
+        /* Estilizando a seção de Multiplicadores */
+        .section {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        /* Contêiner e Botões */
+        .multiplicadores-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* Espaçamento adequado */
+        }
+
+        .multiplicador {
+            width: 60px; 
+            height: 60px; 
+            background: #4CAF50; /* Cor inicial verde */
+            color: white;
+            border-radius: 10px; 
+            text-align: center;
+            line-height: 60px; /* Centraliza o texto verticalmente */
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .multiplicador:hover {
+            background: #1e4c20;
+        }
+
+        /* Botão Selecionado */
+        .multiplicador.selected {
+            background: #ff0505; /* Verde escuro ao selecionar */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Destaque */
+        }
+
+        @media (max-width: 600px) {
+            /* Responsividade: espaçamento e layout mais compacto */
+            .multiplicadores-container {
+                gap: 10px;
+            }
+
+            .multiplicador {
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                font-size: 14px;
+            }
+        }
+        .opcoes-adicionais {
+            padding: 15px;
+            background-color: #f7f7f7;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Adiciona espaçamento entre os itens */
+        }
+
+        .opcoes-adicionais label {
+            display: flex;
+            align-items: center; /* Alinha o texto ao centro do botão */
+            font-weight: bold;
+            cursor: pointer; /* Torna clicável */
+            gap: 10px; /* Espaço entre o radio e o texto */
+        }
+
+        .opcoes-adicionais input[type="radio"] {
+            margin: 0; /* Remove margens extras ao redor do input */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+    </style>
+</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="toggle-btn" onclick="toggleSidebar()"></div>
+        <div class="containerlogo"> 
+            <img src="logo.png" alt="Logo" class="logo"> 
+        </div> 
+        <a href="index.html" class="home">
+            <i class="fa-solid fa-coins icon"></i> <span class="text">Autoconsumo</span>
+        </a>
+        <a href="investimentos.html">
+            <i class="fa-solid fa-solar-panel icon"></i><span class="text">Investimentos</span>
+        </a>
+        <a href="cocamar.html">
+            <i class="fa-solid fa-gauge icon"></i> <span class="text">Cocamar</span>
+        </a>
+        <a href="coopgb.html">
+            <i class="fa-solid fa-paste icon"></i><span class="text">Coop. Grupo B</span>
+        </a>
+        <a href="coopga.html">
+            <i class="fa-solid fa-paste icon"></i><span class="text">Coop. Grupo A</span>
+        </a>
+        <a href="limpeza.html">
+            <i class="fa-solid fa-spray-can-sparkles icon"></i><span class="text">Limpeza</span>
+        </a>
+
+    </div>
+    <div class="container">
+        <h1>Proposta Investimento</h1>
+
+        <form id="formulario">
+
+            <label for="nome">Nome<b>*</b>:</label>
+            <input type="text" id="nome" name="nome" required/>
+
+            <label for="endereco">Endereço<b>*</b>:</label>
+            <input type="text" id="endereco" name="endereco" required/>
+
+            <label for="cep">CEP<b>*</b>:</label>
+            <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" required/>
+
+            <label for="cidade">Cidade<b>*</b>:</label>
+            <input type="text" id="cidade" name="cidade" oninput="atualizarDados()" required/>
+
+            <label for="inputConcessionaria">Concessionária<b>*</b> (caso não retorne o valor esperado, escreva manualmente até que o valor da tarifa apareça):</label>
+            <input type="text" id="inputConcessionaria"/>
+
+            <label for="inputValorCompensavel">Valor Compensável<b>*</b>:</label>
+            <input type="text" id="inputValorCompensavel" readonly />
+
+            <label for="irradiacao" class="readonly">Irradiação:</label>
+            <input type="text" id="irradiacao" name="irradiacao" readonly  class="readonly"required/>
+
+
+            <label for="uc">Unidade Consumidora<b>*</b>:</label>
+            <input type="text" id="uc" name="uc" required/>
+
+            <label for="media">Média<b>*</b>:</label>
+            <input type="text" id="media" name="media" required/>
+
+            <label for="numeroDeFases">Número de fases<b>*</b>:</label>
+            <select id="numeroDeFases" name="numeroDeFases" required>
+                <option value="monofasico">MONOFÁSICO</option>
+                <option value="bifasico">BIFÁSICO</option>
+                <option value="trifasico">TRIFÁSICO</option>
+                <option value="monoRural">MONO RURAL</option>
+            </select>
+
+            <label for="iluminacao">Iluminação<b>*</b>:</label>
+            <input type="text" id="iluminacao" name="iluminacao" required/>
+
+            <label for="valoramais">Acrescentar valor:</label>
+            <input type="text" id="valoramais" name="valoramais"/>
+
+            <label for="desconto">Desconto:</label>
+            <select id="desconto" name="desconto">
+                <option value="">Selecione um desconto</option>
+                <option value="1%">1%</option>
+                <option value="2%">2%</option>
+                <option value="3%">3%</option>
+            </select>
+
+            <label for="padrao">Padrão entrada:</label>
+            <select id="padrao" name="padrao">
+                <option value="">Selecione um padrão</option>
+                <option value="2x50A">2x50A</option>
+                <option value="3x50A">3x50A</option>
+                <option value="3x63A">3x63A</option>
+                <option value="3x80A">3x80A</option>
+                <option value="3x100A">3x100A</option>
+                <option value="3x125A">3x125A</option>
+                <option value="3x150A">3x150A</option>
+                <option value="3x175A">3x175A</option>
+                <option value="3x200A">3x200A</option>
+                <option value="TORRE 112,5 KVA">TORRE 112,5 KVA</option>
+                <option value="TORRE 150 KVA">TORRE 150 KVA</option>
+                <option value="TORRE 225 KVA">TORRE 225 KVA</option>
+                <option value="TORRE 300 KVA">TORRE 300 KVA</option>
+            </select>
+
+            <label for="estrutura">Selecione uma Estrutura<b>*</b>:</label>
+            <select id="estrutura" name="estrutura" onchange="buscarResultados(); verificarEstrutura();" required>
+                <option value="">Selecione uma estrutura</option>
+                <option value="COLONIAL">COLONIAL</option>
+                <option value="FIBROMADEIRA">FIBROMADEIRA</option>
+                <option value="FIBROMETAL">FIBROMETAL</option>
+                <option value="METALICO">METALICO</option>
+                <option value="S/ESTRUTURA">S/ESTRUTURA</option>
+                <option value="SOLO">SOLO</option>
+            </select>
+
+            <label for="palavra-chave">Potência do Gerador<b>*</b>:</label>
+            <input type="range" id="palavra-chave" name="palavra-chave" min="0" max="116" value="0" step="1" class="slider" oninput="atualizarSlider(this.value); buscarResultados(); calcularResultado()" required/>
+            <span id="slider-value">0</span>
+
+            <input type="text" id="resultado" name="resultado" readonly required/>
+
+            <div id="resultados" required></div>
+
+            <div id="multiplicadores-section" class="section">
+                <h3 class="title">Multiplique seu kit</h3>
+                <p class="subtitle">(para usinas maiores)</p>
+                <div id="multiplicadores" class="multiplicadores-container">
+                    <div class="multiplicador" data-value="2">X2</div>
+                    <div class="multiplicador" data-value="3">X3</div>
+                    <div class="multiplicador" data-value="4">X4</div>
+                </div>
+                <!-- Campo oculto para envio PHP -->
+                <input type="hidden" id="multiplicador" name="multiplicador" value="">
+            </div>
+
+            <label for="preco" class="readonly">Preço do Integrador:</label>
+            <input type="text" id="preco" name="preco" readonly  class="readonly"/>
+
+            <div id="quantidadePlacasDiv" class="hidden">
+                <label for="quantidadePlacas">Quantidade de Placas:</label>
+                <input type="number" id="quantidadePlacasInput" name="quantidadePlacas" min="1" />
+            </div>
+
+            <label for="adicionais" class="adicionais-label hidden">Opções Adicionais:</label>
+            <div id="adicionais" class="opcoes-adicionais hidden">
+                <label for="alambrado">
+                    <input type="radio" id="alambrado" name="opcao_adicional" value="Adicionar alambrado">
+                    Adicionar alambrado
+                </label>
+
+                <label for="britas">
+                    <input type="radio" id="britas" name="opcao_adicional" value="Adicionar britas">
+                    Adicionar britas
+                </label>
+                
+                <label for="alambrado_britas">
+                    <input type="radio" id="alambrado_britas" name="opcao_adicional" value="Adicionar alambrado + britas">
+                    Adicionar alambrado + britas
+                </label>
+            </div>
+
+            <!-- Adicionar os campos de entrada para as novas informações -->
+            <label for="codProd" class="readonly">Código do Produto:</label>
+            <input type="text" id="codProd" name="codProd" readonly  class="readonly"/>
+
+            <label for="marca" class="readonly">Marca:</label>
+            <input type="text" id="marca" name="marca" readonly  class="readonly"/>
+
+            <label for="fabricante" class="readonly">Fabricante:</label>
+            <input type="text" id="fabricante" name="fabricante" readonly  class="readonly"/>
+
+            <label for="potenciaInversor" class="readonly">Potência do Inversor:</label>
+            <input type="text" id="potenciaInversor" name="potenciaInversor" readonly  class="readonly"/>
+
+            <label for="potenciaModulo" class="readonly">Potência do Módulo:</label>
+            <input type="text" id="potenciaModulo" name="potenciaModulo" readonly  class="readonly"/>
+
+            <label for="tensaoSaida" class="readonly">Tensão de Saída:</label>
+            <input type="text" id="tensaoSaida" name="tensaoSaida" readonly  class="readonly"/>
+
+            <label for="componentes" class="readonly">Componentes:</label>
+            <input type="text" id="componentes" name="componentes" readonly  class="readonly"/>
+
+            <label for="potenciaGerador" class="readonly">Potência do Gerador:</label>
+            <input type="text" id="potenciaGerador" name="potenciaGerador" readonly  class="readonly"/>
+
+            <button type="button" onclick="gerarPDF()" id="btnGerarPDF" disabled>Gerar PDF</button>
+            <button type="button" onclick="window.location.href='contratousinas.html'" style="background-color: red; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
+                Gerar Contrato
+            </button>
+        </form>
+    </div>
+
+    <script>
+    function verificarEstrutura() {
+        const estrutura = document.getElementById('estrutura').value;
+        
+        const elementosParaOcultar = [
+            document.querySelector('label[for="palavra-chave"]'),
+            document.getElementById('palavra-chave'),
+            document.getElementById('slider-value'),
+            document.getElementById('resultado')
+        ];
+
+        const quantidadePlacasDiv = document.getElementById('quantidadePlacasDiv');
+        const adicionaisDiv = document.querySelector('.opcoes-adicionais');
+        const adicionaisLabel = document.querySelector('.adicionais-label');
+
+
+        if (estrutura === 'SOLO') {
+            elementosParaOcultar.forEach(element => element.classList.add('hidden'));
+            quantidadePlacasDiv.classList.remove('hidden');
+            adicionaisDiv.classList.remove('hidden');
+            adicionaisLabel.classList.remove('hidden');
+            alert("Para usina solo você deve informar a quantidade de placas, um inversor e se precisa de alambrado ou britas!");
+
+        } else {
+            elementosParaOcultar.forEach(element => element.classList.remove('hidden'));
+            quantidadePlacasDiv.classList.add('hidden');
+            adicionaisDiv.classList.add('hidden');
+            adicionaisLabel.classList.add('hidden');
+        }
+    }
+        
+        function buscarResultados() {
+            const estrutura = document.getElementById('estrutura').value;
+            const resultadosDiv = document.getElementById('resultados');
+            resultadosDiv.innerHTML = ''; 
+
+            let url;
+            if (estrutura === 'SOLO') {
+                // A consulta apenas por inversores, sem o filtro de potência
+                url = `buscar_preco.php?estrutura=SOLO`;
+            } else {
+                // Consulta com filtro de potenciaGerador para outras estruturas
+                const potenciaSlider = document.getElementById('palavra-chave').value;
+                url = `buscar_preco.php?potencia=${encodeURIComponent(potenciaSlider)}&estrutura=${encodeURIComponent(estrutura)}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        data.resultados.slice(0, 90).forEach(item => {
+                            const div = document.createElement('div');
+                            div.className = 'resultado-item';
+                            div.textContent = item.titulo;
+                            div.onclick = () => selecionarItem(item);
+                            resultadosDiv.appendChild(div);
+                        });
+                    } else {
+                        resultadosDiv.innerHTML = 'Nenhum resultado encontrado';
+                    }
+                })
+                .catch(error => console.error('Erro ao buscar resultados:', error));
+        }
+
+        function atualizarSlider(valor) {
+            document.getElementById('slider-value').textContent = valor;
+        }
+
+        function selecionarItem(item) {
+            // Manipula a seleção do item - esse trecho não é ajustado, acordo original
+        }
+
+
+
+        function selecionarItem(item) {
+            // Remover a classe 'selecionado' de todos os itens
+            const itens = document.querySelectorAll('.resultado-item');
+            itens.forEach(it => it.classList.remove('selecionado'));
+
+            // Adicionar a classe 'selecionado' ao item clicado
+            const itemSelecionado = event.currentTarget;
+            itemSelecionado.classList.add('selecionado');
+
+            // Preencher o campo de preço e os novos campos com as informações do item
+            document.getElementById('preco').value = item.precoDoIntegrador;
+            document.getElementById('codProd').value = item.codProd;
+            document.getElementById('marca').value = item.marca;
+            document.getElementById('fabricante').value = item.fabricante;
+            document.getElementById('potenciaInversor').value = item.potenciaInversor;
+            document.getElementById('potenciaModulo').value = item.potenciaModulo;
+            document.getElementById('tensaoSaida').value = item.tensaoSaida;
+            document.getElementById('componentes').value = item.componentes;
+            document.getElementById('potenciaGerador').value = item.potenciaGerador;
+        }
+
+        function gerarPDF() {
+            const formData = new FormData(document.getElementById('formulario'));
+                // Adiciona a constante potenciaGerador ao FormData
+            const opcaoAdicional = document.querySelector('input[name="opcao_adicional"]:checked');
+                if (opcaoAdicional) {
+                    formData.append('opcao_adicional', opcaoAdicional.value);
+                }
+                
+            const potenciaGerador = document.getElementById('potenciaGerador').value; // ou use a variável diretamente se já existir
+            const potenciaModulo = document.getElementById('potenciaModulo').value;
+            const precoKit = document.getElementById('preco').value;
+            const numeroDeFases = document.getElementById('numeroDeFases').value;
+            const irradiacao = document.getElementById('irradiacao').value;
+            const marca = document.getElementById('marca').value;
+            const fabricante = document.getElementById('fabricante').value;
+            const potenciaInversor = document.getElementById('potenciaInversor').value;
+            const padrao = document.getElementById('padrao').value;
+            const desconto = document.getElementById('desconto').value;
+            const valoramais = document.getElementById('valoramais').value;
+            const inputConcessionaria = document.getElementById('inputConcessionaria').value;
+            const inputValorCompensavel = document.getElementById('inputValorCompensavel').value;
+            const quantidadePlacas = document.getElementById('quantidadePlacasInput').value;
+            const estrutura = document.getElementById('estrutura').value;
+            formData.append('estrutura', estrutura);
+            formData.append('quantidadePlacas', quantidadePlacas);
+            formData.append('padrao', padrao);
+            formData.append('desconto', desconto);
+            formData.append('valoramais', valoramais);
+            formData.append('marca', marca);
+            formData.append('fabricante', fabricante);
+            formData.append('potenciaInversor', potenciaInversor);
+            formData.append('numeroDeFases', numeroDeFases);
+            formData.append('irradiacao', irradiacao);
+            formData.append('potenciaGerador', potenciaGerador);
+            formData.append('potenciaModulo', potenciaModulo);
+            formData.append('precoKit', precoKit);
+            formData.append('inputConcessionaria', inputConcessionaria);
+            formData.append('inputValorCompensavel', inputValorCompensavel);
+
+            
+            fetch('gerar_pdf_inv.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'arquivo_gerado.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => console.error('Erro ao gerar PDF:', error));
+        }
+
+        function preencherFormulario() {
+            fetch('https://jsonplaceholder.typicode.com/users/1')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('nome').value = data.name;
+                })
+                .catch(error => {
+                    console.log('Erro ao buscar dados da API:', error);
+                });
+        }
+
+        window.onload = preencherFormulario;
+
+        function buscarCidadePorCEP() {
+            const cep = document.getElementById('cep').value;
+            if (cep.length === 8) { // Valida se o CEP possui 8 dígitos
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            document.getElementById('cidade').value = data.localidade;
+                        } else {
+                            alert('CEP não encontrado!');
+                            document.getElementById('cidade').value = '';
+                        }
+                    })
+                    .catch(error => console.error('Erro ao buscar cidade pelo CEP:', error));
+            }
+        }
+
+        window.onload = preencherFormulario;
+
+
+        function buscarIrradiacao() {
+            const cidade = document.getElementById('cidade').value.trim();
+            
+            if (cidade !== "") {
+                fetch(`buscar_irradiacao.php?cidade=${encodeURIComponent(cidade)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('irradiacao').value = data.irradiacao;
+                        } else {
+                            document.getElementById('irradiacao').value = ''; // Limpa o campo se não encontrado
+                            console.warn(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar irradiação:', error);
+                        document.getElementById('irradiacao').value = '';
+                    });
+            } else {
+                document.getElementById('irradiacao').value = ''; // Limpa o campo se não houver input
+            }
+        }
+        // Adiciona a classe 'hidden' a todos os inputs com a classe 'readonly'
+            document.querySelectorAll('.readonly').forEach(input => {
+            input.classList.add('hidden');
+        });
+        function calcularResultado() {
+            const potencia = parseFloat(document.getElementById('palavra-chave').value); // Pega o valor digitado
+            if (!isNaN(potencia)) {
+                const resultado = potencia * 3.9 * 30; // Faz o cálculo
+                document.getElementById('resultado').value = `A geração selecionada é: ${resultado.toFixed(0)} kWh - Selecione um kit abaixo`; // Exibe o resultado com 2 casas decimais
+            } else {
+                document.getElementById('resultado').value = ''; // Limpa o campo se o input for inválido
+            }
+        }
+        function atualizarSlider(valor) {
+            document.getElementById('slider-value').textContent = valor; // Exibe o valor do slider ao lado do controle
+        }
+
+                // Função que verifica se todos os campos obrigatórios estão preenchidos
+        function verificarFormulario() {
+            const formulario = document.getElementById('formulario');
+            const btnGerarPDF = document.getElementById('btnGerarPDF');
+            
+            // Verifica se o formulário é válido
+            if (formulario.checkValidity()) {
+                btnGerarPDF.disabled = false; // Habilita o botão
+            } else {
+                btnGerarPDF.disabled = true; // Desabilita o botão
+            }
+        }
+
+        // Chama a função de verificação sempre que o conteúdo do formulário mudar
+        document.getElementById('formulario').addEventListener('input', verificarFormulario);
+
+        // Chama a função de verificação ao carregar a página
+        window.onload = verificarFormulario;
+
+        function buscarDados() {
+            const cidade = document.getElementById('cidade').value.trim();
+
+            if (cidade !== "") {
+                fetch(`buscar_dados.php?cidade=${encodeURIComponent(cidade)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data); // Log de depuração
+                        if (data.success) {
+                            const inputConcessionaria = document.getElementById('inputConcessionaria');
+                            inputConcessionaria.value = data.concessionaria;
+                            buscarValorCompensavel(); // Chame a função após definir o valor
+                        } else {
+                            document.getElementById('inputConcessionaria').value = 'Erro: ' + data.message;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar dados:', error);
+                        document.getElementById('inputConcessionaria').value = 'Erro de rede';
+                    });
+            } else {
+                document.getElementById('inputConcessionaria').value = 'Informe uma cidade';
+            }
+        }
+        function buscarValorCompensavel() {
+            const concessionaria = document.getElementById('inputConcessionaria').value.trim(); // Use .value para obter o valor
+
+            console.log("Concessionária:", concessionaria); // Log para depuração
+
+            if (concessionaria !== "") {
+                fetch(`buscar_compensavel.php?sigla=${encodeURIComponent(concessionaria)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('inputValorCompensavel').value = data.compensavel;
+                        } else {
+                            document.getElementById('inputValorCompensavel').value = 'Erro: ' + data.message;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar valor compensável:', error);
+                        document.getElementById('inputValorCompensavel').value = 'Erro de rede';
+                    });
+            } else {
+                document.getElementById('inputValorCompensavel').value = 'Informe uma concessionária';
+            }
+        }
+
+        document.getElementById('inputConcessionaria').addEventListener('input', buscarValorCompensavel);
+
+        function atualizarDados() {
+            buscarIrradiacao();
+            buscarDados();
+            buscarValorCompensavel();
+        }
+        function travarDesconto() {
+            const valoramaisInput = document.getElementById('valoramais');
+            const descontoSelect = document.getElementById('desconto');
+
+            valoramaisInput.addEventListener('input', function() {
+                if (valoramaisInput.value.trim() !== "") {
+                    descontoSelect.disabled = true;
+                } else {
+                    descontoSelect.disabled = false;
+                }
+            });
+        }
+
+        // Chama a função para travar o desconto ao carregar a página
+        window.onload = function() {
+            travarDesconto();
+            verificarFormulario(); // Certifique-se de chamar as outras funções necessárias aqui
+        };
+        document.querySelectorAll('.multiplicador').forEach(element => {
+            // Adiciona evento de clique a todos os botões
+            element.addEventListener('click', function () {
+                // Remove a seleção de outros botões
+                document.querySelectorAll('.multiplicador').forEach(el => {
+                    el.classList.remove('selected');
+                });
+
+                // Adicionar a classe 'selected' ao botão clicado
+                this.classList.add('selected');
+
+                // Atualizar o valor no campo oculto
+                const multiplicador = this.getAttribute('data-value');
+                document.getElementById('multiplicador').value = multiplicador;
+            });
+        });
+        document.getElementById('estrutura').addEventListener('change', function() {
+            buscarResultados();
+            verificarEstrutura();
+        });
+    </script>
+</body>
+</html>
