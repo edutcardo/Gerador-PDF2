@@ -690,6 +690,8 @@
             const inputValorCompensavel = document.getElementById('inputValorCompensavel').value;
             const quantidadePlacas = document.getElementById('quantidadePlacasInput').value;
             const estrutura = document.getElementById('estrutura').value;
+            const usina = document.getElementById('usina').value;
+            formData.append('usina', usina);
             formData.append('estrutura', estrutura);
             formData.append('quantidadePlacas', quantidadePlacas);
             formData.append('padrao', padrao);

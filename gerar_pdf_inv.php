@@ -28,6 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $quantidadePlacas = $_POST['quantidadePlacas'];
     $estrutura = $_POST['estrutura'];
     $opcao_adicional = $_POST['opcao_adicional'];
+    $usina = $_POST['usina'];
 
         // Função para verificar e ajustar valores
     function verificarValor($valor) {
@@ -523,7 +524,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome $precoKit $padrao $opcao_adicional");
+    $pdf->Text(34.2, 98, "Nome: $nome $usina");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
