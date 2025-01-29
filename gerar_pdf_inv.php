@@ -29,7 +29,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $estrutura = $_POST['estrutura'];
     $opcao_adicional = $_POST['opcao_adicional'];
     $usina = $_POST['usina'];
+/**
+ * Classe para processamento e validação de dados
+ */
+    class DataProcessor {
+        /**
+         * Processa valores monetários removendo formatação
+         * @param string $valor Valor monetário formatado (ex: R$ 1.234,56)
+         * @return float Valor processado (1234.56)
+         */
+        public static function tratarValorMonetario($valor) {
+            if (empty($valor)) return 0.00;
+            $valor = preg_replace('/[R$\s.]/', '', $valor);
+            $valor = str_replace(',', '.', $valor);
+            return round(floatval($valor), 2);
+        }
 
+        /**
+         * Processa valores percentuais removendo símbolo
+         * @param string $valor Valor percentual formatado (ex: 10,5%)
+         * @return float Valor processado (10.5)
+         */
+        public static function tratarPercentual($valor) {
+            if (empty($valor)) return 0.00;
+            $valor = str_replace(['%', ' '], '', $valor);
+            return round(floatval(str_replace(',', '.', $valor)), 4);
+        }
+
+        /**
+         * Valida dados técnicos do sistema
+         * @param array $dados Array com dados técnicos
+         * @return bool True se válido, Exception caso contrário
+         */
+        public static function validarDadosTecnicos($dados) {
+            $camposNumericos = ['potencia_gerador', 'quantidade_placas', 'geracao_arredondado'];
+            foreach ($camposNumericos as $campo) {
+                if (isset($dados[$campo]) && !is_numeric($dados[$campo])) {
+                    throw new Exception("Valor inválido para {$campo}");
+                }
+            }
+            return true;
+        }
+    }
         // Função para verificar e ajustar valores
     function verificarValor($valor) {
         return $valor == 0 ? 1 : $valor;
@@ -933,8 +974,116 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Salva ou exibe o PDF
     $pdf->Output('arquivo_gerado.pdf', 'I');  // 'I' para exibir no navegador
-    
 
+    try {
+        // Configurações do Banco de Dados com Segurança Aprimorada
+        $dbConfig = [
+            'host' => 'srv1781.hstgr.io',
+            'dbname' => 'u345670158_propostainv',
+            'user' => 'u345670158_eduardotcardo4',
+            'pass' => 'Rtz6ngqr@',
+            'charset' => 'utf8mb4',
+            'options' => [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+            ]
+        ];
+    
+        // Estabelece conexão segura
+        $dsn = "mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']};charset={$dbConfig['charset']}";
+        $pdo = new PDO($dsn, $dbConfig['user'], $dbConfig['pass'], $dbConfig['options']);
+    
+        // Processa e valida dados
+        DataProcessor::validarDadosTecnicos($_POST);
+    
+        // Prepara dados para inserção
+        $dadosProcessados = [
+            // Dados do Cliente
+            'nome' => trim($nome),                          // Remove espaços extras
+            'endereco' => mb_strtoupper($endereco),         // Padroniza endereço em maiúsculas
+            'cidade' => mb_strtoupper($cidade),             // Padroniza cidade em maiúsculas
+            'uc' => preg_replace('/[^0-9]/', '', $uc),      // Mantém apenas números da UC
+            'usina' => trim($usina),                        // Remove espaços extras
+            
+            // Dados Técnicos (com validação de valores numéricos)
+            'media' => floatval($media),
+            'iluminacao' => floatval($iluminacao),
+            'potencia_gerador' => floatval($potenciaGerador),
+            'quantidade_placas' => intval($qtdmodulosArredondado),
+            
+            // Dados Financeiros (com formatação adequada)
+            'preco_final' => round(floatval($precoFinal), 2),
+            'desconto' => floatval($desconto),
+            'geracao_anual' => round(floatval($geracaoAnual), 2),
+            'payback' => round(floatval($paybackArredondado), 2),
+            'percentual_solar' => round(floatval($percentualSolarArredondado), 2)
+        ];
+        
+        // Processamento dos valores financeiros e indicadores
+        $dadosProcessados += [
+            // Retornos por Bandeira Tarifária
+            'retorno_verde' => DataProcessor::tratarValorMonetario($retornoVerdeRs),
+            'retorno_amarelo' => DataProcessor::tratarValorMonetario($retornoAmareloRs),
+            'retorno_vermelho' => DataProcessor::tratarValorMonetario($retornoVermelhoRs),
+            'retorno_vermelho_p1' => DataProcessor::tratarValorMonetario($retornoVermelhoP1Rs),
+            
+            // Indicadores de Rentabilidade
+            'rentabilidade_verde' => DataProcessor::tratarPercentual($rentabilidadeVerdeRs),
+            'rentabilidade_amarela' => DataProcessor::tratarPercentual($rentabilidadeAmarelaRs),
+            'rentabilidade_vermelha' => DataProcessor::tratarPercentual($rentabilidadeVermelhaRs),
+            'rentabilidade_vermelha_p1' => DataProcessor::tratarPercentual($rentabilidadeVermelhaP1Rs),
+            
+            // Custos Operacionais
+            'seguro' => DataProcessor::tratarValorMonetario($seguroRs),
+            'manutencao' => DataProcessor::tratarValorMonetario($manutencaoRs),
+            'imposto' => DataProcessor::tratarValorMonetario($impostoRs),
+            'demanda' => DataProcessor::tratarValorMonetario($demandaRs),
+            
+            // Resultados Líquidos
+            'liquido_verde' => DataProcessor::tratarValorMonetario($liquidoVerdeRs),
+            'liquido_amarelo' => DataProcessor::tratarValorMonetario($liquidoAmareloRs),
+            'liquido_vermelho' => DataProcessor::tratarValorMonetario($liquidoVermelhoRs),
+            'liquido_vermelho_p1' => DataProcessor::tratarValorMonetario($liquidoVermelhoP1Rs),
+            'media_liquido' => DataProcessor::tratarValorMonetario($mediaLiquidoRs),
+            
+            // Dados Comerciais
+            'margem' => round(floatval($margem), 4),
+            'comissao' => round(floatval($comissao), 2),
+            'mobra' => round(floatval($mobra), 2),
+            'geracao_arredondado' => round(floatval($geracaoArredondado), 2),
+            
+            // Metadados do Sistema
+            'usuario_criacao' => $_SESSION['usuario'] ?? 'sistema',
+            'status_projeto' => 'Ativo',
+            'data_atualizacao' => date('Y-m-d H:i:s')
+        ];
+        
+    
+        // Query de inserção otimizada
+        $campos = implode(', ', array_keys($dadosProcessados));
+        $valores = ':' . implode(', :', array_keys($dadosProcessados));
+        
+        $sql = "INSERT INTO resultados_calculados ($campos) VALUES ($valores)";
+        $stmt = $pdo->prepare($sql);
+    
+        // Executa inserção com dados processados
+        $stmt->execute($dadosProcessados);
+    
+        // Registra sucesso
+        $mensagem = "Dados armazenados com sucesso! ID: " . $pdo->lastInsertId();
+        error_log($mensagem);
+    
+    } catch (PDOException $e) {
+        $erro = "Erro no banco de dados: " . $e->getMessage();
+        error_log($erro);
+        throw new Exception($erro);
+    } catch (Exception $e) {
+        $erro = "Erro ao processar dados: " . $e->getMessage();
+        error_log($erro);
+        throw $e;
+    }
     
 }
 ?>
