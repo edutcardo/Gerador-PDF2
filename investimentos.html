@@ -512,8 +512,8 @@
                 <input type="hidden" id="multiplicador" name="multiplicador" value="">
             </div>
 
-            <label for="preco" >Preço do Integrador:</label>
-            <input type="text" id="preco" name="preco" />
+            <label for="preco" class="readonly">Preço do Integrador:</label>
+            <input type="text" id="preco" name="preco" readonly  class="readonly"/>
 
             <div id="quantidadePlacasDiv" class="hidden">
                 <label for="quantidadePlacas">Quantidade de Placas:</label>
@@ -563,8 +563,8 @@
             <label for="potenciaGerador" class="readonly">Potência do Gerador:</label>
             <input type="text" id="potenciaGerador" name="potenciaGerador" readonly  class="readonly"/>
 
-            <input type="number" name="precoKit" id="precoKit" value="1500" required> <!-- Preço do Kit -->
-            <button type="button" onclick="simularCalculo();">Simular Calculo</button>
+            <label for="precoSimulacaoInput" class="readonly">Preço Final Simulado:</label>
+            <input type="text" id="precoSimulacaoInput" name="precoSimulacaoInput" value="Sem informações" style="color: red;"/>
 
             <button type="button" onclick="gerarPDF()" id="btnGerarPDF" disabled>Gerar PDF</button>
             <button type="button" onclick="window.location.href='contratousinas.html'" style="background-color: red; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
@@ -1058,14 +1058,9 @@
             }
         }
         function simularCalculo() {
+            console.log("Chamando simularCalculo");
             const formData = new FormData(document.getElementById('formulario'));
-
-            // Registre todos os valores do formulário no console
-            formData.forEach((value, key) => {
-                console.log(`${key}: ${value}`);  // Verifique se "precoKit" aparece com o valor correto
-            });
-
-            formData.append('simular', true);
+            formData.append('simular', true);  // Indicação distinta para reconhecimento no PHP
 
             fetch('simular_inv.php', {
                 method: 'POST',
@@ -1073,13 +1068,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log("Dados recebidos:", data); // Veja o que está sendo retornado do PHP
-
                 const precoSimulacaoElement = document.getElementById('precoSimulacaoInput');
                 if (data.success) {
                     precoSimulacaoElement.value = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.precoFinal);
                 } else {
-                    precoSimulacaoElement.value = `Erro na simulação: ${data.message || ""}`;
+                    precoSimulacaoElement.value = "Erro na simulação";
                 }
             })
             .catch((error) => {
@@ -1087,6 +1080,11 @@
                 precoSimulacaoElement.value = "Erro de rede";
             });
         }
+
+        document.getElementById('usina').addEventListener('change', function() {
+            exibirImagem();
+            simularCalculo();
+        });
     </script>
 </body>
 </html>
