@@ -1101,40 +1101,55 @@
             });
 
             async function buscarDados(usinaValue) {
-            try {
-                const response = await fetch(`consultar_usina.php?usina=${encodeURIComponent(usinaValue)}`);
-                if (!response.ok) throw new Error('Erro na resposta da rede');
+                try {
+                    const response = await fetch(`consultar_usina.php?usina=${encodeURIComponent(usinaValue)}`);
+                    if (!response.ok) throw new Error('Erro na resposta da rede');
 
-                const data = await response.json();
-                console.log('Dados recebidos:', data);
+                    const data = await response.json();
+                    console.log('Dados recebidos:', data);
 
-                if (data.success) {
-                    document.getElementById('preco_final').value = parseFloat(data.dados.preco_final).toFixed(2);
-                    document.getElementById('retorno_verde').value = parseFloat(data.dados.retorno_verde).toFixed(2);
-                    document.getElementById('media_liquido').value = parseFloat(data.dados.media_liquido).toFixed(2);
-                    document.getElementById('rentabilidade_verde').value = parseFloat(data.dados.rentabilidade_verde).toFixed(2);
-                    document.getElementById('retorno_verde_12').value = parseFloat(data.dados.retorno_verde_12).toFixed(2);
-                } else {
-                    throw new Error(data.message || 'Erro ao buscar dados');
+                    if (data.success) {
+                        // Função para formatar o valor monetário
+                        const formatarMoeda = valor => {
+                            // Converte para string, substitui vírgula por ponto, fixa duas casas decimais
+                            const valorNumerico = parseFloat(valor).toFixed(2) || '0.00';
+                            // Sintaxe RegExp \d(?=(\d{3})+\.), insere pontos como separadores de milhar
+                            return valorNumerico.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        };
+
+                        // Função para formatar porcentagem
+                        const formatarPercentual = valor => {
+                            // Divide por 100, fixa duas casas decimais, transforma o número e acrescenta o símbolo de %
+                            return `${parseFloat(valor).toFixed(2).replace('.', ',')}%`;
+                        };
+
+                        // Atualiza os inputs com os valores formatados
+                        document.getElementById('preco_final').value = 'R$ ' + formatarMoeda(data.dados.preco_final);
+                        document.getElementById('retorno_verde').value = 'R$ ' + formatarMoeda(data.dados.retorno_verde);
+                        document.getElementById('media_liquido').value = 'R$ ' + formatarMoeda(data.dados.media_liquido);
+                        document.getElementById('rentabilidade_verde').value = formatarPercentual(data.dados.rentabilidade_verde);
+                        document.getElementById('retorno_verde_12').value = 'R$ ' + formatarMoeda(data.dados.retorno_verde_12);
+                    } else {
+                        throw new Error(data.message || 'Erro ao buscar dados');
+                    }
+                } catch (error) {
+                    console.error('Erro ao buscar dados:', error);
                 }
-            } catch (error) {
-                console.error('Erro ao buscar dados:', error);
             }
-        }
 
-        document.getElementById('usina').addEventListener('change', function() {
-            const usinaValue = this.value;
-            if (usinaValue && usinaValue !== 'vazio') {
-                buscarDados(usinaValue);
-            } else {
-                // Limpar campos se "Escolha uma opção" for selecionado
-                document.getElementById('preco_final').value = '';
-                document.getElementById('retorno_verde').value = '';
-                document.getElementById('media_liquido').value = '';
-                document.getElementById('rentabilidade_verde').value = '';
-                document.getElementById('retorno_verde_12').value = '';
-            }
-        });
+            document.getElementById('usina').addEventListener('change', function() {
+                const usinaValue = this.value;
+                if (usinaValue && usinaValue !== 'vazio') {
+                    buscarDados(usinaValue);
+                } else {
+                    // Limpar campos se "Escolha uma opção" for selecionado
+                    document.getElementById('preco_final').value = '';
+                    document.getElementById('retorno_verde').value = '';
+                    document.getElementById('media_liquido').value = '';
+                    document.getElementById('rentabilidade_verde').value = '';
+                    document.getElementById('retorno_verde_12').value = '';
+                }
+            });
     </script>
 </body>
 </html>
