@@ -365,10 +365,19 @@
             display: none; /* Inicializa escondida */
             margin-left: 60px;
         }
+        #map {
+            height: 600px; /* Altura do mapa */
+        }
+        #form-container {
+            margin-bottom: 10px;
+        }
 
     </style>
 </head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+
 <body>
     <div class="sidebar" id="sidebar">
         <div class="toggle-btn" onclick="toggleSidebar()"></div>
@@ -578,13 +587,24 @@
             <label for="potenciaGerador" class="readonly">Potência do Gerador:</label>
             <input type="text" id="potenciaGerador" name="potenciaGerador" readonly  class="readonly"/>
 
+            
+            <button onclick="mostrarDetalhes()">Verificar Telhado</button>
+            <div id="detalhes" style="display: none;">
+                <input type="text" id="enderecoInput" placeholder="Endereço" />
+                <input type="text" id="cidadeInput" placeholder="Cidade" />
+                <button onclick="buscarEndereco()">Buscar</button>
+                <div id="map"></div>
+            </div>
+
             <button type="button" onclick="gerarPDF()" id="btnGerarPDF" disabled>Gerar PDF</button>
             <button type="button" onclick="window.location.href='contratousinas.html'" style="background-color: red; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
                 Gerar Contrato
             </button>
         </form>
     </div>
-
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet/dist/esri-leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
     <script>
     function verificarEstrutura() {
         const estrutura = document.getElementById('estrutura').value;
@@ -1149,6 +1169,49 @@
                     document.getElementById('rentabilidade_verde').value = '';
                     document.getElementById('retorno_verde_12').value = '';
                 }
+            });
+            var map = L.map('map').setView([-23.55052, -46.633308], 13);
+            L.esri.basemapLayer('Imagery').addTo(map);
+
+            var marcador;
+
+            function mostrarDetalhes() {
+                document.getElementById('detalhes').style.display = 'block';
+                map.invalidateSize(); // Ajusta o tamanho do mapa
+            }
+
+            function buscarEndereco() {
+                var endereco = document.getElementById("enderecoInput").value;
+                var cidade = document.getElementById("cidadeInput").value;
+                var query = encodeURIComponent(`${endereco}, ${cidade}`);
+                
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            var coordenadas = [data[0].lat, data[0].lon];
+                            map.setView(coordenadas, 15);
+                            
+                            if (marcador) {
+                                marcador.setLatLng(coordenadas);
+                            } else {
+                                marcador = L.marker(coordenadas).addTo(map);
+                            }
+
+                            marcador.bindPopup(`<b>Resultado</b><br>${endereco}, ${cidade}`).openPopup();
+                        } else {
+                            alert("Endereço não encontrado!");
+                        }
+                    })
+                    .catch(error => console.error('Erro:', error));
+            }
+
+            // Enable leaflet-geoman features
+            map.pm.addControls({
+                position: 'topleft',
+                drawCircle: false,  // Ajuste dos controles disponíveis conforme necessário
+                drawMarker: false,
+                tooltips: true,
             });
     </script>
 </body>
