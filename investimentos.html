@@ -774,14 +774,17 @@
 
         function buscarCidadePorCEP() {
             const cep = document.getElementById('cep').value;
-            if (cep.length === 8) { // Valida se o CEP possui 8 dígitos
+            if (cep.length === 8) { // Validação de CEP com 8 dígitos
                 fetch(`https://viacep.com.br/ws/${cep}/json/`)
                     .then(response => response.json())
                     .then(data => {
                         if (!data.erro) {
                             document.getElementById('cidade').value = data.localidade;
-                            buscarDados(); // Adiciona essa linha
-                            buscarValorCompensavel(); // Adiciona essa linha
+                            
+                            // Chamada direta a buscarConcessionariaPorCidade ao preencher a cidade
+                            buscarConcessionariaPorCidade();
+                            buscarDados(); 
+                            buscarValorCompensavel(); 
                         } else {
                             alert('CEP não encontrado!');
                             document.getElementById('cidade').value = '';
