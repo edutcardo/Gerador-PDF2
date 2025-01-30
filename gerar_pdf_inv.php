@@ -101,6 +101,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $maoObraSolo = 125 * $quantidadePlacas;
         $precoKit = ($precoKit + $precoPlaca + $custoEstrutrura) * $multiplicador;
     }
+    function calcularPrecoKit($usina, $quantidadePlacas) {
+        $precoKit = 0;
+    
+        if ($usina === '1mwSolo') {
+            $precoKit = 1520037.79 + 720000 + ($quantidadePlacas * 185);
+        } elseif ($usina === '1mwTelhado') {
+            $precoKit = 1708698.84 + 840000;
+        } else {
+            return "Tipo de usina não reconhecido.";
+        }
+    
+        return $precoKit;
+    }
 
     //Tributação
     function calcularTributario($potenciaInversor) {
@@ -565,8 +578,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome $usina");
-    $pdf->Text(34.2, 104, "Endereço: $endereco");
+    $pdf->Text(34.2, 98, "Nome: $nome $precoKit $precoFinal");
+    $pdf->Text(34.2, 104, "Endereço: $endereco $maoObraSolo $opcao_adicional");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
     
