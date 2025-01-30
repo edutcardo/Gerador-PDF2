@@ -363,14 +363,66 @@
             border: 2px solid #ddd;
             border-radius: 10px;
             display: none; /* Inicializa escondida */
-            margin-left: 60px;
+            margin-left: 5px;
         }
+        /* Inputs */
+        .inputs-container {
+            flex: 1; /* Ocupa o restante do espaço do contêiner */
+            display: flex;
+            flex-direction: column; /* Organiza os elementos verticalmente */
+            gap: 3px; /* Espaçamento entre inputs */
+        }
+
+        /* Ajuste para entradas */
+        .inputs-container input {
+            padding: 10px;
+            color: #333;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #f0f0f0;
+        }
+        /* Contêiner principal para alinhar imagem e inputs */
+        .image-input-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin-top: 20px;
+            background-color: #f5f5f5; /* Cinza claro */
+            border-radius: 10px; /* Bordas arredondadas */
+            padding: 15px; /* Espaçamento interno */
+            border: 1px solid #ddd; /* Bordas sutis */
+            margin-bottom: 10px;
+            padding: 5px;
+
+        }
+
         #map {
             height: 600px; /* Altura do mapa */
         }
         #form-container {
             margin-bottom: 10px;
         }
+        @media (max-width: 768px) {
+            .image-input-container {
+                flex-direction: column; /* Imagem fica acima dos inputs */
+                align-items: center; /* Centraliza os itens horizontalmente */
+            }
+
+            .imagem-usina {
+                width: 100%; /* A imagem ocupará toda a largura */
+            }
+
+            .inputs-container {
+                width: 100%; /* Inputs também ocupam toda a largura */
+            }
+        }
+        #logointerna {
+            width: 150px; /* Largura desejada */
+            height: auto; /* Mantém a proporção da imagem */
+            margin-bottom: 10px; /* Adiciona espaçamento inferior */
+            display: block; /* Garante que a imagem fique em uma nova linha */
+        }
+
 
     </style>
 </head>
@@ -421,9 +473,6 @@
             <label for="cidade">Cidade<b>*</b>:</label>
             <input type="text" id="cidade" name="cidade" oninput="buscarConcessionariaPorCidade()" required/>
 
-            <label for="inputConcessionaria">Concessionária<b>*</b> (caso não retorne o valor esperado, escreva manualmente até que o valor da tarifa apareça):</label>
-            <input type="text" id="inputConcessionaria"/>
-
             <label for="inputValorCompensavel">Valor Compensável<b>*</b>:</label>
             <input type="text" id="inputValorCompensavel" readonly />
 
@@ -444,22 +493,32 @@
                 <option value="1mwTelhado">USINA 1MW TELHADO</option>
             </select>
 
-            <img id="imagem-usina" class="imagem-usina" alt="Imagem da usina">
+            <div class="image-input-container">
 
-            <label for="preco_final">Preço Final (R$):</label>
-            <input type="text" id="preco_final" name="preco_final" readonly />
-
-            <label for="retorno_verde">Retorno Verde (R$):</label>
-            <input type="text" id="retorno_verde" name="retorno_verde" readonly />
-
-            <label for="media_liquido">Média Líquido (R$):</label>
-            <input type="text" id="media_liquido" name="media_liquido" readonly />
-
-            <label for="rentabilidade_verde">Rentabilidade Verde (%):</label>
-            <input type="text" id="rentabilidade_verde" name="rentabilidade_verde" readonly />
-
-            <label for="retorno_verde_12">Retorno Verde Anual (R$):</label>
-            <input type="text" id="retorno_verde_12" name="retorno_verde_12" readonly />
+                <div id="input-concessionaria-container" class="hidden">
+                    <img src="logodeitada.png" class="logointerna" id="logointerna">
+                    <img id="imagem-usina" class="imagem-usina hidden" alt="Imagem da usina">
+                    <label for="inputConcessionaria">Concessionária<b>*</b> (caso não retorne o valor esperado, escreva manualmente até que o valor da tarifa apareça):</label>
+                    <input type="text" id="inputConcessionaria"/>
+                </div>
+                
+                <div class="inputs-container">
+                    <label for="preco_final">Preço Final:</label>
+                    <input type="text" id="preco_final" name="preco_final" readonly />
+            
+                    <label for="retorno_verde">Retorno Verde:</label>
+                    <input type="text" id="retorno_verde" name="retorno_verde" readonly />
+            
+                    <label for="media_liquido">Média Líquido:</label>
+                    <input type="text" id="media_liquido" name="media_liquido" readonly />
+            
+                    <label for="rentabilidade_verde">Rentabilidade Verde:</label>
+                    <input type="text" id="rentabilidade_verde" name="rentabilidade_verde" readonly />
+            
+                    <label for="retorno_verde_12">Retorno Verde Anual:</label>
+                    <input type="text" id="retorno_verde_12" name="retorno_verde_12" readonly />
+                </div>
+            </div>
 
             <label for="media">Média<b>*</b>:</label>
             <input type="text" id="media" name="media" required/>
@@ -972,6 +1031,7 @@
         function exibirImagem() {
             const select = document.getElementById('usina');
             const imagem = document.getElementById('imagem-usina');
+            const inputConcessionariaContainer = document.getElementById('input-concessionaria-container');
             const selecao = select.value;
 
             const configs = {
@@ -1025,9 +1085,9 @@
                 imagem.src = config.imagem;
                 imagem.style.display = 'block';
                 console.log(`Caminho da imagem: ${config.imagem}`);
-
                 document.getElementById('padrao').value = config.padrao || '';
                 document.getElementById('estrutura').value = config.estrutura || '';
+                inputConcessionariaContainer.classList.remove('hidden');
                 
                 verificarEstrutura(); // Altera visibilidade de elementos dependendo de `estrutura`
                 
