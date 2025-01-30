@@ -773,8 +773,13 @@
         window.onload = preencherFormulario;
 
         function buscarCidadePorCEP() {
-            const cep = document.getElementById('cep').value;
-            if (cep.length === 8) { // Validação de CEP com 8 dígitos
+            let cep = document.getElementById('cep').value;
+
+            // Remove qualquer caractere que não seja número (como hífen), o que facilita a validação
+            cep = cep.replace(/\D/g, '');
+
+            // Agora podemos validar e fazer a requisição com o formato correto
+            if (cep.length === 8) { // Valida se o CEP possui 8 dígitos agora corretamente
                 fetch(`https://viacep.com.br/ws/${cep}/json/`)
                     .then(response => response.json())
                     .then(data => {
@@ -791,9 +796,10 @@
                         }
                     })
                     .catch(error => console.error('Erro ao buscar cidade pelo CEP:', error));
+            } else {
+
             }
         }
-
         window.onload = function() {
             preencherFormulario();
             travarDesconto();
