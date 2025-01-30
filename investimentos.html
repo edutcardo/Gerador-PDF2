@@ -356,14 +356,13 @@
         }
         .imagem-usina {
             margin-top: 20px;
-            margin-bottom: 50px;
-            width: 400px; /* Define a largura fixa */
-            height: 300px; /* Define a altura fixa */
+            margin-bottom: 35px;
+            width: 500px; /* Define a largura fixa */
+            height: 400px; /* Define a altura fixa */
             object-fit: cover; /* Adapta a imagem ao contêiner, cortando quando necessário para manter a proporcionalidade */
             border: 2px solid #ddd;
             border-radius: 10px;
             display: none; /* Inicializa escondida */
-            margin-left: 5px;
         }
         /* Inputs */
         .inputs-container {
@@ -371,28 +370,48 @@
             display: flex;
             flex-direction: column; /* Organiza os elementos verticalmente */
             gap: 3px; /* Espaçamento entre inputs */
+            align-items: center;
+            margin-top: 30px;
+        }
+        .inputs-container label {
+            font-size: 11px;
+            width: 100px;
+            
         }
 
         /* Ajuste para entradas */
         .inputs-container input {
             padding: 10px;
-            color: #333;
+            color: #ffffff;
             border-radius: 5px;
-            border: 1px solid #ddd;
-            background-color: #f0f0f0;
+            border: 0.5px solid #ddd;
+            background-color: #297702;
+            font-size: 11px;
+            align-items: center;
         }
         /* Contêiner principal para alinhar imagem e inputs */
         .image-input-container {
             display: flex;
-            align-items: flex-start;
-            gap: 20px;
+            flex-direction: column; /* Alinhar elementos em uma coluna */
+            align-items: center; /* Centralizar horizontalmente todos os elementos filhos */
+            justify-content: center; /* Centraliza os elementos verticalmente */
+            gap: 10px;
             margin-top: 20px;
             background-color: #f5f5f5; /* Cinza claro */
-            border-radius: 10px; /* Bordas arredondadas */
-            padding: 15px; /* Espaçamento interno */
-            border: 1px solid #ddd; /* Bordas sutis */
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #ddd;
             margin-bottom: 10px;
-            padding: 5px;
+
+        }
+        .image-input-container input,
+        .image-input-container label {
+            text-align: center; /* Alinha o texto dos inputs e labels */
+            width: 80%; /* Ajusta a largura conforme necessário */
+            margin-bottom: 10px;
+            align-items: center;
+            margin-left: 50px;
+            
 
         }
 
@@ -421,6 +440,18 @@
             height: auto; /* Mantém a proporção da imagem */
             margin-bottom: 10px; /* Adiciona espaçamento inferior */
             display: block; /* Garante que a imagem fique em uma nova linha */
+            margin-left: 130px;
+            margin-top: 10px;
+        }
+        #inputConcessionaria {
+            text-align: center; /* Como o justify não completamente aplicável a inputs, manter centrar ou alinha ao lado */
+            width: 400px; 
+            height: 40px;
+        }
+        .input-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
 
@@ -492,17 +523,14 @@
                 <option value="1mwSolo">USINA 1MW SOLO</option>
                 <option value="1mwTelhado">USINA 1MW TELHADO</option>
             </select>
+            
 
             <div class="image-input-container">
-
                 <div id="input-concessionaria-container" class="hidden">
                     <img src="logodeitada.png" class="logointerna" id="logointerna">
                     <img id="imagem-usina" class="imagem-usina hidden" alt="Imagem da usina">
-                    <label for="inputConcessionaria">Concessionária<b>*</b> (caso não retorne o valor esperado, escreva manualmente até que o valor da tarifa apareça):</label>
+                    <label for="inputConcessionaria">Concessionária<b>*</b> (Altere manualmente caso não seja a concessionária desejada.):</label>
                     <input type="text" id="inputConcessionaria"/>
-                </div>
-                
-                <div class="inputs-container">
                     <label for="preco_final">Preço Final:</label>
                     <input type="text" id="preco_final" name="preco_final" readonly />
             
@@ -518,6 +546,7 @@
                     <label for="retorno_verde_12">Retorno Verde Anual:</label>
                     <input type="text" id="retorno_verde_12" name="retorno_verde_12" readonly />
                 </div>
+                
             </div>
 
             <label for="media">Média<b>*</b>:</label>
