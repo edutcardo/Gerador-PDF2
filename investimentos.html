@@ -419,7 +419,7 @@
             <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" required/>
 
             <label for="cidade">Cidade<b>*</b>:</label>
-            <input type="text" id="cidade" name="cidade" oninput="atualizarDados()" required/>
+            <input type="text" id="cidade" name="cidade" oninput="buscarConcessionariaPorCidade()" required/>
 
             <label for="inputConcessionaria">Concessionária<b>*</b> (caso não retorne o valor esperado, escreva manualmente até que o valor da tarifa apareça):</label>
             <input type="text" id="inputConcessionaria"/>
@@ -434,7 +434,7 @@
             <label for="uc">Unidade Consumidora<b>*</b>:</label>
             <input type="text" id="uc" name="uc" required/>
 
-            <select id="usina" name="usina" required onchange="exibirImagem(); simularCalculo();">
+            <select id="usina" name="usina" required onchange="exibirImagem(); simularCalculo(); buscarUsinaDados(this.value);">
                 <option value="vazio">Escolha uma opção</option>
                 <option value="75kwSolo">USINA 75KW SOLO</option>
                 <option value="75kwTelhado">USINA 75KW TELHADO</option>
@@ -780,6 +780,8 @@
                     .then(data => {
                         if (!data.erro) {
                             document.getElementById('cidade').value = data.localidade;
+                            buscarDados(); // Adiciona essa linha
+                            buscarValorCompensavel(); // Adiciona essa linha
                         } else {
                             alert('CEP não encontrado!');
                             document.getElementById('cidade').value = '';
@@ -789,7 +791,11 @@
             }
         }
 
-        window.onload = preencherFormulario;
+        window.onload = function() {
+            preencherFormulario();
+            travarDesconto();
+            verificarFormulario();
+        };
 
 
         function buscarIrradiacao() {
@@ -855,30 +861,35 @@
         // Chama a função de verificação ao carregar a página
         window.onload = verificarFormulario;
 
-        function buscarDados() {
-            const cidade = document.getElementById('cidade').value.trim();
+        function buscarUsinaDados(usinaValue) {
+            try {
+                const response = fetch(`consultar_usina.php?usina=${encodeURIComponent(usinaValue)}`);
+                if (!response.ok) throw new Error('Erro na resposta da rede');
 
-            if (cidade !== "") {
-                fetch(`buscar_dados.php?cidade=${encodeURIComponent(cidade)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data); // Log de depuração
-                        if (data.success) {
-                            const inputConcessionaria = document.getElementById('inputConcessionaria');
-                            inputConcessionaria.value = data.concessionaria;
-                            buscarValorCompensavel(); // Chame a função após definir o valor
-                        } else {
-                            document.getElementById('inputConcessionaria').value = 'Erro: ' + data.message;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro ao buscar dados:', error);
-                        document.getElementById('inputConcessionaria').value = 'Erro de rede';
-                    });
-            } else {
-                document.getElementById('inputConcessionaria').value = 'Informe uma cidade';
+                const data = response.json();
+                console.log('Dados recebidos:', data);
+
+                if (data.success) {
+                    // Exemplos de manipulação continuam aqui...
+                    document.getElementById('preco_final').value = 'R$ ' + formatarMoeda(data.dados.preco_final);
+                    // Continua com atualização dos outros elementos...
+                } else {
+                    throw new Error(data.message || 'Erro ao buscar dados');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
             }
         }
+        document.getElementById('cidade').addEventListener('input', buscarConcessionariaPorCidade);
+        document.getElementById('usina').addEventListener('change', function() {
+            const usinaValue = this.value;
+            if (usinaValue && usinaValue !== 'vazio') {
+                buscarUsinaDados(usinaValue);
+            }
+        });
+
+        // Chame a função toda vez que o usuário digitar na cidade:
+        document.getElementById('cidade').addEventListener('input', buscarDados);
         function buscarValorCompensavel() {
             const concessionaria = document.getElementById('inputConcessionaria').value.trim(); // Use .value para obter o valor
 
@@ -1213,6 +1224,31 @@
                 drawMarker: false,
                 tooltips: true,
             });
+            function buscarConcessionariaPorCidade() {
+                const cidade = document.getElementById('cidade').value.trim();
+
+                if (cidade !== "") {
+                    fetch(`buscar_dados.php?cidade=${encodeURIComponent(cidade)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data); // Log de depuração
+                            if (data.success) {
+                                const inputConcessionaria = document.getElementById('inputConcessionaria');
+                                inputConcessionaria.value = data.concessionaria;
+                                buscarValorCompensavel(); // Chame a função após definir o valor
+                            } else {
+                                document.getElementById('inputConcessionaria').value = 'Erro: ' + data.message;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erro ao buscar dados:', error);
+                            document.getElementById('inputConcessionaria').value = 'Erro de rede';
+                        });
+                } else {
+                    document.getElementById('inputConcessionaria').value = 'Informe uma cidade';
+                }
+            }
+
     </script>
 </body>
 </html>
