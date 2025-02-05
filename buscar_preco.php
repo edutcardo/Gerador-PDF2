@@ -2,8 +2,11 @@
 header('Content-Type: application/json');
 
 // Parâmetros de pesquisa
-$potencia = isset($_GET['potencia']) ? floatval($_GET['potencia']) : null;
+$potencia_gerador = isset($_GET['potencia-gerador']) ? floatval($_GET['potencia-gerador']) : null;
 $estrutura = isset($_GET['estrutura']) ? $_GET['estrutura'] : '';
+
+// Defina a margem de tolerância
+$tolerancia = 0.5;
 
 // Configurações do banco de dados
 $servername = "srv1781.hstgr.io";
@@ -19,59 +22,51 @@ if ($conn->connect_error) {
     die(json_encode(['success' => false, 'message' => 'Erro na conexão com o banco de dados: ' . $conn->connect_error]));
 }
 
-// Define a query base
+// Criação da query SQL com intervalo de tolerância
 $sql = "SELECT titulo, precoDoIntegrador, codProd, marca, fabricante, potenciaInversor, potenciaModulo, tensaoSaida, componentes, potenciaGerador 
-        FROM produtos";
+        FROM produtos 
+        WHERE potenciaGerador BETWEEN ? AND ?";
 
-// Modifica a lógica com base na estrutura selecionada
-if (strtoupper($estrutura) === 'SOLO') {
-    // Apenas filtra por inversores
-    $sql .= " WHERE titulo REGEXP '[[:<:]]75kw[[:>:]]' LIMIT 200";
-    $stmt = $conn->prepare($sql);
-} else {
-    // Define margem de tolerância e prepara 'where' pela potencia verbal
-    $tolerancia = 0.5;
-    $limite_inferior = $potencia - $tolerancia;
-    $limite_superior = $potencia + $tolerancia;
-
-    $sql .= " WHERE potenciaGerador BETWEEN ? AND ?";
-    
-    if (!empty($estrutura)) {
-        $sql .= " AND estrutura = ?";
-    }
-
-    // Prepara declaração, passando critérios de limitação aplicáveis
-    $stmt = $conn->prepare($sql);
-    if (!empty($estrutura)) {
-        $stmt->bind_param("dds", $limite_inferior, $limite_superior, $estrutura);
-    } else {
-        $stmt->bind_param("dd", $limite_inferior, $limite_superior);
-    }
+// Adiciona o filtro de estrutura se necessário
+if (!empty($estrutura)) {
+    $sql .= " AND estrutura = ?";
 }
 
-// Verifica se o statement foi preparado corretamente
+// Prepara o statement
+$stmt = $conn->prepare($sql);
 if (!$stmt) {
     die(json_encode(['success' => false, 'message' => 'Erro na preparação da consulta: ' . $conn->error]));
 }
 
-// Executa a query
+// Calcula os limites inferior e superior para a busca
+$limite_inferior = $potencia_gerador - $tolerancia;
+$limite_superior = $potencia_gerador + $tolerancia;
+
+// Vincula os parâmetros de forma correta
+if (!empty($estrutura)) {
+    $stmt->bind_param("dds", $limite_inferior, $limite_superior, $estrutura);
+} else {
+    $stmt->bind_param("dd", $limite_inferior, $limite_superior);
+}
+
+// Executa a consulta
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Obtem e estruturando resultados
+// Verifica se encontrou algum resultado
 $resultados = [];
 while ($row = $result->fetch_assoc()) {
     $resultados[] = $row;
 }
 
-// Envia resultados como JSON
+// Retorna o JSON
 if (count($resultados) > 0) {
     echo json_encode(['success' => true, 'resultados' => $resultados]);
 } else {
     echo json_encode(['success' => false, 'message' => 'Nenhum resultado encontrado']);
 }
 
-// Conclui e libera recursos do banco de dados
+// Fecha a conexão
 $stmt->close();
 $conn->close();
 ?>

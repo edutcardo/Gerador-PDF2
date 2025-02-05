@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $iluminacao = $_POST['iluminacao'];
     $potenciaGerador = $_POST['potenciaGerador'];
     $componentes = $_POST['componentes'];
-    $potenciaModulo = $_POST['potenciaModulo'];
+    $potenciaModulo = $_POST['potenciaModulo']; 
     $numeroDeFases = $_POST['numeroDeFases'];
     $precoKit = $_POST['precoKit'];
     $irradiacao = $_POST['irradiacao'];
@@ -101,19 +101,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $maoObraSolo = 125 * $quantidadePlacas;
         $precoKit = ($precoKit + $precoPlaca + $custoEstrutrura) * $multiplicador;
     }
-    function calcularPrecoKit($usina, $quantidadePlacas) {
-        $precoKit = 0;
+
+
+    function calcularPrecoKit($usina, $quantidadePlacas, ) {
+        $precoKit = 0; // Inicializa o $precoKit
     
         if ($usina === '1mwSolo') {
-            $precoKit = 1520037.79 + 720000 + ($quantidadePlacas * 185);
-        } elseif ($usina === '1mwTelhado') {
-            $precoKit = 1708698.84 + 840000;
+            $precoKit = 1520037.79 + 720000 + ($quantidadePlacas * 185);        
         } else {
-            return "Tipo de usina não reconhecido.";
+            return ["error" => "Tipo de usina não reconhecido."];
         }
-    
-        return $precoKit;
+        return [
+            "precoKit" => $precoKit,
+        ];
     }
+    function calcularMaoObraTelhado($usina, $quantidadePlacas, ) {
+        $maoObraSolo = 0;  // Update appropriated values
+
+        if ($usina === '1mwTelhado') {
+            $maoObraSolo = 100 * $quantidadePlacas;  // Update appropriated values
+        } else {
+            return ["error" => "Tipo de usina não reconhecido."];
+        }
+        return [
+            "$maoObraSolo" => $maoObraSolo,
+        ];
+    }
+    
 
     //Tributação
     function calcularTributario($potenciaInversor) {
@@ -384,6 +398,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $padrao = 110407.50;
             $descPadrao = "TORRE 300 KVA";
             break; 
+        case "TORRE 1 MVA":
+            $padrao = 720000;
+            $descPadrao = "TORRE 1 MVA";
+            break; 
         case "":
         case "selecione um padrao":
             $padrao = 0;
@@ -395,9 +413,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $padraoRs = 'R$ ' . number_format($padrao, 2, ',', '.');
 
-    if ($padrao <> 0) {
+    if ($padrao == 720000) {
+        $padrao = 0;
+        $textoPadrao = "INCLUSO ADEQUAÇÃO DE PADRÃO - CABINE DE TRANSFORMAÇÃO 1MW";
+    } else if ($padrao <> 0) {
         $textoPadrao = "ENTRADA DE ENERGIA ($descPadrao) INCLUSO NO ORÇAMENTO: $padraoRs";
     }
+    
 
 
 
@@ -580,7 +602,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(34.2, 98, "Nome: $nome $precoKit $precoFinal");
     $pdf->Text(34.2, 104, "Endereço: $endereco $maoObraSolo $opcao_adicional");
-    $pdf->Text(34.2, 110, "Cidade: $cidade");
+    $pdf->Text(34.2, 110, "Cidade: $cidade $padrao $usina");
     $pdf->Text(34.2, 138, "UC $uc");
     
     $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
