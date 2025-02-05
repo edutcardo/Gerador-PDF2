@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $endereco = $_POST['endereco'];
     $cidade = $_POST['cidade'];
     $uc = $_POST['uc'];
-    $media = $_POST['media'];
+    $media = isset($_POST['media']) && $_POST['media'] !== '' ? floatval($_POST['media']) : 1;
     $iluminacao = $_POST['iluminacao'];
     $potenciaGerador = $_POST['potenciaGerador'];
     $componentes = $_POST['componentes'];
@@ -115,19 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             "precoKit" => $precoKit,
         ];
     }
-    function calcularMaoObraTelhado($usina, $quantidadePlacas, ) {
-        $maoObraSolo = 0;  // Update appropriated values
 
-        if ($usina === '1mwTelhado') {
-            $maoObraSolo = 100 * $quantidadePlacas;  // Update appropriated values
-        } else {
-            return ["error" => "Tipo de usina não reconhecido."];
-        }
-        return [
-            "$maoObraSolo" => $maoObraSolo,
-        ];
-    }
-    
 
     //Tributação
     function calcularTributario($potenciaInversor) {

@@ -560,7 +560,7 @@
             </div>
 
             <label for="media">Média<b>*</b>:</label>
-            <input type="text" id="media" name="media" required/>
+            <input type="text" id="media" name="media"/>
 
             <label for="numeroDeFases">Número de fases<b>*</b>:</label>
             <select id="numeroDeFases" name="numeroDeFases" required>
@@ -571,7 +571,7 @@
             </select>
 
             <label for="iluminacao">Iluminação<b>*</b>:</label>
-            <input type="text" id="iluminacao" name="iluminacao" required/>
+            <input type="text" id="iluminacao" name="iluminacao"/>
 
             <label for="valoramais">Acrescentar valor:</label>
             <input type="text" id="valoramais" name="valoramais"/>
@@ -686,7 +686,7 @@
             <input type="text" id="potenciaGerador" name="potenciaGerador" readonly  class="readonly"/>
 
             
-            <button onclick="mostrarDetalhes()">Verificar Telhado</button>
+            <button onclick="mostrarDetalhes()" readonly  class="readonly">Verificar Telhado</button>
             <div id="detalhes" style="display: none;">
                 <input type="text" id="enderecoInput" placeholder="Endereço" />
                 <input type="text" id="cidadeInput" placeholder="Cidade" />
@@ -700,10 +700,26 @@
             </button>
         </form>
     </div>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/esri-leaflet/dist/esri-leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
     <script>
+document.getElementById('usina').addEventListener('change', function () {
+    const usinaValue = this.value;
+    if (usinaValue && usinaValue !== 'vazio') {
+        // Chamar funções essenciais diretamente no evento de mudança
+        exibirImagem();
+        simularCalculo();
+        buscarUsinaDados(usinaValue);
+        atualizarDados();
+        verificarFormulario();
+        buscarResultados(); // Chama o carregamento dos dados iniciais
+    } else {
+        // Limpar campos se "Escolha uma opção" for selecionado
+        document.getElementById('preco_final').value = '';
+        document.getElementById('retorno_verde').value = '';
+        document.getElementById('media_liquido').value = '';
+        document.getElementById('rentabilidade_verde').value = '';
+        document.getElementById('retorno_verde_12').value = '';
+    }
+});
     function verificarEstrutura() {
         const estrutura = document.getElementById('estrutura').value;
         
@@ -898,11 +914,6 @@
 
             }
         }
-        window.onload = function() {
-            preencherFormulario();
-            travarDesconto();
-            verificarFormulario();
-        };
 
 
         function buscarIrradiacao() {
@@ -1041,11 +1052,6 @@
             });
         }
 
-        // Chama a função para travar o desconto ao carregar a página
-        window.onload = function() {
-            travarDesconto();
-            verificarFormulario(); // Certifique-se de chamar as outras funções necessárias aqui
-        };
         document.querySelectorAll('.multiplicador').forEach(element => {
             // Adiciona evento de clique a todos os botões
             element.addEventListener('click', function () {
@@ -1075,6 +1081,8 @@
 
             const configs = {
                 '75kwSolo': {
+                    media: '1',
+                    iluminacao: '100',
                     imagem: '75kwsolo.png',
                     padrao: '3x200A',
                     estrutura: 'SOLO',
@@ -1082,6 +1090,8 @@
                     multiplicador: 1
                 },
                 '75kwTelhado': {
+                    media: '1',
+                    iluminacao: '100',
                     imagem: '75kwtelhado.png',
                     padrao: '3x200A',
                     estrutura: 'FIBROMETAL',
@@ -1089,6 +1099,8 @@
                     multiplicador: 1
                 },
                 '300kwSolo': {
+                    media: '1',
+                    iluminacao: '100',
                     imagem: '300kwsolo.png',
                     padrao: 'TORRE 300 KVA',
                     estrutura: 'SOLO',
@@ -1096,6 +1108,8 @@
                     multiplicador: 4
                 },
                 '300kwTelhado': {
+                    media: '1',
+                    iluminacao: '100',
                     imagem: '300kwtelhado.png',
                     padrao: 'TORRE 300 KVA',
                     estrutura: 'FIBROMETAL',
@@ -1103,6 +1117,8 @@
                     multiplicador: 4
                 },
                 '1mwSolo': {
+                    media: '1',
+                    iluminacao: '100',
                     imagem: '1mwsolo.png',
                     padrao: 'TORRE 1 MVA',
                     estrutura: 'SOLO',
@@ -1110,6 +1126,8 @@
                     multiplicador: 10
                 },
                 '1mwTelhado': {
+                    media: '1',
+                    iluminacao: '100',
                     imagem: '1mwtelhado.png',
                     padrao: 'TORRE 1 MVA',
                     estrutura: 'FIBROMETAL',
@@ -1126,6 +1144,8 @@
                 console.log(`Caminho da imagem: ${config.imagem}`);
                 document.getElementById('padrao').value = config.padrao || '';
                 document.getElementById('estrutura').value = config.estrutura || '';
+                document.getElementById('media').value = config.media || '1';
+                document.getElementById('iluminacao').value = config.iluminacao || '';
                 inputConcessionariaContainer.classList.remove('hidden');
                 
                 verificarEstrutura(); // Altera visibilidade de elementos dependendo de `estrutura`
@@ -1149,6 +1169,8 @@
                 // Zerar campos ao deselecionar usinas
                 document.getElementById('padrao').value = '';
                 document.getElementById('estrutura').value = '';
+                document.getElementById('media').value = '';
+                document.getElementById('iluminacao').value = '';
 
             }
         }
