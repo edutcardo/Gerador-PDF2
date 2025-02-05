@@ -741,11 +741,11 @@
             let url;
             if (estrutura === 'SOLO') {
                 // A consulta apenas por inversores, sem o filtro de potência
-                url = `buscar_preco.php?estrutura=SOLO`;
+                url = `buscar_preco_inv.php?estrutura=SOLO`;
             } else {
                 // Consulta com filtro de potenciaGerador para outras estruturas
                 const potenciaSlider = document.getElementById('potSlider').value;
-                url = `buscar_preco.php?potencia=${encodeURIComponent(potenciaSlider)}&estrutura=${encodeURIComponent(estrutura)}`;
+                url = `buscar_preco_inv.php?potencia=${encodeURIComponent(potenciaSlider)}&estrutura=${encodeURIComponent(estrutura)}`;
             }
 
             fetch(url)
@@ -1162,7 +1162,7 @@
             potenciaSlider.value = 112;
             atualizarSlider(112); // Atualiza a exibição do valor do slider
 
-            let url = `buscar_preco.php?potencia=${encodeURIComponent(potenciaSlider.value)}&estrutura=${encodeURIComponent(estrutura)}`;
+            let url = `buscar_preco_inv.php?potencia=${encodeURIComponent(potenciaSlider.value)}&estrutura=${encodeURIComponent(estrutura)}`;
 
             fetch(url)
                 .then(response => response.json())
