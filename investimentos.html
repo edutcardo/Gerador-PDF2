@@ -837,6 +837,8 @@ document.getElementById('usina').addEventListener('change', function () {
             const quantidadePlacas = document.getElementById('quantidadePlacasInput').value;
             const estrutura = document.getElementById('estrutura').value;
             const usina = document.getElementById('usina').value;
+            const tensaoSaida = document.getElementById('tensaoSaida').value;
+            formData.append('tensaoSaida', tensaoSaida);
             formData.append('usina', usina);
             formData.append('estrutura', estrutura);
             formData.append('quantidadePlacas', quantidadePlacas);

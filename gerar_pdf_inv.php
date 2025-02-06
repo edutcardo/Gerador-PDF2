@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $estrutura = $_POST['estrutura'];
     $opcao_adicional = $_POST['opcao_adicional'];
     $usina = $_POST['usina'];
+    $tensaoSaida = $_POST['tensaoSaida'];
 /**
  * Classe para processamento e validação de dados
  */
@@ -102,10 +103,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $precoKit = ($precoKit + $precoPlaca + $custoEstrutrura) * $multiplicador;
     }
     
+    $transformador = 0;
+
     if ($usina === "1mwTelhado") {
         $precoKit = 2548698.84 + 132500;
-
     }
+    if ($tensaoSaida === "380" & $potenciaGerador <= 120) {
+        $transformador = 6590;
+    }
+
 
 
 
@@ -403,7 +409,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-    $precoFinal =(((($precoKit + $opcao_adicional) * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto) + $maoObraSolo ;
+    $precoFinal =(((($precoKit + $opcao_adicional + $transformador) * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto) + $maoObraSolo;
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
     $payback = $precoFinal / $diferencaGastosAno;
@@ -580,9 +586,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome $precoKit $precoFinal");
-    $pdf->Text(34.2, 104, "Endereço: $endereco $maoObraSolo $opcao_adicional");
-    $pdf->Text(34.2, 110, "Cidade: $cidade $padrao $usina");
+    $pdf->Text(34.2, 98, "Nome: $nome $tensaoSaida $usina $deucerto");
+    $pdf->Text(34.2, 104, "Endereço: $endereco $transformador");
+    $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
     
     $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
