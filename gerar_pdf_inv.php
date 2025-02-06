@@ -114,12 +114,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($estrutura === "SOLO" & $potenciaGerador <= 120) {
         $transformador = 30000;
     }
-
-    
-
-
-
-    //Tributação
     function calcularTributario($potenciaInversor) {
         if ($potenciaInversor <= 75) {
             $tributario = "MEI";
@@ -590,16 +584,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome $precoKit $precoFinal");
-    $pdf->Text(34.2, 104, "Endereço: $endereco $transformador $maoObraSolo");
-    $pdf->Text(34.2, 110, "Cidade: $cidade $opcao_adicional $precoPlaca");
+    $pdf->Text(34.2, 98, "Nome: $nome");
+    $pdf->Text(34.2, 104, "Endereço: $endereco");
+    $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc $custoEstrutrura");
     
     $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
     $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
     $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador kWp");
-    $pdf->Text(34.6, 178.75, "Média de Consumo: $media kWh");
-    $pdf->Text(34.6, 185, "Geração Estimada: $geracao kWh");
+    $pdf->Text(34.6, 178.75, "Geração Estimada: $geracao kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text(46, 223, "$dataAtual");
@@ -689,8 +682,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Quinta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCV5.png', 0, 0, 210, 297);
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(0, 0, 0);
+    $pdf->SetFont('helvetica', 'B', 13.5);
+    $pdf->SetTextColor(50, 50, 50);
 
     $componentes = html_entity_decode($componentes);
     $componentes = str_replace(
@@ -745,9 +738,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(16, 155, "$textoPadrao");
+    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->SetTextColor(50, 50, 50);
+    $pdf->Text(16, 150, "$textoPadrao");
 
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
@@ -758,12 +751,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(85, 180, "48 X $valorParcela2Rs");
     $pdf->Text(146, 180, "60 X $valorParcela3Rs");
 
-    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
 
     $pdf->Text(59, 46, "$qtdmodulosArredondado");
     $pdf->Text(85, 46, "$potenciaInversor kW");
-    $pdf->Text(110, 46, "$potenciaGerador kWp");
+    $pdf->Text(110.5, 46, "$potenciaGerador kWp");
     $pdf->Text(139, 46, "$geracaoArredondado kWh");
     $pdf->Text(167, 46, "$geracaoAnual kWh");
 
@@ -837,7 +830,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text($xInicial, $yInicial - 10, '');
 
     // Definir fonte e adicionar conteúdo à quinta página
-    $pdf->SetFont('helvetica','B', 12);
+    $pdf->SetFont('helvetica', 12);
     $pdf->SetTextColor(0, 0, 0);
 
     // Sexta Página (com a imagem undo.jpeg)
