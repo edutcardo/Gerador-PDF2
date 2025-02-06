@@ -502,28 +502,6 @@
 
         <form id="formulario">
 
-            <label for="nome">Nome<b>*</b>:</label>
-            <input type="text" id="nome" name="nome" required/>
-
-            <label for="endereco">Endereço<b>*</b>:</label>
-            <input type="text" id="endereco" name="endereco" required/>
-
-            <label for="cep">CEP<b>*</b>:</label>
-            <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" required/>
-
-            <label for="cidade">Cidade<b>*</b>:</label>
-            <input type="text" id="cidade" name="cidade" oninput="buscarConcessionariaPorCidade()" required/>
-
-            <label for="inputValorCompensavel">Valor Compensável<b>*</b>:</label>
-            <input type="text" id="inputValorCompensavel" readonly />
-
-            <label for="irradiacao" class="readonly">Irradiação:</label>
-            <input type="text" id="irradiacao" name="irradiacao" readonly  class="readonly"required/>
-
-
-            <label for="uc">Unidade Consumidora<b>*</b>:</label>
-            <input type="text" id="uc" name="uc" required/>
-
             <select id="usina" name="usina" required onchange="exibirImagem(); simularCalculo(); buscarUsinaDados(this.value);">
                 <option value="vazio">Escolha uma opção</option>
                 <option value="75kwSolo">USINA 75KW SOLO</option>
@@ -558,6 +536,29 @@
                 </div>
                 
             </div>
+
+
+            <label for="nome">Nome<b>*</b>:</label>
+            <input type="text" id="nome" name="nome" required/>
+
+            <label for="endereco">Endereço<b>*</b>:</label>
+            <input type="text" id="endereco" name="endereco" required/>
+
+            <label for="cep">CEP<b>*</b>:</label>
+            <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" required/>
+
+            <label for="cidade">Cidade<b>*</b>:</label>
+            <input type="text" id="cidade" name="cidade" oninput="buscarConcessionariaPorCidade()" required/>
+
+            <label for="inputValorCompensavel">Valor Compensável<b>*</b>:</label>
+            <input type="text" id="inputValorCompensavel" readonly />
+
+            <label for="irradiacao" class="readonly">Irradiação:</label>
+            <input type="text" id="irradiacao" name="irradiacao" readonly  class="readonly"required/>
+
+
+            <label for="uc">Unidade Consumidora<b>*</b>:</label>
+            <input type="text" id="uc" name="uc" required/>
 
             <label for="media">Média<b>*</b>:</label>
             <input type="text" id="media" name="media"/>
@@ -981,6 +982,16 @@ document.getElementById('usina').addEventListener('change', function () {
         // Chama a função de verificação ao carregar a página
         window.onload = verificarFormulario;
 
+        window.onload = function() {
+    // Define "Copel" como valor inicial do inputConcessionaria
+            document.getElementById('inputConcessionaria').value = 'COPEL';
+            document.getElementById('uc').value = '5555';
+
+
+            // Outras funções que precisam ser chamadas quando a página carrega
+            preencherFormulario();
+        };
+
         function buscarUsinaDados(usinaValue) {
             try {
                 const response = fetch(`consultar_usina.php?usina=${encodeURIComponent(usinaValue)}`);
@@ -1010,6 +1021,7 @@ document.getElementById('usina').addEventListener('change', function () {
 
         // Chame a função toda vez que o usuário digitar na cidade:
         document.getElementById('cidade').addEventListener('input', buscarDados);
+
         function buscarValorCompensavel() {
             const concessionaria = document.getElementById('inputConcessionaria').value.trim(); // Use .value para obter o valor
 

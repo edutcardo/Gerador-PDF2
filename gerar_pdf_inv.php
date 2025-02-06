@@ -587,7 +587,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(34.2, 98, "Nome: $nome");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
-    $pdf->Text(34.2, 138, "UC $uc $custoEstrutrura");
+
     
     $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
     $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
