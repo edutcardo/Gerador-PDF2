@@ -98,9 +98,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $potenciaModulo = 700;
         $potenciaGerador = ($quantidadePlacas * ($potenciaModulo/1000)) * $multiplicador;
         $precoPlaca = $quantidadePlacas * 487.50;
-        $custoEstrutrura = 175 * $quantidadePlacas;
+        $custoEstrutrura = (175 * $quantidadePlacas);
         $maoObraSolo = 125 * $quantidadePlacas;
-        $precoKit = ($precoKit + $precoPlaca + $custoEstrutrura) * $multiplicador;
+        $precoKit = ($precoKit  + $precoPlaca + $custoEstrutrura) * $multiplicador;
     }
     
     $transformador = 0;
@@ -111,7 +111,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($tensaoSaida === "380" & $potenciaGerador <= 120) {
         $transformador = 6590;
     }
+    if ($estrutura === "SOLO" & $potenciaGerador <= 120) {
+        $transformador = 30000;
+    }
 
+    
 
 
 
@@ -365,7 +369,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $descPadrao = "3x175A";
             break;
         case "3x200A":
-            $padrao = 12969.57;
+            $padrao = 10187.84;
             $descPadrao = "3x200A";
             break;
         case "TORRE 112,5 KVA":
@@ -409,7 +413,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-    $precoFinal =(((($precoKit + $opcao_adicional + $transformador) * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto) + $maoObraSolo;
+    $precoFinal =(((($precoKit + $opcao_adicional + $transformador) * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto) + $maoObraSolo ;
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
     $payback = $precoFinal / $diferencaGastosAno;
@@ -586,10 +590,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome $tensaoSaida $usina $deucerto");
-    $pdf->Text(34.2, 104, "Endereço: $endereco $transformador");
-    $pdf->Text(34.2, 110, "Cidade: $cidade");
-    $pdf->Text(34.2, 138, "UC $uc");
+    $pdf->Text(34.2, 98, "Nome: $nome $precoKit $precoFinal");
+    $pdf->Text(34.2, 104, "Endereço: $endereco $transformador $maoObraSolo");
+    $pdf->Text(34.2, 110, "Cidade: $cidade $opcao_adicional $precoPlaca");
+    $pdf->Text(34.2, 138, "UC $uc $custoEstrutrura");
     
     $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
     $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
