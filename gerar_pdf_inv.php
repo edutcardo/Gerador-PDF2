@@ -101,20 +101,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $maoObraSolo = 125 * $quantidadePlacas;
         $precoKit = ($precoKit + $precoPlaca + $custoEstrutrura) * $multiplicador;
     }
-
-
-    function calcularPrecoKit($usina, $quantidadePlacas, ) {
-        $precoKit = 0; // Inicializa o $precoKit
     
-        if ($usina === '1mwSolo') {
-            $precoKit = 1520037.79 + 720000 + ($quantidadePlacas * 185);        
-        } else {
-            return ["error" => "Tipo de usina não reconhecido."];
-        }
-        return [
-            "precoKit" => $precoKit,
-        ];
+    if ($usina === "1mwTelhado") {
+        $precoKit = 2548698.84 + 132500;
+
     }
+
 
 
     //Tributação
@@ -230,20 +222,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $margem = 0;
         $comissao = 0;
     
-        if ($potenciaGerador >= 0 && $potenciaGerador <= 20) {
-            $margem = 1.4786325;
+        if ($potenciaGerador >= 0 && $potenciaGerador <= 30) {
+            $margem = 1.5043478;
             $comissao = 0.07;
             $mobra = 136.76;
-        } elseif ($potenciaGerador > 20 && $potenciaGerador <= 60) {
+        } elseif ($potenciaGerador > 30 && $potenciaGerador <= 60) {
             $margem = 1.4537815;
             $comissao = 0.07;
             $mobra = 134.46;
         } elseif ($potenciaGerador > 60 && $potenciaGerador <= 114) {
-            $margem = 1.3643089;
+            $margem = 1.4065041;
             $comissao = 0.06;
             $mobra = 250.45;
         } elseif ($potenciaGerador > 114) {
-            $margem = 1.3213386;
+            $margem = 1.4065041;
             $comissao = 0.05;
             $mobra = 242.52;
         }
