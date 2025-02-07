@@ -584,7 +584,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome ");
+    $pdf->Text(34.2, 98, "Nome: $nome");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
 
@@ -1022,7 +1022,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'endereco' => mb_strtoupper($endereco),         // Padroniza endereço em maiúsculas
             'cidade' => mb_strtoupper($cidade),             // Padroniza cidade em maiúsculas
             'uc' => preg_replace('/[^0-9]/', '', $uc),      // Mantém apenas números da UC
-            'usina' => trim($usina),                        // Remove espaços extras
+            'usina' => trim($usina), 
+            'input_concessionaria' => $inputConcessionaria,
+            // Remove espaços extras
             
             // Dados Técnicos (com validação de valores numéricos)
             'media' => floatval($media),
