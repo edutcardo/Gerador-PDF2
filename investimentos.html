@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulário com Pesquisa</title>
@@ -421,6 +423,12 @@
             body {
                 flex-direction: column; /* Coloca os elementos do corpo em coluna para garantir alinhamento vertical */
             }
+            
+            #logointerna {
+                margin-left: 0; /* Remove a margem esquerda */
+                display: block; /* Garante que seja visível */
+                margin-bottom: 10px; /* Caso precise de espaço entre elementos */
+            }
 
             .container {
                 margin-left: 60px; /* Ou o valor desejado para compensar a largura da sidebar */
@@ -430,7 +438,7 @@
             
             /* Para telas menores, remove a fixação de tamanho da imagem */
             .imagem-usina {
-                width: calc(220px); /* Ajuste a largura do contêiner menos afasto */
+                width: calc(200px); /* Ajuste a largura do contêiner menos afasto */
                 height: auto; 
                 max-width: 100%; /* Garante que a imagem não exploda a largura do contêiner */
             }
@@ -459,13 +467,14 @@
                 margin-bottom: 10px; /* Margem inferior para afastamento entre elementos */
             }
             #logointerna {
-            width: 150px; /* Largura desejada */
-            height: auto; /* Mantém a proporção da imagem */
-            margin-bottom: 10px; /* Adiciona espaçamento inferior */
-            display: block; /* Garante que a imagem fique em uma nova linha */
-            margin-left: 80px;
-            margin-top: 10px;
-        }
+                display: none;
+            }
+            #inputConcessionaria {
+                text-align: center; /* Como o justify não completamente aplicável a inputs, manter centrar ou alinha ao lado */
+                width: 200px; 
+                height: 40px;
+            }
+
         }
         
         .sidebar:hover + .container input#inputConcessionaria {
@@ -487,14 +496,10 @@
             height: auto; /* Mantém a proporção da imagem */
             margin-bottom: 10px; /* Adiciona espaçamento inferior */
             display: block; /* Garante que a imagem fique em uma nova linha */
-            margin-left: 130px;
+            margin-left: 150px;
             margin-top: 10px;
         }
-        #inputConcessionaria {
-            text-align: center; /* Como o justify não completamente aplicável a inputs, manter centrar ou alinha ao lado */
-            width: 400px; 
-            height: 40px;
-        }
+
         .input-wrapper {
             display: flex;
             justify-content: space-between;
@@ -552,7 +557,7 @@
 
             <div class="image-input-container">
                 <div id="input-concessionaria-container" class="hidden">
-                    <img src="logodeitada.png" class="logointerna" id="logointerna">
+
                     <img id="imagem-usina" class="imagem-usina hidden" alt="Imagem da usina">
                     <label for="inputConcessionaria">Concessionária<b>*</b> (Altere manualmente caso não seja a concessionária desejada.):</label>
                     <input type="text" id="inputConcessionaria"/>
