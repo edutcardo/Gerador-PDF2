@@ -641,12 +641,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFillColor(60, 179, 113); // Verde
     $pdf->Rect($x + ($index * $gap), $y - $barHeight, $barWidth, $barHeight, 'DF'); // Barra
 
-    // Adicionando o valor acima da barra
-    $pdf->SetFont('helvetica', '', 10);
-    $pdf->SetTextColor(0, 0, 0);
-    $valueX = $x + ($index * $gap) + ($barWidth / 2) - 5; // Ajuste para centralizar o texto
-    $valueY = $y - $barHeight - 5; // Ajuste para posicionar acima da barra
-    $pdf->Text($valueX, $valueY, (string)$value); // Adiciona o valor como texto
+
 }
     // Adicionando rótulos nas barras
     $pdf->SetFont('helvetica', '', 10);
@@ -657,6 +652,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $labelY = $y + 5; // Posição logo abaixo da barra
         $pdf->Text($labelX, $labelY, $label);
     }
+    $pdf->Text(77, 216, "Geração Estimada: $geracao kWh");
 
     // Terceira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
