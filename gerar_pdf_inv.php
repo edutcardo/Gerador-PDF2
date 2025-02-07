@@ -584,7 +584,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome");
+    $pdf->Text(34.2, 98, "Nome: $nome $percentualPayback");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
 
@@ -800,31 +800,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach ($dados as $ano => $valor) {
         // Calcular altura da barra
         $barHeight = abs($valor * $escalaY);
-
+    
         // Determinar a posição Y da barra
         if ($valor >= 0) {
             $yBarra = $linhaBase - $barHeight; // Barra positiva
         } else {
             $yBarra = $linhaBase; // Barra negativa
         }
-
+    
         // Desenhar barra
         $pdf->SetFillColor(60, 179, 113); // Verde
         $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF'); // 'DF' para desenhar e preencher
-
+    
         // Adicionar o ano abaixo da barra
         $pdf->SetFont('helvetica', '', 8);
         $pdf->Text($xPos - 1, $linhaBase + 3, (string)$ano);
-
-        // Adicionar o valor na barra
-        $valorTexto = number_format($valor, 0, ',', '.');
-        $yTexto = $valor >= 0 ? $yBarra - 5 : $yBarra + $barHeight + 3;
-        $pdf->Text($xPos - 2, $yTexto, $valorTexto);
-
+    
+        // Condição opcional para pular certas barras (exemplo: mostrar só em anos pares)
+        if ($ano % 2 == 0) { // Alterna entre anos pares ou um sim, um não
+            // Adicionar o valor na barra apenas condicionalmente
+            $valorTexto = 'R$ ' . number_format($valor, 0, ',', '.');
+            $yTexto = $valor >= 0 ? $yBarra - 5 : $yBarra + $barHeight + 3;
+            $pdf->Text($xPos - 2, $yTexto, $valorTexto);
+        }
+    
         // Avançar posição X
         $xPos += $larguraBarra + $espacoEntreBarras;
     }
-
+    
     // Título do gráfico
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text($xInicial, $yInicial - 10, '');
