@@ -418,17 +418,68 @@
             margin-bottom: 10px;
         }
         @media (max-width: 768px) {
-            .image-input-container {
-                flex-direction: column; /* Imagem fica acima dos inputs */
-                align-items: center; /* Centraliza os itens horizontalmente */
+            body {
+                flex-direction: column; /* Coloca os elementos do corpo em coluna para garantir alinhamento vertical */
             }
 
+            .container {
+                margin-left: 60px; /* Ou o valor desejado para compensar a largura da sidebar */
+                padding: 20px;
+                width: calc(250px) /* Ajustar a largura do contêiner considerando a margem da sidebar */
+            }
+            
+            /* Para telas menores, remove a fixação de tamanho da imagem */
             .imagem-usina {
-                width: 100%; /* A imagem ocupará toda a largura */
+                width: calc(220px); /* Ajuste a largura do contêiner menos afasto */
+                height: auto; 
+                max-width: 100%; /* Garante que a imagem não exploda a largura do contêiner */
+            }
+            .image-input-container input,
+            .image-input-container label {
+                margin-left: 60px; /* Ou o valor desejado para compensar a largura da sidebar */
+                width: 200px; /* Maximiza a largura dos inputs e labels */
+                font-size: 14px; /* Ajusta o tamanho da fonte para melhorar a leitura */
+                margin-left: 0; /* Remove o espaçamento interno esquerdo */
+                text-align: center; /* Alinha texto à esquerda para melhor simetria */
+            }
+            .image-input-container {
+                width: 228px; /* Garante que ocupe toda a largura disponível no contêiner */
+                padding: 10px; /* Adiciona padding para espaçamento interno */
+                box-sizing: border-box; /* Inclui padding e borda na contagem de largura total */
+                display: flex;
+                flex-direction: column; /* Coloca os elementos em coluna para melhor ajuste visual */
+                align-items: center; /* Centraliza os elementos horizontalmente */
+                justify-content: center; /* Centraliza os elementos verticalmente */
+                background-color: #f5f5f5; /* Contorno visual separando da LP */
             }
 
-            .inputs-container {
-                width: 100%; /* Inputs também ocupam toda a largura */
+            #input-concessionaria-container {
+                margin-left: 60px; /* Ou o valor desejado para compensar a largura da sidebar */
+                width: 250px; /* Garante a ocupação máxima da largura */
+                margin-bottom: 10px; /* Margem inferior para afastamento entre elementos */
+            }
+            #logointerna {
+            width: 150px; /* Largura desejada */
+            height: auto; /* Mantém a proporção da imagem */
+            margin-bottom: 10px; /* Adiciona espaçamento inferior */
+            display: block; /* Garante que a imagem fique em uma nova linha */
+            margin-left: 80px;
+            margin-top: 10px;
+        }
+        }
+        
+        .sidebar:hover + .container input#inputConcessionaria {
+            width: calc(100% - 20px); /* Leva em conta padding e margem para largura máxima */
+        }
+
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px; /* Reduz o padding do contêiner principal */
+            }
+
+            .image-input-container {
+                gap: 5px; /* Reduzido para acomodar melhor os elementos */
             }
         }
         #logointerna {

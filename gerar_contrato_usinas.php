@@ -195,7 +195,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $precoFinal = $_POST['precoFinal']; // Contém os itens
     $entrada = $_POST['entrada']; // Contém os itens
 
-    $pdf->SetFont('dejavusans', '', 12);
+    $pdf->SetFont('dejavusans', '', 10);
 
 
     // Conteúdo HTML
@@ -298,7 +298,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
    $htmlContent .= '
    <p>5.1.1.  Caso não ocorra a coincidência entre a data de liberação do financiamento e a data da Proposta Comercial, o CONTRATANTE, em caráter irrevogável e irretratável, autoriza a CONTRATADA a proceder ao pertinente e necessário recálculo da proposta para atualização do valor total do Contrato.</p>
-   <p><strong>Cláusula 5ª – Do prazo de entrega e instalação</strong></p>
    <p>5.1.2. Caso o CONTRATANTE dependa exclusivamente de financiamento bancário e este não seja aprovado pelo agente finaceiro para realizar a contratação dos serviços pactuados, o contrato será rescindido de pleno direito, sem que sejam devidas quaisquer multas e/ou indenizações pela CONTRATANTE.</p>
    <p>5.2. A CONTRATANTE não vindo a efetuar o pagamento na data estipulada, fica obrigada a pagar multa de 2% (dois por cento) sobre o valor devido, bem como juros de mora de 1% (um por cento) ao mês, mais correção monetária apurada conforme variação do IGP-M no período.</p>
    <p>5.3. Em caso de desistência ou renúncia pela CONTRATANTE sem motivo justo, dentro do prazo de instalação (cláusula 4.1), será devido a CONTRATADA a título de reparação e indenização multa de 10% (dez por cento) sobre o valor do contrato.</p>
@@ -395,6 +394,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>18.1. Considera-se data da assinatura do contrato, para todos os efeitos, a data da aposição da última assinatura digital no presente instrumento.</p>
    <p>E, para firmeza e como prova de assim haverem entre si, ajustado e contratado, assinam o presente, em 02 (duas) vias de igual teor e forma, para que produza os seus legais e jurídicos efeitos.</p>
    <p>Maringá, 25 de novembro de 2024.</p>
+
+   
    <p>________________________________________________________</p>
    <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong></p>
    <p>(Distribuidora)</p>
