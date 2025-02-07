@@ -74,25 +74,11 @@
         }
 
         #resultados {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background-color: #f9f9f9;
-            margin-bottom: 20px;
+            display: none;
         }
 
         .resultado-item {
-            cursor: pointer;
-            padding: 10px;
-            background: #f1f1f1;
-            border-radius: 6px;
-            text-align: center;
-            transition: transform 0.2s, background 0.2s;
+            display: none;
         }
 
         .resultado-item:hover {
@@ -550,8 +536,8 @@
             <label for="cidade">Cidade<b>*</b>:</label>
             <input type="text" id="cidade" name="cidade" oninput="buscarConcessionariaPorCidade()" required/>
 
-            <label for="inputValorCompensavel">Valor Compensável<b>*</b>:</label>
-            <input type="text" id="inputValorCompensavel" readonly />
+            <label for="inputValorCompensavel" class="hidden">Valor Compensável<b>*</b>:</label>
+            <input type="text" id="inputValorCompensavel" readonly  class="hidden"/>
 
             <label for="irradiacao" class="readonly">Irradiação:</label>
             <input type="text" id="irradiacao" name="irradiacao" readonly  class="readonly"required/>
@@ -559,33 +545,33 @@
             <label for="uc" class="hidden">Unidade Consumidora<b>*</b>:</label>
             <input type="text" id="uc" name="uc" required class="hidden"/>
 
-            <label for="media">Média<b>*</b>:</label>
-            <input type="text" id="media" name="media"/>
+            <label for="media" class="hidden">Média<b>*</b>:</label>
+            <input type="text" id="media" name="media" class="hidden"/>
 
-            <label for="numeroDeFases">Número de fases<b>*</b>:</label>
-            <select id="numeroDeFases" name="numeroDeFases" required>
+            <label for="numeroDeFases" class="hidden">Número de fases<b>*</b>:</label>
+            <select id="numeroDeFases" name="numeroDeFases" required class="hidden">
                 <option value="monofasico">MONOFÁSICO</option>
                 <option value="bifasico">BIFÁSICO</option>
                 <option value="trifasico">TRIFÁSICO</option>
                 <option value="monoRural">MONO RURAL</option>
             </select>
 
-            <label for="iluminacao">Iluminação<b>*</b>:</label>
-            <input type="text" id="iluminacao" name="iluminacao"/>
+            <label for="iluminacao" class="hidden">Iluminação<b>*</b>:</label>
+            <input type="text" id="iluminacao" name="iluminacao" class="hidden"/>
 
-            <label for="valoramais">Acrescentar valor:</label>
-            <input type="text" id="valoramais" name="valoramais"/>
+            <label for="valoramais" class="hidden">Acrescentar valor:</label>
+            <input type="text" id="valoramais" name="valoramais" class="hidden"/>
 
-            <label for="desconto">Desconto:</label>
-            <select id="desconto" name="desconto">
+            <label for="desconto" class="hidden">Desconto:</label>
+            <select id="desconto" name="desconto" class="hidden">
                 <option value="">Selecione um desconto</option>
                 <option value="1%">1%</option>
                 <option value="2%">2%</option>
                 <option value="3%">3%</option>
             </select>
 
-            <label for="padrao">Padrão entrada:</label>
-            <select id="padrao" name="padrao">
+            <label for="padrao" class="hidden">Padrão entrada:</label>
+            <select id="padrao" name="padrao" class="hidden">
                 <option value="">Selecione um padrão</option>
                 <option value="2x50A">2x50A</option>
                 <option value="3x50A">3x50A</option>
@@ -603,8 +589,8 @@
                 <option value="TORRE 1 MVA">TORRE 1 MVA</option>
             </select>
 
-            <label for="estrutura">Selecione uma Estrutura<b>*</b>:</label>
-            <select id="estrutura" name="estrutura" onchange="buscarResultados(); verificarEstrutura();" required>
+            <label for="estrutura" class="hidden">Selecione uma Estrutura<b>*</b>:</label>
+            <select id="estrutura" name="estrutura" onchange="buscarResultados(); verificarEstrutura();" required class="hidden">
                 <option value="">Selecione uma estrutura</option>
                 <option value="COLONIAL">COLONIAL</option>
                 <option value="FIBROMADEIRA">FIBROMADEIRA</option>
@@ -614,15 +600,15 @@
                 <option value="SOLO">SOLO</option>
             </select>
 
-            <label for="potSlider">Potência do Gerador<b>*</b>:</label>
-            <input type="range" id="potSlider" name="potSlider" min="0" max="116" value="0" step="1" class="slider" oninput="atualizarSlider(this.value); buscarResultados(); calcularResultado()" required/>
-            <span id="slider-value">0</span>
+            <label for="potSlider" class="hidden">Potência do Gerador<b>*</b>:</label>
+            <input type="range" id="potSlider" name="potSlider" min="0" max="116" value="0" step="1" class="slider hidden" oninput="atualizarSlider(this.value); buscarResultados(); calcularResultado()" required/>
+            <span id="slider-value" class="hidden">0</span>
 
-            <input type="text" id="resultado" name="resultado" readonly required/>
+            <input type="text" id="resultado" name="resultado" readonly required class="hidden"/>
 
-            <div id="resultados" required></div>
+            <div id="resultados" class="hidden" required></div>
 
-            <div id="multiplicadores-section" class="section">
+            <div id="multiplicadores-section" class="section hidden">
                 <h3 class="title">Multiplique seu kit</h3>
                 <p class="subtitle">(para usinas maiores)</p>
                 <div id="multiplicadores" class="multiplicadores-container">
@@ -631,19 +617,19 @@
                     <div class="multiplicador" data-value="4">X4</div>
                 </div>
                 <!-- Campo oculto para envio PHP -->
-                <input type="hidden" id="multiplicador" name="multiplicador" value="">
+                <input type="hidden" id="multiplicador" name="multiplicador" value="" class="hidden">
             </div>
 
             <label for="preco" class="readonly">Preço do Integrador:</label>
             <input type="text" id="preco" name="preco" readonly  class="readonly"/>
 
             <div id="quantidadePlacasDiv" class="hidden">
-                <label for="quantidadePlacas">Quantidade de Placas:</label>
-                <input type="number" id="quantidadePlacasInput" name="quantidadePlacas" min="1" />
+                <label for="quantidadePlacas" class="hidden">Quantidade de Placas:</label>
+                <input type="number" id="quantidadePlacasInput" name="quantidadePlacas" min="1"  class="hidden"/>
             </div>
 
-            <label for="adicionais" class="adicionais-label hidden">Opções Adicionais:</label>
-            <div id="adicionais" class="opcoes-adicionais hidden">
+            <label for="adicionais" class="adicionais-label hidden" class="hidden">Opções Adicionais:</label>
+            <div id="adicionais" class="opcoes-adicionais hidden" class="hidden">
                 <label for="alambrado">
                     <input type="radio" id="alambrado" name="opcao_adicional" value="Adicionar alambrado">
                     Adicionar alambrado
@@ -718,6 +704,7 @@ document.getElementById('usina').addEventListener('change', function () {
         document.getElementById('media_liquido').value = '';
         document.getElementById('rentabilidade_verde').value = '';
         document.getElementById('retorno_verde_12').value = '';
+        buscarUsinaDados(usinaValue);
     }
 });
     function verificarEstrutura() {
@@ -737,15 +724,14 @@ document.getElementById('usina').addEventListener('change', function () {
 
         if (estrutura === 'SOLO') {
             elementosParaOcultar.forEach(element => element.classList.add('hidden'));
-            quantidadePlacasDiv.classList.remove('hidden');
-            adicionaisDiv.classList.remove('hidden');
-            adicionaisLabel.classList.remove('hidden');
+
 
         } else {
-            elementosParaOcultar.forEach(element => element.classList.remove('hidden'));
             quantidadePlacasDiv.classList.add('hidden');
             adicionaisDiv.classList.add('hidden');
             adicionaisLabel.classList.add('hidden');
+            resultados.classList.add('hidden');
+            multiplicadores.classList.add('hidden');
         }
     }
         
