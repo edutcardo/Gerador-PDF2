@@ -158,7 +158,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Cálculos iniciais da proposta
 
-    $geracao = ($potenciaGerador * 3.9 * 30);
+    $geracao = ($potenciaGerador * 3.8 * 30);
     $qtdmodulos = ($potenciaGerador*1000)/$potenciaModulo;
     $qtdmodulosArredondado = (round($qtdmodulos));
     $metrosOcupados = ($qtdmodulosArredondado * 2.9)* $multiplicador;
@@ -208,11 +208,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $demandaMinima = 100;
     }
 
-    $gastoSemGerador = ($demandaMinima * 0.81) + $iluminacao + ($media * 0.81);
+    $gastoSemGerador = abs(($demandaMinima * 0.81) + $iluminacao + ($media * 0.81));
     $gastoSemGeradorRs = 'R$ ' . number_format($gastoSemGerador, 2, ',', '.');
     $gastoSemGeradorAno = $gastoSemGerador * 12;
     $gastoSemGeradorAnoRs = 'R$ ' . number_format($gastoSemGeradorAno, 2, ',', '.');
-    $gastoComGerador = ($demandaMinima * 0.81) + $iluminacao;
+    $gastoComGerador = abs(($demandaMinima * 0.81) + $iluminacao);
     $gastoComGeradorRs = 'R$ ' . number_format($gastoComGerador, 2, ',', '.');
     $gastoComGeradorAno = $gastoComGerador * 12;
     $gastoComGeradorAnoRs = 'R$ ' . number_format($gastoComGeradorAno, 2, ',', '.');
