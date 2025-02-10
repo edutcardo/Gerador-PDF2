@@ -154,7 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         return $demanda;
     }
     
-    $demanda = calcularDemanda($potenciaInversor, $precoDemanda, $qtdDemanda, $iluminacao, $media);
+    $demanda = abs(calcularDemanda($potenciaInversor, $precoDemanda, $qtdDemanda, $iluminacao, $media));
 
     // Cálculos iniciais da proposta
 
@@ -415,30 +415,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $retorno25anos = $diferencaGastosAno * 25;
     $retorno25anosRs = 'R$ ' . number_format($retorno25anos, 2, ',', '.');
 
-    //Cálculos investidor
-    $bandeiraAmarela = $inputValorCompensavel + 0.01885;
-    $bandeiraVermelha = $inputValorCompensavel + 0.04463;
-    $bandeiraVermelhaP1 = $inputValorCompensavel + 0.07877;
     $retornoVerde = $geracao * $inputValorCompensavel;
     $retornoAmarelo = $geracao * $bandeiraAmarela;
     $retornoVermelho = $geracao * $bandeiraVermelha;
     $retornoVermelhoP1 = $geracao * $bandeiraVermelhaP1;
-    $rentabilidadeVerde = ($retornoVerde / $precoFinal) * 100;
-    $rentabilidadeAmarela = ($retornoAmarelo / $precoFinal) * 100;
-    $rentabilidadeVermelha = ($retornoVermelho / $precoFinal)* 100;
-    $rentabilidadeVermelhaP1 = ($retornoVermelhoP1 / $precoFinal) * 100;
-    $liquidoVerde = $retornoVerde - $seguro - $manutencao - $imposto - $demanda;
-    $liquidoAmarelo = $retornoAmarelo - $seguro - $manutencao - $imposto - $demanda;
-    $liquidoVermelho = $retornoVermelho - $seguro - $manutencao - $imposto - $demanda;
-    $liquidoVermelhoP1 = $retornoVermelhoP1 - $seguro - $manutencao - $imposto - $demanda;
+    $bandeiraAmarela = $inputValorCompensavel + 0.01885;
+    $bandeiraVermelha = $inputValorCompensavel + 0.04463;
+    $bandeiraVermelhaP1 = $inputValorCompensavel + 0.07877;
 
-    
     function calcularImposto($tributario, $retornoVerde) {
         $imposto = 0; // Inicializa a variável para evitar erros
     
         switch ($tributario) {
             case "MEI":
-                $imposto = 76.6;
+                $imposto = 81.9;
                 break;
             case "SIMPLES NACIONAL 7,3%":
                 $imposto = $retornoVerde * 0.073;
@@ -459,6 +449,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $imposto = calcularImposto($tributario, $retornoVerde);
     $seguro = ($precoFinal * 0.007) /12;
 
+    //Cálculos investidor
+    $retornoVerde = $geracao * $inputValorCompensavel;
+    $retornoAmarelo = $geracao * $bandeiraAmarela;
+    $retornoVermelho = $geracao * $bandeiraVermelha;
+    $retornoVermelhoP1 = $geracao * $bandeiraVermelhaP1;
+    $bandeiraAmarela = $inputValorCompensavel + 0.01885;
+    $bandeiraVermelha = $inputValorCompensavel + 0.04463;
+    $bandeiraVermelhaP1 = $inputValorCompensavel + 0.07877;
+    $liquidoVerde = $retornoVerde - ($seguro + $manutencao + $imposto + $demanda);
+    $liquidoAmarelo = $retornoAmarelo - $seguro - $manutencao - $imposto - $demanda;
+    $liquidoVermelho = $retornoVermelho - $seguro - $manutencao - $imposto - $demanda;
+    $liquidoVermelhoP1 = $retornoVermelhoP1 - $seguro - $manutencao - $imposto - $demanda;
+    $rentabilidadeVerde = ($liquidoVerde / $precoFinal) * 100;
+    $rentabilidadeAmarela = ($liquidoAmarelo / $precoFinal) * 100;
+    $rentabilidadeVermelha = ($liquidoVermelho / $precoFinal)* 100;
+    $rentabilidadeVermelhaP1 = ($liquidoVermelhoP1 / $precoFinal) * 100;
+
+    
     $irradiacao = [5888, 5792, 5219, 4544, 3636, 3333, 3529, 4451, 4683, 5311, 5969, 6327];
 
     //Cálculo de irradiação
@@ -523,7 +531,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     // Assumindo valores aproximados
-    $fluxoCaixaAnual = 72000; // Exemplo de um fluxo de caixa médio anual
+    $fluxoCaixaAnual = $precoFinal; // Exemplo de um fluxo de caixa médio anual
     $taxaDesconto = 0.08; // Exemplo de taxa de desconto anual de 8%
     $periodoAnos = 25; // Considerando a vida útil do projeto
     
@@ -534,7 +542,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Estimação de Payback
     $fluxoCaixaAnual = 7200; // Exemplo de fluxo de caixa anual
 
-    $payback = $precoFinal / $fluxoCaixaAnual; // Payback estimado em anos
+    $payback = $precoFinal / ($retornoVerde * 12); // Payback estimado em anos
 
     // Estimação de porcentagem do payback com relação aos 25 anos
     $percentualPayback = ($payback / 25) * 100; // Porcentagem do payback no total de 25 anos
@@ -894,6 +902,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(172, 203.5, "$mediaLiquidoRs");
 
+    $pdf->SetFont('helvetica', 10);
     $pdf->Text(27, 220, "$VPLP");
     $pdf->Text(80, 220, "$TIRP");
     $pdf->Text(127, 220, "$lucratividadeFormatada");
