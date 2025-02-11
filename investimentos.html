@@ -1011,6 +1011,8 @@
     // Define "Copel" como valor inicial do inputConcessionaria
             document.getElementById('inputConcessionaria').value = 'COPEL';
             document.getElementById('uc').value = '5555';
+            document.getElementById('resultadoOperacao').value = ''; // Adicionada linha para resultado
+
 
 
 
@@ -1018,32 +1020,41 @@
             preencherFormulario();
         };
 
+
+
         async function buscarUsinaDados(inputConcessionariaValue, usinaValue) {
             try {
                 const url = `teste.php?inputConcessionaria=${encodeURIComponent(inputConcessionariaValue)}&usina=${encodeURIComponent(usinaValue)}`;
                 const response = await fetch(url);
                 
                 if (!response.ok) {
-                    throw new Error('Erro ao carregar operação');
+                    throw new Error('Não foi possível completar a busca');
                 }
 
                 const data = await response.text();
-                console.log("Resultado da operação:", data);  // Debugging para verificar a resposta
-                document.getElementById('resultadoOperacao').value = data.trim();  // Remover espaços e atribuir
                 
+                if (data.trim() === '') {
+                    console.warn('O servidor não retornou um valor');
+                } else {
+                    document.getElementById('resultadoOperacao').value = data.trim();
+                }
             } catch (error) {
-                console.error('Erro ao carregar operação:', error);
+                console.error('Erro ao buscar dados:', error.message);
             }
         }
 
         document.getElementById('usina').addEventListener('change', function() {
-            const inputConcessionariaValue = document.getElementById('inputConcessionaria').value;
+            const inputConcessionariaValue = document.getElementById('inputConcessionaria').value; // Defina a variável aqui
             const usinaValue = this.value;
+            
             if (usinaValue && usinaValue !== 'vazio') {
                 buscarUsinaDados(inputConcessionariaValue, usinaValue);
+                buscarDados(usinaValue);
+            } else {
+                // Limpar corretivamente os campos caso não se tenha uma seleção válida
+                document.getElementById('resultadoOperacao').value = '';
             }
         });
-
         document.getElementById('cidade').addEventListener('input', buscarDados);
 
         function buscarValorCompensavel() {
