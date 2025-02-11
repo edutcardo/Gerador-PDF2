@@ -56,7 +56,16 @@ if (!empty($inputConcessionaria) && !empty($usina)) {
                 break;
         }
 
-        echo $resultado;
+        // Formata o resultado para o formato de moeda brasileira
+        if (is_numeric($resultado)) {
+            $resultado_formatado = 'R$ ' . number_format($resultado, 2, ',', '.');
+        } else {
+            $resultado_formatado = $resultado;
+        }
+        
+        // Envie o resultado formatado como resposta
+        echo $resultado_formatado;
+        
     } else {
         // Retorna vazio se nenhum resultado foi encontrado
         echo "";
