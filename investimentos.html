@@ -575,10 +575,12 @@
             
                     <label for="retorno_verde_12">Retorno Verde Anual:</label>
                     <input type="text" id="retorno_verde_12" name="retorno_verde_12" readonly />
+
+                    <label for="resultadoOperacao">Resultado da Operação (1 + 1):</label>
+                    <input type="text" id="resultadoOperacao" name="resultadoOperacao" readonly />
                 </div>
                 
             </div>
-
 
             <label for="nome">Nome<b>*</b>:</label>
             <input type="text" id="nome" name="nome" required/>
@@ -1029,11 +1031,25 @@ document.getElementById('usina').addEventListener('change', function () {
             document.getElementById('uc').value = '5555';
 
 
+
             // Outras funções que precisam ser chamadas quando a página carrega
             preencherFormulario();
         };
 
         function buscarUsinaDados(usinaValue) {
+
+            //AUTOMAÇÃO DE PUXAR CÁLCULOS APÓS ESCOLHA DA USINA********************************************************
+
+            fetch('teste.php')
+                .then(response => response.text())  // Trata a resposta como texto
+                .then(data => {
+                    // Encontra o input pelo ID e define seu valor conforme a resposta recebida
+                    document.getElementById('resultadoOperacao').value = data;
+                })
+                .catch(error => console.error('Erro ao carregar operação:', error));
+
+            //AUTOMAÇÃO ACABA AQUI************************************************************************************
+
             try {
                 const response = fetch(`consultar_usina.php?usina=${encodeURIComponent(usinaValue)}`);
                 if (!response.ok) throw new Error('Erro na resposta da rede');
@@ -1433,6 +1449,7 @@ document.getElementById('usina').addEventListener('change', function () {
                     document.getElementById('inputConcessionaria').value = 'Informe uma cidade';
                 }
             }
+
 
     </script>
 </body>
