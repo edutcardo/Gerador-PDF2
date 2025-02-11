@@ -576,11 +576,18 @@
                     <label for="retorno_verde_12">Retorno Verde Anual:</label>
                     <input type="text" id="retorno_verde_12" name="retorno_verde_12" readonly />
 
+                    <label for="precoFinalBack">Preço Final Back:</label>
+                    <input type="text" id="precoFinalBack" name="precoFinalBack" readonly />
+
                     <label for="retornoVerde">Retorno em bandeira verde:</label>
                     <input type="text" id="retornoVerde" name="retornoVerde" readonly />
 
+                    <label for="rentabilidadeVerde">Rentabilidade Verde:</label>
+                    <input type="text" id="rentabilidadeVerde" name="rentabilidadeVerde" readonly />
+
                     <label for="retornoVerdeAnual">Retorno Verde Anual:</label>
                     <input type="text" id="retornoVerdeAnual" name="retornoVerdeAnual" readonly />
+
                 </div>
                 
             </div>
@@ -1034,9 +1041,12 @@
                     if (data.trim() === '') {
                         console.warn('O servidor não retornou um valor');
                     } else {
-                        const [retornoVerde, retornoVerdeAnual] = data.trim().split("|");
+                        const [retornoVerde, retornoVerdeAnual, precoFinalBack, rentabilidadeVerde] = data.trim().split("|");
+
                         document.getElementById('retornoVerde').value = retornoVerde;
-                        document.getElementById('retornoVerdeAnual').value = retornoVerdeAnual; // Certifique-se que o ID do elemento está correto
+                        document.getElementById('retornoVerdeAnual').value = retornoVerdeAnual;
+                        document.getElementById('precoFinalBack').value = precoFinalBack;
+                        document.getElementById('rentabilidadeVerde').value = rentabilidadeVerde;
                     }
                 } else {
                     console.error('Resposta não foi ok:', response.statusText);
