@@ -66,7 +66,7 @@ if (!empty($inputConcessionaria) && !empty($usina)) {
         // Calcula o retorno anual
         if (is_numeric($resultado)) {
             $retornoVerdeAnual = $resultado * 12;
-            $rentabilidadeVerde = $precoFinalBack / ($resultado * 12);
+            $rentabilidadeVerde = ($resultado) / $precoFinalBack;
             
             $resultado_formatado = 'R$ ' . number_format($resultado, 2, ',', '.');
             $retornoVerdeAnual_formatado = 'R$ ' . number_format($retornoVerdeAnual, 2, ',', '.');
