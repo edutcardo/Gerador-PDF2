@@ -1025,7 +1025,7 @@
 
         async function buscarUsinaDados(inputConcessionariaValue, usinaValue) {
             try {
-                const url = `teste.php?inputConcessionaria=${encodeURIComponent(inputConcessionariaValue)}&usina=${encodeURIComponent(usinaValue)}`;
+                const url = `inputAutomatico.php?inputConcessionaria=${encodeURIComponent(inputConcessionariaValue)}&usina=${encodeURIComponent(usinaValue)}`;
                 const response = await fetch(url);
 
                 if (response.ok) {
