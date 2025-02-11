@@ -6,10 +6,11 @@ $username = "u345670158_eduardotcardo3";
 $password = "Rtz6ngqr@";
 $dbname = "u345670158_tarifa";
 
-// Obter o valor de inputConcessionaria a partir de uma requisição GET
+// Obter os valores de entrada da requisição GET
 $inputConcessionaria = isset($_GET['inputConcessionaria']) ? $_GET['inputConcessionaria'] : '';
+$usina = isset($_GET['usina']) ? $_GET['usina'] : '';
 
-if (!empty($inputConcessionaria)) {
+if (!empty($inputConcessionaria) && !empty($usina)) {
     // Criar conexão
     $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -27,9 +28,35 @@ if (!empty($inputConcessionaria)) {
     $result = $conn->query($sql);
 
     if ($result && $result->num_rows > 0) {
-        // Se encontrar resultados, retorne o primeiro valor "compensável"
         $row = $result->fetch_assoc();
-        echo $row['compensavel'];
+        $compensavel = $row['compensavel'];
+
+        // Calcula de acordo com o tipo de usina
+        switch($usina) {
+            case '75kwSolo':
+                $resultado = $compensavel * 12768;
+                break;
+            case '75kwTelhado':
+                $resultado = $compensavel * 12804;
+                break;
+            case '300kwSolo':
+                $resultado = $compensavel * 51072;
+                break;
+            case '300kwTelhado':
+                $resultado = $compensavel * 51217;
+                break;
+            case '1mwSolo':
+                $resultado = $compensavel * 170772;
+                break;
+            case '1mwTelhado':
+                $resultado = $compensavel * 166458;
+                break;
+            default:
+                $resultado = "Valor de usina desconhecido";
+                break;
+        }
+
+        echo $resultado;
     } else {
         // Retorna vazio se nenhum resultado foi encontrado
         echo "";
@@ -38,7 +65,7 @@ if (!empty($inputConcessionaria)) {
     // Fechar conexão
     $conn->close();
 } else {
-    // Se a concessionária não for especificada, retorne vazio
+    // Se parâmetros não forem especificados corretamente, retorne vazio
     echo "";
 }
 

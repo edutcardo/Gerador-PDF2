@@ -544,7 +544,7 @@
 
         <form id="formulario">
 
-            <select id="usina" name="usina" required onchange="exibirImagem(); simularCalculo(); buscarUsinaDados(this.value);">
+            <select id="usina" name="usina" required onchange="exibirImagem(); buscarUsinaDados(this.value);">
                 <option value="vazio">Escolha uma opção</option>
                 <option value="75kwSolo">USINA 75KW SOLO</option>
                 <option value="75kwTelhado">USINA 75KW TELHADO</option>
@@ -1036,56 +1036,32 @@ document.getElementById('usina').addEventListener('change', function () {
             preencherFormulario();
         };
 
-        function buscarUsinaDados(usinaValue) {
-
-            //AUTOMAÇÃO DE PUXAR CÁLCULOS APÓS ESCOLHA DA USINA********************************************************
-
-        // JavaScript em teste.html
-
-            const inputConcessionariaValue = document.getElementById('inputConcessionaria').value || 'DefaultConcessionaria'; // Adicione um padrão se necessário
-            console.log("Valor de Concessionária:", inputConcessionariaValue);
-
-            fetch('teste.php?inputConcessionaria=' + encodeURIComponent(inputConcessionariaValue))
-                .then(response => {
-                    console.log("Resposta recebida:", response);
-                    return response.text()
-                })
-                .then(data => {
-                    document.getElementById('resultadoOperacao').value = data;
-                    console.log("Resultado:", data);
-                })
-                .catch(error => console.error('Erro ao carregar operação:', error));
-
-
-            //AUTOMAÇÃO ACABA AQUI************************************************************************************
-
+        async function buscarUsinaDados(inputConcessionariaValue, usinaValue) {
             try {
-                const response = fetch(`consultar_usina.php?usina=${encodeURIComponent(usinaValue)}`);
-                if (!response.ok) throw new Error('Erro na resposta da rede');
-
-                const data = response.json();
-                console.log('Dados recebidos:', data);
-
-                if (data.success) {
-                    // Exemplos de manipulação continuam aqui...
-                    document.getElementById('preco_final').value = 'R$ ' + formatarMoeda(data.dados.preco_final);
-                    // Continua com atualização dos outros elementos...
-                } else {
-                    throw new Error(data.message || 'Erro ao buscar dados');
+                const url = `teste.php?inputConcessionaria=${encodeURIComponent(inputConcessionariaValue)}&usina=${encodeURIComponent(usinaValue)}`;
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar operação');
                 }
+
+                const data = await response.text();
+                console.log("Resultado da operação:", data);  // Debugging para verificar a resposta
+                document.getElementById('resultadoOperacao').value = data.trim();  // Remover espaços e atribuir
+                
             } catch (error) {
-                console.error('Erro ao buscar dados:', error);
+                console.error('Erro ao carregar operação:', error);
             }
         }
-        document.getElementById('cidade').addEventListener('input', buscarConcessionariaPorCidade);
+
         document.getElementById('usina').addEventListener('change', function() {
+            const inputConcessionariaValue = document.getElementById('inputConcessionaria').value;
             const usinaValue = this.value;
             if (usinaValue && usinaValue !== 'vazio') {
-                buscarUsinaDados(usinaValue);
+                buscarUsinaDados(inputConcessionariaValue, usinaValue);
             }
         });
 
-        // Chame a função toda vez que o usuário digitar na cidade:
         document.getElementById('cidade').addEventListener('input', buscarDados);
 
         function buscarValorCompensavel() {
@@ -1312,35 +1288,6 @@ document.getElementById('usina').addEventListener('change', function () {
                 document.getElementById('potenciaGerador').value = item.potenciaGerador;
             }
         }
-        function simularCalculo() {
-            console.log("Chamando simularCalculo");
-            const formData = new FormData(document.getElementById('formulario'));
-            formData.append('simular', true);  // Indicação distinta para reconhecimento no PHP
-
-            fetch('simular_inv.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                const precoSimulacaoElement = document.getElementById('precoSimulacaoInput');
-                if (data.success) {
-                    precoSimulacaoElement.value = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.precoFinal);
-                } else {
-                    precoSimulacaoElement.value = "Erro na simulação";
-                }
-            })
-            .catch((error) => {
-                console.error("Erro de rede ao chamar simulação:", error);
-                precoSimulacaoElement.value = "Erro de rede";
-            });
-            }
-
-            document.getElementById('usina').addEventListener('change', function() {
-                exibirImagem();
-                simularCalculo();
-            });
-
             async function buscarDados(usinaValue) {
                 try {
                     const response = await fetch(`consultar_usina.php?usina=${encodeURIComponent(usinaValue)}`);
