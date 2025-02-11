@@ -554,6 +554,11 @@
                 <option value="1mwTelhado">USINA 1MW TELHADO</option>
             </select>
             
+            <label for="cep">CEP<b>*</b>:</label>
+            <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" required/>
+
+            <label for="cidade">Cidade<b>*</b>:</label>
+            <input type="text" id="cidade" name="cidade" oninput="buscarConcessionariaPorCidade()" required/>
 
             <div class="image-input-container">
                 <div id="input-concessionaria-container" class="hidden">
@@ -561,21 +566,7 @@
                     <img id="imagem-usina" class="imagem-usina hidden" alt="Imagem da usina">
                     <label for="inputConcessionaria">Concessionária<b>*</b> (Altere manualmente caso não seja a concessionária desejada.):</label>
                     <input type="text" id="inputConcessionaria"/>
-                    <label for="preco_final">Preço Final:</label>
-                    <input type="text" id="preco_final" name="preco_final" readonly />
-            
-                    <label for="retorno_verde">Retorno Verde:</label>
-                    <input type="text" id="retorno_verde" name="retorno_verde" readonly />
-            
-                    <label for="media_liquido">Média Líquido:</label>
-                    <input type="text" id="media_liquido" name="media_liquido" readonly />
-            
-                    <label for="rentabilidade_verde">Rentabilidade Verde:</label>
-                    <input type="text" id="rentabilidade_verde" name="rentabilidade_verde" readonly />
-            
-                    <label for="retorno_verde_12">Retorno Verde Anual:</label>
-                    <input type="text" id="retorno_verde_12" name="retorno_verde_12" readonly />
-
+      
                     <label for="precoFinalBack">Preço Final Back:</label>
                     <input type="text" id="precoFinalBack" name="precoFinalBack" readonly />
 
@@ -592,17 +583,11 @@
                 
             </div>
 
-            <label for="nome">Nome<b>*</b>:</label>
+            <label for="nome">Nome na proposta comercial<b>*</b>:</label>
             <input type="text" id="nome" name="nome" required/>
 
-            <label for="endereco">Endereço<b>*</b>:</label>
+            <label for="endereco">Endereço na proposta comercial<b>*</b>:</label>
             <input type="text" id="endereco" name="endereco" required/>
-
-            <label for="cep">CEP<b>*</b>:</label>
-            <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" required/>
-
-            <label for="cidade">Cidade<b>*</b>:</label>
-            <input type="text" id="cidade" name="cidade" oninput="buscarConcessionariaPorCidade()" required/>
 
             <label for="inputValorCompensavel" class="hidden">Valor Compensável<b>*</b>:</label>
             <input type="text" id="inputValorCompensavel" readonly  class="hidden"/>
@@ -998,24 +983,27 @@
             document.getElementById('slider-value').textContent = valor; // Exibe o valor do slider ao lado do controle
         }
 
-                // Função que verifica se todos os campos obrigatórios estão preenchidos
         function verificarFormulario() {
-            const formulario = document.getElementById('formulario');
+            const cep = document.getElementById('cep').value.trim();
+            const cidade = document.getElementById('cidade').value.trim();
+            const nome = document.getElementById('nome').value.trim();
+            const endereco = document.getElementById('endereco').value.trim();
+            
             const btnGerarPDF = document.getElementById('btnGerarPDF');
             
-            // Verifica se o formulário é válido
-            if (formulario.checkValidity()) {
+            // Verifica se os campos requeridos estão preenchidos
+            if (cep && cidade && nome && endereco) {
                 btnGerarPDF.disabled = false; // Habilita o botão
             } else {
-                btnGerarPDF.disabled = true; // Desabilita o botão
+
             }
         }
 
-        // Chama a função de verificação sempre que o conteúdo do formulário mudar
+        // Chamar a função de verificação sempre que o formulário mudar
         document.getElementById('formulario').addEventListener('input', verificarFormulario);
 
-        // Chama a função de verificação ao carregar a página
-        window.onload = verificarFormulario;
+// Certifica-se de chamar a verificação ao carregar a página
+window.onload = verificarFormulario;
 
         window.onload = function() {
     // Define "Copel" como valor inicial do inputConcessionaria
