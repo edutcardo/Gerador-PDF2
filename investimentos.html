@@ -745,26 +745,7 @@
         </form>
     </div>
     <script>
-document.getElementById('usina').addEventListener('change', function () {
-    const usinaValue = this.value;
-    if (usinaValue && usinaValue !== 'vazio') {
-        // Chamar funções essenciais diretamente no evento de mudança
-        exibirImagem();
-        simularCalculo();
-        buscarUsinaDados(usinaValue);
-        atualizarDados();
-        verificarFormulario();
-        buscarResultados(); // Chama o carregamento dos dados iniciais
-    } else {
-        // Limpar campos se "Escolha uma opção" for selecionado
-        document.getElementById('preco_final').value = '';
-        document.getElementById('retorno_verde').value = '';
-        document.getElementById('media_liquido').value = '';
-        document.getElementById('rentabilidade_verde').value = '';
-        document.getElementById('retorno_verde_12').value = '';
-        buscarUsinaDados(usinaValue);
-    }
-});
+
 
     function verificarEstrutura() {
         const estrutura = document.getElementById('estrutura').value;
@@ -1339,15 +1320,7 @@ document.getElementById('usina').addEventListener('change', function () {
                     document.getElementById('retorno_verde_12').value = '';
                 }
             });
-            var map = L.map('map').setView([-23.55052, -46.633308], 13);
-            L.esri.basemapLayer('Imagery').addTo(map);
 
-            var marcador;
-
-            function mostrarDetalhes() {
-                document.getElementById('detalhes').style.display = 'block';
-                map.invalidateSize(); // Ajusta o tamanho do mapa
-            }
 
             function buscarEndereco() {
                 var endereco = document.getElementById("enderecoInput").value;
@@ -1375,13 +1348,7 @@ document.getElementById('usina').addEventListener('change', function () {
                     .catch(error => console.error('Erro:', error));
             }
 
-            // Enable leaflet-geoman features
-            map.pm.addControls({
-                position: 'topleft',
-                drawCircle: false,  // Ajuste dos controles disponíveis conforme necessário
-                drawMarker: false,
-                tooltips: true,
-            });
+
             function buscarConcessionariaPorCidade() {
                 const cidade = document.getElementById('cidade').value.trim();
 
@@ -1394,6 +1361,7 @@ document.getElementById('usina').addEventListener('change', function () {
                                 const inputConcessionaria = document.getElementById('inputConcessionaria');
                                 inputConcessionaria.value = data.concessionaria;
                                 buscarValorCompensavel(); // Chame a função após definir o valor
+
                             } else {
                                 document.getElementById('inputConcessionaria').value = 'Erro: ' + data.message;
                             }
