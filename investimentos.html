@@ -578,6 +578,9 @@
 
                     <label for="retornoVerde">Retorno em bandeira verde:</label>
                     <input type="text" id="retornoVerde" name="retornoVerde" readonly />
+
+                    <label for="retornoVerdeAnual">Retorno Verde Anual:</label>
+                    <input type="text" id="retornoVerdeAnual" name="retornoVerdeAnual" readonly />
                 </div>
                 
             </div>
@@ -1020,23 +1023,23 @@
             preencherFormulario();
         };
 
-
-
         async function buscarUsinaDados(inputConcessionariaValue, usinaValue) {
             try {
                 const url = `teste.php?inputConcessionaria=${encodeURIComponent(inputConcessionariaValue)}&usina=${encodeURIComponent(usinaValue)}`;
                 const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error('Não foi possível completar a busca');
-                }
 
-                const data = await response.text();
-                
-                if (data.trim() === '') {
-                    console.warn('O servidor não retornou um valor');
+                if (response.ok) {
+                    const data = await response.text();
+
+                    if (data.trim() === '') {
+                        console.warn('O servidor não retornou um valor');
+                    } else {
+                        const [retornoVerde, retornoVerdeAnual] = data.trim().split("|");
+                        document.getElementById('retornoVerde').value = retornoVerde;
+                        document.getElementById('retornoVerdeAnual').value = retornoVerdeAnual; // Certifique-se que o ID do elemento está correto
+                    }
                 } else {
-                    document.getElementById('retornoVerde').value = data.trim();
+                    console.error('Resposta não foi ok:', response.statusText);
                 }
             } catch (error) {
                 console.error('Erro ao buscar dados:', error.message);
@@ -1053,6 +1056,7 @@
             } else {
                 // Limpar corretivamente os campos caso não se tenha uma seleção válida
                 document.getElementById('retornoVerde').value = '';
+                document.getElementById('retorno_verde_12').value = ''; // Limpeza do novo campo
             }
         });
         document.getElementById('cidade').addEventListener('input', buscarDados);

@@ -30,7 +30,7 @@ if (!empty($inputConcessionaria) && !empty($usina)) {
     if ($result && $result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $compensavel = $row['compensavel'];
-
+    
         // Calcula de acordo com o tipo de usina
         switch($usina) {
             case '75kwSolo':
@@ -55,27 +55,24 @@ if (!empty($inputConcessionaria) && !empty($usina)) {
                 $resultado = "Valor de usina desconhecido";
                 break;
         }
-
-        // Formata o resultado para o formato de moeda brasileira
+    
+        // Calcula o retorno anual
         if (is_numeric($resultado)) {
+            $retornoVerdeAnual = $resultado * 12;
+            
             $resultado_formatado = 'R$ ' . number_format($resultado, 2, ',', '.');
+            $retornoVerdeAnual_formatado = 'R$ ' . number_format($retornoVerdeAnual, 2, ',', '.');
         } else {
             $resultado_formatado = $resultado;
+            $retornoVerdeAnual_formatado = $resultado;
         }
         
-        // Envie o resultado formatado como resposta
-        echo $resultado_formatado;
-        
+        // Envie os resultados formatados como resposta, separados por algum delimitador, por exemplo "|"
+        echo $resultado_formatado . "|" . $retornoVerdeAnual_formatado;
+    
     } else {
-        // Retorna vazio se nenhum resultado foi encontrado
         echo "";
     }
-
-    // Fechar conexão
-    $conn->close();
-} else {
-    // Se parâmetros não forem especificados corretamente, retorne vazio
-    echo "";
-}
+}  
 
 ?>
