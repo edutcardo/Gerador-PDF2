@@ -1040,13 +1040,22 @@ document.getElementById('usina').addEventListener('change', function () {
 
             //AUTOMAÇÃO DE PUXAR CÁLCULOS APÓS ESCOLHA DA USINA********************************************************
 
-            fetch('teste.php')
-                .then(response => response.text())  // Trata a resposta como texto
+        // JavaScript em teste.html
+
+            const inputConcessionariaValue = document.getElementById('inputConcessionaria').value || 'DefaultConcessionaria'; // Adicione um padrão se necessário
+            console.log("Valor de Concessionária:", inputConcessionariaValue);
+
+            fetch('teste.php?inputConcessionaria=' + encodeURIComponent(inputConcessionariaValue))
+                .then(response => {
+                    console.log("Resposta recebida:", response);
+                    return response.text()
+                })
                 .then(data => {
-                    // Encontra o input pelo ID e define seu valor conforme a resposta recebida
                     document.getElementById('resultadoOperacao').value = data;
+                    console.log("Resultado:", data);
                 })
                 .catch(error => console.error('Erro ao carregar operação:', error));
+
 
             //AUTOMAÇÃO ACABA AQUI************************************************************************************
 
