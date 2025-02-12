@@ -568,19 +568,19 @@
             </script>
             
             <label for="cep">CEP<b>*</b>:</label>
-            <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" required/>
+            <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" placeholder="87010255"/>
 
             <label for="cidade">Cidade<b>*</b>:</label>
-            <input type="text" id="cidade" name="cidade" oninput="buscarConcessionariaPorCidade()" required/>
+            <input type="text" id="cidade" name="cidade" oninput="buscarConcessionariaPorCidade()" placeholder="Maringá"/>
 
             <div class="image-input-container">
                 <div id="input-concessionaria-container" class="hidden">
 
                     <img id="imagem-usina" class="imagem-usina hidden" alt="Imagem da usina">
-                    <label for="inputConcessionaria">Concessionária<b>*</b> (Altere manualmente caso não seja a concessionária desejada.):</label>
+                    <label for="inputConcessionaria" placeholder="COPEL">Concessionária<b>*</b> (Altere manualmente caso não seja a concessionária desejada.):</label>
                     <input type="text" id="inputConcessionaria"/>
       
-                    <label for="precoFinalBack">Preço Final Back:</label>
+                    <label for="precoFinalBack">Preço Final:</label>
                     <input type="text" id="precoFinalBack" name="precoFinalBack" readonly />
 
                     <label for="retornoVerde">Retorno em bandeira verde:</label>
@@ -597,10 +597,10 @@
             </div>
 
             <label for="nome">Nome na proposta comercial<b>*</b>:</label>
-            <input type="text" id="nome" name="nome" required/>
+            <input type="text" id="nome" name="nome" placeholder="Usina Investimento"/>
 
             <label for="endereco">Endereço na proposta comercial<b>*</b>:</label>
-            <input type="text" id="endereco" name="endereco" required/>
+            <input type="text" id="endereco" name="endereco" placeholder="A definir"/>
 
             <label for="inputValorCompensavel" class="hidden">Valor Compensável<b>*</b>:</label>
             <input type="text" id="inputValorCompensavel" readonly  class="hidden"/>
@@ -1023,6 +1023,7 @@ window.onload = verificarFormulario;
             document.getElementById('inputConcessionaria').value = 'COPEL';
             document.getElementById('uc').value = '5555';
             document.getElementById('cep').value = '87010-255';
+            document.getElementById('inputValorCompensavel').value = '0.4054079';
             document.getElementById('cidade').value = 'Maringá';
             document.getElementById('endereco').value = 'A definir';
             document.getElementById('retornoVerde').value = ''; // Adicionada linha para resultado
@@ -1339,12 +1340,7 @@ window.onload = verificarFormulario;
                             return `${parseFloat(valor).toFixed(2).replace('.', ',')}%`;
                         };
 
-                        // Atualiza os inputs com os valores formatados
-                        document.getElementById('preco_final').value = 'R$ ' + formatarMoeda(data.dados.preco_final);
-                        document.getElementById('retorno_verde').value = 'R$ ' + formatarMoeda(data.dados.retorno_verde);
-                        document.getElementById('media_liquido').value = 'R$ ' + formatarMoeda(data.dados.media_liquido);
-                        document.getElementById('rentabilidade_verde').value = formatarPercentual(data.dados.rentabilidade_verde);
-                        document.getElementById('retorno_verde_12').value = 'R$ ' + formatarMoeda(data.dados.retorno_verde_12);
+
                     } else {
                         throw new Error(data.message || 'Erro ao buscar dados');
                     }

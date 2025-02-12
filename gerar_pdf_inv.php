@@ -4,10 +4,10 @@ require_once('vendor/autoload.php'); // Ou o caminho correto, se você não esti
 
 // Verifica se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nome = $_POST['nome'];
-    $endereco = $_POST['endereco'];
-    $cidade = $_POST['cidade'];
-    $uc = $_POST['uc'];
+    $nome = isset($_POST['nome']) ? $_POST['nome'] : 'Informar';
+    $endereco = isset($_POST['endereco']) ? $_POST['endereco'] : 'Informar';
+    $cidade = isset($_POST['cidade']) ? $_POST['cidade'] : 'Informar';
+    $uc = isset($_POST['uc']) ? $_POST['uc'] : '0000';
     $media = isset($_POST['media']) && $_POST['media'] !== '' ? floatval($_POST['media']) : 1;
     $iluminacao = $_POST['iluminacao'];
     $potenciaGerador = $_POST['potenciaGerador'];
