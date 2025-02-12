@@ -553,6 +553,19 @@
                 <option value="1mwSolo">USINA 1MW SOLO</option>
                 <option value="1mwTelhado">USINA 1MW TELHADO</option>
             </select>
+
+            <script>
+            document.getElementById('usina').addEventListener('change', function() {
+                const usinaValue = this.value;
+                const inputConcessionariaContainer = document.getElementById('input-concessionaria-container');
+                
+                if (usinaValue === 'vazio') {
+                    inputConcessionariaContainer.style.display = 'none';
+                } else {
+                    inputConcessionariaContainer.style.display = 'block';
+                }
+            });
+            </script>
             
             <label for="cep">CEP<b>*</b>:</label>
             <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" required/>
@@ -608,11 +621,11 @@
                 <option value="trifasico">TRIFÁSICO</option>
                 <option value="monoRural">MONO RURAL</option>
             </select>
-
+ss
             <label for="iluminacao" class="hidden">Iluminação<b>*</b>:</label>
             <input type="text" id="iluminacao" name="iluminacao" class="hidden"/>
 
-            <label for="valoramais" class="hidden">Acrescentar valor:</label>
+            <label for="valoramais"  class="hidden">Acrescentar valor:</label>
             <input type="text" id="valoramais" name="valoramais" class="hidden"/>
 
             <label for="desconto" class="hidden">Desconto:</label>
@@ -1011,6 +1024,23 @@ window.onload = verificarFormulario;
             document.getElementById('uc').value = '5555';
             document.getElementById('retornoVerde').value = ''; // Adicionada linha para resultado
 
+            const usinaSelect = document.getElementById('usina');
+            const inputConcessionariaContainer = document.getElementById('input-concessionaria-container');
+            
+            usinaSelect.addEventListener('change', function() {
+                if (this.value === 'vazio') {
+                    inputConcessionariaContainer.style.display = 'none';
+                } else {
+                    inputConcessionariaContainer.style.display = 'block';
+                }
+            });
+            
+            // Inicialize a visibilidade do contêiner com base no valor inicial
+            if (usinaSelect.value === 'vazio') {
+                inputConcessionariaContainer.style.display = 'none';
+            } else {
+                inputConcessionariaContainer.style.display = 'block';
+            }
 
 
 
@@ -1364,7 +1394,7 @@ window.onload = verificarFormulario;
 
             function buscarConcessionariaPorCidade() {
                 const cidade = document.getElementById('cidade').value.trim();
-
+                
                 if (cidade !== "") {
                     fetch(`buscar_dados.php?cidade=${encodeURIComponent(cidade)}`)
                         .then(response => response.json())
@@ -1386,9 +1416,15 @@ window.onload = verificarFormulario;
                 } else {
                     document.getElementById('inputConcessionaria').value = 'Informe uma cidade';
                 }
+
+                // Adicione esta linha para redefinir o select usina
+                const selectUsina = document.getElementById('usina');
+                selectUsina.value = 'vazio';
+                
+                // Atualiza a visibilidade do input-concessionaria-container
+                const inputConcessionariaContainer = document.getElementById('input-concessionaria-container');
+                inputConcessionariaContainer.style.display = 'none';
             }
-
-
     </script>
 </body>
 </html>
