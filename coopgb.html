@@ -685,60 +685,36 @@
             document.getElementById('modalContrato').style.display = "none"; // Fecha o modal após salvar
         }
         function enviarDadosD4sign() {
-            const formData = new FormData(document.getElementById('formulario'));
+            const formData = new FormData(document.getElementById('formContrato'));
+
             const dados = {
                 name_document: "Nome do Documento",
                 templates: {
-                    MTU4MTY2: {
-                        nome: formData.get('nome') || "1",
-                        cpf: "12345678901",
-                        logradouro: formData.get('endereco') || "1",
-                        nr: "1",
-                        cep: formData.get('cep') || "1",
-                        cidade: formData.get('cidade') + " - UF" || "1 - UF",
-                        kwp: "1",
-                        qtdmodulos: "1",
-                        kwhmes: "1",
-                        _: "1",
-                        uc: formData.get('uc') || "1",
-                        cpf_cnpj: "1",
-                        consumo: "1",
-                        data: new Date().toISOString().slice(0,10), // Data atual
-                        id: "1",
-                        nomeficha: "1",
-                        cpfficha: "1",
-                        logradourouc: "1",
-                        nruc: "1",
-                        cepuc: "1",
-                        cidadeuc: "1",
-                        telefone: "1",
-                        responsável: "1",
-                        uc2: "1",
-                        logradouro2: "1",
-                        consumo2: "1",
-                        uc3: "1",
-                        logradouro3: "1",
-                        consumo3: "1",
-                        uc4: "1",
-                        logradouro4: "1",
-                        consumo4: "1",
-                        uc5: "1",
-                        logradouro5: "1",
-                        consumo5: "1",
-                        uc6: "1",
-                        logradouro6: "1",
-                        consumo6: "1",
-                        uc7: "1",
-                        logradouro7: "1",
-                        consumo7: "1",
-                        totalconsumo: "1"
+                    MTYyMjcz: {
+                        nome: formData.get('nomeTitular') || "1",
+                        _cpfcnpj: formData.get('CPFCNPJTitular') || "1",
+                        estado: "teste",
+                        rua: formData.get('enderecoTitular') || "1",
+                        bairro: "teste",
+                        numero: formData.get('Whatsapp') || "1",
+                        _representante: "representante",
+                        _usina: "teste",
+                        uc: "teste",
+                        endereco: formData.get('enderecoTitular') || "1",
+                        classificacao: "teste",
+                        rshora: "teste",
+                        kwp: "teste",
+                        kwhdia: "teste",
+                        kwh1h: "teste",
+                        kwhmes: "teste",
+                        taxaadm: "teste",
+                        email: "engeletazevedo@gmail.com",
+                        data: new Date().toISOString().slice(0, 10) // Data atual
                     }
                 }
             };
 
-            console.log('Enviando dados para D4sign:', JSON.stringify(dados));
-
-            fetch('https://secure.d4sign.com.br/api/v1/documents/88b7ed6f-368d-4801-85d1-56f94b75f7cb/makedocumentbytemplateword?tokenAPI=live_52449bbd01229efbbeaaf4ce6ee511df175bef8707b57ff35604039dc7714c48&cryptKey=live_crypt_rwJd9DYWs28IYUI1bPhhWDnVtJg5yeb8', {
+            fetch('enviar_dados_d4sign.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -750,13 +726,13 @@
                     throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
                 }
                 return response.json();
-                })
-                .then(data => {
+            })
+            .then(data => {
                 console.log('Resposta de sucesso:', data);
-                })
-                .catch(error => {
+            })
+            .catch(error => {
                 console.error('Erro ao enviar dados:', error.message);
-                });
+            });
         }
         
     </script>
