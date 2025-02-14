@@ -692,79 +692,35 @@
                 name_document: "Teste",
                 templates: {
                     MTY0MzI1: {
-                        nome: formData.get('nomeTitular') || "",
-                        cpf: formData.get('CPFCNPJTitular') || "",
-                        logradouro: formData.get('enderecoTitular') || "",
-                        nr: formData.get('Whatsapp') || "",
-                        cep: document.getElementById('cep').value || "",
-                        cidade: document.getElementById('cidade').value || "",
-                        telefone: formData.get('Whatsapp') || "",
-                        totalconsumo: document.getElementById('media').value || "",
-                        kwp: "teste"
-                        // Additional necessary fields
+                        nome: formData.get('nomeTitular'),
+                        cpf: formData.get('CPFCNPJTitular'),
+                        logradouro: formData.get('enderecoTitular'),
+                        nr: formData.get('Whatsapp'),
                     }
                 }
             };
 
-            fetch('enviar_dados_d4sign.php', {
-                method: 'POST',
+            fetch("enviar_dados_d4sign.php", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify(dadosDocumento)
+                body: JSON.stringify(dadosDocumento),
             })
-            .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                return response.json();
-            })
-            .then(dataDocumento => {
-                console.log('Documento criado com sucesso:', dataDocumento);
-
-                const uuidDocument = dataDocumento.uuid;
-
-                if (!uuidDocument) {
-                    throw new Error("UUID não encontrado na resposta da API");
-                }
-
-                // Preparando a URL corretamente com fetcher sem suppression?
-                const apiToken = 'live_52449bbd01229efbbeaaf4ce6ee511df175bef8707b57ff35604039dc7714c48';
-                const cryptKey = 'live_crypt_rwJd9DYWs28IYUI1bPhhWDnVtJg5yeb8';
-                
-                const url = `https://secure.d4sign.com.br/api/v1/documents/${uuidDocument}/createlist?tokenAPI=${apiToken}&cryptKey=${cryptKey}`;
-
-                const dadosSignatario = {
-                    signers: [
-                        {
-                            email: "engeletazevedo@gmail.com",
-                            act: "1",
-                            foreign: "0",
-                            certificadoicpbr: "0",
-                            assinatura_presencial: "0",
-                            docauthandselfie: "0",
-                            whatsapp_number: `+55${formData.get('Whatsapp')}`
-                        }
-                    ]
-                };
-
-                console.log('URL Endpoint Used:', url);
-                console.log('Request Data to Sign:', dadosSignatario);
-
-                return fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(dadosSignatario)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Erro durante a solicitação: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Operação completa", data);
+                    alert(`Documento e Signatários criados com sucesso. UUID: ${data.uuid}`);
+                })
+                .catch(error => {
+                    console.error("Erro:", error);
+                    alert("Ocorreu um erro ao processar o documento.");
                 });
-            })
-            .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                return response.json();
-            })
-            .then(dataSignatario => {
-                console.log('Signatário adicionado com sucesso:', dataSignatario);
-            })
-
         }
     </script>
 </body>
