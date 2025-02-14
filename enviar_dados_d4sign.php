@@ -139,12 +139,43 @@ if (curl_errno($curl)) {
 }
 curl_close($curl);
 
+// Enviar documento aos signatários
+$sendToSignersData = [
+    "message" => "Segue o contrato:",
+    "skip_email" => "0",
+    "workflow" => "0",
+];
+
+$url_send_document = "https://secure.d4sign.com.br/api/v1/documents/$uuid/sendtosigner?tokenAPI=$tokenAPI&cryptKey=$cryptKey";
+
+$options = [
+    CURLOPT_URL => $url_send_document,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+    CURLOPT_POST => true,
+    CURLOPT_POSTFIELDS => json_encode($sendToSignersData),
+];
+
+$curl = curl_init();
+curl_setopt_array($curl, $options);
+$responseSend = curl_exec($curl);
+
+if (curl_errno($curl)) {
+    $error_msg = curl_error($curl);
+    curl_close($curl);
+    http_response_code(500);
+    echo json_encode(["error" => "Erro ao enviar documento aos signatários via API", "details" => $error_msg]);
+    exit;
+}
+curl_close($curl);
+
 // Retorna resultado completo
 echo json_encode([
     "uuid" => $uuid,
     "results" => [
         "primeiroSignatário" => json_decode($responseSigners1),
         "segundoSignatário" => json_decode($responseSigners2),
+        "envioDocumento" => json_decode($responseSend),
     ]
 ]);
 ?>

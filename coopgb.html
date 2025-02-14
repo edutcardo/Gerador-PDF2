@@ -707,20 +707,15 @@
                 },
                 body: JSON.stringify(dadosDocumento),
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Erro durante a solicitação: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log("Operação completa", data);
-                    alert(`Documento e Signatários criados com sucesso. UUID: ${data.uuid}`);
-                })
-                .catch(error => {
-                    console.error("Erro:", error);
-                    alert("Ocorreu um erro ao processar o documento.");
-                });
+            .then(response => {
+                if (!response.ok) throw new Error(`Erro na solicitação: ${response.statusText}`);
+                return response.json();
+            })
+            .then(data => {
+                console.log("Operação completa", data);
+                document.getElementById('responseMessage').innerHTML = "<p class='success'>Documento e Signatários criados e enviados com sucesso. UUID: " + data.uuid + "</p>";
+            })
+
         }
     </script>
 </body>
