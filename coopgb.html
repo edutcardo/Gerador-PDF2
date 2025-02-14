@@ -447,8 +447,34 @@
                     <option value="20%">20%</option>
                 </select>
 
+                <h2>Itens do Projeto</h2>
+                <div class="table-container">
+                    <table id="dynamicTable">
+                        <thead>
+                            <tr>
+                                <th>Quantidade</th>
+                                <th>Item</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" name="quantidade[]" placeholder="Ex: 1, 10, Incluso"></td>
+                                <td><input type="text" name="item[]" placeholder="Digite o item"></td>
+                                <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remover</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Botão para adicionar linha -->
+                <button type="button" class="add-row-btn" onclick="addRow()">Adicionar Linha</button>
+
                 <label for="nrContrato">Nome da Unidade Consumidora:</label>
                 <input type="text" id="nrContrato" name="nrContrato" required>
+
+                <label for="uc">Nome da Unidade Consumidora:</label>
+                <input type="text" id="uc" name="uc" required>
 
                 <label for="CEPContrato">CEP da Unidade Consumidora:</label>
                 <input type="text" id="CEPContrato" name="CEPContrato" required>
@@ -745,6 +771,7 @@
                         cpf: formData.get('CPFCNPJTitular'),
                         logradouro: formData.get('enderecoTitular'),
                         nr: formData.get('Whatsapp'),
+                        
                     }
                 }
             };
@@ -765,6 +792,23 @@
                 document.getElementById('responseMessage').innerHTML = "<p class='success'>Documento e Signatários criados e enviados com sucesso. UUID: " + data.uuid + "</p>";
             })
 
+        }
+        function addRow() {
+            const table = document.getElementById('dynamicTable').getElementsByTagName('tbody')[0];
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+               <td><input type="text" name="quantidade[]" placeholder="Ex: 1, 10, Incluso"></td>
+               <td><input type="text" name="item[]" placeholder="Digite o item"></td>
+               <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remover</button></td>
+           `;
+
+            table.appendChild(newRow);
+        }
+
+        function removeRow(button) {
+            const row = button.parentElement.parentElement;
+            row.remove();
         }
     </script>
 </body>
