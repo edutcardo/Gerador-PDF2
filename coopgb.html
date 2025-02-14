@@ -691,14 +691,18 @@
                 name_document: "Teste",
                 templates: {
                     MTY0MzI1: {
-                        nome: formData.get('nomeTitular') || "1",
-                        cpf: formData.get('CPFCNPJTitular') || "1",
-                        logradouro: formData.get('enderecoTitular') || "1",
-                        nr: formData.get('Whatsapp') || "1",
-                        cep: formData.get('cep') || "1",
-                        cidade: formData.get('cidade') || "1",
+                        // Coleta dos dados vindos do formulários
+                        nome: formData.get('nomeTitular') || "",
+                        cpf: formData.get('CPFCNPJTitular') || "",
+                        logradouro: formData.get('enderecoTitular') || "",
+                        nr: formData.get('Whatsapp') || "",
+                        cep: document.getElementById('cep').value || "",
+                        cidade: document.getElementById('cidade').value || "",
+                        telefone: formData.get('Whatsapp') || "",
+                        totalconsumo: document.getElementById('media').value || "",
+                        // Dados que você define invariavelmente
                         kwp: "teste",
-                        qtdmodulos: "1",  // Substitua conforme necessário
+                        qtdmodulos: "1",  // Você pode dinamizar esse campo com a lógica necessária
                         kwhmes: "teste",
                         _: "teste",
                         uc: "teste",
@@ -711,8 +715,7 @@
                         logradourouc: "teste",
                         nruc: "teste",
                         cepuc: "teste",
-                        cidadeuc: formData.get('cidade') || "1",
-                        telefone: formData.get('Whatsapp') || "1",
+                        cidadeuc: document.getElementById('cidade').value || "",
                         responsável: "teste",
                         uc2: "teste",
                         logradouro2: "teste",
@@ -731,8 +734,7 @@
                         consumo6: "teste",
                         uc7: "teste",
                         logradouro7: "teste",
-                        consumo7: "teste",
-                        totalconsumo: formData.get('media') || ""
+                        consumo7: "teste"
                     }
                 }
             };
