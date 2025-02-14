@@ -684,14 +684,14 @@
             console.log('Dados do contrato salvos:', Object.fromEntries(dados));
             document.getElementById('modalContrato').style.display = "none"; // Fecha o modal após salvar
         }
+        // Utilize exatamente API Token corresfunction outside regs_manifest before operating persistent solicit a perspectiva e paixão intended                            
         function enviarDadosD4sign() {
             const formData = new FormData(document.getElementById('formContrato'));
 
-            const dados = {
+            const dadosDocumento = {
                 name_document: "Teste",
                 templates: {
                     MTY0MzI1: {
-                        // Coleta dos dados vindos do formulários
                         nome: formData.get('nomeTitular') || "",
                         cpf: formData.get('CPFCNPJTitular') || "",
                         logradouro: formData.get('enderecoTitular') || "",
@@ -700,41 +700,8 @@
                         cidade: document.getElementById('cidade').value || "",
                         telefone: formData.get('Whatsapp') || "",
                         totalconsumo: document.getElementById('media').value || "",
-                        // Dados que você define invariavelmente
-                        kwp: "teste",
-                        qtdmodulos: "1",  // Você pode dinamizar esse campo com a lógica necessária
-                        kwhmes: "teste",
-                        _: "teste",
-                        uc: "teste",
-                        cpf_cnpj: "teste",
-                        consumo: "teste",
-                        data: "teste",
-                        id: "teste",
-                        nomeficha: "teste",
-                        cpfficha: "teste",
-                        logradourouc: "teste",
-                        nruc: "teste",
-                        cepuc: "teste",
-                        cidadeuc: document.getElementById('cidade').value || "",
-                        responsável: "teste",
-                        uc2: "teste",
-                        logradouro2: "teste",
-                        consumo2: "teste",
-                        uc3: "teste",
-                        logradouro3: "teste",
-                        consumo3: "teste",
-                        uc4: "teste",
-                        logradouro4: "teste",
-                        consumo4: "teste",
-                        uc5: "teste",
-                        logradouro5: "teste",
-                        consumo5: "teste",
-                        uc6: "teste",
-                        logradouro6: "teste",
-                        consumo6: "teste",
-                        uc7: "teste",
-                        logradouro7: "teste",
-                        consumo7: "teste"
+                        kwp: "teste"
+                        // Additional necessary fields
                     }
                 }
             };
@@ -744,22 +711,63 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(dados)
+                body: JSON.stringify(dadosDocumento)
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 return response.json();
             })
-            .then(data => {
-                console.log('Resposta de sucesso:', data);
+            .then(dataDocumento => {
+                console.log('Documento criado com sucesso:', dataDocumento);
+
+                const uuidDocument = dataDocumento.uuid;
+
+                if (!uuidDocument) {
+                    throw new Error("UUID não encontrado na resposta da API");
+                }
+
+                // Preparando a URL corretamente com fetcher sem suppression?
+                const apiToken = 'live_52449bbd01229efbbeaaf4ce6ee511df175bef8707b57ff35604039dc7714c48';
+                const cryptKey = 'live_crypt_rwJd9DYWs28IYUI1bPhhWDnVtJg5yeb8';
+                
+                const url = `https://secure.d4sign.com.br/api/v1/documents/${uuidDocument}/createlist?tokenAPI=${apiToken}&cryptKey=${cryptKey}`;
+
+                const dadosSignatario = {
+                    signers: [
+                        {
+                            email: "engeletazevedo@gmail.com",
+                            act: "1",
+                            foreign: "0",
+                            certificadoicpbr: "0",
+                            assinatura_presencial: "0",
+                            docauthandselfie: "0",
+                            whatsapp_number: `+55${formData.get('Whatsapp')}`
+                        }
+                    ]
+                };
+
+                console.log('URL Endpoint Used:', url);
+                console.log('Request Data to Sign:', dadosSignatario);
+
+                return fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dadosSignatario)
+                });
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.json();
+            })
+            .then(dataSignatario => {
+                console.log('Signatário adicionado com sucesso:', dataSignatario);
             })
             .catch(error => {
-                console.error('Erro ao enviar dados:', error.message);
+                console.error('Erro durante o envio dos dados:', error.message);
             });
         }
-        
     </script>
 </body>
 </html>
