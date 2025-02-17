@@ -761,38 +761,38 @@
         }
         // Utilize exatamente API Token corresfunction outside regs_manifest before operating persistent solicit a perspectiva e paixão intended                            
         function enviarDadosD4sign() {
-            const formData = new FormData(document.getElementById('formContrato'));
+        const formData = new FormData(document.getElementById('formContrato'));
 
-            const dadosDocumento = {
-                name_document: "Teste",
-                templates: {
-                    MTY0MzI1: {
-                        nome: formData.get('nomeTitular'),
-                        cpf: formData.get('CPFCNPJTitular'),
-                        logradouro: formData.get('enderecoTitular'),
-                        nr: formData.get('Whatsapp'),
-                        
-                    }
+        const dadosDocumento = {
+            name_document: "Teste",
+            templates: {
+                MTY0MzI1: {
+                    nome: formData.get('nomeTitular'),
+                    cpf: formData.get('CPFCNPJTitular'),
+                    logradouro: formData.get('enderecoTitular'),
+                    nr: formData.get('Whatsapp'), // Corrige aqui para usar o campo correto
+                    cep: formData.get('CEPTitular'), // Corrige aqui para usar o campo correto
+                    uc: formData.get('uc'), // Assumindo que deveria ser input com o id 'uc'
                 }
-            };
+            }
+        };
 
-            fetch("enviar_dados_d4sign.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(dadosDocumento),
-            })
-            .then(response => {
-                if (!response.ok) throw new Error(`Erro na solicitação: ${response.statusText}`);
-                return response.json();
-            })
-            .then(data => {
-                console.log("Operação completa", data);
-                document.getElementById('responseMessage').innerHTML = "<p class='success'>Documento e Signatários criados e enviados com sucesso. UUID: " + data.uuid + "</p>";
-            })
-
-        }
+        fetch("enviar_dados_d4sign.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(dadosDocumento),
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`Erro na solicitação: ${response.statusText}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Operação completa", data);
+            document.getElementById('responseMessage').innerHTML = "<p class='success'>Documento e Signatários criados e enviados com sucesso. UUID: " + data.uuid + "</p>";
+        })
+    }
         function addRow() {
             const table = document.getElementById('dynamicTable').getElementsByTagName('tbody')[0];
             const newRow = document.createElement('tr');
