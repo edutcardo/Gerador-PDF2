@@ -470,11 +470,11 @@
                 <!-- Botão para adicionar linha -->
                 <button type="button" class="add-row-btn" onclick="addRow()">Adicionar Linha</button>
 
-                <label for="nrContrato">Nome da Unidade Consumidora:</label>
-                <input type="text" id="nrContrato" name="nrContrato" required>
+                <label for="nomeContrato">Nome da Unidade Consumidora:</label>
+                <input type="text" id="nomeContrato" name="nomeContrato" required>
 
-                <label for="uc">Nome da Unidade Consumidora:</label>
-                <input type="text" id="uc" name="uc" required>
+                <label for="nruc1">Número da Unidade Consumidora:</label>
+                <input type="text" id="nruc11" name="nruc1" required>
 
                 <label for="CEPContrato">CEP da Unidade Consumidora:</label>
                 <input type="text" id="CEPContrato" name="CEPContrato" required>
@@ -770,9 +770,20 @@
                     nome: formData.get('nomeTitular'),
                     cpf: formData.get('CPFCNPJTitular'),
                     logradouro: formData.get('enderecoTitular'),
-                    nr: formData.get('Whatsapp'), // Corrige aqui para usar o campo correto
+                    nr: formData.get('NResidenciaTitular'), // Corrige aqui para usar o campo correto
                     cep: formData.get('CEPTitular'), // Corrige aqui para usar o campo correto
-                    uc: formData.get('uc'), // Assumindo que deveria ser input com o id 'uc'
+                    uc: formData.get('nruc1'), // Assumindo que deveria ser input com o id 'uc'
+                    cidade: formData.get('CidadeTitular'), // Assumindo que deveria ser input com o id 'uc'
+                    nomeficha : formData.get('nomeContrato'),
+                    cpfficha : formData.get('CPFCNPJTitular'),
+                    logradourouc : formData.get('enderecoTitular'),
+                    cepuc : formData.get('CEPTitular'),
+                    cidadeuc : formData.get('CidadeTitular'),
+                    telefone : formData.get('Whatsapp'),
+
+
+
+
                 }
             }
         };
@@ -788,10 +799,7 @@
             if (!response.ok) throw new Error(`Erro na solicitação: ${response.statusText}`);
             return response.json();
         })
-        .then(data => {
-            console.log("Operação completa", data);
-            document.getElementById('responseMessage').innerHTML = "<p class='success'>Documento e Signatários criados e enviados com sucesso. UUID: " + data.uuid + "</p>";
-        })
+
     }
         function addRow() {
             const table = document.getElementById('dynamicTable').getElementsByTagName('tbody')[0];

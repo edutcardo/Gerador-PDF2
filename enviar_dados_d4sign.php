@@ -74,7 +74,7 @@ $signersData1 = [
             'certificadoicpbr' => '0',
             'assinatura_presencial' => '0',
             'docauthandselfie' => '0',
-            'whatsapp_number' => '+' . sanitize_input($template_data['nr']),
+            'whatsapp_number' => '+' . sanitize_input($template_data['telefone']),
         ]
     ]
 ];
