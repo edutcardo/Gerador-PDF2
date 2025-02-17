@@ -761,44 +761,66 @@
         }
         // Utilize exatamente API Token corresfunction outside regs_manifest before operating persistent solicit a perspectiva e paixão intended                            
         function enviarDadosD4sign() {
-        const formData = new FormData(document.getElementById('formContrato'));
+            const formData = new FormData(document.getElementById('formContrato'));
 
-        const dadosDocumento = {
-            name_document: "Teste",
-            templates: {
-                MTY0MzI1: {
-                    nome: formData.get('nomeTitular'),
-                    cpf: formData.get('CPFCNPJTitular'),
-                    logradouro: formData.get('enderecoTitular'),
-                    nr: formData.get('NResidenciaTitular'), // Corrige aqui para usar o campo correto
-                    cep: formData.get('CEPTitular'), // Corrige aqui para usar o campo correto
-                    uc: formData.get('nruc1'), // Assumindo que deveria ser input com o id 'uc'
-                    cidade: formData.get('CidadeTitular'), // Assumindo que deveria ser input com o id 'uc'
-                    nomeficha : formData.get('nomeContrato'),
-                    cpfficha : formData.get('CPFCNPJContrato'),
-                    logradourouc : formData.get('logradouroContrato'),
-                    cepuc : formData.get('CEPContrato'),
-                    cidadeuc : formData.get('cidadeContrato'),
-                    telefone : formData.get('Whatsapp'),
-                    _ : "15%",
+            // Captura das quantidades e itens
+            const quantidadeElements = document.querySelectorAll('input[name="quantidade[]"]');
+            const itemElements = document.querySelectorAll('input[name="item[]"]');
 
+            // Armazenar todos os valores para possibilitar a escolha por índices
+            const quantidades = [];
+            const itens = [];
+
+            quantidadeElements.forEach((element) => {
+                quantidades.push(element.value);
+            });
+
+            itemElements.forEach((element) => {
+                itens.push(element.value);
+            });
+
+            const dadosDocumento = {
+                name_document: "Teste",
+                templates: {
+                    MTY0MzI1: {
+
+                        nome: quantidades[1],
+                        cpf: itens[0],
+                        logradouro: formData.get('enderecoTitular'),
+                        nr: formData.get('NResidenciaTitular'),
+                        cep: formData.get('CEPTitular'),
+                        uc: formData.get('nruc1'),
+                        cidade: formData.get('CidadeTitular'),
+                        nomeficha: formData.get('nomeContrato'),
+                        cpfficha: formData.get('CPFCNPJContrato'),
+                        logradourouc: formData.get('logradouroContrato'),
+                        cepuc: formData.get('CEPContrato'),
+                        cidadeuc: formData.get('cidadeContrato'),
+                        telefone: formData.get('Whatsapp'),
+                        _: "15%"
+                    }
                 }
-            }
-        };
+            };
 
-        fetch("enviar_dados_d4sign.php", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(dadosDocumento),
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`Erro na solicitação: ${response.statusText}`);
-            return response.json();
-        })
-
-    }
+            fetch("enviar_dados_d4sign.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dadosDocumento),
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`Erro na solicitação: ${response.statusText}`);
+                return response.json();
+            })
+            .then(data => {
+                console.log("Operação completa", data);
+                document.getElementById('responseMessage').innerHTML = "<p class='success'>Documento e Signatários criados e enviados com sucesso. UUID: " + data.uuid + "</p>";
+            })
+            .catch(error => {
+                console.error("Erro ao enviar dados:", error);
+            });
+        }
         function addRow() {
             const table = document.getElementById('dynamicTable').getElementsByTagName('tbody')[0];
             const newRow = document.createElement('tr');
