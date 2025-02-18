@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário com Pesquisa</title>
+    <title>Proposta B Cooperativa</title>
     <style>
         * {
             margin: 0;
@@ -475,9 +475,6 @@
                 <label for="nomeContrato">Nome da Unidade Consumidora:</label>
                 <input type="text" id="nomeContrato" name="nomeContrato" required>
 
-                <label for="nruc1">Número da Unidade Consumidora:</label>
-                <input type="text" id="nruc11" name="nruc1" required>
-
                 <label for="CEPContrato">CEP da Unidade Consumidora:</label>
                 <input type="text" id="CEPContrato" name="CEPContrato" required>
 
@@ -774,6 +771,7 @@
         const nmroucs = [];
         const lugarucs = [];
         const meducs = [];
+        
 
         nmroucElements.forEach((element) => {
             nmroucs.push(element.value);
@@ -784,8 +782,18 @@
         });
 
         meducElements.forEach((element) => {
-            meducs.push(element.value);
+            meducs.push(parseFloat(element.value) || 0);
         });
+
+            // Realiza o cálculo do totalconsumo
+    const totalconsumo = meducs.reduce((acc, consumo) => acc + consumo, 0);
+
+    // Calcula a quantidade de módulos e arredonda
+    const qtdmodulos = Math.round(totalconsumo / 59);
+
+    // Calcula o kwp e kwhmes
+    const kwp = qtdmodulos * 555;
+    const kwhmes = qtdmodulos * 59;
 
 
         const dadosDocumento = {
@@ -807,7 +815,7 @@
                     telefone: formData.get('Whatsapp'),
                     _: "15%",
                     cpf: formData.get('CPFCNPJTitular'),
-                    nruc: formData.get('nruc1'),
+                    nruc: nmroucs[0],
                     consumo:  meducs[0],
                     uc2: nmroucs[1],
                     logradouro2: lugarucs[1],
@@ -827,6 +835,10 @@
                     uc7: nmroucs[6],
                     logradouro7: lugarucs[6],
                     consumo7: meducs[6],
+                    kwp: kwp,
+                    qtdmodulos: qtdmodulos,
+                    kwhmes: kwhmes,
+                    totalconsumo: totalconsumo
 
                 }
             }
