@@ -316,6 +316,9 @@
         #btnContrato:hover {
             background-color: darkred;
         }
+        .inputmodal{
+            width: 50px;
+        }
 
 
 
@@ -452,17 +455,16 @@
                     <table id="dynamicTable">
                         <thead>
                             <tr>
-                                <th>Quantidade</th>
-                                <th>Item</th>
-                                <th>Ação</th>
+                                <th>UC</th>
+                                <th>Local</th>
+                                <th>Média</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><input type="text" name="quantidade[]" placeholder="Ex: 1, 10, Incluso"></td>
-                                <td><input type="text" name="item[]" placeholder="Digite o item"></td>
-                                <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remover</button>
-                                </td>
+                                <td><input type="text" name="nmrouc[]" placeholder="Digite o nº da UC" class="inputmodal"></td>
+                                <td><input type="text" name="lugaruc[]" placeholder="Endereço da uc" class="inputmodal"></td>
+                                <td><input type="text" name="meduc[]" placeholder="Digite a média" class="inputmodal"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -761,74 +763,109 @@
         }
         // Utilize exatamente API Token corresfunction outside regs_manifest before operating persistent solicit a perspectiva e paixão intended                            
         function enviarDadosD4sign() {
-            const formData = new FormData(document.getElementById('formContrato'));
+        const formData = new FormData(document.getElementById('formContrato'));
 
-            // Captura das quantidades e itens
-            const quantidadeElements = document.querySelectorAll('input[name="quantidade[]"]');
-            const itemElements = document.querySelectorAll('input[name="item[]"]');
+        // Captura dos campos nmrouc e lugaruc
+        const nmroucElements = document.querySelectorAll('input[name="nmrouc[]"]');
+        const lugarucElements = document.querySelectorAll('input[name="lugaruc[]"]');
+        const meducElements = document.querySelectorAll('input[name="meduc[]"]');
 
-            // Armazenar todos os valores para possibilitar a escolha por índices
-            const quantidades = [];
-            const itens = [];
+        // Armazenar todos os valores
+        const nmroucs = [];
+        const lugarucs = [];
+        const meducs = [];
 
-            quantidadeElements.forEach((element) => {
-                quantidades.push(element.value);
-            });
+        nmroucElements.forEach((element) => {
+            nmroucs.push(element.value);
+        });
 
-            itemElements.forEach((element) => {
-                itens.push(element.value);
-            });
+        lugarucElements.forEach((element) => {
+            lugarucs.push(element.value);
+        });
 
-            const dadosDocumento = {
-                name_document: "Teste",
-                templates: {
-                    MTY0MzI1: {
+        meducElements.forEach((element) => {
+            meducs.push(element.value);
+        });
 
-                        nome: quantidades[1],
-                        cpf: itens[0],
-                        logradouro: formData.get('enderecoTitular'),
-                        nr: formData.get('NResidenciaTitular'),
-                        cep: formData.get('CEPTitular'),
-                        uc: formData.get('nruc1'),
-                        cidade: formData.get('CidadeTitular'),
-                        nomeficha: formData.get('nomeContrato'),
-                        cpfficha: formData.get('CPFCNPJContrato'),
-                        logradourouc: formData.get('logradouroContrato'),
-                        cepuc: formData.get('CEPContrato'),
-                        cidadeuc: formData.get('cidadeContrato'),
-                        telefone: formData.get('Whatsapp'),
-                        _: "15%"
-                    }
+
+        const dadosDocumento = {
+            name_document: "Teste",
+            templates: {
+                MTY0MzI1: {
+                    nome: formData.get('nomeTitular'),
+                    cpf: formData.get('CPFCNPJTitular'),
+                    logradouro: formData.get('enderecoTitular'),
+                    nr: formData.get('NResidenciaTitular'),
+                    cep: formData.get('CEPTitular'),
+                    uc: formData.get('nruc1'),
+                    cidade: formData.get('CidadeTitular'),
+                    nomeficha: formData.get('nomeContrato'),
+                    cpfficha: formData.get('CPFCNPJContrato'),
+                    logradourouc: formData.get('logradouroContrato'),
+                    cepuc: formData.get('CEPContrato'),
+                    cidadeuc: formData.get('cidadeContrato'),
+                    telefone: formData.get('Whatsapp'),
+                    _: "15%",
+                    cpf: formData.get('CPFCNPJTitular'),
+                    nruc: formData.get('nruc1'),
+                    uc2: uc2,
+                    logradouro2: logradouro2,
+                    consumo2: "teste",
+                    uc3: uc3,
+                    logradouro3: logradouro3,
+                    consumo3: "teste",
+                    uc4: uc4,
+                    logradouro4: logradouro4,
+                    consumo4: "teste",
+                    uc5: uc5,
+                    logradouro5: logradouro5,
+                    consumo5: "teste",
+                    uc6: uc6,
+                    logradouro6: logradouro6,
+                    consumo6: "teste",
+                    uc7: uc7,
+                    logradouro7: logradouro7,
+                    consumo7: "teste",
+                    totalconsumo: totalconsumo
+
                 }
-            };
+            }
+        };
 
-            fetch("enviar_dados_d4sign.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(dadosDocumento),
-            })
-            .then(response => {
-                if (!response.ok) throw new Error(`Erro na solicitação: ${response.statusText}`);
-                return response.json();
-            })
-            .then(data => {
-                console.log("Operação completa", data);
-                document.getElementById('responseMessage').innerHTML = "<p class='success'>Documento e Signatários criados e enviados com sucesso. UUID: " + data.uuid + "</p>";
-            })
-            .catch(error => {
-                console.error("Erro ao enviar dados:", error);
-            });
-        }
+        fetch("enviar_dados_d4sign.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(dadosDocumento),
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`Erro na solicitação: ${response.statusText}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Operação completa", data);
+            document.getElementById('responseMessage').innerHTML = "<p class='success'>Documento e Signatários criados e enviados com sucesso. UUID: " + data.uuid + "</p>";
+        })
+        .catch(error => {
+            console.error("Erro ao enviar dados:", error);
+        });
+    }
+
+
+
+    function removeRow(button) {
+        const row = button.parentElement.parentElement;
+        row.remove();
+    }
         function addRow() {
             const table = document.getElementById('dynamicTable').getElementsByTagName('tbody')[0];
             const newRow = document.createElement('tr');
 
             newRow.innerHTML = `
-               <td><input type="text" name="quantidade[]" placeholder="Ex: 1, 10, Incluso"></td>
-               <td><input type="text" name="item[]" placeholder="Digite o item"></td>
-               <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remover</button></td>
+                <td><input type="text" name="nmrouc[]" placeholder="Digite o nº da UC" class="inputmodal"></td>
+                <td><input type="text" name="lugaruc[]" placeholder="Endereço da uc" class="inputmodal"></td>
+                <td><input type="text" name="meduc[]" placeholder="Digite a média" class="inputmodal"></td>
            `;
 
             table.appendChild(newRow);
