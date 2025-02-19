@@ -80,6 +80,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nascimento = $_POST['nascimento'];
     $cep = $_POST['cep'];
     $modalidade = $_POST['modalidade'];
+    $formaPagamento = $_POST['formaPagamento'];
+    $potenciaInversor = $_POST['potenciaInversor'];
+
+    $potenciaInversor = floatval($potenciaInversor); // Converte para float
+
+ 
+
+    if ($potenciaInversor > 75) {
+        $prazo = 120;
+    } else {
+        $prazo = 60;
+    }
 
     
     setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
@@ -394,7 +406,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>5.3. Em caso de desistência ou renúncia pela CONTRATANTE sem motivo justo, dentro do prazo de instalação (cláusula 4.1), será devido a CONTRATADA a título de reparação e indenização multa de 10% (dez por cento) sobre o valor do contrato.</p>
    <p>5.4.  A CONTRATANTE reconhece e concorda que apenas terá a posse do gerador fotovoltaico após o seu pagamento integral, podendo este ser retirado pela CONTRATADA em caso de não pagamento do valor e no prazo pactuado.</p>
    <p><strong>Cláusula 6ª – Do prazo de entrega e instalação</strong></p>
-   <p>6.1. O prazo para entrega dos equipamentos, instalação e início da operação do sistema solar fotovoltaico é de até 120 (cento e vinte) dias úteis pela CONTRATADA, contado a partir da aprovação do projeto pela Concessionária de energia local.</p>
+   <p>6.1. O prazo para entrega dos equipamentos, instalação e início da operação do sistema solar fotovoltaico é de até '. $prazo .' (cento e vinte) dias úteis pela CONTRATADA, contado a partir da aprovação do projeto pela Concessionária de energia local.</p>
    <p>6.1.1. O prazo mencionado na cláusula 6.1. não abrange os prazos de responsabilidade da Concessionária de Energia. Havendo necessidade de aumento de carga, reforço na estrutura, reprovação/devolução do projeto pela Concessionária ou outro fator que demande maior tempo para a aprovação do projeto junto à concessionária de energia, o início da contagem do prazo previsto na cláusula 6.1. dar-se-á após a regularização efetiva deste último perante a companhia local.</p>
    <p>6.2. Serão descontados do prazo mencionado no item 6.1., dias chuvosos que não permitam a execução do serviço de instalação.</p>
    <p>6.3. Este contrato encerrar-se-á com o cumprimento das obrigações de entrega e instalação dos equipamentos solares fotovoltaicos pela CONTRATADA e de pagamento pelo CONTRATANTE do valor total do contrato pactuado. </p>

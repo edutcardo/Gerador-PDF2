@@ -459,11 +459,20 @@
             <label for="nr">Número da residência*:</label>
             <input type="text" id="nr" name="nr" />
 
-            <label for="potencia">Potência:</label>
+            <label for="potencia">Potência (kWp):</label>
             <input type="text" id="potencia" name="potencia" />
+
+            <label for="potenciaInversor">Potência total dos inversores (kW):</label>
+            <input type="text" id="potenciaInversor" name="potenciaInversor" />
 
             <label for="precoFinal">Preço Final (R$):</label>
             <input type="text" id="precoFinal" name="precoFinal" />
+
+            <label for="formaPagamento">Selecione a forma de pagamento:</label>
+            <select id="formaPagamento" name="formaPagamento">
+                <option value="boleto">Boleto</option>
+                <option value="financiamento">Financiamento</option>
+            </select>
 
             <!-- Tabela de itens -->
             <p>&nbsp;</p>
@@ -542,6 +551,10 @@
             const email = document.getElementById('email').value;
             const cep = document.getElementById('cep').value;
             const modalidade = document.getElementById('modalidade').value;
+            const potenciaInversor = document.getElementById('potenciaInversor').value;
+            const formaPagamento = document.getElementById('formaPagamento').value;
+            formData.append('potenciaInversor', potenciaInversor);
+            formData.append('formaPagamento', formaPagamento);
             formData.append('modalidade', modalidade);
             formData.append('CPF', CPF);
             formData.append('nascimento', nascimento);
