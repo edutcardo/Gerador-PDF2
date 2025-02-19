@@ -206,56 +206,83 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     switch ($estado) {
         case "MT":
             $textoEstado = '
-        <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
-            no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
-            Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
-            “DISTRIBUIDORA”.
+            <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
+                no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
+                Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
+                “DISTRIBUIDORA”.
             </p>
-        <p><strong>CANAL VERDE GESTAO DE EMPREENDIMENTOS MT LTDA</strong>, pessoa jurídica de direito privada, 
-            inscrita no CNPJ sob o n.° 54.399.517/0001-24, com sede na Rua das Tamareiras, 23, Sala 04, Jardim Botanico,
-            na cidade de Sinop, MT - CEP 78.556-002, representada neste ato por seu representante legal,
-            doravante denominada “CONTRATADA”.
+            <p><strong>CANAL VERDE GESTAO DE EMPREENDIMENTOS MT LTDA</strong>, pessoa jurídica de direito privada, 
+                inscrita no CNPJ sob o n.° 54.399.517/0001-24, com sede na Rua das Tamareiras, 23, Sala 04, Jardim Botanico,
+                na cidade de Sinop, MT - CEP 78.556-002, representada neste ato por seu representante legal,
+                doravante denominada “CONTRATADA”.
             </p>';
             $cnpjEstado = '<strong>CANAL VERDE GESTAO DE EMPREENDIMENTOS MT LTDA</strong>';
             $cidadeComarca = 'Sinop - MT';
             break;
-
+    
         case "SP":
             $textoEstado = '
-        <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
-            no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
-            Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
-            “DISTRIBUIDORA”.
+            <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
+                no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
+                Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
+                “DISTRIBUIDORA”.
             </p>
-        <p><strong>CANAL VERDE SP</strong>, pessoa jurídica de direito privada, inscrita no CNPJ sob o n.° 
-            48.892.992/0001-35, com sede na Avenida Doutor Paulo de Moraes, 555, Paulista, na cidade de
-            Piracicaba, SP - CEP 13.400-853, representada neste ato por seu representante legal,
-            doravante denominada “CONTRATADA”.
+            <p><strong>CANAL VERDE SP</strong>, pessoa jurídica de direito privada, inscrita no CNPJ sob o n.° 
+                48.892.992/0001-35, com sede na Avenida Doutor Paulo de Moraes, 555, Paulista, na cidade de
+                Piracicaba, SP - CEP 13.400-853, representada neste ato por seu representante legal,
+                doravante denominada “CONTRATADA”.
             </p>';
             $cnpjEstado = '<strong>CANAL VERDE SP</strong>';
             $cidadeComarca = 'Piracicaba - SP';
             break;
-
+    
         case "PR":
-            $textoEstado = '
-        <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
-            no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
-            Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
-            “DISTRIBUIDORA”.
-            </p>
-        <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privada, inscrita 
-            no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - 
-            CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.
-            </p>';
-            $cnpjEstado = '<strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>';
+            if ($modalidade == "autoconsumo") {
+                $textoEstado = '
+                <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
+                    no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
+                    Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
+                    “DISTRIBUIDORA”.
+                </p>
+                <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privada, inscrita 
+                    no CNPJ sob o n.° 32.608.889/0001-80, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - 
+                    CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.
+                </p>';
+                $cnpjEstado = '<strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>';
+            } else if ($modalidade == "investimento") {
+                $textoEstado = '
+                <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
+                    no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
+                    Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
+                    “DISTRIBUIDORA”.
+                </p>
+                <p><strong>CANAL VERDE GESTAO DE EMPREENDIMENTOS LTDA CNPJ</strong>, pessoa jurídica de direito privada, inscrita 
+                    no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR -
+                    CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.
+                </p>';
+                $cnpjEstado = '<strong>CANAL VERDE GESTAO DE EMPREENDIMENTOS LTDA CNPJ</strong>';
+            } else {
+                // Condição padrão SEM modalidade específica para PR
+                $textoEstado = '
+                <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
+                    no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
+                    Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
+                    “DISTRIBUIDORA”.
+                </p>
+                <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privada, inscrita 
+                    no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - 
+                    CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.
+                </p>';
+                $cnpjEstado = '<strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>';
+            }
             $cidadeComarca = 'Maringá - PR';
             break;
-
+    
         default:
             $textoEstado = '<p><strong>[Informações de Contratada específicas para o estado não disponíveis]</strong></p>';
+            $cidadeComarca = 'Indefinida';
             break;
     }
-
 
     // Conteúdo HTML
     $htmlContent = '
