@@ -422,6 +422,13 @@
 
         <form id="formulario">
 
+            <label for="modalidade">Selecione a modalidade:</label>
+            <select id="modalidade" name="modalidade">
+                <option value="">Selecione uma modalidade</option>
+                <option value="autoconsumo">Autoconsumo</option>
+                <option value="investimento">Investimento</option>
+            </select>
+
             <label for="nome">Nome<b>*</b>:</label>
             <input type="text" id="nome" name="nome" required />
 
@@ -534,7 +541,8 @@
             const nascimento = document.getElementById('nascimento').value;
             const email = document.getElementById('email').value;
             const cep = document.getElementById('cep').value;
-
+            const modalidade = document.getElementById('modalidade').value;
+            formData.append('modalidade', modalidade);
             formData.append('CPF', CPF);
             formData.append('nascimento', nascimento);
             formData.append('email', email);

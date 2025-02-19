@@ -79,6 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $CPF = $_POST['CPF'];
     $nascimento = $_POST['nascimento'];
     $cep = $_POST['cep'];
+    $modalidade = $_POST['modalidade'];
 
     foreach ($valores_pagamento as $index => $valor) {
         $dataPagamento = $datas_pagamento[$index];
@@ -197,9 +198,61 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->SetFont('dejavusans', '', 10);
 
+    // Lógica dos textos dinâmicos de acordo com o estado
+    switch ($estado) {
+        case "MT":
+            $textoEstado = '
+        <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
+            no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
+            Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
+            “DISTRIBUIDORA”.
+            </p>
+        <p><strong>CANAL VERDE GESTAO DE EMPREENDIMENTOS MT LTDA</strong>, pessoa jurídica de direito privada, 
+            inscrita no CNPJ sob o n.° 54.399.517/0001-24, com sede na Rua das Tamareiras, 23, Sala 04, Jardim Botanico,
+            na cidade de Sinop, MT - CEP 78.556-002, representada neste ato por seu representante legal,
+            doravante denominada “CONTRATADA”.
+            </p>
+            ';
+            break;
+
+        case "SP":
+            $textoEstado = '
+        <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
+            no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
+            Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
+            “DISTRIBUIDORA”.
+            </p>
+        <p><strong>CANAL VERDE SP</strong>, pessoa jurídica de direito privada, inscrita no CNPJ sob o n.° 
+            48.892.992/0001-35, com sede na Avenida Doutor Paulo de Moraes, 555, Paulista, na cidade de
+            Piracicaba, SP - CEP 13.400-853, representada neste ato por seu representante legal,
+            doravante denominada “CONTRATADA”.
+            </p>
+            ';
+            break;
+
+        case "PR":
+            $textoEstado = '
+        <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
+            no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
+            Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
+            “DISTRIBUIDORA”.
+            </p>
+        <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privada, inscrita 
+            no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - 
+            CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.
+            </p>  
+            ';
+            break;
+
+        default:
+            $textoEstado = '<p><strong>[Informações de Contratada específicas para o estado não disponíveis]</strong></p>';
+            break;
+    }
+
 
     // Conteúdo HTML
     $htmlContent = '
+
         <p></p>
         <p></p>
         <p></p>
@@ -210,8 +263,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p><strong>CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS</strong></p>
     </div>
    <p>Por este instrumento,</p>
-   <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “DISTRIBUIDORA”.</p>
-   <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privada, inscrita no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.</p>
+   <p>'.$textoEstado .'</p>
    <p><strong>' . $nome . '</strong>, inscrito no CPF n.º '. $CPF .', residente e domiciliado em '. $endereco .', na cidade de '. $cidade .' - CEP: '. $cep .', correio eletrônico: '. $email .', contato: '. $telefone .', doravante denominada CONTRATANTE.</p>
    <p>Considerando que:</p>
    <p>1. A Palladium (Distribuidora) é a empresa responsável pelo fornecimento de equipamentos e materiais necessários para a instalação de sistema solar fotovoltaico.</p>
