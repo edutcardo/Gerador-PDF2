@@ -217,6 +217,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             doravante denominada “CONTRATADA”.
             </p>
             ';
+            $cnpjEstado = '<strong>CANAL VERDE GESTAO DE EMPREENDIMENTOS MT LTDA</strong>';
             break;
 
         case "SP":
@@ -232,6 +233,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             doravante denominada “CONTRATADA”.
             </p>
             ';
+            $cnpjEstado = '<strong>CANAL VERDE SP</strong>';
             break;
 
         case "PR":
@@ -246,6 +248,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.
             </p>  
             ';
+            $cnpjEstado = '<strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>';
             break;
 
         default:
@@ -450,14 +453,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>18.1. Considera-se data da assinatura do contrato, para todos os efeitos, a data da aposição da última assinatura digital no presente instrumento.</p>
    <p>E, para firmeza e como prova de assim haverem entre si, ajustado e contratado, assinam o presente, em 02 (duas) vias de igual teor e forma, para que produza os seus legais e jurídicos efeitos.</p>
    <p>' . $cidade . ', ' . $dataAtual . '.</p>
-
-   
+    <style>
+    p {
+        margin: 0; /* Remove margens automáticas */
+        text-align: justify; /* Define o texto como justificado */
+    }
+    </style>
+   <p></p>
+   <p></p>
+   <p></p>
    <p>________________________________________________________</p>
    <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong></p>
    <p>(Distribuidora)</p>
+   <p></p>
+   <p></p>
+   <p></p>
    <p>________________________________________________________</p>
-   <p><strong>CANAL VERDE - GESTÃO DE EMPREENDIMENTOS LTDA</strong></p>
+   <p>' . $cnpjEstado . '</p>
    <p>(Contratada)</p>
+   <p></p>
+   <p></p>
+   <p></p>
    <p>________________________________________________________</p>
    <p><strong>' . $nome . '</strong></p>
    <p>(Contratante)</p>
