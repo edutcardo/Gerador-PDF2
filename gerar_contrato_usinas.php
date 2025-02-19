@@ -198,6 +198,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->SetFont('dejavusans', '', 10);
 
+    setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
+    $dataAtual = date("d/m/Y");
+
+
     // Lógica dos textos dinâmicos de acordo com o estado
     switch ($estado) {
         case "MT":
@@ -445,7 +449,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p><strong>Cláusula 18ª – Do foro</strong></p>
    <p>18.1. Considera-se data da assinatura do contrato, para todos os efeitos, a data da aposição da última assinatura digital no presente instrumento.</p>
    <p>E, para firmeza e como prova de assim haverem entre si, ajustado e contratado, assinam o presente, em 02 (duas) vias de igual teor e forma, para que produza os seus legais e jurídicos efeitos.</p>
-   <p>Maringá, 25 de novembro de 2024.</p>
+   <p>' . $cidade . ', ' . $dataAtual . '.</p>
 
    
    <p>________________________________________________________</p>
