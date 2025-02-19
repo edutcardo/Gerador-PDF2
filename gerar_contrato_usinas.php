@@ -215,9 +215,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             inscrita no CNPJ sob o n.° 54.399.517/0001-24, com sede na Rua das Tamareiras, 23, Sala 04, Jardim Botanico,
             na cidade de Sinop, MT - CEP 78.556-002, representada neste ato por seu representante legal,
             doravante denominada “CONTRATADA”.
-            </p>
-            ';
+            </p>';
             $cnpjEstado = '<strong>CANAL VERDE GESTAO DE EMPREENDIMENTOS MT LTDA</strong>';
+            $cidadeComarca = 'Sinop - MT';
             break;
 
         case "SP":
@@ -231,9 +231,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             48.892.992/0001-35, com sede na Avenida Doutor Paulo de Moraes, 555, Paulista, na cidade de
             Piracicaba, SP - CEP 13.400-853, representada neste ato por seu representante legal,
             doravante denominada “CONTRATADA”.
-            </p>
-            ';
+            </p>';
             $cnpjEstado = '<strong>CANAL VERDE SP</strong>';
+            $cidadeComarca = 'Piracicaba - SP';
             break;
 
         case "PR":
@@ -246,9 +246,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privada, inscrita 
             no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - 
             CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.
-            </p>  
-            ';
+            </p>';
             $cnpjEstado = '<strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>';
+            $cidadeComarca = 'Maringá - PR';
             break;
 
         default:
@@ -450,7 +450,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>17.7. As partes reconhecem por meio do presente Instrumento, a validade da assinatura eletrônica, nos termos do artigo 10, § 2º, da Medida Provisória n.º 2.200-2/2001 e Lei Geral de Proteção de Dados, bem como de que a referida assinatura eletrônica não implicará em qualquer alteração, desqualificação ou desnaturação de quaisquer deveres ou obrigações aqui previstas, os quais as partes continuam obrigadas a cumprir.</p>
    <p>17.8. Considera-se data da assinatura do contrato, para todos os efeitos, a data da aposição da última assinatura digital no presente instrumento.</p>
    <p><strong>Cláusula 18ª – Do foro</strong></p>
-   <p>18.1. Considera-se data da assinatura do contrato, para todos os efeitos, a data da aposição da última assinatura digital no presente instrumento.</p>
+   <p>18.1. Para a resolução de eventuais litígios que se refiram a direitos ou a obrigações decorrentes deste contrato, fica eleito o foro da comarca da cidade de ' . $cidadeComarca . ' em que será assinado este instrumento.</p>
    <p>E, para firmeza e como prova de assim haverem entre si, ajustado e contratado, assinam o presente, em 02 (duas) vias de igual teor e forma, para que produza os seus legais e jurídicos efeitos.</p>
    <p>' . $cidade . ', ' . $dataAtual . '.</p>
     <style>
