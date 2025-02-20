@@ -476,9 +476,8 @@
 
             <!-- Tabela de itens -->
             <p>&nbsp;</p>
-            <div id="projectItemsContainer">
             <h2>Itens do Projeto</h2>
-            <div class="table-container" id="projectItems">
+            <div class="table-container">
                 <table id="dynamicTable">
                     <thead>
                         <tr>
@@ -491,14 +490,14 @@
                         <tr>
                             <td><input type="text" name="quantidade[]" placeholder="Ex: 1, 10, Incluso"></td>
                             <td><input type="text" name="item[]" placeholder="Digite o item"></td>
-                            <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remover</button></td>
+                            <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remover</button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <!-- Botão para adicionar linha -->
             <button type="button" class="add-row-btn" onclick="addRow()">Adicionar Linha</button>
-            </div>
             <p>&nbsp;</p>
             <p>&nbsp;</p>
             <h2>Planos de Pagamento</h2>
@@ -508,9 +507,6 @@
                         <tr>
                             <th>Valor (R$)</th>
                             <th>Data de Pagamento</th>
-                            <th>Banco</th>
-                            <th>Agência</th>
-                            <th>Conta Corrente</th>
                             <th>Ação</th>
                         </tr>
                     </thead>
@@ -518,9 +514,7 @@
                         <tr>
                             <td><input type="text" name="valor_pagamento[]" placeholder="Digite o valor"></td>
                             <td><input type="text" name="data_pagamento[]" placeholder="dd/mm/aaaa"></td>
-                            <td><input type="text" name="banco[]" placeholder="Banco"></td>
-                            <td><input type="text" name="agencia[]" placeholder="Agência"></td>
-                            <td><input type="text" name="conta_corrente[]" placeholder="Conta Corrente"></td>
+
                             <td><button type="button" class="remove-row-btn"
                                     onclick="removePaymentRow(this)">Remover</button></td>
                         </tr>
@@ -540,17 +534,6 @@
     </div>
 
     <script>
-    document.getElementById('formaPagamento').addEventListener('change', function () {
-        const selectedOption = this.value;
-        const projectItemsSection = document.getElementById('projectItems');
-
-        if (selectedOption === 'financiamento') {
-            projectItemsSection.style.display = 'none'; // Ocultar
-        } else {
-            projectItemsSection.style.display = 'block'; // Mostrar
-        }
-    });
-
         function gerarPDF() {
             const formData = new FormData(document.getElementById('formulario'));
 
@@ -664,9 +647,6 @@
             newRow.innerHTML = `
                 <td><input type="text" name="valor_pagamento[]" placeholder="Digite o valor"></td>
                 <td><input type="text" name="data_pagamento[]" placeholder="dd/mm/aaaa"></td>
-                <td><input type="text" name="banco[]" placeholder="Banco"></td>
-                <td><input type="text" name="agencia[]" placeholder="Agência"></td>
-                <td><input type="text" name="conta_corrente[]" placeholder="Conta Corrente"></td>
                 <td><button type="button" class="remove-row-btn" onclick="removePaymentRow(this)">Remover</button></td>
             `;
 

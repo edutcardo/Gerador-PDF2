@@ -72,9 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $precoFinal = $_POST['precoFinal']; // Contém os itens
     $valores_pagamento = $_POST['valor_pagamento'];
     $datas_pagamento = $_POST['data_pagamento'];
-    $bancos = $_POST['banco'];
-    $agencias = $_POST['agencia'];
-    $contas_corrente = $_POST['conta_corrente'];
     $email = $_POST['email'];
     $CPF = $_POST['CPF'];
     $nascimento = $_POST['nascimento'];
@@ -99,37 +96,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     foreach ($valores_pagamento as $index => $valor) {
         $dataPagamento = $datas_pagamento[$index];
-        $banco = $bancos[$index];
-        $agencia = $agencias[$index];
-        $contaCorrente = $contas_corrente[$index];
+
 
         // Usar essas variáveis para compor o conteúdo do PDF conforme necessário
     }
     $dataPagamento1 = $datas_pagamento[0];
-    $banco1 = $bancos[0];
-    $agencia1 = $agencias[0];
-    $contaCorrente1 = $contas_corrente[0];
     $valor_pagamento = $valores_pagamento[0];
 
     $dataPagamento2 = $datas_pagamento[1];
-    $banco2 = $bancos[1];
-    $agencia2 = $agencias[1];
-    $contaCorrente2 = $contas_corrente[1];
+
 
     $dataPagamento3 = $datas_pagamento[2];
-    $banco3 = $bancos[2];
-    $agencia3 = $agencias[2];
-    $contaCorrente3 = $contas_corrente[2];
+
 
     $dataPagamento4 = $datas_pagamento[3];
-    $banco4 = $bancos[3];
-    $agencia4 = $agencias[3];
-    $contaCorrente4 = $contas_corrente[3];
+
 
     $dataPagamento5 = $datas_pagamento[4];
-    $banco5 = $bancos[4];
-    $agencia5 = $agencias[4];
-    $contaCorrente5 = $contas_corrente[4];
+
 
 
     if (isset($_POST['quantidade']) && isset($_POST['item'])) {
@@ -378,20 +362,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    
     foreach ($valores_pagamento as $index => $valor) {
         $dataPagamento = $datas_pagamento[$index];
-        $banco = $bancos[$index];
-        $agencia = $agencias[$index];
-        $contaCorrente = $contas_corrente[$index];
+
 
         $valor_formatado = 'R$ ' . number_format((float)$valor, 2, ',', '.');
 
 
-        if (!empty($dataPagamento) && !empty($banco) && !empty($agencia) && !empty($contaCorrente) && !empty($valor_pagamento)) {
+        if (!empty($dataPagamento)){
             $htmlContent .= '<p>';
             $htmlContent .= '<b>Valor ' . ($index + 1) . ': ' . htmlspecialchars($valor_formatado) . ', </b>';
             $htmlContent .= '<b> que será pago na data : ' . htmlspecialchars($dataPagamento) . ', </b>';
-            $htmlContent .= ' através de Boleto que será efetuado na instituição banco <b>' . htmlspecialchars($banco) . ', </b>';
-            $htmlContent .= '<b>Agência: ' . htmlspecialchars($agencia) . ', </b>';
-            $htmlContent .= '<b>Conta Corrente: ' . htmlspecialchars($contaCorrente) . '</b>, em nome de <b>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, 
+            $htmlContent .= ' através de Boleto que será efetuado na instituição banco <b> 756 SICOOB, </b>';
+            $htmlContent .= '<b>Agência: 4340-0, </b>';
+            $htmlContent .= '<b>Conta Corrente: 299.832-7</b>, em nome de <b>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, 
             CNPJ nº 49.348.620/0001-05 e PIX chave nº 49.348.620/0001-05</b>. Com os pagamentos dos materiais fotovoltaicos e mão-de-obra da forma combinada
              entre as partes, onde será efetuado a emissão da nota fiscal total dos produtos.';
             $htmlContent .= '</p>';
