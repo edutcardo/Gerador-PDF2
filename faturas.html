@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário com Pesquisa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        a,p {
+            font-family: Epilogue !important;
+        }
+
+        body {
+            background-color: #c6f3df;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+            margin-left: 60px; /* Adicione essa linha */
+        }
+
+        h1 {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: block;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="month"],
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        input[readonly],
+        input.hidden {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        #resultados {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+
+        .resultado-item {
+            cursor: pointer;
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 6px;
+            text-align: center;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .resultado-item:hover {
+            background: #007bff;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+        }
+        .hidden {
+            display: none;
+        }
+        .slider {
+            width: 100%; /* Deixa o slider ocupar toda a largura disponível */
+            height: 20px; /* Aumenta a altura do slider */
+            appearance: none; /* Remove o estilo padrão do navegador */
+            background: #ddd; /* Define a cor de fundo do slider */
+            border-radius: 10px; /* Deixa as bordas arredondadas */
+            outline: none; /* Remove a borda ao focar no slider */
+            transition: background 0.3s ease; /* Adiciona uma transição suave ao hover */
+        }
+
+        .slider:hover {
+            background: #ccc; /* Muda o fundo quando o slider é hoverado */
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none; /* Remove o estilo padrão do botão do slider */
+            width: 25px; /* Largura do botão */
+            height: 25px; /* Altura do botão */
+            background: #007bff; /* Cor do botão */
+            border-radius: 50%; /* Deixa o botão redondo */
+            cursor: pointer; /* Mostra que o botão é clicável */
+            transition: background 0.3s ease; /* Suaviza a mudança de cor */
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            background: #0056b3; /* Cor do botão ao passar o mouse */
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .slider::-moz-range-thumb:hover {
+            background: #0056b3;
+        }
+        .sidebar:hover .logo {
+            width: 80px; /* Tamanho maior quando expandido */
+            height: 80px;
+            padding: 8px;
+        }
+        .sidebar {
+            width: 60px;
+            background-color: #006b3c;
+            transition: width 0.3s;
+            overflow: hidden;
+            position: fixed; /* Torna a sidebar fixa */
+            z-index: 2; /* Mantém a sidebar acima de outros elementos */
+            height: 100vh; /* Altura total da tela */
+            top: 0; /* Começa do topo */
+            left: 0; /* Fixa na lateral esquerda */
+        }
+
+        .sidebar:hover {
+            width: 200px;
+
+        }
+        .sidebar a {
+            display: flex; /* Ativa o layout flexível */
+            align-items: center; /* Centraliza verticalmente o conteúdo */
+            justify-content: flex-start; /* Centraliza horizontalmente (altere para `center` se necessário) */
+            padding: 10px; /* Ajusta o espaçamento interno */
+            color: #333;
+            text-decoration: none;
+            position: relative;
+            z-index: 2;
+            gap: 10px; /* Espaço entre ícone e texto */
+            margin-left: 8px;
+            margin-top: 24px;
+        }
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+        .sidebar a .text {
+            display: none; /* Oculta o texto por padrão */
+            margin-left: 10px; /* Adiciona espaçamento entre ícone e texto */
+        }
+        .sidebar:hover a .text {
+            display: inline-block; /* Exibe o texto quando a barra está em hover */ 
+            font-weight: bold; /* Negrito */
+            color: white; /* Cor branca */
+        }
+        .sidebar:hover .span {
+            text-decoration: none;
+            text-align: center;
+            margin: 0;
+        }
+        .sidebar img {
+            width: 100%; /* Adapta a largura ao contêiner */
+            height: 40px; /* Mantém a proporção da altura */
+            transition: transform 0.3s, filter 0.3s; /* Suaviza a transição */
+            object-fit: contain; /* Garante que a imagem seja ajustada sem distorção */
+        }
+
+        .sidebar:hover img {
+            content: url('logohover.png'); /* Substitui a imagem por outra */
+            filter: brightness(1.2); /* Torna a imagem um pouco mais brilhante (opcional) */
+            transform: scale(1.9); /* Aumenta a imagem de forma proporcional (opcional) */
+        }
+        .sidebar:hover ~ .topbar {
+            margin-left: 200px; /* Alinha com a sidebar expandida */
+            width: calc(100% - 200px); /* Ajusta a largura para o novo espaço disponível */
+        }
+        .sidebar:hover ~ .content {
+            margin-left: 200px; /* Ajusta para acompanhar a largura expandida da sidebar */
+        }
+        .icon{
+            color: white;
+        }
+        .containerlogo{
+            width: 100%; /* Define o tamanho inicial da logo */
+            height: 130px; /* Ajuste as dimensões conforme necessário */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+        .logo {
+            width: 40px; /* Define o tamanho inicial da logo */
+            height: 40px; /* Ajuste as dimensões conforme necessário */
+            margin: 10px 0;
+            transition: width 0.3s, height 0.3s;
+            padding: 0px;
+            padding-top: 8px;
+        }
+        .sidebar:hover ~ .container {
+            margin-left: 200px; /* Adicione esta linha para quando a sidebar estiver expandida */
+        }
+        .selecionado {
+            background-color: #007bff;
+            color: #fff;
+            transform: scale(1.05);
+            border: 2px solid #0056b3;
+        }
+
+    </style>
+</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="toggle-btn" onclick="toggleSidebar()"></div>
+        <div class="containerlogo"> 
+            <img src="logo.png" alt="Logo" class="logo"> 
+        </div> 
+        <a href="index.html" class="home">
+            <i class="fa-solid fa-coins icon"></i> <span class="text">Autoconsumo</span>
+        </a>
+        <a href="investimentos.html">
+            <i class="fa-solid fa-solar-panel icon"></i><span class="text">Investimentos</span>
+        </a>
+        <a href="cocamar.html">
+            <i class="fa-solid fa-gauge icon"></i> <span class="text">Cocamar</span>
+        </a>
+        <a href="coopgb.html">
+            <i class="fa-solid fa-paste icon"></i><span class="text">Coop. Grupo B</span>
+        </a>
+        <a href="coopga.html">
+            <i class="fa-solid fa-paste icon"></i><span class="text">Coop. Grupo A</span>
+        </a>
+        <a href="faturas.html">
+            <i class="fa-solid fa-credit-card icon"></i><span class="text">Faturas</span>
+        </a>
+        <a href="limpeza.html">
+            <i class="fa-solid fa-spray-can-sparkles icon"></i><span class="text">Limpeza</span>
+        </a>
+    </div>
+    </div>
+    <div class="container">
+        <h1>Faturas</h1>
+
+        <form id="formulario">
+            <label for="nuAnoMes">Mês de referência das faturas<b>*</b>:</label>
+            <input type="month" id="nuAnoMes " name="nuAnoMes " required/>
+
+            <label for="nuInstalacao">Número da instalação da unidade de consumo:</label>
+            <input type="text" id="nuInstalacao" name="nuInstalacao"/>
+
+            <button type="button" onclick="gerarPDF()"  id="btnGerarPDF">Gerar PDF</button>
+        </form>
+
+    </div>
+
+    <script>
+        function gerarPDF(event) {
+            const formData = new FormData(document.getElementById('formulario'));
+            const nuInstalacao = formData.get('nuInstalacao');
+            const nuAnoMes = formData.get('nuAnoMes');
+            
+            if(!nuInstalacao  || !nuAnoMes) {
+                alert("ALGUNS CAMPOS ESTÃO VAZIOS!");
+                return
+            }
+
+            fetch('gerar_pdf_fatura.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'arquivo_gerado.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => console.error('Erro ao gerar PDF:', error));
+        }
+
+    </script>
+</body>
+</html>
