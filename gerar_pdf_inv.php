@@ -86,6 +86,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($multiplicador)) {
         $multiplicador = 1; // Valor padrão atribuído
     }
+    $potenciaInversorUnitario = $potenciaInversor;
+
+
     $precoPlaca = 0;
     $custoEstrutrura = 0;
     $maoObraSolo = 0;
@@ -108,6 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($usina === "1mwTelhado") {
         $precoKit = 2548698.84 + 132500;
     }
+
     if ($tensaoSaida === "380" & $potenciaGerador <= 120) {
         $transformador = 6590;
     }
@@ -379,7 +383,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $descPadrao = "TORRE 225 KVA";
             break; 
         case "TORRE 300 KVA":
-            $padrao = 110407.50;
+            $padrao = 113983.74;
             $descPadrao = "TORRE 300 KVA";
             break; 
         case "TORRE 1 MVA":
@@ -408,6 +412,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     $precoFinal =(((($precoKit + $opcao_adicional + $transformador) * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto) + $maoObraSolo ;
+    
+
+    $descrição2 = "";
+    $descrição3 = "";
+    $descrição4 = "";
+    $descrição5 = "";
+
+    if ($usina === "1mwSolo") {
+        $precoFinal = 4838398.60;
+        $potenciaInversor = 975;
+
+        $descrição2 = "360 CONECTOR MC4 MACHO/FEMEA 1000V TI-LANE";
+        $descrição3 = "5000 CABO SOLAR PV 1.8KVCC 6MM PRETO NBR 16612";
+        $descrição4 = "5000 CABO SOLAR PV 1.8KVCC 6MM VERMELHO NBR 16612";
+        $descrição5 = "357 ESTRUTURA SOLO P/ 6 MOD.";
+        $multiplicador = 13;
+    }
+    if ($usina === "75kwTelhado") {
+        $precoFinal = $precoFinal *0.965;
+    }
+
+
+    
+    
+    
+    
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
     $payback = $precoFinal / $diferencaGastosAno;
@@ -725,8 +755,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Escrever os dados extraídos no PDF
     if (empty($matches)) {
         $pdf->Text(16, $y + 3, "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO BIFACIAL HJT 700W");
-        $pdf->Text(16, $y + 10, "$multiplicador INVERSOR SOLAR $fabricante DE $potenciaInversor KW");
-        $pdf->Text(16, $y + 17, "ESTRUTURA DE SOLO MONOPOSTE PARA TERRENO HORIZONTAL");
+        $pdf->Text(16, $y + 10, "$multiplicador INVERSOR SOLAR $fabricante DE $potenciaInversorUnitario KW");
+        $pdf->Text(16, $y + 17, "ESTRUTURA DE SOLO BIPOSTE PARA TERRENO HORIZONTAL");
+        $pdf->Text(16, $y + 24, "$descrição2");
+        $pdf->Text(16, $y + 31, "$descrição3");
+        $pdf->Text(16, $y + 38, "$descrição4");
+        $pdf->Text(16, $y + 45, "$descrição5");
     } else {
         foreach ($matches as $match) {
             $sku = trim($match[1]);

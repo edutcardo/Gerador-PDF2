@@ -542,7 +542,7 @@
     <div class="container">
         <h1>Proposta Investimento</h1>
 
-        <form id="formulario">
+        <form id="formulario"W>
 
             <select id="usina" name="usina" required onchange="exibirImagem(); buscarUsinaDados(this.value);">
                 <option value="vazio">Escolha uma opção</option>
@@ -746,8 +746,7 @@
                 <div id="map"></div>
             </div>
 
-            <button type="button" onclick="gerarPDF()" id="btnGerarPDF" disabled>Gerar PDF</button>
-            <button type="button" onclick="window.location.href='contratousinas.html'" style="background-color: red; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
+            <button type="button" onclick="gerarPDF()" id="btnGerarPDF">Gerar PDF</button>            <button type="button" onclick="window.location.href='contratousinas.html'" style="background-color: red; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
                 Gerar Contrato
             </button>
         </form>
@@ -848,6 +847,12 @@
         }
 
         function gerarPDF() {
+            const formIsValid = mensagemCampoVazio();
+            if(!formIsValid){
+                alert("ALGUM DOS CAMPOS ESTÁ VAZIO");
+                return;
+            }
+
             const formData = new FormData(document.getElementById('formulario'));
                 // Adiciona a constante potenciaGerador ao FormData
             const opcaoAdicional = document.querySelector('input[name="opcao_adicional"]:checked');
@@ -910,14 +915,7 @@
         }
 
         function preencherFormulario() {
-            fetch('https://jsonplaceholder.typicode.com/users/1')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('nome').value = data.name;
-                })
-                .catch(error => {
-                    console.log('Erro ao buscar dados da API:', error);
-                });
+
         }
 
         window.onload = preencherFormulario;
@@ -1007,10 +1005,30 @@
             // Verifica se os campos requeridos estão preenchidos
             if (cep && cidade && nome && endereco) {
                 btnGerarPDF.disabled = false; // Habilita o botão
+
             } else {
 
             }
         }
+
+        function mensagemCampoVazio() {
+            const cep = document.getElementById('cep').value.trim();
+            const cidade = document.getElementById('cidade').value.trim();
+            const nome = document.getElementById('nome').value.trim();
+            const endereco = document.getElementById('endereco').value.trim();
+            
+            const btnGerarPDF = document.getElementById('btnGerarPDF');
+            
+            // Verifica se os campos requeridos estão preenchidos
+            if (cep && cidade && nome && endereco) {
+                // btnGerarPDF.disabled = false; // Habilita o botão
+                return true;
+            } else {
+                // btnGerarPDF.disabled = true; // Desabilita o botão para garantir que não possa ser clicado
+                return false;
+            }
+        }
+
 
         // Chamar a função de verificação sempre que o formulário mudar
         document.getElementById('formulario').addEventListener('input', verificarFormulario);
@@ -1025,7 +1043,7 @@ window.onload = verificarFormulario;
             document.getElementById('cep').value = '87010-255';
             document.getElementById('inputValorCompensavel').value = '0.4054079';
             document.getElementById('cidade').value = 'Maringá';
-            document.getElementById('endereco').value = 'A definir';
+
             document.getElementById('retornoVerde').value = ''; // Adicionada linha para resultado
 
             const usinaSelect = document.getElementById('usina');

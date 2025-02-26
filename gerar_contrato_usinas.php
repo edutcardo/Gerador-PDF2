@@ -201,6 +201,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
     $dataAtual = date("d/m/Y");
+    $complemento = '';
 
 
     // Lógica dos textos dinâmicos de acordo com o estado
@@ -250,6 +251,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.
                 </p>';
                 $cnpjEstado = '<strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>';
+                $complemento = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             } else if ($modalidade == "investimento") {
                 $textoEstado = '
                 <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
@@ -299,7 +301,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
    <p>Por este instrumento,</p>
    <p>'.$textoEstado .'</p>
-   <p><strong>' . $nome . '</strong>, inscrito no CPF n.º '. $CPF .', residente e domiciliado em '. $endereco .', na cidade de '. $cidade .' - CEP: '. $cep .', correio eletrônico: '. $email .', contato: '. $telefone .', doravante denominada CONTRATANTE.</p>
+   <p><strong>' . $modalidade . '</strong>, inscrito no CPF n.º '. $CPF .', residente e domiciliado em '. $endereco .', na cidade de '. $cidade .' - CEP: '. $cep .', correio eletrônico: '. $email .', contato: '. $telefone .', doravante denominada CONTRATANTE.</p>
    <p>Considerando que:</p>
    <p>1. A Palladium (Distribuidora) é a empresa responsável pelo fornecimento de equipamentos e materiais necessários para a instalação de sistema solar fotovoltaico.</p>
    <p>2. A Canal Verde (Contratada) é a empresa responsável pala instalação, manutenção e suporte técnico do sistema solar fotovoltaico comercializado.</p>
@@ -367,7 +369,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $valor_formatado = 'R$ ' . number_format((float)$valor, 2, ',', '.');
 
 
-        if (!empty($dataPagamento)){
+        if ($formaPagamento === 'boleto') {
             $htmlContent .= '<p>';
             $htmlContent .= '<b>Valor ' . ($index + 1) . ': ' . htmlspecialchars($valor_formatado) . ', </b>';
             $htmlContent .= '<b> que será pago na data : ' . htmlspecialchars($dataPagamento) . ', </b>';
@@ -377,6 +379,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             CNPJ nº 49.348.620/0001-05 e PIX chave nº 49.348.620/0001-05</b>. Com os pagamentos dos materiais fotovoltaicos e mão-de-obra da forma combinada
              entre as partes, onde será efetuado a emissão da nota fiscal total dos produtos.';
             $htmlContent .= '</p>';
+        }elseif ($formaPagamento === 'financiamento') {
+            // Caminho para modalidade "financiamento", sem verificar $dataPagamento
+            $htmlContent .= '<b>Financiamento: ' . $precoFinalRs . ', </b>';
+            $htmlContent .= ' será realizado via <b>financiamento pelo Banco do Brasil</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo Banco. A transferência deverá ser efetuada para a instituição bancária <b>SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7</b>, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ sob o n.º <b>49.348.620/0001-05</b>, chave <b>PIX n.º 49.348.620/0001-05</b>.';
+        } else {
+            // Opção para outras modalidades, se necessário
+            $htmlContent .= '<b> Valor não especificado para a modalidade fornecida. </b>';
         }
     }
 
@@ -491,13 +500,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p></p>
    <p></p>
    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;________________________________________________________</p>
-   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong></p>
+   <p>' . $complemento . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong></p>
    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Distribuidora)</p>
    <p></p>
    <p></p>
    <p></p>
    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;________________________________________________________</p>
-   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $cnpjEstado . '</p>
+   <p>' . $complemento . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $cnpjEstado . '</p>
    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Contratada)</p>
    <p></p>
    <p></p>
