@@ -544,15 +544,7 @@
 
         <form id="formulario"W>
 
-            <select id="usina" name="usina" required onchange="exibirImagem(); buscarUsinaDados(this.value);">
-                <option value="vazio">Escolha uma opção</option>
-                <option value="75kwSolo">USINA 75KW SOLO</option>
-                <option value="75kwTelhado">USINA 75KW TELHADO</option>
-                <option value="300kwSolo">USINA 300KW SOLO</option>
-                <option value="300kwTelhado">USINA 300KW TELHADO</option>
-                <option value="1mwSolo">USINA 1MW SOLO</option>
-                <option value="1mwTelhado">USINA 1MW TELHADO</option>
-            </select>
+
 
             <script>
             document.getElementById('usina').addEventListener('change', function() {
@@ -572,6 +564,17 @@
 
             <label for="cidade">Cidade<b>*</b>:</label>
             <input type="text" id="cidade" name="cidade" oninput="buscarConcessionariaPorCidade()" placeholder="Maringá"/>
+
+            <label for="usina">Selecione uma usina:<b>*</b>:</label>
+            <select id="usina" name="usina" required onchange="exibirImagem(); buscarUsinaDados(this.value);">
+                <option value="vazio">Escolha uma opção</option>
+                <option value="75kwSolo">USINA 75KW SOLO</option>
+                <option value="75kwTelhado">USINA 75KW TELHADO</option>
+                <option value="300kwSolo">USINA 300KW SOLO</option>
+                <option value="300kwTelhado">USINA 300KW TELHADO</option>
+                <!--<option value="1mwSolo">USINA 1MW SOLO</option>
+                <option value="1mwTelhado">USINA 1MW TELHADO</option>-->
+            </select>
 
             <div class="image-input-container">
                 <div id="input-concessionaria-container" class="hidden">
@@ -1040,9 +1043,9 @@ window.onload = verificarFormulario;
     // Define "Copel" como valor inicial do inputConcessionaria
             document.getElementById('inputConcessionaria').value = 'COPEL';
             document.getElementById('uc').value = '5555';
-            document.getElementById('cep').value = '87010-255';
+
             document.getElementById('inputValorCompensavel').value = '0.4054079';
-            document.getElementById('cidade').value = 'Maringá';
+
 
             document.getElementById('retornoVerde').value = ''; // Adicionada linha para resultado
 
