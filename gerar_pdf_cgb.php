@@ -26,11 +26,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $demandaMinima = 100;
     }
 
-    $kwhSemImpostos = $inputValorTarifaCrua - ($inputValorFiob * 0.3);
-    $precoFatura = ((($demandaMinima*0.82) + $iluminacao + (($media - $demandaMinima)* $kwhSemImpostos)) + (($demandaMinima * $kwhCopel)+ $iluminacao));
-    $kwhCopel = $inputValorTarifaCrua * 1.19 * 1.0925;
+    $kwhSemImpostos = ($inputValorTarifaCrua *0.85);
+    $precoFatura = $kwhSemImpostos  * $media + $iluminacao;
+    $kwhCopel = $inputValorTarifaCrua;
     $precoCopel = ($kwhCopel * $media) + $iluminacao;
-    $economia = $precoCopel - $precoFatura;
+    $economia = ($precoCopel -$precoFatura);
+    $precoFatura = $precoCopel- $economia ;
     $precoCopelx12 = $precoCopel * 12;
     $precoFaturax12 = $precoFatura * 12;
     $economiax12 = $economia * 12;
@@ -51,24 +52,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('esteconomia.png', 7, 0, 210, 297);
+    $pdf->Image('EE1.png', 7, 0, 210, 297);
 
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(72, 72, "$nome");
-    $pdf->Text(81, 76.87, "$uc");
+    $pdf->Text(50, 27, "$nome");
+    $pdf->Text(50, 32.4, "U.C.: $uc");
 
     $pdf->SetFont('helvetica', 'B', 15);
     $pdf->Text(49, 96, "$economiaRs");
     $pdf->Text(124, 96, "$economiaRsx12");
 
-    $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->Text(92, 136.3, "$media kWh");
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->Text(70, 47.3, "$media kWh");
     $pdf->Text(156.5, 136.6, "$mediax12 kWh");
 
     $pdf->SetFont('helvetica', 'B', 15);
-    $pdf->Text(68, 128, "$precoCopelRs");
+    $pdf->Text(159, 47.3, "$precoCopelRs");
     $pdf->Text(133, 128, "$precoCopelRsx12");
     $pdf->Text(68, 161, "$precoFaturaRs");
     $pdf->Text(133, 161, "$precoFaturaRsx12");
@@ -76,6 +77,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(76, 185, "$precoFaturaRsx12");
     $pdf->Text(76, 213, "$precoCopelRsx12");
     $pdf->Text(148, 202, "$diferencaAnualRs");
+
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('EE2.png', 7, 0, 210, 297);
+
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('EE3.png', 7, 0, 210, 297);
 
     
     // Salva ou exibe o PDF

@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $potenciaInversorUnitario = $potenciaInversor;
 
-
+    $m2placa= 3.1;
     $precoPlaca = 0;
     $custoEstrutrura = 0;
     $maoObraSolo = 0;
@@ -104,6 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $custoEstrutrura = (175 * $quantidadePlacas);
         $maoObraSolo = 125 * $quantidadePlacas;
         $precoKit = ($precoKit  + $precoPlaca + $custoEstrutrura) * $multiplicador;
+        $m2placa= 9.3;
     }
     
     $transformador = 0;
@@ -165,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $geracao = ($potenciaGerador * 3.8 * 30);
     $qtdmodulos = ($potenciaGerador*1000)/$potenciaModulo;
     $qtdmodulosArredondado = (round($qtdmodulos));
-    $metrosOcupados = ($qtdmodulosArredondado * 2.9)* $multiplicador;
+    $metrosOcupados = ($qtdmodulosArredondado * $m2placa)* $multiplicador;
 
     if (isset($_POST['opcao_adicional'])) {
         $opcaoAdicional = $_POST['opcao_adicional'];
