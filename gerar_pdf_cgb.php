@@ -1,6 +1,11 @@
 <?php
 require_once('vendor/autoload.php'); // Ou o caminho correto, se você não estiver usando o Composer
 
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+
 // Verifica se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome = $_POST['nome'];
@@ -46,6 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mediax12 = $media * 12;
     $totalFaturas = $precoCopel + $economia;
     $resto = $demandaMinima * 0.82 + $iluminacao;
+    $restoRs = number_format($resto, 2, ',', '.');
     $restoMaisFatura = $precoFatura + $resto;
     $restoMaisFaturaRs = number_format($restoMaisFatura, 2, ',', '.');
 
@@ -63,24 +69,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(50, 27, "$nome");
     $pdf->Text(50, 32.4, "U.C.: $uc");
+    
 
 
-    $pdf->SetFont('helvetica', 'B', 15);
-    $pdf->Text(69, 47.4, "$media kWh");
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->Text(69, 47.5, "$media kWh");
+    $pdf->Text(172, 47.5, "$precoCopelRs");
+    $pdf->Text(57, 97, "$precoCopelRs");
+    $pdf->Text(149, 97, "$precoFaturaRs");
     $pdf->Text(57, 128, "$economiaRs");
     $pdf->Text(149, 128, "$economiaRsx12");
-    $pdf->Text(57, 97, "$precoCopelRs");
-    $pdf->Text(165, 47.4, "$precoCopelRs");
-    $pdf->Text(149, 97, "$precoFaturaRs");
-
 
 
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->Image('EE2.png', 7, 0, 210, 297);
-    $pdf->Text(42, 152, "$resto");
-    $pdf->Text(104, 152, "$precoFaturaRs");
-    $pdf->Text(167, 152, "$restoMaisFaturaRs");
+    $pdf->Text(39, 152, "$restoRs");
+    $pdf->Text(105, 152, "$precoFaturaRs");
+    $pdf->Text(172, 152, "$restoMaisFaturaRs");
 
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('EE3.png', 7, 0, 210, 297);
