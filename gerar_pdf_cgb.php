@@ -45,6 +45,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $diferencaAnualRs =  number_format($diferencaAnual, 2, ',', '.');
     $mediax12 = $media * 12;
     $totalFaturas = $precoCopel + $economia;
+    $resto = $demandaMinima * 0.82 + $iluminacao;
+    $restoMaisFatura = $precoFatura + $resto;
+    $restoMaisFaturaRs = number_format($restoMaisFatura, 2, ',', '.');
 
     // Criação do PDF
     $pdf = new TCPDF();
@@ -67,19 +70,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(57, 128, "$economiaRs");
     $pdf->Text(149, 128, "$economiaRsx12");
     $pdf->Text(57, 97, "$precoCopelRs");
-    $pdf->SetFont('helvetica', 'B', 15);
     $pdf->Text(165, 47.4, "$precoCopelRs");
     $pdf->Text(149, 97, "$precoFaturaRs");
 
 
 
-
-
     $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->SetFont('helvetica', 'B', 16);
     $pdf->Image('EE2.png', 7, 0, 210, 297);
-    $pdf->Text(42, 160, "$precoCopelRs");
-    $pdf->Text(94, 160, "$precoFaturaRs");
-    $pdf->Text(150, 160, "$totalFaturas");
+    $pdf->Text(42, 152, "$resto");
+    $pdf->Text(104, 152, "$precoFaturaRs");
+    $pdf->Text(167, 152, "$restoMaisFaturaRs");
 
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('EE3.png', 7, 0, 210, 297);
