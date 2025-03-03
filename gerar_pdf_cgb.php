@@ -35,15 +35,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $precoCopelx12 = $precoCopel * 12;
     $precoFaturax12 = $precoFatura * 12;
     $economiax12 = $economia * 12;
-    $precoCopelRs = 'R$ ' . number_format($precoCopel, 2, ',', '.');
-    $precoFaturaRs = 'R$ ' . number_format($precoFatura, 2, ',', '.');
-    $economiaRs = 'R$ ' . number_format($economia, 2, ',', '.');
-    $precoCopelRsx12 = 'R$ ' . number_format($precoCopelx12, 2, ',', '.');
-    $precoFaturaRsx12 = 'R$ ' . number_format($precoFaturax12, 2, ',', '.');
-    $economiaRsx12 = 'R$ ' . number_format($economiax12, 2, ',', '.');
+    $precoCopelRs = number_format($precoCopel, 2, ',', '.');
+    $precoFaturaRs = number_format($precoFatura, 2, ',', '.');
+    $economiaRs = number_format($economia, 2, ',', '.');
+    $precoCopelRsx12 = number_format($precoCopelx12, 2, ',', '.');
+    $precoFaturaRsx12 = number_format($precoFaturax12, 2, ',', '.');
+    $economiaRsx12 = number_format($economiax12, 2, ',', '.');
     $diferencaAnual = $precoCopelx12 - $precoFaturax12;
-    $diferencaAnualRs =  'R$ ' . number_format($diferencaAnual, 2, ',', '.');
+    $diferencaAnualRs =  number_format($diferencaAnual, 2, ',', '.');
     $mediax12 = $media * 12;
+    $totalFaturas = $precoCopel + $economia;
 
     // Criação do PDF
     $pdf = new TCPDF();
@@ -60,26 +61,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(50, 27, "$nome");
     $pdf->Text(50, 32.4, "U.C.: $uc");
 
-    $pdf->SetFont('helvetica', 'B', 15);
-    $pdf->Text(49, 96, "$economiaRs");
-    $pdf->Text(124, 96, "$economiaRsx12");
-
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->Text(70, 47.3, "$media kWh");
-    $pdf->Text(156.5, 136.6, "$mediax12 kWh");
 
     $pdf->SetFont('helvetica', 'B', 15);
-    $pdf->Text(159, 47.3, "$precoCopelRs");
-    $pdf->Text(133, 128, "$precoCopelRsx12");
-    $pdf->Text(68, 161, "$precoFaturaRs");
-    $pdf->Text(133, 161, "$precoFaturaRsx12");
+    $pdf->Text(69, 47.4, "$media kWh");
+    $pdf->Text(57, 128, "$economiaRs");
+    $pdf->Text(149, 128, "$economiaRsx12");
+    $pdf->Text(57, 97, "$precoCopelRs");
+    $pdf->SetFont('helvetica', 'B', 15);
+    $pdf->Text(165, 47.4, "$precoCopelRs");
+    $pdf->Text(149, 97, "$precoFaturaRs");
 
-    $pdf->Text(76, 185, "$precoFaturaRsx12");
-    $pdf->Text(76, 213, "$precoCopelRsx12");
-    $pdf->Text(148, 202, "$diferencaAnualRs");
+
+
+
 
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('EE2.png', 7, 0, 210, 297);
+    $pdf->Text(42, 160, "$precoCopelRs");
+    $pdf->Text(94, 160, "$precoFaturaRs");
+    $pdf->Text(150, 160, "$totalFaturas");
 
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('EE3.png', 7, 0, 210, 297);
