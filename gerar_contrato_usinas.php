@@ -82,13 +82,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $potenciaInversor = floatval($potenciaInversor); // Converte para float
 
- 
+    $prazo=0;
 
-    if ($potenciaInversor > 75) {
-        $prazo = 120;
-    } else {
-        $prazo = 60;
-    }
+
+
+
+// colocar imagem dinamica (timbrado) ao selecionar a modalidade ////////////////////////////////
+//retirar data acima*************************
+//seleção do banco do financiamento
+//cartão de crédito reaizar inclusão
+//BOLETO+FINANCIAMENTO+CARTÃO 
+//CONSÓRCIO (LISTA DE BANCOS)
+//rastreabilidade (login e Senha)
+//Inclusão testemunha 1 e testemunha 2**************************************************
+//retirar espaço entre nome e descrição na assinatura
+//Ajustar lista (colocar em ordem alfabética), sem listagem de itens************************************************
+//Atualizar clausula 11ª**********************************
+//Inclusão na clausula 17ª (será a 17.7 e o restante 17.8 e 17.9)****************************
+
+
+
+
+
 
     
     setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
@@ -158,14 +173,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Text(80, 40, "$cidade, $dataAtual"); // Cidade e data
-
-    
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-
-
     function renderTextWithBold($pdf, $paragraphs, $cellWidth)
     {
         $fragments = preg_split('/(\*\*.+?\*\*)/', $paragraphs, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -196,14 +206,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $potencia = $_POST['potencia']; // Contém os itens
     $precoFinal = $_POST['precoFinal']; // Contém os itens
     $entrada = $_POST['entrada']; // Contém os itens
-
     $pdf->SetFont('dejavusans', '', 10);
-
     setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
     $dataAtual = date("d/m/Y");
     $complemento = '';
-
-
     // Lógica dos textos dinâmicos de acordo com o estado
     switch ($estado) {
         case "MT":
@@ -240,6 +246,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
         case "PR":
             if ($modalidade == "autoconsumo") {
+                $prazo=60;
                 $textoEstado = '
                 <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
                     no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
@@ -253,6 +260,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $cnpjEstado = '<strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>';
                 $complemento = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             } else if ($modalidade == "investimento") {
+                $prazo = 120;
                 $textoEstado = '
                 <p><strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong>, pessoa jurídica de direito privado, inscrita
                     no CNPJ sob o n.º 49.348.620/0001-05, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de 
@@ -289,19 +297,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Conteúdo HTML
     $htmlContent = '
-
-        <p></p>
-        <p></p>
-        <p></p>
     <div style="text-align: center;">
-        <p></p>
-        <p></p>
-        <p></p>
         <p><strong>CONTRATO DE VENDA E INSTALAÇÃO DE EQUIPAMENTOS SOLARES FOTOVOLTAICOS</strong></p>
     </div>
    <p>Por este instrumento,</p>
    <p>'.$textoEstado .'</p>
-   <p><strong>' . $modalidade . '</strong>, inscrito no CPF n.º '. $CPF .', residente e domiciliado em '. $endereco .', na cidade de '. $cidade .' - CEP: '. $cep .', correio eletrônico: '. $email .', contato: '. $telefone .', doravante denominada CONTRATANTE.</p>
+   <p><strong>' . $nome . '</strong>, inscrito no CPF n.º '. $CPF .', residente e domiciliado em '. $endereco .', na cidade de '. $cidade .' - CEP: '. $cep .', correio eletrônico: '. $email .', contato: '. $telefone .', doravante denominada CONTRATANTE.</p>
    <p>Considerando que:</p>
    <p>1. A Palladium (Distribuidora) é a empresa responsável pelo fornecimento de equipamentos e materiais necessários para a instalação de sistema solar fotovoltaico.</p>
    <p>2. A Canal Verde (Contratada) é a empresa responsável pala instalação, manutenção e suporte técnico do sistema solar fotovoltaico comercializado.</p>
@@ -369,6 +370,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $valor_formatado = 'R$ ' . number_format((float)$valor, 2, ',', '.');
 
 
+
         if ($formaPagamento === 'boleto') {
             $htmlContent .= '<p>';
             $htmlContent .= '<b>Valor ' . ($index + 1) . ': ' . htmlspecialchars($valor_formatado) . ', </b>';
@@ -376,8 +378,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $htmlContent .= ' através de Boleto que será efetuado na instituição banco <b> 756 SICOOB, </b>';
             $htmlContent .= '<b>Agência: 4340-0, </b>';
             $htmlContent .= '<b>Conta Corrente: 299.832-7</b>, em nome de <b>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, 
-            CNPJ nº 49.348.620/0001-05 e PIX chave nº 49.348.620/0001-05</b>. Com os pagamentos dos materiais fotovoltaicos e mão-de-obra da forma combinada
-             entre as partes, onde será efetuado a emissão da nota fiscal total dos produtos.';
+            CNPJ nº 49.348.620/0001-05 e PIX chave nº 49.348.620/0001-05</b>. ';
             $htmlContent .= '</p>';
         }elseif ($formaPagamento === 'financiamento') {
             // Caminho para modalidade "financiamento", sem verificar $dataPagamento
@@ -391,13 +392,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
    $htmlContent .= '
-   <p>5.1.1.  Caso não ocorra a coincidência entre a data de liberação do financiamento e a data da Proposta Comercial, o CONTRATANTE, em caráter irrevogável e irretratável, autoriza a CONTRATADA a proceder ao pertinente e necessário recálculo da proposta para atualização do valor total do Contrato.</p>
-   <p>5.1.2. Caso o CONTRATANTE dependa exclusivamente de financiamento bancário e este não seja aprovado pelo agente finaceiro para realizar a contratação dos serviços pactuados, o contrato será rescindido de pleno direito, sem que sejam devidas quaisquer multas e/ou indenizações pela CONTRATANTE.</p>
+   <p>5.1.1.  Caso não ocorra a coincidência entre a data de liberação do financiamento/consórcio e a data da Proposta Comercial, o CONTRATANTE, em caráter irrevogável e irretratável, autoriza a CONTRATADA a proceder ao pertinente e necessário recálculo da proposta para atualização do valor total do Contrato.</p>
+   <p>5.1.2. Caso o CONTRATANTE dependa exclusivamente de financiamento/consórcio e este não seja aprovado pelo agente finaceiro para realizar a contratação dos serviços pactuados, o contrato será rescindido de pleno direito, sem que sejam devidas quaisquer multas e/ou indenizações pela CONTRATANTE.</p>
    <p>5.2. A CONTRATANTE não vindo a efetuar o pagamento na data estipulada, fica obrigada a pagar multa de 2% (dois por cento) sobre o valor devido, bem como juros de mora de 1% (um por cento) ao mês, mais correção monetária apurada conforme variação do IGP-M no período.</p>
    <p>5.3. Em caso de desistência ou renúncia pela CONTRATANTE sem motivo justo, dentro do prazo de instalação (cláusula 4.1), será devido a CONTRATADA a título de reparação e indenização multa de 10% (dez por cento) sobre o valor do contrato.</p>
    <p>5.4.  A CONTRATANTE reconhece e concorda que apenas terá a posse do gerador fotovoltaico após o seu pagamento integral, podendo este ser retirado pela CONTRATADA em caso de não pagamento do valor e no prazo pactuado.</p>
    <p><strong>Cláusula 6ª – Do prazo de entrega e instalação</strong></p>
-   <p>6.1. O prazo para entrega dos equipamentos, instalação e início da operação do sistema solar fotovoltaico é de até '. $prazo .' (cento e vinte) dias úteis pela CONTRATADA, contado a partir da aprovação do projeto pela Concessionária de energia local.</p>
+   <p>6.1. O prazo para entrega dos equipamentos, instalação e início da operação do sistema solar fotovoltaico é de até '. $prazo .' dias úteis pela CONTRATADA, contado a partir da aprovação do projeto pela Concessionária de energia local.</p>
    <p>6.1.1. O prazo mencionado na cláusula 6.1. não abrange os prazos de responsabilidade da Concessionária de Energia. Havendo necessidade de aumento de carga, reforço na estrutura, reprovação/devolução do projeto pela Concessionária ou outro fator que demande maior tempo para a aprovação do projeto junto à concessionária de energia, o início da contagem do prazo previsto na cláusula 6.1. dar-se-á após a regularização efetiva deste último perante a companhia local.</p>
    <p>6.2. Serão descontados do prazo mencionado no item 6.1., dias chuvosos que não permitam a execução do serviço de instalação.</p>
    <p>6.3. Este contrato encerrar-se-á com o cumprimento das obrigações de entrega e instalação dos equipamentos solares fotovoltaicos pela CONTRATADA e de pagamento pelo CONTRATANTE do valor total do contrato pactuado. </p>
@@ -409,44 +410,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>8.1. O encerramento dos serviços de instalação do sistema fotovoltaico será precedido de uma vistoria por parte da CONTRATADA, para que esta verifique e comprove a satisfatória execução dos serviços realizados.</p>
    <p><strong>Cláusula 9ª – Da garantia dos equipamentos</strong></p>
    <p>9.1. Os fabricantes garantem a perfeita execução dos equipamentos e periféricos comercializados ao CONTRATANTE, de acordo com os seguintes prazos:</p>
-   <p>a)	Módulo fotovoltaico - possui garantia de fábrica de 12 (doze) anos contra defeito de fabricação e de 25 (vinte e cinco) anos para performance de geração;</p>
-   <p>b)	Inversor – possui 10 (dez) anos de garantia contra defeito de fabricação;</p>
-   <p>c)	Outros componentes do gerador fotovoltaico (materiais periféricos) - possuem 01 (ano) de garantia contra defeito de fabricação.</p>
+   <ol type="A">
+        <li>	Módulo fotovoltaico - possui garantia de fábrica de 12 (doze) anos contra defeito de fabricação e de 25 (vinte e cinco) anos para performance de geração;</li>
+        <li>	Inversor – possui 10 (dez) anos de garantia contra defeito de fabricação;</li>
+        <li>	Outros componentes do gerador fotovoltaico (materiais periféricos) - possuem 01 (ano) de garantia contra defeito de fabricação.</li>
+   </ol>
    <p>9.2. A contagem do período de garantia dos equipamentos pelos fabricantes inicia-se a partir da efetiva ativação do sistema solar fotovoltaico conectado à rede elétrica da concessionária. Decorrido os prazos mencionados na cláusula 9.1., o CONTRATANTE torna-se o único responsável por eventuais defeitos nos equipamentos.</p>
    <p><strong>Cláusula 10ª – Das obrigações da Contratada</strong></p>
    <p>10.1. Sem prejuízo de outras disposições deste contrato, constituem obrigações da CONTRATADA:</p>ilateral ou não aplicação de multas, os inadimplementos decorrentes das situações a seguir, quando vierem a afetar a realização da entrega do objeto do contrato no local indicado:</p>
-   <ul>
-       <li>a)	Cumprir integralmente este contrato na forma e modo ajustados;</li>
-       <li>b)	Conduzir os trabalhos com estrita observância às normas da legislação pertinente, cumprindo as determinações dos Poderes Públicos, mantendo sempre limpo o local dos serviços e nas melhores condições de segurança, higiene e disciplina;</li>
-       <li>c)	Fornecer e utilizar os materiais, equipamentos, ferramentas e utensílios necessários, na qualidade e quantidade especificadas na Proposta Comercial;</li>
-       <li>d)	Empregar na execução dos serviços apenas profissionais capacitados e qualificados para essas funções;</li>
-       <li>e)	Apresentar ao CONTRATANTE, quando for o caso, a relação nominal dos profissionais que adentrarão em suas instalações;</li>
-       <li>f)	Obedecer às normas técnicas, de saúde, de higiene e de segurança do trabalho, de acordo com as normas do Ministério do Trabalho e Emprego (MTE);</li>
-       <li>g)	Assumir a responsabilidade pelos atos e/ou omissões praticados por si e por seus subordinados, bem como pelos danos que venham a causar para a CONTRATANTE, desde que comprovados, em decorrência da prestação dos serviços prestados;</li>
-       <li>h)  Arcar devidamente, nos termos da legislação trabalhista, com a remuneração e demais verbas laborais devidas a seus subordinados, inclusive, encargos fiscais e previdenciários referentes às relações de trabalho;</li>
-       <li>i)	Arcar com todas as despesas de natureza tributária decorrentes dos serviços especificados neste contrato;</li>
-       <li>j)	Relatar à CONTRATANTE toda e qualquer irregularidade verificada no decorrer da prestação dos serviços;</li>
-       <li>k)	Guardar sigilo sobre todas as informações obtidas em decorrência do cumprimento do contrato;</li>
-       <li>l)	 Providenciar junto ao CREA as Anotações de Responsabilidade Técnica (ART), referentes ao objeto do contrato e especialidades, nos termos das normas pertinentes.</li>
-   </ul>
+   <ol type="A">
+       <li>	Cumprir integralmente este contrato na forma e modo ajustados;</li>
+       <li>	Conduzir os trabalhos com estrita observância às normas da legislação pertinente, cumprindo as determinações dos Poderes Públicos, mantendo sempre limpo o local dos serviços e nas melhores condições de segurança, higiene e disciplina;</li>
+       <li>	Fornecer e utilizar os materiais, equipamentos, ferramentas e utensílios necessários, na qualidade e quantidade especificadas na Proposta Comercial;</li>
+       <li>	Empregar na execução dos serviços apenas profissionais capacitados e qualificados para essas funções;</li>
+       <li>	Apresentar ao CONTRATANTE, quando for o caso, a relação nominal dos profissionais que adentrarão em suas instalações;</li>
+       <li>	Obedecer às normas técnicas, de saúde, de higiene e de segurança do trabalho, de acordo com as normas do Ministério do Trabalho e Emprego (MTE);</li>
+       <li>	Assumir a responsabilidade pelos atos e/ou omissões praticados por si e por seus subordinados, bem como pelos danos que venham a causar para a CONTRATANTE, desde que comprovados, em decorrência da prestação dos serviços prestados;</li>
+       <li>  Arcar devidamente, nos termos da legislação trabalhista, com a remuneração e demais verbas laborais devidas a seus subordinados, inclusive, encargos fiscais e previdenciários referentes às relações de trabalho;</li>
+       <li>	Arcar com todas as despesas de natureza tributária decorrentes dos serviços especificados neste contrato;</li>
+       <li>	Relatar à CONTRATANTE toda e qualquer irregularidade verificada no decorrer da prestação dos serviços;</li>
+       <li>	Guardar sigilo sobre todas as informações obtidas em decorrência do cumprimento do contrato;</li>
+       <li> Providenciar junto ao CREA as Anotações de Responsabilidade Técnica (ART), referentes ao objeto do contrato e especialidades, nos termos das normas pertinentes.</li>
+   </ol>
    <p><strong>Cláusula 11ª – Das obrigações do Contratante</strong></p>
    <p>11.1. Sem prejuízo de outras disposições deste contrato, constituem obrigações do CONTRATANTE:</p>
-    <ul>
-       <li>a)	É imperativo adquirir um serviço de internet que satisfaça os critérios mínimos de velocidade e estabilidade necessários para o monitoramento eficaz do gerador fotovoltaico. A falta de conexão com a internet inviabiliza o monitoramento da energia, comprometendo a eficácia da gestão energética. Sem acesso à internet, não há possibilidade de monitoramento;</li>
-       <li>b)	Manter e acompanhar o monitoramento do gerador fotovoltaico (por aplicativo ou site) para conferir a performance energética. Qualquer inconsistência, acionar o canal de suporte da CONTRATADA.</li>
-       <li>c)	Notificar imediatamente a CONTRATADA em caso de suspeitas ou problemas relacionados a geração de energia solar fotovoltaica;</li>
-       <li>d) Realizar a manutenção preventiva e limpezas periódicas dos equipamentos fotovoltaicos instalados (recomenda-se realizar de três a quatro limpezas dos painéis por ano). A falta dessas manutenções pode resultar em perda de desempenho do sistema e, consequentemente, na redução da produção de energia;</li>
-       <li>e) Avaliar a necessidade de contratação de empresa de seguro contra furtos e/ou roubos;</li>
-       <li>f) Efetuar o pagamento na data e nos termos definidos neste contrato;</li>
-       <li>g) Fornecer todos os dados e informações pertinentes ao desenvolvimento dos trabalhos, objeto deste Contrato;</li>
-       <li>h) Facilitar o acesso dos trabalhadores da CONTRATADA ao local da obra, caso seja necessário;</li>
-       <li>i) Garantir a segurança dos trabalhadores da CONTRATADA, mantendo animais de estimação presos em local adequado durante a instalação dos equipamentos solares fotovoltaicos;</li>
-       <li>j) Afastar outras condições que estejam sob seu controle e que possam trazer riscos à segurança e saúde dos trabalhadores envolvidos na execução dos serviços;</li>
-       <li>k) Retirar do local de instalação quaisquer objetos de decoração ou aparelhos sensíveis que possam sofrer dano caso;</li>
-       <li>l) Notificar a CONTRATADA, por escrito, da ocorrência de eventuais imperfeições, falhas ou irregularidades constatadas no curso da execução dos serviços;</li>
-       <li>m) Realizar a segurança e preservação do sistema solar fotovoltaico, após a instalação;</li>
-       <li>n) Realizar a manutenção preventiva do sistema fotovoltaico e da estrutura de sustentação, seguindo as normas de engenharia durante toda a vida útil do sistema de geração, após a conclusão da instalação.</li>
-   </ul>
+    <ol type="A">
+       <li> É imperativo adquirir um serviço de internet que satisfaça os critérios mínimos de velocidade e estabilidade necessários para o monitoramento eficaz do gerador fotovoltaico. A falta de conexão com a internet inviabiliza o monitoramento da energia, comprometendo a eficácia da gestão energética. Sem acesso à internet, não há possibilidade de monitoramento;</li>
+       <li> Manter e acompanhar o monitoramento do gerador fotovoltaico (por aplicativo ou site) para conferir a performance energética. Qualquer inconsistência, acionar o canal de suporte da CONTRATADA.</li>
+       <li> Notificar imediatamente a CONTRATADA em caso de suspeitas ou problemas relacionados a geração de energia solar fotovoltaica;</li>
+       <li> Realizar a manutenção preventiva e limpezas periódicas dos equipamentos fotovoltaicos instalados (recomenda-se realizar de três a quatro limpezas dos painéis por ano). A falta dessas manutenções pode resultar em perda de desempenho do sistema e, consequentemente, na redução da produção de energia;</li>
+       <li> Avaliar a necessidade de contratação de empresa de seguro contra furtos e/ou roubos;</li>
+       <li> Efetuar o pagamento na data e nos termos definidos neste contrato;</li>
+       <li> Fornecer todos os dados e informações pertinentes ao desenvolvimento dos trabalhos, objeto deste Contrato;</li>
+       <li> Facilitar o acesso dos trabalhadores da CONTRATADA ao local da obra, caso seja necessário;</li>
+       <li> Garantir a segurança dos trabalhadores da CONTRATADA, mantendo animais de estimação presos em local adequado durante a instalação dos equipamentos solares fotovoltaicos;</li>
+       <li> Afastar outras condições que estejam sob seu controle e que possam trazer riscos à segurança e saúde dos trabalhadores envolvidos na execução dos serviços;</li>
+       <li> Retirar do local de instalação quaisquer objetos de decoração ou aparelhos sensíveis que possam sofrer dano caso;</li>
+       <li> Notificar a CONTRATADA, por escrito, da ocorrência de eventuais imperfeições, falhas ou irregularidades constatadas no curso da execução dos serviços;</li>
+       <li> Realizar a segurança e preservação do sistema solar fotovoltaico, após a instalação;</li>
+       <li> Realizar a manutenção preventiva do sistema fotovoltaico e da estrutura de sustentação, seguindo as normas de engenharia durante toda a vida útil do sistema de geração, após a conclusão da instalação.</li>
+   </ol>
    <p><strong>Cláusula 12ª – Da proteção de dados pessoais</strong></p>
    <p>12.1. Em observação às determinações constantes da Lei n.º 13.709/18 – Lei Geral de Proteção de Dados (LGPD) -, o CONTRATANTE e a CONTRATADA se comprometem a proteger os direitos fundamentais de liberdade e de privacidade e o livre desenvolvimento da personalidade da pessoa natural, relativos ao tratamento de dados pessoais, inclusive nos meios digitais..</p>
    <p>12.2. A coleta e o tratamento de dados pessoais pelas partes ocorrerão quando estritamente necessário para a prestação dos serviços objeto deste contrato ou nas demais hipóteses, previstas nos arts. 7º e/ou 11 da Lei n.º 13.709/2018 e, em hipótese alguma, poderão ser compartilhados ou utilizados para outros fins.</p>
@@ -458,7 +461,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p><strong>Cláusula 14ª – Do caso fortuito e da força maior</strong></p>
    <p>14.1. As obrigações do presente contrato suspender-se-ão sempre que ocorrerem circunstâncias alheias à vontade, controle e ação das partes, causadas por motivo de força maior ou caso fortuito, na forma do Código Civil, desde que sua ocorrência seja alegada e comprovada no prazo de 48 (quarenta e oito) horas.</p>
    <p>14.2. Serão considerados casos fortuitos ou de força maior, para efeito de rescisão contratual unilateral ou não aplicação de multas, os inadimplementos decorrentes das situações a seguir, quando vierem a afetar a realização da entrega do objeto do contrato no local indicado:</p>
-   <ol type="a">
+   <ol type="A">
        <li> Greve geral no país;</li>
        <li> Calamidade pública;</li>
        <li> Interrupção dos meios normais de transportes que impeça a locomoção do pessoal;</li>
@@ -482,30 +485,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>17.4. Todos os avisos, notificações e comunicações enviados no âmbito deste contrato deverão ser feitos por escrito, preferencialmente via e-mail, com aviso de recebimento, para o endereço eletrônico das pessoas indicada pelas partes.</p>
    <p>17.5. Em caso de nulidade, total ou parcial, de uma disposição do contrato, as restantes disposições não serão afetadas pela disposição nula, valendo as demais clausulas que não foram afetadas. </p>
    <p>17.6. Declaram as partes, outrossim, terem plena ciência do teor do presente Contrato e que o mesmo tem validade de título executivo extrajudicial, nos termos do artigo 784 do Código de Processo Civil.</p>
-   <p>17.7. As partes reconhecem por meio do presente Instrumento, a validade da assinatura eletrônica, nos termos do artigo 10, § 2º, da Medida Provisória n.º 2.200-2/2001 e Lei Geral de Proteção de Dados, bem como de que a referida assinatura eletrônica não implicará em qualquer alteração, desqualificação ou desnaturação de quaisquer deveres ou obrigações aqui previstas, os quais as partes continuam obrigadas a cumprir.</p>
-   <p>17.8. Considera-se data da assinatura do contrato, para todos os efeitos, a data da aposição da última assinatura digital no presente instrumento.</p>
+   <p>17.7. 	O presente contrato é celebrado em caráter irrevogável e irretratável, obrigando as partes e seus sucessores, e pessoalmente os sócios de cada uma das partes, vedada a sua cessão ou transferência, no total ou em parte, sem anuência expressa.</p>
+   <p>17.8. As partes reconhecem por meio do presente Instrumento, a validade da assinatura eletrônica, nos termos do artigo 10, § 2º, da Medida Provisória n.º 2.200-2/2001 e Lei Geral de Proteção de Dados, bem como de que a referida assinatura eletrônica não implicará em qualquer alteração, desqualificação ou desnaturação de quaisquer deveres ou obrigações aqui previstas, os quais as partes continuam obrigadas a cumprir.</p>
+   <p>17.9. Considera-se data da assinatura do contrato, para todos os efeitos, a data da aposição da última assinatura digital no presente instrumento.</p>
    <p><strong>Cláusula 18ª – Do foro</strong></p>
    <p>18.1. Para a resolução de eventuais litígios que se refiram a direitos ou a obrigações decorrentes deste contrato, fica eleito o foro da comarca da cidade de ' . $cidadeComarca . ' em que será assinado este instrumento.</p>
    <p>E, para firmeza e como prova de assim haverem entre si, ajustado e contratado, assinam o presente, em 02 (duas) vias de igual teor e forma, para que produza os seus legais e jurídicos efeitos.</p>
    <p>' . $cidade . ', ' . $dataAtual . '.</p>
-    <style>
-    p {
-        margin: 0; /* Remove margens automáticas */
-        text-align: justify; /* Define o texto como justificado */
-    }
-    </style>
+
    <p></p>
    <p></p>
    <p></p>
    <p></p>
    <p></p>
    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;________________________________________________________</p>
-   <p>' . $complemento . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong></p>
+   <p>' . $complemento . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA</strong></p>
    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Distribuidora)</p>
    <p></p>
    <p></p>
    <p></p>
-   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;________________________________________________________</p>
+   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;________________________________________________________</p>
    <p>' . $complemento . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $cnpjEstado . '</p>
    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Contratada)</p>
    <p></p>
@@ -514,10 +513,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;________________________________________________________</p>
    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $nome . '</strong></p>
    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Contratante)</p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;________________________________________________________</p>
+   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Testemunha 1</strong></p>
+   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Contratante)</p>
+   <p></p>
+   <p></p>
+   <p></p>
+   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;________________________________________________________</p>
+   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Testemunha 2</strong></p>
+   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Contratante)</p>
 
 ';
 
-    $pdf->writeHTMLCell(0, 0, 15, 40, $htmlContent, 0, 2, 0, true, 'J', true);
+    $pdf->writeHTMLCell(0, 0, 15, 20, $htmlContent, 0, 2, 0, true, 'J', true);
 
 
     $pdf->Output('arquivo_gerado.pdf', 'I');  // 'I' para exibir no navegador
