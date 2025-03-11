@@ -79,6 +79,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $modalidade = $_POST['modalidade'];
     $formaPagamento = $_POST['formaPagamento'];
     $potenciaInversor = $_POST['potenciaInversor'];
+    $bancos = $_POST['banco'];
+    $formaPags = $_POST['formaPag'];
 
     $potenciaInversor = floatval($potenciaInversor); // Converte para float
 
@@ -128,6 +130,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     $dataPagamento5 = $datas_pagamento[4];
+
+    if (isset($_POST['banco']) && isset($_POST['formaPag'])) {
+        $bancos = $_POST['banco'];
+        $formaPags = $_POST['formaPag'];
+    }
+    $primeiraformaPag = $formaPags[0];
+    $primeirobanco = $bancos[0];
+    $segundaformaPag = $formaPags[1];
+    $segundobanco = $bancos[1];
+    $terceiraformaPag = $formaPags[2];
+    $terceirobanco = $bancos[2];
+    $quartaformaPag = $formaPags[3];
+    $quartobanco = $bancos[3];
+    $quintaformaPag = $formaPags[4];
+    $quintobanco = $bancos[4];
+    $sextaformaPag = $formaPags[5];
+    $sextobanco = $bancos[5];
+    $setimaformaPag = $formaPags[6];
+    $setimobanco = $bancos[6];
+    $oitavaformaPag = $formaPags[7];
+    $oitavobanco = $bancos[7];
+    $nonaformaPag = $formaPags[8];
+    $nonobanco = $bancos[8];
+    $decimaformaPag = $formaPags[9];
+    $decimobanco = $bancos[9];
 
 
 
@@ -371,7 +398,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-        if ($formaPagamento === 'boleto') {
+        if ($formaPags[0] === 'boleto') {
             $htmlContent .= '<p>';
             $htmlContent .= '<b>Valor ' . ($index + 1) . ': ' . htmlspecialchars($valor_formatado) . ', </b>';
             $htmlContent .= '<b> que será pago na data : ' . htmlspecialchars($dataPagamento) . ', </b>';
@@ -380,7 +407,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $htmlContent .= '<b>Conta Corrente: 299.832-7</b>, em nome de <b>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, 
             CNPJ nº 49.348.620/0001-05 e PIX chave nº 49.348.620/0001-05</b>. ';
             $htmlContent .= '</p>';
-        }elseif ($formaPagamento === 'financiamento') {
+        }elseif ($formaPags[0] === 'financiamento') {
             // Caminho para modalidade "financiamento", sem verificar $dataPagamento
             $htmlContent .= '<b>Financiamento: ' . $precoFinalRs . ', </b>';
             $htmlContent .= ' será realizado via <b>financiamento pelo Banco do Brasil</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo Banco. A transferência deverá ser efetuada para a instituição bancária <b>SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7</b>, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ sob o n.º <b>49.348.620/0001-05</b>, chave <b>PIX n.º 49.348.620/0001-05</b>.';
