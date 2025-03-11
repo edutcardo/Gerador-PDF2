@@ -468,7 +468,7 @@
             <label for="precoFinal">Preço Final (R$):</label>
             <input type="text" id="precoFinal" name="precoFinal" />
 
-
+            <input type="text" id="formaPagamento" name="formaPagamento" value="boleto" />
 
             <!-- Tabela de itens -->
             <p>&nbsp;</p>
@@ -511,7 +511,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <select id="bancofinanceiro" name="bancofinanceiro">
+                                <select id="bancofinanceiro" name="banco[]">
                                     <option value="bb">Banco do Brasil</option>
                                     <option value="caixa">Caixa Economica</option>
                                     <option value="sicoob">SICOOB</option>
@@ -519,7 +519,7 @@
                                 </select>
                             </td>
                             <td>
-                            <select id="formaPagamento" name="formaPagamento">
+                            <select  name="formaPag[]">
                                 <option value="boleto">Boleto</option>
                                 <option value="cartao">Cartão de crédito</option>
                                 <option value="financiamento">Financiamento</option>
@@ -659,7 +659,7 @@
 
             newRow.innerHTML = `
             <td>
-                <select id="bancofinanceiro" name="bancofinanceiro">
+                <select id="bancofinanceiro" name="banco[]">
                 <option value="bb">Banco do Brasil</option>
                 <option value="caixa">Caixa Economica</option>
                 <option value="sicoob">SICOOB</option>
@@ -667,7 +667,7 @@
                 </select>
             </td>
             <td>
-            <select id="formaPagamento" name="formaPagamento">
+            <select  name="formaPag[]">
                 <option value="boleto">Boleto</option>
                 <option value="cartao">Cartão de crédito</option>
                 <option value="financiamento">Financiamento</option>
