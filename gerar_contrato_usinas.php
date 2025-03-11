@@ -389,34 +389,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>4.2. Na eventual falta do produto especificado na Proposta Comercial, a CONTRATADA poderá realizar a substituição por outro de espécie, marca ou modelo similar, desde que este possua potência igual ou superior àquela do produto inicialmente proposto, sem qualquer ônus para o CONTRATANTE.</p>
    <p><strong>Cláusula 5ª – Do preço e forma de pagamento</strong></p>
    <p>5.1. Pela prestação dos serviços contratados, a CONTRATANTE pagará a CONTRATADA a quantia total de ' . $precoFinalRs . ', cujo pagamento será realizado da seguinte forma:</p>';
-   
-    foreach ($valores_pagamento as $index => $valor) {
+
         $dataPagamento = $datas_pagamento[$index];
 
 
         $valor_formatado = 'R$ ' . number_format((float)$valor, 2, ',', '.');
 
+        $contBoleto = 0;
 
 
-        if ($formaPags[0] === 'boleto') {
+        foreach ($formaPags as $index => $formaPag) {
+            // Supondo que $valoresFormatados e $datasPagamentos são arrays paralelos a $formaPags
+            $valor_formatado = isset($valoresFormatados[$index]) ? htmlspecialchars($valoresFormatados[$index]) : 'Valor não informado';
+            $dataPagamento = isset($datasPagamentos[$index]) ? htmlspecialchars($datasPagamentos[$index]) : 'Data não informada';
+   
+
+
+        if ($formaPag === 'boleto') {
             $htmlContent .= '<p>';
-            $htmlContent .= '<b>Valor ' . ($index + 1) . ': ' . htmlspecialchars($valor_formatado) . ', </b>';
-            $htmlContent .= '<b> que será pago na data : ' . htmlspecialchars($dataPagamento) . ', </b>';
-            $htmlContent .= ' através de Boleto que será efetuado na instituição banco <b> 756 SICOOB, </b>';
+            $htmlContent .= '<b>Valor ' . ($index + 1) . ': ' . $valor_formatado . ', </b>';
+            $htmlContent .= '<b> que será pago na data : ' . $dataPagamento . ', </b>';
+            $htmlContent .= ' através de Boleto que será efetuado na instituição banco <b> 756 SICOOB, </b>';
             $htmlContent .= '<b>Agência: 4340-0, </b>';
             $htmlContent .= '<b>Conta Corrente: 299.832-7</b>, em nome de <b>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, 
             CNPJ nº 49.348.620/0001-05 e PIX chave nº 49.348.620/0001-05</b>. ';
             $htmlContent .= '</p>';
-        }elseif ($formaPags[0] === 'financiamento') {
-            // Caminho para modalidade "financiamento", sem verificar $dataPagamento
-            $htmlContent .= '<b>Financiamento: ' . $precoFinalRs . ', </b>';
+        } elseif ($formaPag === 'financiamento') {
+            $htmlContent .= '<p>';
+            $htmlContent .= '<b>Financiamento: ' . $valor_formatado . ', </b>';
             $htmlContent .= ' será realizado via <b>financiamento pelo Banco do Brasil</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo Banco. A transferência deverá ser efetuada para a instituição bancária <b>SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7</b>, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ sob o n.º <b>49.348.620/0001-05</b>, chave <b>PIX n.º 49.348.620/0001-05</b>.';
+            $htmlContent .= '</p>';
         } else {
-            // Opção para outras modalidades, se necessário
             $htmlContent .= '<b> Valor não especificado para a modalidade fornecida. </b>';
         }
     }
-
+    
 
    $htmlContent .= '
    <p>5.1.1.  Caso não ocorra a coincidência entre a data de liberação do financiamento/consórcio e a data da Proposta Comercial, o CONTRATANTE, em caráter irrevogável e irretratável, autoriza a CONTRATADA a proceder ao pertinente e necessário recálculo da proposta para atualização do valor total do Contrato.</p>
