@@ -468,11 +468,7 @@
             <label for="precoFinal">Preço Final (R$):</label>
             <input type="text" id="precoFinal" name="precoFinal" />
 
-            <label for="formaPagamento">Selecione a forma de pagamento:</label>
-            <select id="formaPagamento" name="formaPagamento">
-                <option value="boleto">Boleto</option>
-                <option value="financiamento">Financiamento</option>
-            </select>
+
 
             <!-- Tabela de itens -->
             <p>&nbsp;</p>
@@ -505,6 +501,7 @@
                 <table id="planosPagamentoTable">
                     <thead>
                         <tr>
+                            <th>Método de Pagamento</th>
                             <th>Valor (R$)</th>
                             <th>Data de Pagamento</th>
                             <th>Ação</th>
@@ -512,9 +509,16 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>
+                            <select id="formaPagamento" name="formaPagamento">
+                                <option value="boleto">Boleto</option>
+                                <option value="cartao">Cartão de crédito</option>
+                                <option value="financiamento">Financiamento</option>
+                                <option value="consorcio">Consórcio</option>
+                            </select>
+                            </td>
                             <td><input type="text" name="valor_pagamento[]" placeholder="Digite o valor"></td>
                             <td><input type="text" name="data_pagamento[]" placeholder="dd/mm/aaaa"></td>
-
                             <td><button type="button" class="remove-row-btn"
                                     onclick="removePaymentRow(this)">Remover</button></td>
                         </tr>
@@ -645,6 +649,14 @@
             const newRow = document.createElement('tr');
 
             newRow.innerHTML = `
+            <td>
+            <select id="formaPagamento" name="formaPagamento">
+                <option value="boleto">Boleto</option>
+                <option value="cartao">Cartão de crédito</option>
+                <option value="financiamento">Financiamento</option>
+                <option value="consorcio">Consórcio</option>
+            </select>
+            </td>
                 <td><input type="text" name="valor_pagamento[]" placeholder="Digite o valor"></td>
                 <td><input type="text" name="data_pagamento[]" placeholder="dd/mm/aaaa"></td>
                 <td><button type="button" class="remove-row-btn" onclick="removePaymentRow(this)">Remover</button></td>
