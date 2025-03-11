@@ -502,6 +502,7 @@
                     <thead>
                         <tr>
                             <th>Método de Pagamento</th>
+                            <th>Banco</th>
                             <th>Valor (R$)</th>
                             <th>Data de Pagamento</th>
                             <th>Ação</th>
@@ -509,6 +510,14 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>
+                                <select id="bancofinanceiro" name="bancofinanceiro">
+                                    <option value="bb">Banco do Brasil</option>
+                                    <option value="caixa">Caixa Economica</option>
+                                    <option value="sicoob">SICOOB</option>
+                                    <option value="sicredi">SICREDI</option>
+                                </select>
+                            </td>
                             <td>
                             <select id="formaPagamento" name="formaPagamento">
                                 <option value="boleto">Boleto</option>
@@ -649,6 +658,14 @@
             const newRow = document.createElement('tr');
 
             newRow.innerHTML = `
+            <td>
+                <select id="bancofinanceiro" name="bancofinanceiro">
+                <option value="bb">Banco do Brasil</option>
+                <option value="caixa">Caixa Economica</option>
+                <option value="sicoob">SICOOB</option>
+                <option value="sicredi">SICREDI</option>
+                </select>
+            </td>
             <td>
             <select id="formaPagamento" name="formaPagamento">
                 <option value="boleto">Boleto</option>
