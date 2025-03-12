@@ -468,7 +468,7 @@
             <label for="precoFinal">Preço Final (R$):</label>
             <input type="text" id="precoFinal" name="precoFinal" />
 
-            <input type="text" id="formaPagamento" name="formaPagamento" value="boleto" />
+
 
             <!-- Tabela de itens -->
             <p>&nbsp;</p>
@@ -560,9 +560,9 @@
             const cep = document.getElementById('cep').value;
             const modalidade = document.getElementById('modalidade').value;
             const potenciaInversor = document.getElementById('potenciaInversor').value;
-            const formaPagamento = document.getElementById('formaPagamento').value;
+
             formData.append('potenciaInversor', potenciaInversor);
-            formData.append('formaPagamento', formaPagamento);
+
             formData.append('modalidade', modalidade);
             formData.append('CPF', CPF);
             formData.append('nascimento', nascimento);

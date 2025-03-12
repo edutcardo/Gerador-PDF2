@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nascimento = $_POST['nascimento'];
     $cep = $_POST['cep'];
     $modalidade = $_POST['modalidade'];
-    $formaPagamento = $_POST['formaPagamento'];
+
     $potenciaInversor = $_POST['potenciaInversor'];
     $bancos = $_POST['banco'];
     $formaPags = $_POST['formaPag'];
@@ -390,24 +390,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p><strong>Cláusula 5ª – Do preço e forma de pagamento</strong></p>
    <p>5.1. Pela prestação dos serviços contratados, a CONTRATANTE pagará a CONTRATADA a quantia total de ' . $precoFinalRs . ', cujo pagamento será realizado da seguinte forma:</p>';
 
-        $dataPagamento = $datas_pagamento[$index];
-
-
-        $valor_formatado = 'R$ ' . number_format((float)$valor, 2, ',', '.');
-
-        $contBoleto = 0;
 
 
         foreach ($formaPags as $index => $formaPag) {
-            // Supondo que $valoresFormatados e $datasPagamentos são arrays paralelos a $formaPags
-            $valor_formatado = isset($valoresFormatados[$index]) ? htmlspecialchars($valoresFormatados[$index]) : 'Valor não informado';
-            $dataPagamento = isset($datasPagamentos[$index]) ? htmlspecialchars($datasPagamentos[$index]) : 'Data não informada';
-   
+
+            $dataPagamento = $datas_pagamento[$index];
+            $valorpagamento = $valores_pagamento[$index];
+            $bancoat = $bancos[$index];
+            $bancoatform = strtoupper($bancoat);
+            $valor_formatado = 'R$ ' . number_format((float)$valorpagamento, 2, ',', '.');
 
 
         if ($formaPag === 'boleto') {
             $htmlContent .= '<p>';
-            $htmlContent .= '<b>Valor ' . ($index + 1) . ': ' . $valor_formatado . ', </b>';
+            $htmlContent .= '<b>Boleto: ' . $valor_formatado . ', </b>';
             $htmlContent .= '<b> que será pago na data : ' . $dataPagamento . ', </b>';
             $htmlContent .= ' através de Boleto que será efetuado na instituição banco <b> 756 SICOOB, </b>';
             $htmlContent .= '<b>Agência: 4340-0, </b>';
@@ -417,7 +413,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } elseif ($formaPag === 'financiamento') {
             $htmlContent .= '<p>';
             $htmlContent .= '<b>Financiamento: ' . $valor_formatado . ', </b>';
-            $htmlContent .= ' será realizado via <b>financiamento pelo Banco do Brasil</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo Banco. A transferência deverá ser efetuada para a instituição bancária <b>SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7</b>, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ sob o n.º <b>49.348.620/0001-05</b>, chave <b>PIX n.º 49.348.620/0001-05</b>.';
+            $htmlContent .= ' será realizado via <b>financiamento em '.$bancoatform.'</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo Banco. A transferência deverá ser efetuada para a instituição bancária <b>SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7</b>, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ sob o n.º <b>49.348.620/0001-05</b>, chave <b>PIX n.º 49.348.620/0001-05</b>.';
+            $htmlContent .= '</p>';
+        } elseif ($formaPag === 'cartao') {
+            $htmlContent .= '<p>';
+            $htmlContent .= '<b>Cartão de Crédito: ' . $valor_formatado . ', </b>';
+            $htmlContent .= '<b> que será pago na data : ' . $dataPagamento . ', </b>';
+            $htmlContent .= ' através de Cartão de Crédito que será efetuado na instituição banco <b> 756 SICOOB, </b>';
+            $htmlContent .= '<b>Agência: 4340-0, </b>';
+            $htmlContent .= '<b>Conta Corrente: 299.832-7</b>, em nome de <b>PALLADIUM IMPORTADORA DE EQUIPAMENTOS LTDA, 
+            CNPJ nº 49.348.620/0001-05 e PIX chave nº 49.348.620/0001-05</b>. ';
+        } elseif ($formaPag === 'consorcio') {
+            $htmlContent .= '<p>';
+            $htmlContent .= '<b>Consórcio: ' . $valor_formatado . ', </b>';
+            $htmlContent .= ' será realizado via <b>consórcio em '.$bancoatform.'</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo Banco. A transferência deverá ser efetuada para a instituição bancária <b>SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7</b>, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ sob o n.º <b>49.348.620/0001-05</b>, chave <b>PIX n.º 49.348.620/0001-05</b>.';
             $htmlContent .= '</p>';
         } else {
             $htmlContent .= '<b> Valor não especificado para a modalidade fornecida. </b>';
