@@ -1,5 +1,10 @@
 <?php
 require_once('vendor/autoload.php'); // Ou o caminho correto, se você não estiver usando o Composer
+
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
 class CustomPDF extends TCPDF
 {
     private $backgroundImage;
@@ -400,6 +405,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $bancoatform = strtoupper($bancoat);
             $valor_formatado = 'R$ ' . number_format((float)$valorpagamento, 2, ',', '.');
 
+            if ($bancoat == 'caixa') {
+                $bancoatdig = 'Caixa Economica Federal';
+            } else if ($bancoat == 'bb') {
+                $bancoatdig = 'Banco de Brasil';
+            } else if ($bancoat == 'sicoob') {
+                $bancoatdig = 'SICOOB';
+            } else if ($bancoat == 'sicredi') {
+                $bancoatdig = 'SICREDI';
+            }else{
+            }
+
+
 
         if ($formaPag === 'boleto') {
             $htmlContent .= '<p>';
@@ -413,7 +430,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } elseif ($formaPag === 'financiamento') {
             $htmlContent .= '<p>';
             $htmlContent .= '<b>Financiamento: ' . $valor_formatado . ', </b>';
-            $htmlContent .= ' será realizado via <b>financiamento em '.$bancoatform.'</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo Banco. A transferência deverá ser efetuada para a instituição bancária <b>SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7</b>, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ sob o n.º <b>49.348.620/0001-05</b>, chave <b>PIX n.º 49.348.620/0001-05</b>.';
+            $htmlContent .= ' será realizado via <b>financiamento em '.$bancoatdig.'</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo Banco. A transferência deverá ser efetuada para a instituição bancária <b>SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7</b>, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ sob o n.º <b>49.348.620/0001-05</b>, chave <b>PIX n.º 49.348.620/0001-05</b>.';
             $htmlContent .= '</p>';
         } elseif ($formaPag === 'cartao') {
             $htmlContent .= '<p>';
@@ -426,7 +443,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } elseif ($formaPag === 'consorcio') {
             $htmlContent .= '<p>';
             $htmlContent .= '<b>Consórcio: ' . $valor_formatado . ', </b>';
-            $htmlContent .= ' será realizado via <b>consórcio em '.$bancoatform.'</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo Banco. A transferência deverá ser efetuada para a instituição bancária <b>SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7</b>, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ sob o n.º <b>49.348.620/0001-05</b>, chave <b>PIX n.º 49.348.620/0001-05</b>.';
+            $htmlContent .= ' será realizado via <b>consórcio em '.$bancoatdig.'</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo Banco. A transferência deverá ser efetuada para a instituição bancária <b>SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7</b>, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ sob o n.º <b>49.348.620/0001-05</b>, chave <b>PIX n.º 49.348.620/0001-05</b>.';
+            $htmlContent .= '</p>';
+        } elseif ($formaPag === 'cheque') {
+            $htmlContent .= '<p>';
+            $htmlContent .= '<b>Cheque nominal: ' . $valor_formatado . ', </b>';
+            $htmlContent .= ' será realizado via <b>cheque nominal em '.$bancoatdig.'</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo Banco. A transferência deverá ser efetuada para a instituição bancária <b>SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7</b>, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ sob o n.º <b>49.348.620/0001-05</b>, chave <b>PIX n.º 49.348.620/0001-05</b>.';
             $htmlContent .= '</p>';
         } else {
             $htmlContent .= '<b> Valor não especificado para a modalidade fornecida. </b>';
