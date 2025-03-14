@@ -332,14 +332,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>3. O cliente (Contratante) que realiza a compra e a contratação dos serviços de instalação de sistema solar fotovoltaico em sua propriedade.</p>
    <p>As partes acima identificadas têm, entre si, justas e acertadas o presente Contrato de Venda e Instalação de Equipamentos Solares Fotovoltaicos, conforme cláusulas e condições adiante estipuladas:</p>
    <p><strong>Cláusula 1ª – Do objeto do contrato</strong></p>
-   <p>1.1.	O presente contrato tem como objeto a venda e implantação de 01 (um) gerador fotovoltaico ON GRID conectado à rede pela CONTRATADA, com <u><strong>potência operacional estimada</strong></u> de <strong>' . $potencia . ' kWp</strong>, em <strong>'. $endereco.', ' .$cidade .' - '.$estado.', CEP:' .$cep .'</strong> conforme condições, quantidades e procedimentos estabelecidos neste Instrumento.</p>
+   <p>1.1.	O presente contrato tem como objeto a venda e implantação de 01 (um) gerador fotovoltaico ON GRID conectado à rede pela CONTRATADA, com <u><strong>potência operacional estimada</strong></u> de <strong>' . $potencia . ' kWp</strong>, em <strong>'. $endereco.', ' .$cidade .' - '.$estado.', CEP: ' .$cep .'</strong> conforme condições, quantidades e procedimentos estabelecidos neste Instrumento.</p>
    <p>1.2. A contratação inclui:</p>
 <p></p>
        a) Elaboração de Projeto Solar Fotovoltaico;</p>
        b) Fornecimento de todos os materiais, equipamentos e mão de obra necessários para a instalação do sistema de geração de energia fotovoltaica contratado;</p>
        c) Aprovação e conexão à rede de distribuição de energia;</p>
        d) 1 (um) ano de seguro contra furto qualificado, danos elétricos e climáticos;</p>
-       e) O escoamento da energia pela CONTRATADA, caso o sistema adquirido tenha sido projetado para a geração compartilhada.</p>
+       e) escoamento da energia pela CONTRATADA, caso o sistema adquirido tenha sido projetado para a geração compartilhada.</p>
 <p></p>
    <p>1.3. A produção energética do sistema fotovoltaico poderá variar para mais ou para menos, levando-se em consideração a localização (com base no índice de irradiação solar), período do ano, condições climáticas, realização de manutenções preventivas (limpeza dos painéis), posicionamento e ângulo de inclinação dos painéis e eventuais intercorrências pela Concessionária de energia.</p>
    <p><strong>Cláusula 2ª – Da condição de aprovação do projeto pela Concessionária</strong></p>
@@ -414,8 +414,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $htmlContent .= '<b>' . $valor_formatado . ', </b>';
             $htmlContent .= 'que será pago através de <b>boleto bancário</b>, com vencimento para <b>' . $dataPagamento . ', </b>';
             $htmlContent .= 'para à instituição financeira SICOOB (banco 756),';
-            $htmlContent .= 'Agência: 4340-0,';
-            $htmlContent .= 'Conta Corrente: 299.832-7, pertencente à <b>Palladium Importadora de Equipamentos Ltda</b>, 
+            $htmlContent .= ' Agência: 4340-0,';
+            $htmlContent .= ' Conta Corrente: 299.832-7, pertencente à <b>Palladium Importadora de Equipamentos Ltda</b>, 
             inscrita no CNPJ/PIX nº 49.348.620/0001-05. ';
             $htmlContent .= '</p>';
         } elseif ($formaPag === 'financiamento') {
@@ -428,8 +428,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $htmlContent .= '<b>' . $valor_formatado . ', </b>';
             $htmlContent .= 'queque será pago através de <b>cartão de crédito</b>, com vencimento para <b>' . $dataPagamento . ', </b>';
             $htmlContent .= 'para à instituição financeira SICOOB (banco 756),';
-            $htmlContent .= 'Agência: 4340-0,';
-            $htmlContent .= 'Conta Corrente: 299.832-7, pertencente à <b>Palladium Importadora de Equipamentos Ltda</b>, 
+            $htmlContent .= ' Agência: 4340-0,';
+            $htmlContent .= ' Conta Corrente: 299.832-7, pertencente à <b>Palladium Importadora de Equipamentos Ltda</b>, 
             inscrita no CNPJ/PIX nº 49.348.620/0001-05.</b> ';
             $htmlContent .= '</p>';
         } elseif ($formaPag === 'consorcio') {
@@ -530,7 +530,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p><strong>Cláusula 15ª – Da rescisão</strong></p>
    <p>15.1. Constituirá justa causa para a rescisão deste contrato a parte que deixar de cumprir com qualquer cláusula ou condição contratual, após ter sido notificada do fato e não ter sanado integralmente seu inadimplemento no prazo de 30 (trinta) dias a partir da data de recebimento da notificação.</p>
    <p>15.1.1. A rescisão, por dolo ou culpa de uma das partes, lhe acarretará a responsabilidade pelas perdas e danos a que der causa, sem prejuízo das demais sanções contratuais e/ou legais aplicáveis. </p>
-   <p>15.2. Após a ocorrência de 30 (trinta) dias de atraso de pagamento pelo CONTRATANTE e não saneamento de seu inadimplemento no prazo de 05 (cinco) dias após o recebimento da notificação, a CONTRATADA poderá rescindir este contrato, sem prejuízo das perdas e danos, com o cancelamento do Projeto junto a Concessionária local e, se for o caso, com o bloqueio do Sistema de Compensação de Energia Elétrica (SCEE).</p>
+   <p>15.2. Após a ocorrência de 30 (trinta) dias de atraso de pagamento pelo CONTRATANTE e não saneamento de seu inadimplemento no prazo de 05 (cinco) dias após o recebimento da notificação, a CONTRATADA poderá rescindir este contrato, sem prejuízo das perdas e danos.</p>
    <p><strong>Cláusula 16ª – Das penalidades</strong></p>
    <p>16.1. A violação das cláusulas deste Instrumento enseja a aplicação de multa correspondente a 20% (vinte por cento) sobre o valor do contrato, a ser corrigido no momento de sua aplicação, conforme variação do IGP-M (Fundação Getúlio Vargas) no período, sem prejuízo de demais cominações legais cabíveis.</p>
    <p>16.2. Além das multas contratuais, será devida indenização suplementar pelas perdas, danos, lucros cessantes, danos indiretos e quaisquer outros prejuízos patrimoniais ou morais percebidos pela parte contrária.</p>
