@@ -334,13 +334,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p><strong>Cláusula 1ª – Do objeto do contrato</strong></p>
    <p>1.1.	O presente contrato tem como objeto a venda e implantação de 01 (um) gerador fotovoltaico ON GRID conectado à rede pela CONTRATADA, com <u><strong>potência operacional estimada</strong></u> de <strong>' . $potencia . ' kWp</strong>, em <strong>'. $endereco.', ' .$cidade .' - '.$estado.', CEP:' .$cep .'</strong> conforme condições, quantidades e procedimentos estabelecidos neste Instrumento.</p>
    <p>1.2. A contratação inclui:</p>
-   <ol type="a">
-       <li> Elaboração de Projeto Solar Fotovoltaico;</li>
-       <li> Fornecimento de todos os materiais, equipamentos e mão de obra necessários para a instalação do sistema de geração de energia fotovoltaica contratado;</li>
-       <li> Aprovação e conexão à rede de distribuição de energia;</li>
-       <li> 1 (um) ano de seguro contra furto qualificado, danos elétricos e climáticos;</li>
-       <li> O escoamento da energia pela CONTRATADA, caso o sistema adquirido tenha sido projetado para a geração compartilhada.</li>
-   </ol>
+<p></p>
+       a) Elaboração de Projeto Solar Fotovoltaico;</p>
+       b) Fornecimento de todos os materiais, equipamentos e mão de obra necessários para a instalação do sistema de geração de energia fotovoltaica contratado;</p>
+       c) Aprovação e conexão à rede de distribuição de energia;</p>
+       d) 1 (um) ano de seguro contra furto qualificado, danos elétricos e climáticos;</p>
+       e) O escoamento da energia pela CONTRATADA, caso o sistema adquirido tenha sido projetado para a geração compartilhada.</p>
+<p></p>
    <p>1.3. A produção energética do sistema fotovoltaico poderá variar para mais ou para menos, levando-se em consideração a localização (com base no índice de irradiação solar), período do ano, condições climáticas, realização de manutenções preventivas (limpeza dos painéis), posicionamento e ângulo de inclinação dos painéis e eventuais intercorrências pela Concessionária de energia.</p>
    <p><strong>Cláusula 2ª – Da condição de aprovação do projeto pela Concessionária</strong></p>
    <p>2.1. Este contrato terá validade e produzirá efeitos legais a partir da aprovação do projeto pela Concessionária de energia local. A aprovação do referido projeto é condição terminantemente obrigatória para o cumprimento das obrigações contratuais estipuladas neste contrato.</p>
@@ -467,46 +467,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p>8.1. O encerramento dos serviços de instalação do sistema fotovoltaico será precedido de uma vistoria por parte da CONTRATADA, para que esta verifique e comprove a satisfatória execução dos serviços realizados.</p>
    <p><strong>Cláusula 9ª – Da garantia dos equipamentos</strong></p>
    <p>9.1. Os fabricantes garantem a perfeita execução dos equipamentos e periféricos comercializados ao CONTRATANTE, de acordo com os seguintes prazos:</p>
-   <ol type="a">
-        <li>	Módulo fotovoltaico - possui garantia de fábrica de 12 (doze) anos contra defeito de fabricação e de 25 (vinte e cinco) anos para performance de geração;</li>
-        <li>	Inversor – possui 10 (dez) anos de garantia contra defeito de fabricação;</li>
-        <li>	Outros componentes do gerador fotovoltaico (materiais periféricos) - possuem 01 (ano) de garantia contra defeito de fabricação.</li>
-   </ol>
+<p></p>
+        a)	Módulo fotovoltaico - possui garantia de fábrica de 12 (doze) anos contra defeito de fabricação e de 25 (vinte e cinco) anos para performance de geração;</p>
+        b)	Inversor – possui 10 (dez) anos de garantia contra defeito de fabricação;</p>
+        c)	Outros componentes do gerador fotovoltaico (materiais periféricos) - possuem 01 (ano) de garantia contra defeito de fabricação.</p>
+<p></p>
    <p>9.2. A contagem do período de garantia dos equipamentos pelos fabricantes inicia-se a partir da efetiva ativação do sistema solar fotovoltaico conectado à rede elétrica da concessionária. Decorrido os prazos mencionados na cláusula 9.1., o CONTRATANTE torna-se o único responsável por eventuais defeitos nos equipamentos.</p>
    <p><strong>Cláusula 10ª – Das obrigações da Contratada</strong></p>
    <p>10.1. Sem prejuízo de outras disposições deste contrato, constituem obrigações da CONTRATADA:</p>
-   <ol type="a">
-       <li>	Cumprir integralmente este contrato na forma e modo ajustados;</li>
-       <li>	Conduzir os trabalhos com estrita observância às normas da legislação pertinente, cumprindo as determinações dos Poderes Públicos, mantendo sempre limpo o local dos serviços e nas melhores condições de segurança, higiene e disciplina;</li>
-       <li>	Fornecer e utilizar os materiais, equipamentos, ferramentas e utensílios necessários, na qualidade e quantidade especificadas na Proposta Comercial;</li>
-       <li>	Empregar na execução dos serviços apenas profissionais capacitados e qualificados para essas funções;</li>
-       <li>	Apresentar ao CONTRATANTE, quando for o caso, a relação nominal dos profissionais que adentrarão em suas instalações;</li>
-       <li>	Obedecer às normas técnicas, de saúde, de higiene e de segurança do trabalho, de acordo com as normas do Ministério do Trabalho e Emprego (MTE);</li>
-       <li>	Assumir a responsabilidade pelos atos e/ou omissões praticados por si e por seus subordinados, bem como pelos danos que venham a causar para a CONTRATANTE, desde que comprovados, em decorrência da prestação dos serviços prestados;</li>
-       <li>  Arcar devidamente, nos termos da legislação trabalhista, com a remuneração e demais verbas laborais devidas a seus subordinados, inclusive, encargos fiscais e previdenciários referentes às relações de trabalho;</li>
-       <li>	Arcar com todas as despesas de natureza tributária decorrentes dos serviços especificados neste contrato;</li>
-       <li>	Relatar à CONTRATANTE toda e qualquer irregularidade verificada no decorrer da prestação dos serviços;</li>
-       <li>	Guardar sigilo sobre todas as informações obtidas em decorrência do cumprimento do contrato;</li>
-       <li> Providenciar junto ao CREA as Anotações de Responsabilidade Técnica (ART), referentes ao objeto do contrato e especialidades, nos termos das normas pertinentes.</li>
-   </ol>
+<p></p>
+       a)	Cumprir integralmente este contrato na forma e modo ajustados;</p>
+       b)	Conduzir os trabalhos com estrita observância às normas da legislação pertinente, cumprindo as determinações dos Poderes Públicos, mantendo sempre limpo o local dos serviços e nas melhores condições de segurança, higiene e disciplina;</p>
+       c)	Fornecer e utilizar os materiais, equipamentos, ferramentas e utensílios necessários, na qualidade e quantidade especificadas na Proposta Comercial;</p>
+       d)	Empregar na execução dos serviços apenas profissionais capacitados e qualificados para essas funções;</p>
+       e)	Apresentar ao CONTRATANTE, quando for o caso, a relação nominal dos profissionais que adentrarão em suas instalações;</p>
+       f)	Obedecer às normas técnicas, de saúde, de higiene e de segurança do trabalho, de acordo com as normas do Ministério do Trabalho e Emprego (MTE);</p>
+       g)	Assumir a responsabilidade pelos atos e/ou omissões praticados por si e por seus subordinados, bem como pelos danos que venham a causar para a CONTRATANTE, desde que comprovados, em decorrência da prestação dos serviços prestados;</p>
+       h)  Arcar devidamente, nos termos da legislação trabalhista, com a remuneração e demais verbas laborais devidas a seus subordinados, inclusive, encargos fiscais e previdenciários referentes às relações de trabalho;</p>
+       i)	Arcar com todas as despesas de natureza tributária decorrentes dos serviços especificados neste contrato;</p>
+       j)	Relatar à CONTRATANTE toda e qualquer irregularidade verificada no decorrer da prestação dos serviços;</p>
+       k)	Guardar sigilo sobre todas as informações obtidas em decorrência do cumprimento do contrato;</p>
+       l) Providenciar junto ao CREA as Anotações de Responsabilidade Técnica (ART), referentes ao objeto do contrato e especialidades, nos termos das normas pertinentes.</p>
+<p></p>
    <p><strong>Cláusula 11ª – Das obrigações do Contratante</strong></p>
    <p>11.1. Sem prejuízo de outras disposições deste contrato, constituem obrigações do CONTRATANTE:</p>
-    <ol type="a">
-       <li> É imperativo adquirir um serviço de internet que satisfaça os critérios mínimos de velocidade e estabilidade necessários para o monitoramento eficaz do gerador fotovoltaico. A falta de conexão com a internet inviabiliza o monitoramento da energia, comprometendo a eficácia da gestão energética. Sem acesso à internet, não há possibilidade de monitoramento;</li>
-       <li> Manter e acompanhar o monitoramento do gerador fotovoltaico (por aplicativo ou site) para conferir a performance energética. Qualquer inconsistência, acionar o canal de suporte da CONTRATADA.</li>
-       <li> Notificar imediatamente a CONTRATADA em caso de suspeitas ou problemas relacionados a geração de energia solar fotovoltaica;</li>
-       <li> Realizar a manutenção preventiva e limpezas periódicas dos equipamentos fotovoltaicos instalados (recomenda-se realizar de três a quatro limpezas dos painéis por ano). A falta dessas manutenções pode resultar em perda de desempenho do sistema e, consequentemente, na redução da produção de energia;</li>
-       <li> Avaliar a necessidade de contratação de empresa de seguro contra furtos e/ou roubos;</li>
-       <li> Efetuar o pagamento na data e nos termos definidos neste contrato;</li>
-       <li> Fornecer todos os dados e informações pertinentes ao desenvolvimento dos trabalhos, objeto deste Contrato;</li>
-       <li> Facilitar o acesso dos trabalhadores da CONTRATADA ao local da obra, caso seja necessário;</li>
-       <li> Garantir a segurança dos trabalhadores da CONTRATADA, mantendo animais de estimação presos em local adequado durante a instalação dos equipamentos solares fotovoltaicos;</li>
-       <li> Afastar outras condições que estejam sob seu controle e que possam trazer riscos à segurança e saúde dos trabalhadores envolvidos na execução dos serviços;</li>
-       <li> Retirar do local de instalação quaisquer objetos de decoração ou aparelhos sensíveis que possam sofrer dano caso;</li>
-       <li> Notificar a CONTRATADA, por escrito, da ocorrência de eventuais imperfeições, falhas ou irregularidades constatadas no curso da execução dos serviços;</li>
-       <li> Realizar a segurança e preservação do sistema solar fotovoltaico, após a instalação;</li>
-       <li> Realizar a manutenção preventiva do sistema fotovoltaico e da estrutura de sustentação, seguindo as normas de engenharia durante toda a vida útil do sistema de geração, após a conclusão da instalação.</li>
-   </ol>
+ <p></p>
+       a) É imperativo adquirir um serviço de internet que satisfaça os critérios mínimos de velocidade e estabilidade necessários para o monitoramento eficaz do gerador fotovoltaico. A falta de conexão com a internet inviabiliza o monitoramento da energia, comprometendo a eficácia da gestão energética. Sem acesso à internet, não há possibilidade de monitoramento;</p>
+       b) Manter e acompanhar o monitoramento do gerador fotovoltaico (por aplicativo ou site) para conferir a performance energética. Qualquer inconsistência, acionar o canal de suporte da CONTRATADA.</p>
+       c) Notificar imediatamente a CONTRATADA em caso de suspeitas ou problemas relacionados a geração de energia solar fotovoltaica;</p>
+       d) Realizar a manutenção preventiva e limpezas periódicas dos equipamentos fotovoltaicos instalados (recomenda-se realizar de três a quatro limpezas dos painéis por ano). A falta dessas manutenções pode resultar em perda de desempenho do sistema e, consequentemente, na redução da produção de energia;</p>
+       e) Avaliar a necessidade de contratação de empresa de seguro contra furtos e/ou roubos;</p>
+       f) Efetuar o pagamento na data e nos termos definidos neste contrato;</p>
+       g) Fornecer todos os dados e informações pertinentes ao desenvolvimento dos trabalhos, objeto deste Contrato;</p>
+       h) Facilitar o acesso dos trabalhadores da CONTRATADA ao local da obra, caso seja necessário;</p>
+       i) Garantir a segurança dos trabalhadores da CONTRATADA, mantendo animais de estimação presos em local adequado durante a instalação dos equipamentos solares fotovoltaicos;</p>
+       j) Afastar outras condições que estejam sob seu controle e que possam trazer riscos à segurança e saúde dos trabalhadores envolvidos na execução dos serviços;</p>
+       k) Retirar do local de instalação quaisquer objetos de decoração ou aparelhos sensíveis que possam sofrer dano caso;</p>
+       l) Notificar a CONTRATADA, por escrito, da ocorrência de eventuais imperfeições, falhas ou irregularidades constatadas no curso da execução dos serviços;</p>
+       m) Realizar a segurança e preservação do sistema solar fotovoltaico, após a instalação;</p>
+       n) Realizar a manutenção preventiva do sistema fotovoltaico e da estrutura de sustentação, seguindo as normas de engenharia durante toda a vida útil do sistema de geração, após a conclusão da instalação.</p>
+<p></p>
    <p><strong>Cláusula 12ª – Da proteção de dados pessoais</strong></p>
    <p>12.1. Em observação às determinações constantes da Lei n.º 13.709/18 – Lei Geral de Proteção de Dados (LGPD) -, o CONTRATANTE e a CONTRATADA se comprometem a proteger os direitos fundamentais de liberdade e de privacidade e o livre desenvolvimento da personalidade da pessoa natural, relativos ao tratamento de dados pessoais, inclusive nos meios digitais..</p>
    <p>12.2. A coleta e o tratamento de dados pessoais pelas partes ocorrerão quando estritamente necessário para a prestação dos serviços objeto deste contrato ou nas demais hipóteses, previstas nos arts. 7º e/ou 11 da Lei n.º 13.709/2018 e, em hipótese alguma, poderão ser compartilhados ou utilizados para outros fins.</p>
@@ -518,15 +518,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <p><strong>Cláusula 14ª – Do caso fortuito e da força maior</strong></p>
    <p>14.1. As obrigações do presente contrato suspender-se-ão sempre que ocorrerem circunstâncias alheias à vontade, controle e ação das partes, causadas por motivo de força maior ou caso fortuito, na forma do Código Civil, desde que sua ocorrência seja alegada e comprovada no prazo de 48 (quarenta e oito) horas.</p>
    <p>14.2. Serão considerados casos fortuitos ou de força maior, para efeito de rescisão contratual unilateral ou não aplicação de multas, os inadimplementos decorrentes das situações a seguir, quando vierem a afetar a realização da entrega do objeto do contrato no local indicado:</p>
-   <ol type="a">
-       <li> Greve geral no país;</li>
-       <li> Calamidade pública;</li>
-       <li> Interrupção dos meios normais de transportes que impeça a locomoção do pessoal;</li>
-       <li> Acidentes, sem culpa da CONTRATADA, que impliquem em retardamento da execução da atividade;</li>
-       <li> Consequências, devidamente comprovadas, de condições meteorológicas excepcionalmente prejudiciais e não passíveis de previsão;</li>
-       <li> Eventuais atrasos decorrentes de dificuldades técnicas que venham a requerer a modificação do(s)Projeto(s) e Especificações, desde que exigidas pela engenharia ou órgão oficiais;</li>
-       <li> Outros casos que se enquadrem no art. 393, parágrafo único, do Código Civil Brasileiro.</li>
-   </ol>        
+<p></p>
+       a) Greve geral no país;</p>
+       b) Calamidade pública;</p>
+       c) Interrupção dos meios normais de transportes que impeça a locomoção do pessoal;</p>
+       d) Acidentes, sem culpa da CONTRATADA, que impliquem em retardamento da execução da atividade;</p>
+       e) Consequências, devidamente comprovadas, de condições meteorológicas excepcionalmente prejudiciais e não passíveis de previsão;</p>
+       f) Eventuais atrasos decorrentes de dificuldades técnicas que venham a requerer a modificação do(s)Projeto(s) e Especificações, desde que exigidas pela engenharia ou órgão oficiais;</p>
+       g) Outros casos que se enquadrem no art. 393, parágrafo único, do Código Civil Brasileiro.</p>
+<p></p>        
    <p><strong>Cláusula 15ª – Da rescisão</strong></p>
    <p>15.1. Constituirá justa causa para a rescisão deste contrato a parte que deixar de cumprir com qualquer cláusula ou condição contratual, após ter sido notificada do fato e não ter sanado integralmente seu inadimplemento no prazo de 30 (trinta) dias a partir da data de recebimento da notificação.</p>
    <p>15.1.1. A rescisão, por dolo ou culpa de uma das partes, lhe acarretará a responsabilidade pelas perdas e danos a que der causa, sem prejuízo das demais sanções contratuais e/ou legais aplicáveis. </p>
