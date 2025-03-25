@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário com Pesquisa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        a,
+        p {
+            font-family: Epilogue !important;
+        }
+
+        body {
+            background-color: #c6f3df;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+            margin-left: 60px;
+            /* Adicione essa linha */
+        }
+
+        h1 {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: block;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        input[readonly],
+        input.hidden {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        #resultados {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+
+        .resultado-item {
+            cursor: pointer;
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 6px;
+            text-align: center;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .resultado-item:hover {
+            background: #007bff;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        button {
+            background-color: #126e04;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 8px;
+        }
+
+        button:hover {
+            background-color: #079b14;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .slider {
+            width: 100%;
+            /* Deixa o slider ocupar toda a largura disponível */
+            height: 20px;
+            /* Aumenta a altura do slider */
+            appearance: none;
+            /* Remove o estilo padrão do navegador */
+            background: #ddd;
+            /* Define a cor de fundo do slider */
+            border-radius: 10px;
+            /* Deixa as bordas arredondadas */
+            outline: none;
+            /* Remove a borda ao focar no slider */
+            transition: background 0.3s ease;
+            /* Adiciona uma transição suave ao hover */
+        }
+
+        .slider:hover {
+            background: #ccc;
+            /* Muda o fundo quando o slider é hoverado */
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            /* Remove o estilo padrão do botão do slider */
+            width: 25px;
+            /* Largura do botão */
+            height: 25px;
+            /* Altura do botão */
+            background: #007bff;
+            /* Cor do botão */
+            border-radius: 50%;
+            /* Deixa o botão redondo */
+            cursor: pointer;
+            /* Mostra que o botão é clicável */
+            transition: background 0.3s ease;
+            /* Suaviza a mudança de cor */
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            background: #0056b3;
+            /* Cor do botão ao passar o mouse */
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .slider::-moz-range-thumb:hover {
+            background: #0056b3;
+        }
+
+        .sidebar:hover .logo {
+            width: 80px;
+            /* Tamanho maior quando expandido */
+            height: 80px;
+            padding: 8px;
+        }
+
+        .sidebar {
+            width: 60px;
+            background-color: #006b3c;
+            transition: width 0.3s;
+            overflow: hidden;
+            position: fixed;
+            /* Torna a sidebar fixa */
+            z-index: 2;
+            /* Mantém a sidebar acima de outros elementos */
+            height: 100vh;
+            /* Altura total da tela */
+            top: 0;
+            /* Começa do topo */
+            left: 0;
+            /* Fixa na lateral esquerda */
+        }
+
+        .sidebar:hover {
+            width: 200px;
+
+        }
+
+        .sidebar a {
+            display: flex;
+            /* Ativa o layout flexível */
+            align-items: center;
+            /* Centraliza verticalmente o conteúdo */
+            justify-content: flex-start;
+            /* Centraliza horizontalmente (altere para `center` se necessário) */
+            padding: 10px;
+            /* Ajusta o espaçamento interno */
+            color: #333;
+            text-decoration: none;
+            position: relative;
+            z-index: 2;
+            gap: 10px;
+            /* Espaço entre ícone e texto */
+            margin-left: 8px;
+            margin-top: 24px;
+        }
+
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+
+        .sidebar a .text {
+            display: none;
+            /* Oculta o texto por padrão */
+            margin-left: 10px;
+            /* Adiciona espaçamento entre ícone e texto */
+        }
+
+        .sidebar:hover a .text {
+            display: inline-block;
+            /* Exibe o texto quando a barra está em hover */
+            font-weight: bold;
+            /* Negrito */
+            color: white;
+            /* Cor branca */
+        }
+
+        .sidebar:hover .span {
+            text-decoration: none;
+            text-align: center;
+            margin: 0;
+        }
+
+        .sidebar img {
+            width: 100%;
+            /* Adapta a largura ao contêiner */
+            height: 40px;
+            /* Mantém a proporção da altura */
+            transition: transform 0.3s, filter 0.3s;
+            /* Suaviza a transição */
+            object-fit: contain;
+            /* Garante que a imagem seja ajustada sem distorção */
+        }
+
+        .sidebar:hover img {
+            content: url('logohover.png');
+            /* Substitui a imagem por outra */
+            filter: brightness(1.2);
+            /* Torna a imagem um pouco mais brilhante (opcional) */
+            transform: scale(1.9);
+            /* Aumenta a imagem de forma proporcional (opcional) */
+        }
+
+        .sidebar:hover~.topbar {
+            margin-left: 200px;
+            /* Alinha com a sidebar expandida */
+            width: calc(100% - 200px);
+            /* Ajusta a largura para o novo espaço disponível */
+        }
+
+        .sidebar:hover~.content {
+            margin-left: 200px;
+            /* Ajusta para acompanhar a largura expandida da sidebar */
+        }
+
+        .icon {
+            color: white;
+        }
+
+        .containerlogo {
+            width: 100%;
+            /* Define o tamanho inicial da logo */
+            height: 130px;
+            /* Ajuste as dimensões conforme necessário */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .logo {
+            width: 40px;
+            /* Define o tamanho inicial da logo */
+            height: 40px;
+            /* Ajuste as dimensões conforme necessário */
+            margin: 10px 0;
+            transition: width 0.3s, height 0.3s;
+            padding: 0px;
+            padding-top: 8px;
+        }
+
+        .sidebar:hover~.container {
+            margin-left: 200px;
+            /* Adicione esta linha para quando a sidebar estiver expandida */
+        }
+
+        .selecionado {
+            background-color: #007bff;
+            color: #fff;
+            transform: scale(1.05);
+            border: 2px solid #0056b3;
+        }
+
+        /* Estilização da tabela */
+        .table-container {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        table th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        table td input {
+            width: 90%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .add-row-btn,
+        .remove-row-btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .add-row-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .remove-row-btn {
+            background-color: #dc3545;
+        }
+
+        .remove-row-btn:hover {
+            background-color: #a71d2a;
+        }
+    </style>
+</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="toggle-btn" onclick="toggleSidebar()"></div>
+        <div class="containerlogo">
+            <img src="logo.png" alt="Logo" class="logo">
+        </div>
+        <a href="index.html" class="home">
+            <i class="fa-solid fa-coins icon"></i> <span class="text">Autoconsumo</span>
+        </a>
+        <a href="investimentos.html">
+            <i class="fa-solid fa-solar-panel icon"></i><span class="text">Investimentos</span>
+        </a>
+        <a href="cocamar.html">
+            <i class="fa-solid fa-gauge icon"></i> <span class="text">Cocamar</span>
+        </a>
+        <a href="coopgb.html">
+            <i class="fa-solid fa-paste icon"></i><span class="text">Coop. Grupo B</span>
+        </a>
+        <a href="coopga.html">
+            <i class="fa-solid fa-paste icon"></i><span class="text">Coop. Grupo A</span>
+        </a>
+        <a href="limpeza.html">
+            <i class="fa-solid fa-spray-can-sparkles icon"></i><span class="text">Limpeza</span>
+        </a>
+
+    </div>
+    <div class="container">
+        <h1>Contrato</h1>
+
+        <form id="formulario">
+
+            <label for="modalidade">Selecione a modalidade:</label>
+            <select id="modalidade" name="modalidade">
+                <option value="">Selecione uma modalidade</option>
+                <option value="autoconsumo">Autoconsumo</option>
+                <option value="investimento">Investimento</option>
+            </select>
+
+            <label for="nome">Nome<b>*</b>:</label>
+            <input type="text" id="nome" name="nome" required />
+
+            <label for="cep">CEP<b>*</b>:</label>
+            <input type="text" id="cep" name="cep" oninput="buscarCidadePorCEP()" />
+
+            <label for="endereco">Endereço<b>*</b>:</label>
+            <input type="text" id="endereco" name="endereco" />
+
+            <label for="CPF">CPF ou CNPJ<b>*</b>:</label>
+            <input type="text" id="CPF" name="CPF" />
+
+            <label for="nascimento">Data de Nascimento<b>*</b>:</label>
+            <input type="text" id="nascimento" name="nascimento" />
+
+            <label for="email">Email<b>*</b>:</label>
+            <input type="text" id="email" name="email" />
+
+            <label for="telefone">Telefone<b>*</b>:</label>
+            <input type="text" id="telefone" name="telefone" />
+
+            <label for="cidade">Cidade<b>*</b>:</label>
+            <input type="text" id="cidade" name="cidade" oninput="atualizarDados()" />
+
+            <label for="estado">Estado:</label>
+            <input type="text" id="estado" name="estado" readonly />
+
+            <label for="nr">Número da residência*:</label>
+            <input type="text" id="nr" name="nr" />
+
+            <label for="potencia">Potência (kWp):</label>
+            <input type="text" id="potencia" name="potencia" />
+
+            <label for="potenciaInversor">Potência total dos inversores (kW):</label>
+            <input type="text" id="potenciaInversor" name="potenciaInversor" />
+
+            <label for="precoFinal">Preço Final (R$):</label>
+            <input type="text" id="precoFinal" name="precoFinal" />
+
+
+
+            <!-- Tabela de itens -->
+            <p>&nbsp;</p>
+            <h2>Itens do Projeto</h2>
+            <div class="table-container">
+                <table id="dynamicTable">
+                    <thead>
+                        <tr>
+                            <th>Quantidade</th>
+                            <th>Item</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="quantidade[]" placeholder="Ex: 1, 10, Incluso"></td>
+                            <td><input type="text" name="item[]" placeholder="Digite o item"></td>
+                            <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remover</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Botão para adicionar linha -->
+            <button type="button" class="add-row-btn" onclick="addRow()">Adicionar Linha</button>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <h2>Planos de Pagamento</h2>
+            <div class="table-container">
+                <table id="planosPagamentoTable">
+                    <thead>
+                        <tr>
+                            <th>Método de Pagamento</th>
+                            <th>Banco</th>
+                            <th>Valor (R$)</th>
+                            <th>Data de Pagamento</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select id="bancofinanceiro" name="banco[]">
+                                    <option value="bb">Banco do Brasil</option>
+                                    <option value="caixa">Caixa Economica</option>
+                                    <option value="sicoob">SICOOB</option>
+                                    <option value="sicredi">SICREDI</option>
+                                </select>
+                            </td>
+                            <td>
+                            <select  name="formaPag[]">
+                                <option value="boleto">Boleto</option>
+                                <option value="cartao">Cartão de crédito</option>
+                                <option value="financiamento">Financiamento</option>
+                                <option value="consorcio">Consórcio</option>
+                                <option value="cheque">Cheque nominal</option>
+                            </select>
+                            </td>
+                            <td><input type="text" name="valor_pagamento[]" placeholder="Digite o valor"></td>
+                            <td><input type="text" name="data_pagamento[]" placeholder="dd/mm/aaaa"></td>
+                            <td><button type="button" class="remove-row-btn"
+                                    onclick="removePaymentRow(this)">Remover</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Botão para adicionar nova linha de pagamento -->
+            <button type="button" class="add-row-btn" onclick="addPaymentRow()">Adicionar Plano de Pagamento</button>
+
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <button type="button" onclick="gerarPDF()" id="btnGerarPDF">Gerar PDF</button>
+
+            </button>
+        </form>
+    </div>
+
+    <script>
+        function gerarPDF() {
+            const formData = new FormData(document.getElementById('formulario'));
+
+            const telefone = document.getElementById('telefone').value;
+            const potencia = document.getElementById('potencia').value;
+            const precoFinal = document.getElementById('precoFinal').value;
+            const estado = document.getElementById('estado').value;
+            const CPF = document.getElementById('CPF').value;
+            const nascimento = document.getElementById('nascimento').value;
+            const email = document.getElementById('email').value;
+            const cep = document.getElementById('cep').value;
+            const modalidade = document.getElementById('modalidade').value;
+            const potenciaInversor = document.getElementById('potenciaInversor').value;
+
+            formData.append('potenciaInversor', potenciaInversor);
+
+            formData.append('modalidade', modalidade);
+            formData.append('CPF', CPF);
+            formData.append('nascimento', nascimento);
+            formData.append('email', email);
+            formData.append('estado', estado);
+            formData.append('telefone', telefone);
+            formData.append('potencia', potencia);
+            formData.append('precoFinal', precoFinal);
+            formData.append('cep', cep);
+
+
+            fetch('gerar_contrato_usinas.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'arquivo_gerado.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => console.error('Erro ao gerar PDF:', error));
+        }
+
+        function preencherFormulario() {
+            fetch('https://jsonplaceholder.typicode.com/users/1')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('nome').value = data.name;
+                })
+                .catch(error => {
+                    console.log('Erro ao buscar dados da API:', error);
+                });
+        }
+
+        window.onload = preencherFormulario;
+
+        function buscarCidadePorCEP() {
+    const cep = document.getElementById('cep').value.replace(/\D/g, ''); // Remove caracteres não numéricos mais uma vez!
+
+    if (cep.length === 8) { // Verifique que CEP está com 8 caracteres
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.erro) {
+                    document.getElementById('cidade').value = data.localidade;
+                    document.getElementById('estado').value = data.uf;
+                } else {
+                    alert('CEP não encontrado!');
+                    document.getElementById('cidade').value = '';
+                    document.getElementById('estado').value = '';
+                }
+            })
+            .catch(error => console.error('Erro ao buscar cidade e estado pelo CEP:', error));
+    }
+}
+        window.onload = preencherFormulario;
+
+
+        function calcularResultado() {
+            const potencia = parseFloat(document.getElementById('palavra-chave').value); // Pega o valor digitado
+            if (!isNaN(potencia)) {
+                const resultado = potencia * 3.9 * 30; // Faz o cálculo
+                document.getElementById('resultado').value = `A geração selecionada é: ${resultado.toFixed(0)} kWh - Selecione um kit abaixo`; // Exibe o resultado com 2 casas decimais
+            } else {
+                document.getElementById('resultado').value = ''; // Limpa o campo se o input for inválido
+            }
+        }
+        function addRow() {
+            const table = document.getElementById('dynamicTable').getElementsByTagName('tbody')[0];
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+               <td><input type="text" name="quantidade[]" placeholder="Ex: 1, 10, Incluso"></td>
+               <td><input type="text" name="item[]" placeholder="Digite o item"></td>
+               <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remover</button></td>
+           `;
+
+            table.appendChild(newRow);
+        }
+
+        function removeRow(button) {
+            const row = button.parentElement.parentElement;
+            row.remove();
+        }
+        function addPaymentRow() {
+            const table = document.getElementById('planosPagamentoTable').getElementsByTagName('tbody')[0];
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+            <td>
+                <select id="bancofinanceiro" name="banco[]">
+                <option value="bb">Banco do Brasil</option>
+                <option value="caixa">Caixa Economica</option>
+                <option value="sicoob">SICOOB</option>
+                <option value="sicredi">SICREDI</option>
+                </select>
+            </td>
+            <td>
+            <select  name="formaPag[]">
+                <option value="boleto">Boleto</option>
+                <option value="cartao">Cartão de crédito</option>
+                <option value="financiamento">Financiamento</option>
+                <option value="consorcio">Consórcio</option>
+                <option value="cheque">Cheque nominal</option>
+            </select>
+            </td>
+                <td><input type="text" name="valor_pagamento[]" placeholder="Digite o valor"></td>
+                <td><input type="text" name="data_pagamento[]" placeholder="dd/mm/aaaa"></td>
+                <td><button type="button" class="remove-row-btn" onclick="removePaymentRow(this)">Remover</button></td>
+            `;
+
+            table.appendChild(newRow);
+        }
+
+        function removePaymentRow(button) {
+            const row = button.parentElement.parentElement;
+            row.remove();
+        }
+        function atualizarDados() {
+            const cidade = document.getElementById('cidade').value;
+            console.log(`Cidade digitada: ${cidade}`);
+
+            if (cidade.trim() !== "") {
+                // Suposição: Uma API fictícia é usada para demonstração, verifique a API real
+                fetch(`https://api-endpoint-para-cidade-e-estado.com/buscar?cidade=${encodeURIComponent(cidade)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na solicitação');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Dados recebidos da API:', data);
+
+                    if (data.estado) {
+                        document.getElementById('estado').value = data.estado;
+                        console.log(`Estado encontrado: ${data.estado}`);
+                    } else {
+                        document.getElementById('estado').value = 'Estado não encontrado';
+                        console.log('Estado não encontrado.');
+                    }
+                })
+                .catch(error => console.error('Erro ao buscar estado pela cidade:', error));
+            }
+        }
+
+
+    </script>
+</body>
