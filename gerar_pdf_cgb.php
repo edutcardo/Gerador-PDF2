@@ -1,25 +1,30 @@
 <?php
 require_once('vendor/autoload.php'); // Ou o caminho correto, se você não estiver usando o Composer
 
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 
-// Verifica se o formulário foi enviado
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nome = $_POST['nome'];
-    $endereco = $_POST['endereco'];
-    $cep = $_POST['cep'];
-    $cidade = $_POST['cidade'];
-    $uc = $_POST['uc'];
-    $inputValorCompensavel = $_POST['inputValorCompensavel'];
-    $inputValorFiob = $_POST['inputValorFiob'];
-    $inputValorTarifaCrua = $_POST['inputValorTarifaCrua'];
-    $media = $_POST['media'];
-    $iluminacao = $_POST['iluminacao'];
-    $desconto = $_POST['desconto'];
-    $numeroDeFases = $_POST['numeroDeFases'];
+    $input = file_get_contents("php://input");
+    $data = json_decode($input, true);
+
+    $nome = $data['nome'];
+    $endereco = $data['endereco'];
+    $cep = $data['cep'];
+    $cidade = $data['cidade'];
+    $uc = $data['uc'];
+    $inputValorCompensavel = $data['inputValorCompensavel'];
+    $inputValorFiob = $data['inputValorFiob'];
+    $inputValorTarifaCrua = $data['inputValorTarifaCrua'];
+    $media = $data['media'];
+    $iluminacao = $data['iluminacao'];
+    $desconto = $data['desconto'];
+    $numeroDeFases = $data['numeroDeFases'];
+
 
     if ($numeroDeFases == 'mono rural') {
         $demandaMinima = 1;
@@ -62,34 +67,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('EE1.png', 7, 0, 210, 297);
+    $pdf->Image('EE1.png', 0, 0, 210, 297);
 
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(50, 27, "$nome");
-    $pdf->Text(50, 32.4, "U.C.: $uc");
+    $pdf->Text(40, 27, "$nome");
+    $pdf->Text(40, 32.4, "U.C.: $uc");
     
 
 
     $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->Text(69, 47.5, "$media kWh");
-    $pdf->Text(172, 47.5, "$precoCopelRs");
-    $pdf->Text(57, 97, "$precoCopelRs");
-    $pdf->Text(149, 97, "$precoFaturaRs");
-    $pdf->Text(57, 128, "$economiaRs");
-    $pdf->Text(149, 128, "$economiaRsx12");
+    $pdf->Text(62, 47.5, "$media kWh");
+    $pdf->Text(165, 47.5, "$precoCopelRs");
+    $pdf->Text(50, 97, "$precoCopelRs");
+    $pdf->Text(142, 97, "$precoFaturaRs");
+    $pdf->Text(50, 128, "$economiaRs");
+    $pdf->Text(142, 128, "$economiaRsx12");
 
 
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->Image('EE2.png', 7, 0, 210, 297);
-    $pdf->Text(39, 152, "$restoRs");
-    $pdf->Text(105, 152, "$precoFaturaRs");
-    $pdf->Text(172, 152, "$restoMaisFaturaRs");
+    $pdf->Image('EE2.png', 0, 0, 210, 297);
+    $pdf->Text(32, 152, "$restoRs");
+    $pdf->Text(98, 152, "$precoFaturaRs");
+    $pdf->Text(165, 152, "$restoMaisFaturaRs");
 
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('EE3.png', 7, 0, 210, 297);
+    $pdf->Image('EE3.png', 0, 0, 210, 297);
 
     
     // Salva ou exibe o PDF
