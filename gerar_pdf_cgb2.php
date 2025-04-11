@@ -5,6 +5,10 @@ require_once('vendor/autoload.php'); // Ou o caminho correto, se você não esti
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+
 
 
 
@@ -26,8 +30,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $consumomes = $data['consumomes'];
     $consumoano = $data['consumoano'];
     $contacopel = $data['contacopel'];
+    $iluminacao = $data['iluminacao'];
 
-    $resto = $input5 - $input7; 
+    $resto = (($input5*1.19*1.025) - $input7);
     $restomaisfatura = $resto + $input7;
 
     $input7s = number_format($input7, 2, ',', '.');
@@ -36,8 +41,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $input4s = number_format($input4, 2, ',', '.');
     $restos = number_format($resto, 2, ',', '.');
     $restomaisfaturas = number_format($restomaisfatura, 2, ',', '.');
+    
+    $input7sx12 = (($input7) * 12);
+    $input5sx12 = (($input5) * 12);
+    $diferenca = $input5sx12 - $input7sx12;
 
-
+    $input7sx12s = number_format($input7sx12, 2, ',', '.');
+    $input5sx12s = number_format($input5sx12, 2, ',', '.');
+    $diferencas = number_format($diferenca, 2, ',', '.');
 
     // Criação do PDF
     $pdf = new TCPDF();
@@ -68,9 +79,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->Image('EE2.png', 0, 0, 210, 297);
-    $pdf->Text(32, 152, "$restos");
-    $pdf->Text(98, 152, "$input7s");
-    $pdf->Text(165, 152, "$restomaisfaturas");
+    $pdf->Text(32, 152, "$input5sx12s");
+    $pdf->Text(98, 152, "$input7sx12s");
+    $pdf->Text(165, 152, "$diferencas");
 
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('EE3.png', 0, 0, 210, 297);

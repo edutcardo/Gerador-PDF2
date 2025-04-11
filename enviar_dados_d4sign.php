@@ -1,4 +1,23 @@
 <?php
+// --- INÍCIO: Tratamento CORS Preflight (OPTIONS) ---
+// Verifica se o método da requisição é OPTIONS
+if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    // Define os cabeçalhos CORS necessários para a resposta OPTIONS
+    // Permite qualquer origem (por segurança, considere substituir '*' por 'http://localhost:3000' em dev e seu domínio real em produção)
+    header("Access-Control-Allow-Origin: *");
+    // Métodos permitidos para a URL real (o seu script usa POST)
+    header("Access-Control-Allow-Methods: POST, OPTIONS");
+    // Cabeçalhos que o navegador pode enviar na requisição real (Content-Type é comum para JSON POST)
+    header("Access-Control-Allow-Headers: Content-Type");
+    // Opcional: Cachear a resposta preflight por 1 dia (em segundos)
+    header("Access-Control-Max-Age: 86400");
+    // Define o status HTTP como 204 No Content (resposta padrão de sucesso para OPTIONS)
+    http_response_code(204);
+    // Interrompe a execução do script PHP aqui, pois só queremos enviar os cabeçalhos para OPTIONS
+    header("Content-Type: application/json");
+
+    exit(0);
+}
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -17,7 +36,8 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 }
 
 function sanitize_input($input) {
-    return htmlspecialchars(strip_tags(trim($input)));
+    $input_str = $input ?? ''; // Garante que é string ou vazio
+    return htmlspecialchars(strip_tags(trim($input_str)));
 }
 
 // Preparar dados do documento
@@ -74,7 +94,7 @@ $signersData1 = [
             'certificadoicpbr' => '0',
             'assinatura_presencial' => '0',
             'docauthandselfie' => '0',
-            'whatsapp_number' => '+55' . sanitize_input($template_data['telefone']),
+            'whatsapp_number' => '+55' . sanitize_input($template_data['telefone'] ?? ''), // Se 'telefone' não existir, usa string vazia ''
         ]
     ]
 ];
