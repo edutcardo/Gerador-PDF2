@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $precokwh_numeric = floatval(str_replace(',', '.', $precokwh_input_str)); // E6 (numeric)
 
     // --- NOVAS VARIÁVEIS E CONSTANTES DA PLANILHA ---
-    $perdageracao_f6 = 0.85; // F6 da planilha
+    $perdageracao_f6 = 0.15; // F6 da planilha
     $fator_solar_mensal_equivalente = 30 * 4; // (30 dias * 4 horas de sol pleno equivalentes por dia)
 
     // Cálculo de Economia
@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $deslocamento = 26.25;      // J6 (fixo)
-    $k6_comissao_val = 0.95;    // K6 (fixo, conforme solicitado)
+    $k6_comissao_val = 0.05;    // K6 (fixo, conforme solicitado)
     $estrutura_j4 = "TELHADO"; // J4 (fixo)
     $fator_estrutura_solo = ($estrutura_j4 == "SOLO" ? 1.0 : 1.0); // Na prática, sempre 1 com J4="TELHADO"
 
@@ -116,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // --- CRIAÇÃO DO PDF ---
     $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
     $pdf->SetCreator(PDF_CREATOR);
-    $pdf->SetAuthor('Canal Verde');
+    $pdf->SetAuthor('Canal Verde ' );
     $pdf->SetTitle('Proposta Limpeza de Módulos');
     $pdf->SetSubject('Proposta Comercial');
 
@@ -134,49 +134,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdf->SetTextColor(255,0,0); $pdf->Text(10,10, "Erro: Imagem PL1.png não encontrada!");
     }
 
-    $pdf->SetFont('helvetica', '', 10); // Fonte um pouco menor para caber mais info
+    $pdf->SetFont('helvetica', 'B', 14); // Fonte um pouco menor para caber mais info
     $pdf->SetTextColor(255, 255, 255); // Cor do texto Branca (ajuste se sua imagem tiver fundo claro)
 
     $x_coord = 34.2;
     $y_coord = 85; // Subi um pouco para mais espaço
     $line_height = 6;
 
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Nome: " . $nome, 0, 'L'); $y_coord += $line_height;
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Endereço: " . $endereco, 0, 'L'); $y_coord += $line_height;
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Cidade: " . $cidade, 0, 'L'); $y_coord += $line_height * 1.2;
-
-    $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "DADOS DO SISTEMA E PROPOSTA:", 0, 'L'); $y_coord += $line_height;
-    $pdf->SetFont('helvetica', '', 10);
-
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Quantidade de Módulos: " . $qtdmodulos . " unidades", 0, 'L'); $y_coord += $line_height;
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Potência de cada Módulo: " . $potmodulos_Wp . " Wp", 0, 'L'); $y_coord += $line_height;
-    $potenciaTotalSistemaKWp = ($qtdmodulos * $potmodulos_Wp) / 1000;
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Potência Total do Sistema: " . number_format($potenciaTotalSistemaKWp, 2, ',', '.') . " kWp", 0, 'L'); $y_coord += $line_height;
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Preço do kWh Informado: R$ " . number_format($precokwh_numeric, 2, ',', '.'), 0, 'L'); $y_coord += $line_height * 1.2;
-
-    $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "ANÁLISE DE ECONOMIA COM LIMPEZA:", 0, 'L'); $y_coord += $line_height;
-    $pdf->SetFont('helvetica', '', 10);
-
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Economia Mensal Estimada (Módulos Limpos): R$ " . number_format($econMensalComLimp, 2, ',', '.'), 0, 'L'); $y_coord += $line_height;
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Economia Mensal Estimada (Módulos Sujos - perda F6=" . ($perdageracao_f6*100) . "%): R$ " . number_format($econMensalSemLimp, 2, ',', '.'), 0, 'L'); $y_coord += $line_height;
-    $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Ganho Mensal com a Limpeza: R$ " . number_format($econDiferenca, 2, ',', '.'), 0, 'L'); $y_coord += $line_height * 1.2;
-    $pdf->SetFont('helvetica', '', 10);
-
-    $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "INVESTIMENTO NA LIMPEZA:", 0, 'L'); $y_coord += $line_height;
-    $pdf->SetFont('helvetica', '', 10);
-
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Custo por Limpeza Avulsa: R$ " . number_format($custototal_B15, 2, ',', '.'), 0, 'L'); $y_coord += $line_height;
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Payback (1 Limpeza): " . $payback1limpeza_text, 0, 'L'); $y_coord += $line_height * 1.2;
-
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Pacote 3 Limpezas: " . $custo3limpezas_text, 0, 'L'); $y_coord += $line_height;
-    $pdf->SetXY($x_coord, $y_coord); $pdf->MultiCell(160, $line_height, "Payback (Pacote 3 Limpezas, valor 1ª parc.): " . $payback3limpezas_text, 0, 'L'); $y_coord += $line_height;
-
     // Data atual no canto inferior direito
-    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->SetFont('helvetica', 'B', 14);
     $pdf->SetXY(175, 280); // Ajuste Y se necessário
     $pdf->Cell(0, 10, $dataAtual, 0, 0, 'R');
 
@@ -190,7 +156,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (file_exists('PL4.png')) {
         $pdf->AddPage(); $pdf->Image('PL4.png', 0, 0, 210, 297, '', '', '', false, 300, '', false, false, 0);
     }
+    
+    $pdf->SetXY(18.4, 71); $pdf->MultiCell(160, $line_height,"Cliente: " .$nome, 0, 'L'); $y_coord += $line_height;
+    $pdf->SetXY(18.4,78); $pdf->MultiCell(160, $line_height,$qtdmodulos." módulos, ". $potmodulos_Wp ." Wp, de ". $potenciaTotalSistemaKWp."kWp", 0, 'L'); $y_coord += $line_height * 1.2;
+    $pdf->SetXY(18.4, 85); $pdf->MultiCell(160, $line_height,"Endereço: " .$endereco, 0, 'L'); $y_coord += $line_height;
+    $pdf->SetXY(18.4,92); $pdf->MultiCell(160, $line_height,"Cidade: " .$cidade, 0, 'L'); $y_coord += $line_height * 1.2;
 
+    $pdf->SetXY(18.4, 115); $pdf->MultiCell(160, $line_height, "Custo por Limpeza Avulsa: R$ " . number_format($custototal_B15, 2, ',', '.'), 0, 'L'); $y_coord += $line_height;
+    $pdf->SetXY(18.4, 122); $pdf->MultiCell(160, $line_height, "Payback (1 Limpeza): " . $payback1limpeza_text, 0, 'L'); $y_coord += $line_height * 1.2;
+    $pdf->SetXY(18.4, 129); $pdf->MultiCell(160, $line_height, "Pacote 3 Limpezas: " . $custo3limpezas_text, 0, 'L'); $y_coord += $line_height;
+    $pdf->SetXY(18.4, 136); $pdf->MultiCell(160, $line_height, "Payback (Pacote 3 Limpezas, valor 1ª parc.): " . $payback3limpezas_text, 0, 'L'); $y_coord += $line_height;
+    
+    $pdf->SetXY(18.4, 196); $pdf->MultiCell(160, $line_height,"Aderindo ao pacote de três limpezas anuais, além da manutenção preventiva, você ganhará o monitoramento online completo do seu sistema durante 1 ano!", 2, false); 
+
+    $pdf->SetXY(18.4, 159); $pdf->MultiCell(160, $line_height,"Economia mensal do sistema SEM limpeza: R$ " .number_format($econMensalComLimp, 2, ',', '.'), 0, 'L'); $y_coord += $line_height;
+    $pdf->SetXY(18.4, 166); $pdf->MultiCell(160, $line_height,"Economia mensal do sistema COM limpeza: R$ " .number_format($econMensalSemLimp, 2, ',', '.'), 0, 'L'); $y_coord += $line_height;
+    $pdf->SetXY(18.4, 173); $pdf->MultiCell(160, $line_height,"Diferença na economia mensal do sistema: R$ " .number_format($econDiferenca, 2, ',', '.'), 0, 'L'); $y_coord += $line_height * 1.2;
     $nomeArquivoLimpo = preg_replace('/[^A-Za-z0-9_\-]/', '_', $nome);
     $pdf->Output("Proposta_Limpeza_Modulos_{$nomeArquivoLimpo}.pdf", 'I');
 
