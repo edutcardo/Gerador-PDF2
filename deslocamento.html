@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Custo de Deslocamento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: none; /* Hidden by default */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl w-full max-w-lg">
+        <h1 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-6">
+            Calcular Custo de Deslocamento
+        </h1>
+        <p class="text-sm text-gray-600 mb-4 text-center">
+            Este formulário calcula o custo de deslocamento a partir de Maringá-PR.
+            Insira o nome da cidade de destino. Você pode incluir o estado (ex: "São Paulo - SP").
+        </p>
+
+        <div class="space-y-4">
+            <div>
+                <label for="cidade_destino" class="block text-sm font-medium text-gray-700 mb-1">
+                    Cidade de Destino:
+                </label>
+                <input type="text" id="cidade_destino" name="cidade_destino"
+                       class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                       placeholder="Ex: Londrina - PR ou Curitiba">
+            </div>
+
+            <button id="calcular_btn"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out flex items-center justify-center space-x-2">
+                <span>Calcular Deslocamento</span>
+                <div id="loader" class="loader"></div>
+            </button>
+        </div>
+
+        <div id="resultado_div" class="mt-6 p-4 bg-gray-50 rounded-lg shadow min-h-[80px] text-gray-700">
+            <p class="text-center text-gray-500">Insira uma cidade e clique em calcular para ver o resultado.</p>
+        </div>
+
+        <div id="error_message_div" class="mt-4 p-3 bg-red-100 text-red-700 rounded-lg shadow hidden">
+            </div>
+
+    </div>
+
+    <script>
+        // Seleciona os elementos do DOM
+        const cidadeInput = document.getElementById('cidade_destino');
+        const calcularBtn = document.getElementById('calcular_btn');
+        const resultadoDiv = document.getElementById('resultado_div');
+        const errorMessageDiv = document.getElementById('error_message_div');
+        const loader = document.getElementById('loader');
+
+        // URL do seu script PHP. Certifique-se de que este caminho está correto.
+        // Se o arquivo PHP estiver na mesma pasta que este HTML, o nome do arquivo é suficiente.
+        const phpScriptUrl = 'gerar_pdf_limpeza.php'; // ATENÇÃO: AJUSTE ESTE CAMINHO SE NECESSÁRIO
+
+        calcularBtn.addEventListener('click', async () => {
+            const cidade = cidadeInput.value.trim();
+
+            // Limpa mensagens anteriores e mostra o loader
+            resultadoDiv.innerHTML = '<p class="text-center text-gray-500">Calculando...</p>';
+            errorMessageDiv.classList.add('hidden');
+            errorMessageDiv.textContent = '';
+            loader.style.display = 'block';
+            calcularBtn.disabled = true;
+
+            if (!cidade) {
+                errorMessageDiv.textContent = 'Por favor, insira o nome da cidade de destino.';
+                errorMessageDiv.classList.remove('hidden');
+                resultadoDiv.innerHTML = '<p class="text-center text-gray-500">Insira uma cidade e clique em calcular para ver o resultado.</p>';
+                loader.style.display = 'none';
+                calcularBtn.disabled = false;
+                return;
+            }
+
+            // Prepara os dados para enviar via POST
+            const formData = new FormData();
+            formData.append('acao', 'simular_deslocamento');
+            formData.append('cidade', cidade);
+
+            try {
+                // Faz a requisição para o script PHP
+                const response = await fetch(phpScriptUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    // Trata erros de HTTP (ex: 404, 500)
+                    throw new Error(`Erro na requisição: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json(); // Espera uma resposta JSON do PHP
+
+                // Processa a resposta do PHP
+                if (data.sucesso) {
+                    resultadoDiv.innerHTML = `
+                        <h3 class="text-lg font-semibold text-green-700 mb-2">Resultado do Cálculo:</h3>
+                        <p><strong>Cidade Consultada:</strong> ${cidade}</p>
+                        <p><strong>Distância Aproximada:</strong> ${data.distancia_km} km</p>
+                        <p><strong>Custo de Deslocamento Estimado:</strong> R$ ${data.custo_deslocamento.toFixed(2).replace('.', ',')}</p>
+                        ${data.mensagem ? `<p class="text-sm text-gray-600 mt-2"><i>Observação: ${data.mensagem}</i></p>` : ''}
+                    `;
+                } else {
+                    // Se o PHP retornar sucesso = false, mostra a mensagem de erro do PHP
+                    errorMessageDiv.textContent = data.mensagem_erro || 'Ocorreu um erro ao calcular o deslocamento.';
+                    errorMessageDiv.classList.remove('hidden');
+                    resultadoDiv.innerHTML = '<p class="text-center text-red-500">Falha ao obter dados.</p>';
+                }
+
+            } catch (error) {
+                // Trata erros de rede ou erros ao processar a resposta
+                console.error('Erro ao simular deslocamento:', error);
+                errorMessageDiv.textContent = `Erro ao conectar com o servidor ou processar a resposta: ${error.message}. Verifique o console para mais detalhes.`;
+                errorMessageDiv.classList.remove('hidden');
+                resultadoDiv.innerHTML = '<p class="text-center text-red-500">Erro na comunicação.</p>';
+            } finally {
+                // Esconde o loader e reabilita o botão
+                loader.style.display = 'none';
+                calcularBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

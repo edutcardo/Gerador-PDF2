@@ -3,94 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário Simplificado</title>
+    <title>Formulário Simplificado com Autocomplete de Cidade</title>
     <style>
+        /* Seu CSS existente - Mantido */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Roboto', sans-serif;
         }
-        a,p { /* Mantido caso queira usar 'a' ou 'p' com esta fonte em algum lugar */
-            font-family: Epilogue !important;
-        }
-
         body {
-            background-color: #f3f4f6;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            background-color: #f3f4f6; color: #333; display: flex;
+            justify-content: center; align-items: center; min-height: 100vh; padding: 20px;
         }
-
         .container {
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 100%;
-            padding: 30px;
-            /* margin-left foi removido pois a sidebar foi eliminada */
+            background: #fff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 600px; width: 100%; padding: 30px;
         }
-
-        h1 {
-            text-align: center;
-            color: #555;
-            margin-bottom: 20px;
+        h1 { text-align: center; color: #555; margin-bottom: 20px; }
+        label { font-weight: 500; margin-bottom: 5px; display: block; color: #555; }
+        input[type="text"], input[type="number"] {
+            width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd;
+            border-radius: 6px; font-size: 14px; color: #333;
         }
-
-        label {
-            font-weight: 500;
-            margin-bottom: 5px;
-            display: block;
-            color: #555;
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none; border-color: #007bff; box-shadow: 0 0 5px rgba(0,123,255,0.3);
         }
-
-        input[type="text"],
-        input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            color: #333;
-        }
-
-        input[type="text"]:focus,
-        input[type="number"]:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-        }
-
         button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
+            background-color: #007bff; color: white; border: none; padding: 12px;
+            width: 100%; border-radius: 6px; font-size: 16px; cursor: pointer;
             transition: background-color 0.3s ease;
         }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
 
-        button:hover {
-            background-color: #0056b3;
+        #simulacaoDeslocamento {
+            margin-top: -15px; margin-bottom: 15px; font-size: 0.9em;
+            color: #555; min-height: 2.5em; padding: 5px 0;
         }
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
+        #simulacaoDeslocamento strong { color: #007bff; }
+        #simulacaoDeslocamento .aviso-simulacao { color: #b07000; font-size: 0.9em; }
+        #simulacaoDeslocamento .erro-simulacao { color: #cc0000; }
+
+        input#cidade[disabled] {
+            cursor: wait;
+            background-color: #f9f9f9;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-        }
+        @media (max-width: 768px) { .container { padding: 20px; } }
     </style>
 </head>
 <body>
@@ -98,7 +58,6 @@
         <h1>Proposta Limpeza Simplificada</h1>
 
         <form id="formulario">
-
             <label for="nome">Nome<b>*</b>:</label>
             <input type="text" id="nome" name="nome" required/>
 
@@ -106,7 +65,9 @@
             <input type="text" id="endereco" name="endereco" required/>
 
             <label for="cidade">Cidade<b>*</b>:</label>
-            <input type="text" id="cidade" name="cidade" required/>
+            <input type="text" id="cidade" name="cidade" placeholder="Digite para buscar a cidade..." list="cidadeSuggestions" autocomplete="off" required/>
+            <datalist id="cidadeSuggestions"></datalist> {/* Elemento para as sugestões */}
+            <div id="simulacaoDeslocamento"></div>
 
             <label for="qtdmodulos">Quantidade de Módulos<b>*</b>:</label>
             <input type="number" id="qtdmodulos" name="qtdmodulos" required/>
@@ -122,67 +83,239 @@
     </div>
 
     <script>
-        function gerarPDF() {
-            const formulario = document.getElementById('formulario');
-            const formData = new FormData(formulario);
+        let debounceTimeoutSimulacao;
+        let debounceTimeoutAutocomplete;
+        const cidadeInput = document.getElementById('cidade');
+        const simulacaoDiv = document.getElementById('simulacaoDeslocamento');
+        const btnGerarPDFElement = document.getElementById('btnGerarPDF');
+        const cidadeSuggestionsDatalist = document.getElementById('cidadeSuggestions');
 
-            // Os campos nome, endereco, cidade, qtdmodulos, potmodulos, precokwh
-            // já são incluídos automaticamente pelo new FormData(formulario)
-            // porque eles têm o atributo 'name'.
+        let allMunicipalities = [];
+        let municipalitiesPromise = null;
 
-            // Opcional: Log para verificar os dados antes de enviar
-            // for (var pair of formData.entries()) {
-            //     console.log(pair[0]+ ': ' + pair[1]);
-            // }
+        function normalizeText(text) {
+            if (!text) return '';
+            return text.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        }
 
-            fetch('https://canalverdedev.com/gerar_pdf_limpeza.php', {
-                method: 'POST',
-                body: formData
-            })
+        async function fetchMunicipalities() {
+            if (municipalitiesPromise) return municipalitiesPromise;
+
+            const url = 'https://raw.githubusercontent.com/kelvins/municipios-brasileiros/refs/heads/main/json/municipios.json';
+            const originalPlaceholder = "Digite o nome da cidade..."; // Salva o placeholder original
+            
+            if (cidadeInput.value === '') {
+                 cidadeInput.placeholder = "Carregando cidades...";
+            }
+            cidadeInput.disabled = true;
+            console.log("Iniciando busca de municípios...");
+
+            municipalitiesPromise = fetch(url)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('A resposta da rede não foi ok: ' + response.statusText);
+                        throw new Error(`Erro HTTP ${response.status} ao buscar municípios.`);
                     }
-                    return response.blob();
+                    return response.json();
                 })
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = url;
-                    
-                    const nomeCliente = formData.get('nome') ? formData.get('nome').trim().replace(/\s+/g, '_') : 'Cliente';
-                    const nomeArquivo = `Proposta_Limpeza_${nomeCliente}.pdf`;
-                    a.download = nomeArquivo;
-                    
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
+                .then(data => {
+                    console.log("Dados brutos recebidos (primeiros 3):", data.slice(0, 3));
+                    let problematicUfCount = 0;
+
+                    allMunicipalities = data.map((mun, index) => {
+                        if (mun.nome === "Loanda") { // Log específico para Loanda
+                            console.log("JS: Processando Loanda (bruto):", mun, "Valor de mun.uf:", mun.uf);
+                        }
+                        let ufValue = ""; // Padrão para UF
+                        if (mun.uf !== undefined && mun.uf !== null) {
+                            ufValue = String(mun.uf).trim();
+                        } else {
+                            problematicUfCount++;
+                            if (problematicUfCount < 10) {
+                                console.warn(`JS: UF problemático (undefined, null) para mun[${index}]: Nome='${mun.nome}'`, mun);
+                            }
+                        }
+                        return {
+                            nome: mun.nome,
+                            uf: ufValue 
+                        };
+                    });
+
+                    if (problematicUfCount > 0) {
+                        console.warn(`JS: Encontrados ${problematicUfCount} municípios com UF indefinido ou nulo no JSON original.`);
+                    }
+                    console.log(`JS: Municípios processados e mapeados: ${allMunicipalities.length}.`);
+                    console.log("JS: allMunicipalities (primeiros 3 processados):", allMunicipalities.slice(0,3));
+
+                    cidadeInput.placeholder = originalPlaceholder;
+                    cidadeInput.disabled = false;
+                    //cidadeInput.focus(); // Pode ser removido para não ser intrusivo
+                    return allMunicipalities;
                 })
                 .catch(error => {
-                    console.error('Erro ao gerar PDF:', error);
-                    alert('Ocorreu um erro ao gerar o PDF: ' + error.message);
+                    console.error("JS: Falha ao carregar ou processar lista de municípios:", error);
+                    cidadeInput.placeholder = "Erro ao carregar cidades. Tente novamente.";
+                    cidadeInput.disabled = false;
+                    allMunicipalities = [];
+                    municipalitiesPromise = null;
+                    return [];
                 });
+            return municipalitiesPromise;
+        }
+
+        function displaySuggestions(inputValue) {
+            if (!cidadeSuggestionsDatalist || allMunicipalities.length === 0) return;
+
+            cidadeSuggestionsDatalist.innerHTML = '';
+            if (inputValue.length < 3) return;
+
+            const normalizedInput = normalizeText(inputValue);
+            let count = 0;
+            for (let i = 0; i < allMunicipalities.length && count < 15; i++) {
+                const mun = allMunicipalities[i];
+                if (normalizeText(mun.nome).includes(normalizedInput)) {
+                    const option = document.createElement('option');
+                    option.value = mun.nome + (mun.uf && mun.uf !== "" ? ` - ${mun.uf}` : '');
+                    // option.textContent = mun.nome + (mun.uf && mun.uf !== "" ? ` (${mun.uf})` : ''); // Para navegadores que suportam mostrar textContent no datalist
+                    cidadeSuggestionsDatalist.appendChild(option);
+                    count++;
+                }
+            }
+        }
+        
+        if (cidadeInput) {
+            cidadeInput.addEventListener('focus', async () => {
+                if (allMunicipalities.length === 0 && !municipalitiesPromise) {
+                    console.log("JS: Foco no campo cidade, iniciando carregamento de municípios se necessário.");
+                    await fetchMunicipalities();
+                }
+            }, { once: true });
+
+            cidadeInput.addEventListener('input', () => {
+                const inputText = cidadeInput.value;
+                
+                clearTimeout(debounceTimeoutAutocomplete);
+                debounceTimeoutAutocomplete = setTimeout(() => {
+                    if (allMunicipalities.length > 0) {
+                        displaySuggestions(inputText);
+                    } else if (!municipalitiesPromise) {
+                        console.log("JS: Input no campo cidade, municípios não carregados, tentando carregar...");
+                        fetchMunicipalities().then(() => displaySuggestions(inputText));
+                    } else {
+                         console.log("JS: Input no campo cidade, municípios ainda carregando ou falha no carregamento.");
+                    }
+                }, 300);
+
+                clearTimeout(debounceTimeoutSimulacao);
+                if (inputText.length >= 3) {
+                    debounceTimeoutSimulacao = setTimeout(simularDeslocamento, 800);
+                } else {
+                    if(simulacaoDiv) simulacaoDiv.innerHTML = '';
+                }
+            });
+        }
+
+        async function simularDeslocamento() {
+            if (!cidadeInput || !simulacaoDiv) return;
+            const cidade = cidadeInput.value.trim();
+
+            if (cidade.length < 3) {
+                simulacaoDiv.innerHTML = '';
+                return;
+            }
+            simulacaoDiv.innerHTML = '<em>Calculando deslocamento...</em>';
+            try {
+                const formData = new FormData();
+                formData.append('cidade', cidade);
+                formData.append('acao', 'simular_deslocamento');
+
+                const response = await fetch('https://canalverdedev.com/gerar_pdf_limpeza.php', {
+                    method: 'POST', body: formData
+                });
+                
+                const responseText = await response.text(); // Lê a resposta como texto primeiro
+                if (!response.ok) {
+                    console.error('JS: Erro na resposta da simulação (texto):', response.status, responseText);
+                    throw new Error(`Erro na rede: ${response.status} ${response.statusText}. Detalhes: ${responseText.substring(0,100)}`);
+                }
+                
+                try {
+                    const data = JSON.parse(responseText); // Tenta parsear o texto como JSON
+                    if (data.sucesso) {
+                        let htmlResult = `Custo de deslocamento estimado: <strong>R$ ${data.custo_deslocamento.toFixed(2).replace('.', ',')}</strong>`;
+                        if (data.distancia_km > 0) htmlResult += ` (${data.distancia_km.toFixed(1).replace('.', ',')} km).`;
+                        if (data.mensagem && data.mensagem.toLowerCase() !== 'cálculo ok' && data.mensagem.trim() !== '') {
+                             htmlResult += `<br><small class="aviso-simulacao">Aviso: ${data.mensagem}</small>`;
+                        }
+                        simulacaoDiv.innerHTML = htmlResult;
+                    } else { 
+                        simulacaoDiv.innerHTML = `<span class="erro-simulacao">Não foi possível estimar: ${data.mensagem_erro || 'Tente incluir a UF (ex: Cidade/UF)'}.</span><br>Custo padrão (no PDF): R$ ${data.custo_deslocamento.toFixed(2).replace('.', ',')}`;
+                    }
+                } catch (e) { // Erro ao parsear JSON
+                    console.error('JS: Erro ao parsear JSON da simulação:', e);
+                    console.error('JS: Resposta do servidor que causou o erro de JSON:', responseText.substring(0, 500)); // Loga parte da resposta
+                    simulacaoDiv.innerHTML = '<span class="erro-simulacao">Erro de comunicação (resposta inesperada do servidor). Verifique os logs do PHP.</span>';
+                }
+            } catch (error) {
+                 console.error('JS: Erro na função simularDeslocamento:', error);
+                 simulacaoDiv.innerHTML = `<span class="erro-simulacao">Erro ao simular: ${error.message}</span>`;
+            }
+        }
+
+        function gerarPDF() {
+            const formulario = document.getElementById('formulario');
+            if (!formulario || !btnGerarPDFElement) return;
+            const formData = new FormData(formulario);
+            btnGerarPDFElement.disabled = true; btnGerarPDFElement.textContent = 'Gerando PDF...';
+            
+            fetch('https://canalverdedev.com/gerar_pdf_limpeza.php', {
+                method: 'POST', body: formData
+            })
+            .then(async response => { // Tornar esta callback async para usar await
+                if (!response.ok) {
+                    const errorText = await response.text(); // Lê o texto do erro
+                    console.error("JS: Resposta de erro do servidor (PDF):", errorText.substring(0, 500));
+                    throw new Error(`Falha ao gerar PDF: ${response.status} ${response.statusText}.`);
+                }
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/pdf") !== -1) {
+                    return response.blob();
+                } else { 
+                    const unexpectedText = await response.text(); // Lê o texto inesperado
+                    console.error("JS: Resposta inesperada do servidor (esperava PDF):", unexpectedText.substring(0,500));
+                    throw new Error("Resposta inesperada do servidor. Esperava um PDF e recebeu: " + (contentType || "sem content-type"));
+                }
+            })
+            .then(blob => { 
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.style.display = 'none'; a.href = url;
+                const nomeCliente = formData.get('nome') ? formData.get('nome').trim().replace(/\s+/g, '_') : 'Cliente';
+                a.download = `Proposta_Limpeza_${nomeCliente}.pdf`;
+                document.body.appendChild(a); a.click();
+                window.URL.revokeObjectURL(url); document.body.removeChild(a);
+            })
+            .catch(error => { console.error('JS: Erro ao gerar PDF:', error); alert('Ocorreu um erro ao gerar o PDF: ' + error.message); })
+            .finally(() => {
+                if(btnGerarPDFElement) { btnGerarPDFElement.textContent = 'Gerar PDF'; }
+                 verificarFormulario();
+            });
         }
 
         function verificarFormulario() {
             const formulario = document.getElementById('formulario');
-            const btnGerarPDF = document.getElementById('btnGerarPDF');
-            
-            // Verifica se todos os campos requeridos no formulário estão preenchidos
-            if (formulario.checkValidity()) {
-                btnGerarPDF.disabled = false;
-            } else {
-                btnGerarPDF.disabled = true;
+            if (formulario && btnGerarPDFElement) {
+                if (formulario.checkValidity() && btnGerarPDFElement.textContent === 'Gerar PDF') {
+                    btnGerarPDFElement.disabled = false;
+                } else if (btnGerarPDFElement.textContent !== 'Gerando PDF...') {
+                    btnGerarPDFElement.disabled = true;
+                }
             }
         }
 
-        // Adiciona ouvintes de evento para verificar o formulário em cada mudança
-        document.getElementById('formulario').addEventListener('input', verificarFormulario);
-        document.getElementById('formulario').addEventListener('change', verificarFormulario); // Para selects, se houver no futuro
-
-        // Verifica o formulário ao carregar a página
+        const formElement = document.getElementById('formulario');
+        if (formElement) {
+            formElement.addEventListener('input', verificarFormulario);
+            formElement.addEventListener('change', verificarFormulario);
+        }
         window.onload = function() {
             verificarFormulario();
         };
