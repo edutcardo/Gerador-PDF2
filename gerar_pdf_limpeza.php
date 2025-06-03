@@ -2,6 +2,11 @@
 // Certifique-se de que o autoload do TCPDF está correto
 require_once('vendor/autoload.php');
 
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+
+
 // --- CONFIGURAÇÕES DE DEBUG E ERRO ---
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
