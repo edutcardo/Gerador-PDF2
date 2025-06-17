@@ -405,7 +405,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else if ($bancoat == 'sicredi') {
                 $bancoatdig = 'SICREDI';
                             } else if ($bancoat == 'particular') {
-                $bancoatdig = 'Particular';
+                $bancoatdig = 'com banco particular (escolhido pelo cliente)';
             }else{
             }
 
