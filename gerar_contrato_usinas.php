@@ -276,11 +276,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
                     “DISTRIBUIDORA”.
                 </p>
-                <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privado, inscrita 
-                    no CNPJ sob o n.° 32.608.889/0001-80, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - 
+                <p><strong>CANAL VERDE GESTAO DE EMPREENDIMENTOS LTDA CNPJ</strong>, pessoa jurídica de direito privado, inscrita 
+                    no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR -
                     CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.
                 </p>';
-                $cnpjEstado = '<strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>';
+                $cnpjEstado = '<strong>CANAL VERDE GESTAO DE EMPREENDIMENTOS LTDA</strong>';
                 $complemento = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             } else if ($modalidade == "investimento") {
                 $prazo = 120;
@@ -303,11 +303,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     Maringá/PR - CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada 
                     “DISTRIBUIDORA”.
                 </p>
-                <p><strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>, pessoa jurídica de direito privado, inscrita 
-                    no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR - 
+                <p><strong>CANAL VERDE GESTAO DE EMPREENDIMENTOS LTDA CNPJ</strong>, pessoa jurídica de direito privado, inscrita 
+                    no CNPJ sob o n.° 35.067.916/0001-43, com sede na Av. Colombo, n.º 5088, zona 07, na cidade de Maringá/PR -
                     CEP 87.030-121, representada neste ato por seu representante legal, doravante denominada “CONTRATADA”.
                 </p>';
-                $cnpjEstado = '<strong>NEO MARINGÁ ENGENHARIA ELÉTRICA LTDA</strong>';
+                $cnpjEstado = '<strong>CANAL VERDE GESTAO DE EMPREENDIMENTOS LTDA</strong>';
             }
             $cidadeComarca = 'Maringá - PR';
             break;
@@ -404,6 +404,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $bancoatdig = 'SICOOB';
             } else if ($bancoat == 'sicredi') {
                 $bancoatdig = 'SICREDI';
+                            } else if ($bancoat == 'particular') {
+                $bancoatdig = 'Particular';
             }else{
             }
 
@@ -422,6 +424,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $htmlContent .= '<p>';
             $htmlContent .= '<b>' . $valor_formatado . ', </b>';
             $htmlContent .= 'que será pago através de <b>financiamento bancário '.$bancoatdig.'</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo banco. A transferência deverá ser efetuada para a instituição bancária SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ/PIX sob o n.º 49.348.620/0001-05.';
+            $htmlContent .= '</p>';
+                    } elseif ($formaPag === 'personalizado') {
+            $htmlContent .= '<p>';
+            $htmlContent .= '<b>' . $valor_formatado . ', </b>';
+            $htmlContent .= 'que será pago através de <b>boleto bancário</b>, com vencimento para <b>' . $dataPagamento . ', </b>';
+            $htmlContent .= 'para à instituição financeira SICOOB (banco 756),';
+            $htmlContent .= ' Agência: 4340-0,';
+            $htmlContent .= ' Conta Corrente: 299.832-7, pertencente à <b>Palladium Importadora de Equipamentos Ltda</b>, 
+            inscrita no CNPJ/PIX nº 49.348.620/0001-05. ';
+            $htmlContent .= '</p>';
+                    } elseif ($formaPag === 'entrada') {
+            $htmlContent .= '<p>';
+            $htmlContent .= '<b>' . $valor_formatado . ', </b>';
+            $htmlContent .= 'que será pago como <b>entrada</b>, com vencimento para <b>' . $dataPagamento . ', </b>';
+            $htmlContent .= 'para à instituição financeira SICOOB (banco 756),';
+            $htmlContent .= ' Agência: 4340-0,';
+            $htmlContent .= ' Conta Corrente: 299.832-7, pertencente à <b>Palladium Importadora de Equipamentos Ltda</b>, 
+            inscrita no CNPJ/PIX nº 49.348.620/0001-05. ';
             $htmlContent .= '</p>';
         } elseif ($formaPag === 'cartao') {
             $htmlContent .= '<p>';
