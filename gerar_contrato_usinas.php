@@ -404,7 +404,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $bancoatdig = 'SICOOB';
             } else if ($bancoat == 'sicredi') {
                 $bancoatdig = 'SICREDI';
-                            } else if ($bancoat == 'particular') {
+            } else if ($bancoat == 'bradesco') {
+                $bancoatdig = 'BRADESCO';
+            } else if ($bancoat == 'bvfinanceira') {
+                $bancoatdig = 'BV Financeira S.A.';
+            } else if ($bancoat == 'particular') {
                 $bancoatdig = 'com banco particular (escolhido pelo cliente)';
             }else{
             }
