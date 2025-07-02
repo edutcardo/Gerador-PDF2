@@ -429,7 +429,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $htmlContent .= '<b>' . $valor_formatado . ', </b>';
             $htmlContent .= 'que será pago através de <b>financiamento bancário '.$bancoatdig.'</b>. O CONTRATANTE deverá efetuar o repasse total do valor em até <b>03 (três) dias</b> após a liberação dos recursos pelo banco. A transferência deverá ser efetuada para a instituição bancária SICOOB (banco 756), Agência 4340-0, Conta Corrente 299.832-7, em nome de <b>Palladium Importadora de Equipamentos Ltda</b>, inscrita no CNPJ/PIX sob o n.º 49.348.620/0001-05.';
             $htmlContent .= '</p>';
-                    } elseif ($formaPag === 'personalizado') {
+        } elseif ($formaPag === 'personalizado') {
             $htmlContent .= '<p>';
             $htmlContent .= '<b>' . $valor_formatado . ', </b>';
             $htmlContent .= 'que será pago através de <b>boleto bancário</b>, com vencimento para <b>' . $dataPagamento . ', </b>';
@@ -438,7 +438,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $htmlContent .= ' Conta Corrente: 299.832-7, pertencente à <b>Palladium Importadora de Equipamentos Ltda</b>, 
             inscrita no CNPJ/PIX nº 49.348.620/0001-05. ';
             $htmlContent .= '</p>';
-                    } elseif ($formaPag === 'entrada') {
+        } elseif ($formaPag === 'pix') {
+            $htmlContent .= '<p>';
+            $htmlContent .= '<b>' . $valor_formatado . ', </b>';
+            $htmlContent .= 'que será pago através de <b>PIX</b>, com vencimento para <b>' . $dataPagamento . ', </b>';
+            $htmlContent .= 'para à instituição financeira SICOOB (banco 756),';
+            $htmlContent .= ' Agência: 4340-0,';
+            $htmlContent .= ' Conta Corrente: 299.832-7, pertencente à <b>Palladium Importadora de Equipamentos Ltda</b>, 
+            inscrita no CNPJ/PIX nº 49.348.620/0001-05. ';
+            $htmlContent .= '</p>';
+        } elseif ($formaPag === 'entrada') {
             $htmlContent .= '<p>';
             $htmlContent .= '<b>' . $valor_formatado . ', </b>';
             $htmlContent .= 'que será pago como <b>entrada</b>, com vencimento para <b>' . $dataPagamento . ', </b>';
