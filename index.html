@@ -310,7 +310,7 @@
             <input type="text" id="cidade" name="cidade" oninput="buscarIrradiacao()" required/>
 
             <label for="irradiacao" class="readonly">Irradiação:</label>
-            <input type="text" id="irradiacao" name="irradiacao" readonly  class="readonly"required/>
+            <input type="text" id="irradiacao" name="irradiacao" />
 
             <label for="uc">Unidade Consumidora<b>*</b>:</label>
             <input type="text" id="uc" name="uc" required/>
@@ -389,16 +389,16 @@
             <input type="text" id="potenciaInversor" name="potenciaInversor" readonly  class="readonly"/>
 
             <label for="potenciaModulo" class="readonly">Potência do Módulo:</label>
-            <input type="text" id="potenciaModulo" name="potenciaModulo" readonly  class="readonly"/>
+            <input type="text" id="potenciaModulo" name="potenciaModulo" />
 
             <label for="tensaoSaida" class="readonly">Tensão de Saída:</label>
-            <input type="text" id="tensaoSaida" name="tensaoSaida" readonly  class="readonly"/>
+            <input type="text" id="tensaoSaida" name="tensaoSaida" />
 
             <label for="componentes" class="readonly">Componentes:</label>
-            <input type="text" id="componentes" name="componentes" readonly  class="readonly"/>
+            <input type="text" id="componentes" name="componentes" />
 
             <label for="potenciaGerador" class="readonly">Potência do Gerador:</label>
-            <input type="text" id="potenciaGerador" name="potenciaGerador" readonly  class="readonly"/>
+            <input type="text" id="potenciaGerador" name="potenciaGerador" />
 
             <button type="button" onclick="gerarPDF()" id="btnGerarPDF" disabled>Gerar PDF</button>
         </form>
