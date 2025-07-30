@@ -1035,14 +1035,6 @@ $pdf->Text(172, 220, "$ROI_formatado");
         $x += $barWidth + $gap;
     }
 
-    // Sétima Página (com a imagem undo.jpeg)
-    $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV7.png', 0, 0, 210, 297);
-    
-    // Definir fonte e adicionar conteúdo à sétima página
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-
     // Nona Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCV9.png', 0, 0, 210, 297);
