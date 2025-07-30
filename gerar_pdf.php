@@ -65,23 +65,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     function calcularMargemEComissao($potenciaGerador) {
         $margem = 0;
         $comissao = 0;
-    
-        if ($potenciaGerador >= 0 && $potenciaGerador <= 20) {
-            $margem = 1.4786325;
-            $comissao = 0.07;
+        $mobra = 0;
+
+        if ($potenciaGerador >= 0 && $potenciaGerador < 20) {
+            $margem = 1.4816930;
             $mobra = 136.76;
-        } elseif ($potenciaGerador > 20 && $potenciaGerador <= 60) {
-            $margem = 1.4537815;
-            $comissao = 0.07;
+            $comissao = 0.07; // Original
+        } elseif ($potenciaGerador >= 20 && $potenciaGerador < 60) {
+            $margem = 1.4589524;
             $mobra = 134.46;
-        } elseif ($potenciaGerador > 60 && $potenciaGerador <= 114) {
-            $margem = 1.3643089;
-            $comissao = 0.06;
+            $comissao = 0.07; // Original
+        } elseif ($potenciaGerador >= 60 && $potenciaGerador < 114) {
+            $margem = 1.3667618;
             $mobra = 250.45;
-        } elseif ($potenciaGerador > 114) {
+            $comissao = 0.06; // Original
+        } elseif ($potenciaGerador >= 114) {
             $margem = 1.3213386;
-            $comissao = 0.05;
             $mobra = 242.52;
+            $comissao = 0.05; // Original
         }
     
         return [
