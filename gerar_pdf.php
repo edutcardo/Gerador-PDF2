@@ -308,10 +308,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
     
-    $pdf->Text(90.5, 157.9, "$metrosOcupados m²");
+    $pdf->Text(92, 157.9, "$metrosOcupados m²");
     $pdf->Text(99, 164.70, "$qtdmodulosArredondado Placas");
-    $pdf->Text(63, 171, "$potenciaGerador kWp");
-    $pdf->Text(61.5, 178, "$media kWh");
+    $pdf->Text(63.7, 171, "$potenciaGerador kWp");
+    $pdf->Text(61.7, 178.2, "$media kWh");
     $pdf->Text(60.7, 185, "$geracao kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
@@ -402,56 +402,65 @@ $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
 
-    $componentes = html_entity_decode($componentes);
-    $componentes = str_replace(
-        ["<\/th>", "<\/td>", "<\/tr>", "<\/table>"], 
-        ["</th>", "</td>", "</tr>", "</table>"], 
-        $componentes
-    );
+    $pdf->Text(23, 180, "INCLUSO MATERIAL ELÉTRICO");
+    $pdf->Text(23, 188, "INCLUSO PROJETO SOLAR FOTOVOLTAICO");
+    $pdf->Text(23, 196, "INCLUSO ART DE PROJETO E EXECUÇÃO");
+    $pdf->Text(23, 204, "INCLUSO ACOMPANHAMENTO JUNTO A CONCESSIONÁRIA LOCAL");
+    $pdf->Text(23, 212, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
+    $pdf->Text(23, 220, "1 INVERSOR 220V CHINT/SAJ " . round($potenciaInversor) . " KW");
+    $pdf->Text(23, 228, "ESTRUTURA DE FIXAÇÃO");
+
+
+    // $componentes = html_entity_decode($componentes);
+    // $componentes = str_replace(
+    //     ["<\/th>", "<\/td>", "<\/tr>", "<\/table>"], 
+    //     ["</th>", "</td>", "</tr>", "</table>"], 
+    //     $componentes
+    // );
     
-    // Extrair os dados da tabela
-    preg_match_all('/<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>/', $componentes, $matches, PREG_SET_ORDER);
+    // // Extrair os dados da tabela
+    // preg_match_all('/<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>/', $componentes, $matches, PREG_SET_ORDER);
     
-    // Ajuste na altura da descrição
-    $y = 176; // Posição inicial Y
-    $linhaAltura = 8; // Altura de cada linha no PDF
-    $larguraDescricao = 180; // Ajuste para a largura da descrição
-    $larguraQuantidade = 20; // Ajuste para a largura da quantidade
-    $maxY = 280; // Limite Y da página
+    // // Ajuste na altura da descrição
+    // $y = 176; // Posição inicial Y
+    // $linhaAltura = 8; // Altura de cada linha no PDF
+    // $larguraDescricao = 180; // Ajuste para a largura da descrição
+    // $larguraQuantidade = 20; // Ajuste para a largura da quantidade
+    // $maxY = 280; // Limite Y da página
     
-    // Função para adicionar uma nova página se necessário
-    function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
-        if ($y + $linhaAltura > $maxY) {
-            $pdf->AddPage(); // Adiciona uma nova página
-            return 10; // Reseta a posição Y após a nova página
-        }
-        return $y;
-    }
+    // // Função para adicionar uma nova página se necessário
+    // function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
+    //     if ($y + $linhaAltura > $maxY) {
+    //         $pdf->AddPage(); // Adiciona uma nova página
+    //         return 10; // Reseta a posição Y após a nova página
+    //     }
+    //     return $y;
+    // }
     
-    // Escrever os dados extraídos no PDF
-    if (empty($matches)) {
-        $pdf->Text(10, $y + 3, "Nenhum dado encontrado.");
-    } else {
-        foreach ($matches as $match) {
-            $sku = trim($match[1]);
-            $quantidade = trim($match[2]);
-            $descricao = trim($match[3]);
+    // // Escrever os dados extraídos no PDF
+    // if (empty($matches)) {
+    //     $pdf->Text(10, $y + 3, "Nenhum dado encontrado.");
+    // } else {
+    //     foreach ($matches as $match) {
+    //         $sku = trim($match[1]);
+    //         $quantidade = trim($match[2]);
+    //         $descricao = trim($match[3]);
     
-            // Verificar se há espaço suficiente para escrever na página
-            $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
+    //         // Verificar se há espaço suficiente para escrever na página
+    //         $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
     
-            // Adicionar quantidade, com ajuste para subir um pouco
-            $pdf->SetXY(16, $y - 0.9); // Ajuste para subir um pouco a posição Y
-            $pdf->Cell($larguraQuantidade, $linhaAltura, $quantidade, 0, 0, 'L'); // Alinhamento à esquerda
+    //         // Adicionar quantidade, com ajuste para subir um pouco
+    //         $pdf->SetXY(16, $y - 0.9); // Ajuste para subir um pouco a posição Y
+    //         $pdf->Cell($larguraQuantidade, $linhaAltura, $quantidade, 0, 0, 'L'); // Alinhamento à esquerda
     
-            // Adicionar a descrição com quebra automática de linha
-            $pdf->SetXY(27, $y); // Ajuste a posição X para alinhar a descrição
-            $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0);
+    //         // Adicionar a descrição com quebra automática de linha
+    //         $pdf->SetXY(27, $y); // Ajuste a posição X para alinhar a descrição
+    //         $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0);
     
-            // Atualizar Y para a próxima linha somente após o MultiCell
-            $y += max($linhaAltura, $pdf->GetY() - $y);
-        }
-    }
+    //         // Atualizar Y para a próxima linha somente após o MultiCell
+    //         $y += max($linhaAltura, $pdf->GetY() - $y);
+    //     }
+    // }
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(16, 256, "$textoPadrao");
