@@ -308,7 +308,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
     
-    $pdf->Text(89, 157.9, "$metrosOcupados m²");
+    $pdf->Text(90.5, 157.9, "$metrosOcupados m²");
     $pdf->Text(99, 164.70, "$qtdmodulosArredondado Placas");
     $pdf->Text(63, 171, "$potenciaGerador kWp");
     $pdf->Text(61.5, 178, "$media kWh");
@@ -561,10 +561,10 @@ $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W
     // Definir fonte e adicionar conteúdo à sexta página
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(255, 255, 255);
-    $pdf->Text(90, 50, "$fabricante $potenciaInversor kW");
+    $pdf->Text(90, 50, "$fabricante ". round($potenciaInversor) ." kW");
     $pdf->Text(155, 50, "10 ANOS");
     $pdf->SetFont('helvetica', 'B', 9);
-    $pdf->Text(75,67, "$marca $potenciaModulo W");
+    $pdf->Text(75,67, "$marca ". round($potenciaModulo) ." W");
     $pdf->Text(146, 90, "$valorParcela3Rs");
 
 
