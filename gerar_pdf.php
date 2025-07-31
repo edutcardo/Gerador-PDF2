@@ -308,16 +308,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
     
-
-    $pdf->Text(114, 160, "$metrosOcupados m²");
-    $pdf->Text(99, 166.25, "$qtdmodulosArredondado Placas");
-    $pdf->Text(63, 172.5, "$potenciaGerador kWp");
-    $pdf->Text(61.5, 178.75, "$media kWh");
-    $pdf->Text(57.5, 185, "$geracao kWh");
+    $pdf->Text(92, 157.7, "$metrosOcupados m²");
+    $pdf->Text(99, 164.70, "$qtdmodulosArredondado Placas");
+    $pdf->Text(63, 171, "$potenciaGerador kWp");
+    $pdf->Text(61.5, 178, "$media kWh");
+    $pdf->Text(60.7, 185, "$geracao kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(34, 225.5, "$dataAtual");
-
+    $pdf->Text(21, 225.5, "$dataAtual");
 
     // Segunda Página (com a imagem genérica e gráfico)
     $pdf->AddPage();  // Adiciona a segunda página
@@ -325,59 +323,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
 
-    // Dados para o gráfico
-    $data = [$jan3, $fev3, $mar3, $abr3, $mai3, $jun3, $jul3, $ago3, $set3, $out3, $nov3, $dez3]; // Valores para as barras
-    $labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
+//     // Dados para o gráfico
+//     $data = [$jan3, $fev3, $mar3, $abr3, $mai3, $jun3, $jul3, $ago3, $set3, $out3, $nov3, $dez3]; // Valores para as barras
+//     $labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
 
-    // Definindo as cores para as barras
-    $barColor = [1, 133, 56];  // Cor Verde Canal
+//     // Definindo as cores para as barras
+//     $barColor = [1, 133, 56];  // Cor Verde Canal
 
-    // Posições e tamanho do gráfico
-    $x = 23;  // Posição X para o gráfico
-    $y = 260; // Posição Y para o gráfico (mais para baixo na página)
-    $barWidth = 5; // Largura das barras
-    $gap = 15;  // Distância entre as barras
-    $maxBarHeight = 40; // Altura máxima do gráfico (limite)
+//     // Posições e tamanho do gráfico
+//     $x = 23;  // Posição X para o gráfico
+//     $y = 260; // Posição Y para o gráfico (mais para baixo na página)
+//     $barWidth = 5; // Largura das barras
+//     $gap = 15;  // Distância entre as barras
+//     $maxBarHeight = 40; // Altura máxima do gráfico (limite)
 
-    // Determinando o maior valor para escalar as barras
-    $maxValue = max($data);
+//     // Determinando o maior valor para escalar as barras
+//     $maxValue = max($data);
 
-    // Desenhar a moldura ao redor do gráfico
-    $molduraX = $x - 5; // Ajuste para começar um pouco antes das barras
-    $molduraY = $y - $maxBarHeight - 7; // Ajuste para incluir espaço acima das barras
-    $molduraWidth = count($data) * $gap; // Largura total baseada no número de barras e espaçamento
-    $molduraHeight = $maxBarHeight + 10; // Altura total (incluindo margem superior e inferior)
+//     // Desenhar a moldura ao redor do gráfico
+//     $molduraX = $x - 5; // Ajuste para começar um pouco antes das barras
+//     $molduraY = $y - $maxBarHeight - 7; // Ajuste para incluir espaço acima das barras
+//     $molduraWidth = count($data) * $gap; // Largura total baseada no número de barras e espaçamento
+//     $molduraHeight = $maxBarHeight + 10; // Altura total (incluindo margem superior e inferior)
 
-    $pdf->SetDrawColor(0, 0, 0); // Cor da moldura (preto)
-    $pdf->SetLineWidth(0.006); // Espessura da linha da moldura
-    $pdf->Rect($molduraX, $molduraY, $molduraWidth, $molduraHeight, 'D'); // 'D' para apenas desenhar a linha
+//     $pdf->SetDrawColor(0, 0, 0); // Cor da moldura (preto)
+//     $pdf->SetLineWidth(0.006); // Espessura da linha da moldura
+//     $pdf->Rect($molduraX, $molduraY, $molduraWidth, $molduraHeight, 'D'); // 'D' para apenas desenhar a linha
 
 
-    // Desenhando as barras e adicionando os valores
-    foreach ($data as $index => $value) {
-    // Calculando a altura proporcional da barra
-    $barHeight = ($value / $maxValue) * $maxBarHeight;
+//     // Desenhando as barras e adicionando os valores
+//     foreach ($data as $index => $value) {
+//     // Calculando a altura proporcional da barra
+//     $barHeight = ($value / $maxValue) * $maxBarHeight;
 
-    // Desenhando cada barra
-    $pdf->SetFillColor(60, 179, 113); // Verde
-    $pdf->Rect($x + ($index * $gap), $y - $barHeight, $barWidth, $barHeight, 'DF'); // Barra
+//     // Desenhando cada barra
+//     $pdf->SetFillColor(60, 179, 113); // Verde
+//     $pdf->Rect($x + ($index * $gap), $y - $barHeight, $barWidth, $barHeight, 'DF'); // Barra
 
-    // Adicionando o valor acima da barra
-    $pdf->SetFont('helvetica', '', 10);
-    $pdf->SetTextColor(0, 0, 0);
-    $valueX = $x + ($index * $gap) + ($barWidth / 2) - 5; // Ajuste para centralizar o texto
-    $valueY = $y - $barHeight - 5; // Ajuste para posicionar acima da barra
-    $pdf->Text($valueX, $valueY, (string)$value); // Adiciona o valor como texto
-}
-    // Adicionando rótulos nas barras
-    $pdf->SetFont('helvetica', '', 10);
-    $pdf->SetTextColor(0, 0, 0);
-    foreach ($labels as $index => $label) {
-        // Centralizar os rótulos horizontalmente e posicionar abaixo das barras
-        $labelX = $x + ($index * $gap) + ($barWidth / 2) - (strlen($label) * 1.5); // Ajuste baseado no comprimento do texto
-        $labelY = $y + 5; // Posição logo abaixo da barra
-        $pdf->Text($labelX, $labelY, $label);
-    }
+//     // Adicionando o valor acima da barra
+//     $pdf->SetFont('helvetica', '', 10);
+//     $pdf->SetTextColor(0, 0, 0);
+//     $valueX = $x + ($index * $gap) + ($barWidth / 2) - 5; // Ajuste para centralizar o texto
+//     $valueY = $y - $barHeight - 5; // Ajuste para posicionar acima da barra
+//     $pdf->Text($valueX, $valueY, (string)$value); // Adiciona o valor como texto
+// }
+//     // Adicionando rótulos nas barras
+//     $pdf->SetFont('helvetica', '', 10);
+//     $pdf->SetTextColor(0, 0, 0);
+//     foreach ($labels as $index => $label) {
+//         // Centralizar os rótulos horizontalmente e posicionar abaixo das barras
+//         $labelX = $x + ($index * $gap) + ($barWidth / 2) - (strlen($label) * 1.5); // Ajuste baseado no comprimento do texto
+//         $labelY = $y + 5; // Posição logo abaixo da barra
+//         $pdf->Text($labelX, $labelY, $label);
+//     }
 
     // Terceira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
