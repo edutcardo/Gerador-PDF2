@@ -131,31 +131,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $valorFixo = calcularFixo($potenciaGerador);
 
-    function calcularParcela($taxa, $nper, $vp, $vf = 0, $tipo = 0) {
-        if ($taxa == 0) {
-            return -($vp + $vf) / $nper;
-        } else {
-            $valorParcela = ($vp * pow(1 + $taxa, $nper) + $vf) * $taxa / ((1 + $taxa * $tipo) * (pow(1 + $taxa, $nper) - 1));
-            return -$valorParcela;
-        }
-    }
-    
-    // Exemplo de uso
-    $taxa = 0.015; // Taxa de juros mensal (1.5% convertido para decimal)
-    $nper = -36;    // Número de períodos
-    $nper2 = -48;    // Número de períodos
-    $nper3 = -60;    // Número de períodos
-    $vp = 36000;   // Valor presente do empréstimo
-    $vf = 0;       // Valor futuro (geralmente 0, se não especificado)
-    $tipo = 0;     // Tipo (0 = fim do período, 1 = início do período)
-    
-    $valorParcela = calcularParcela($taxa, $nper, $vp, $vf, $tipo);
-    $valorParcela2 = calcularParcela($taxa, $nper2, $vp, $vf, $tipo);
-    $valorParcela3 = calcularParcela($taxa, $nper3, $vp, $vf, $tipo);
-    $valorParcelaRs = 'R$ ' . number_format($valorParcela, 2, ',', '.');
-    $valorParcela2Rs = 'R$ ' . number_format($valorParcela2, 2, ',', '.');
-    $valorParcela3Rs = 'R$ ' . number_format($valorParcela3, 2, ',', '.');
-
         // Cálculo do desconto no preço do kit
         if ($desconto == "" || $desconto == "selecione um desconto") {
             $desconto = 1;
@@ -226,6 +201,74 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $precoFinal =(($precoKit * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto ;
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
+
+function calcularParcela_corrigido($taxa, $nper, $vp, $vf = 0, $tipo = 0) {
+    // Define uma alta escala de precisão para os cálculos intermediários
+    bcscale(10);
+
+    // Converte todas as entradas para strings para uso com BCMath
+    $taxa_str = (string)$taxa;
+    $nper_str = (string)abs($nper); // Usa o valor absoluto, pois o número de períodos deve ser positivo
+    $vp_str   = (string)$vp;
+    $vf_str   = (string)$vf;
+
+    // Se a taxa for 0, o cálculo é uma simples divisão
+    if (bccomp($taxa_str, '0') == 0) {
+        $soma_valores = bcadd($vp_str, $vf_str);
+        return bcdiv(bcmul($soma_valores, '-1'), $nper_str, 2);
+    }
+
+    // Implementação da fórmula da Tabela Price (PMT) com BCMath
+    // Fórmula: P = (PV * i) / (1 - (1 + i)^-n)
+    // Para evitar a potência negativa, usamos a forma equivalente: P = (PV * i * (1+i)^n) / ((1+i)^n - 1)
+
+    // 1. (1 + i)
+    $um_mais_i = bcadd('1', $taxa_str);
+
+    // 2. (1 + i)^n
+    $fator_potencia = bcpow($um_mais_i, $nper_str);
+
+    // 3. Numerador: (PV * i * (1+i)^n)
+    $numerador_parcial = bcmul($vp_str, $taxa_str);
+    $numerador = bcmul($numerador_parcial, $fator_potencia);
+
+    // 4. Denominador: ((1+i)^n - 1)
+    $denominador = bcsub($fator_potencia, '1');
+    
+    // Ignora $vf e $tipo por enquanto, pois a fórmula padrão da Tabela Price não os utiliza diretamente
+    // e o seu exemplo usa os valores padrão (0).
+
+    // 5. Cálculo da parcela: Numerador / Denominador
+    $valorParcela = bcdiv($numerador, $denominador, 2); // Arredonda para 2 casas decimais no final
+
+    // Retorna o valor negativo, como na função original
+    return bcmul($valorParcela, '-1', 2);
+    }
+
+    // --- Exemplo de uso com suas variáveis ---
+
+    $taxa = 0.015; // Taxa de juros mensal (1.5%)
+    $vp = $precoFinal;   // Valor presente do empréstimo
+    $vf = 0;       // Valor futuro
+    $tipo = 0;     // Tipo
+
+    // Períodos
+    $nper1 = 36;
+    $nper2 = 48;
+    $nper3 = 60;
+
+    // Cálculo para 36 meses
+    $valorParcela = calcularParcela_corrigido($taxa, $nper1, $vp, $vf, $tipo);
+    $valorParcelaRs = 'R$ '. number_format(abs((float)$valorParcela), 2, ',', '.');
+
+    // Cálculo para 48 meses
+    $valorParcela2 = calcularParcela_corrigido($taxa, $nper2, $vp, $vf, $tipo);
+    $valorParcela2Rs = 'R$ '. number_format(abs((float)$valorParcela2), 2, ',', '.');
+
+    // Cálculo para 60 meses
+    $valorParcela3 = calcularParcela_corrigido($taxa, $nper3, $vp, $vf, $tipo);
+    $valorParcela3Rs = 'R$ '. number_format(abs((float)$valorParcela3), 2, ',', '.');
+
 
     $payback = $precoFinal / $diferencaGastosAno;
     $paybackArredondado = round($payback);
