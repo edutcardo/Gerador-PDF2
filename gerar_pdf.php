@@ -308,7 +308,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
     
-    $pdf->Text(92, 157.7, "$metrosOcupados m²");
+    $pdf->Text(89, 157.9, "$metrosOcupados m²");
     $pdf->Text(99, 164.70, "$qtdmodulosArredondado Placas");
     $pdf->Text(63, 171, "$potenciaGerador kWp");
     $pdf->Text(61.5, 178, "$media kWh");
