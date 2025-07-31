@@ -537,71 +537,83 @@ $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W
 
     $pdf->Text(152, 166, "$paybackArredondado anos");
     $pdf->Text(143, 178, "$retorno25anosRs");
+// ... código anterior
 
-    // Dados do Payback
-    $anos = 25; // Total de anos
+// Dados do Payback
+$anos = 25; // Total de anos
 
-    // Calcular o retorno acumulado ao longo dos anos
-    $dados = [];
-    $retornoAcumulado = 0;
-    for ($ano = 1; $ano <= $anos; $ano++) {
-        $retornoAcumulado += $diferencaGastosAno;
-        $dados[$ano] = $retornoAcumulado - $precoFinal; // Payback acumulado
+// Calcular o retorno acumulado ao longo dos anos
+$dados = [];
+$retornoAcumulado = 0;
+for ($ano = 1; $ano <= $anos; $ano++) {
+    $retornoAcumulado += $diferencaGastosAno;
+    $dados[$ano] = $retornoAcumulado - $precoFinal; // Payback acumulado
+}
+
+// Configurações do gráfico
+$xInicial = 20; // Posição X do gráfico
+$yInicial = 213; // Posição Y do gráfico
+$larguraGrafico = 160; // Largura total do gráfico
+$alturaGrafico = 60; // Altura total do gráfico
+$larguraBarra = 5; // Largura de cada barra
+$espacoEntreBarras = 2; // Espaço entre as barras
+$linhaBase = $yInicial + $alturaGrafico; // Posição da linha base (eixo X)
+
+// Determinar o maior e menor valor
+$min = min($dados);
+$max = max($dados);
+$escalaY = $alturaGrafico / ($max - $min); // Escala de altura por unidade
+
+// Desenhar eixo X e Y
+$pdf->SetDrawColor(0, 0, 0); // Preto
+$pdf->Line($xInicial, $linhaBase, $xInicial + $larguraGrafico, $linhaBase); // Eixo X
+$pdf->Line($xInicial, $linhaBase - $alturaGrafico, $xInicial, $linhaBase); // Eixo Y
+
+// Título do gráfico
+$pdf->SetFont('helvetica', 'B', 12);
+$pdf->Text($xInicial, $yInicial - 10, 'Gráfico de Payback (25 anos)');
+
+// Desenhar as barras do gráfico
+$xPos = $xInicial; // Posição inicial no eixo X
+foreach ($dados as $ano => $valor) {
+    // Calcular altura da barra
+    $barHeight = abs($valor * $escalaY);
+
+    // Determinar a posição Y da barra
+    if ($valor >= 0) {
+        $yBarra = $linhaBase - $barHeight; // Barra positiva
+    } else {
+        $yBarra = $linhaBase; // Barra negativa
     }
 
-    // Configurações do gráfico
-    $xInicial = 20; // Posição X do gráfico
-    $yInicial = 213; // Posição Y do gráfico
-    $larguraGrafico = 160; // Largura total do gráfico
-    $alturaGrafico = 30; // Altura total do gráfico
-    $larguraBarra = 5; // Largura de cada barra
-    $espacoEntreBarras = 2; // Espaço entre as barras
-    $linhaBase = $yInicial + $alturaGrafico; // Posição da linha base (eixo X)
+    // Desenhar barra
+    $pdf->SetFillColor(60, 179, 113); // Verde
+    $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF'); // 'DF' para desenhar e preencher
 
-    // Determinar o maior e menor valor
-    $min = min($dados);
-    $max = max($dados);
-    $escalaY = $alturaGrafico / ($max - $min); // Escala de altura por unidade
+    // Adicionar o ano abaixo da barra
+    $pdf->SetFont('helvetica', '', 8);
+    $pdf->Text($xPos - 1, $linhaBase + 3, (string)$ano);
 
-    // Desenhar eixo X e Y
-    $pdf->SetDrawColor(0, 0, 0); // Preto
-    $pdf->Line($xInicial, $linhaBase, $xInicial + $larguraGrafico, $linhaBase); // Eixo X
-    $pdf->Line($xInicial, $linhaBase - $alturaGrafico, $xInicial, $linhaBase); // Eixo Y
-
-    // Desenhar as barras do gráfico
-    $xPos = $xInicial; // Posição inicial no eixo X
-    foreach ($dados as $ano => $valor) {
-        // Calcular altura da barra
-        $barHeight = abs($valor * $escalaY);
-
-        // Determinar a posição Y da barra
-        if ($valor >= 0) {
-            $yBarra = $linhaBase - $barHeight; // Barra positiva
-        } else {
-            $yBarra = $linhaBase; // Barra negativa
-        }
-
-        // Desenhar barra
-        $pdf->SetFillColor(60, 179, 113); // Verde
-        $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF'); // 'DF' para desenhar e preencher
-
-        // Adicionar o ano abaixo da barra
+    // Adicionar o valor na barra, pulando de 1 em 1 (ou seja, mostrando a cada 2 anos)
+    // A condição `$ano % 2 != 0` verifica se o ano é ímpar (1, 3, 5, etc.)
+    // Se você quisesse pular de 2 em 2, usaria `$ano % 3 == 1`
+    if ($ano % 2 == 1) { // Aqui mudamos a lógica para exibir apenas a cada 2 anos.
         $pdf->SetFont('helvetica', '', 8);
-        $pdf->Text($xPos - 1, $linhaBase + 3, (string)$ano);
-
-        // Adicionar o valor na barra
         $valorTexto = number_format($valor, 0, ',', '.');
         $yTexto = $valor >= 0 ? $yBarra - 5 : $yBarra + $barHeight + 3;
         $pdf->Text($xPos - 2, $yTexto, $valorTexto);
-
-        // Avançar posição X
-        $xPos += $larguraBarra + $espacoEntreBarras;
     }
-
-    // Título do gráfico
-    $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text($xInicial, $yInicial - 10, 'Gráfico de Payback (25 anos)');
     
+    // Avançar posição X
+    $xPos += $larguraBarra + $espacoEntreBarras;
+}
+// --- FIM DA MODIFICAÇÃO ---
+
+
+// Título do gráfico
+$pdf->SetFont('helvetica', 'B', 12);
+$pdf->Text($xInicial, $yInicial - 10, 'Gráfico de Payback (25 anos)');
+
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
