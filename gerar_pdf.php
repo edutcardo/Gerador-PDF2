@@ -390,9 +390,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('pg4.png', 0, 0, 210, 297);
     $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(255, 0, 0);
+$pdf->SetTextColor(0, 100, 0);
 
-    $pdf->Text(148, 43.5, "$qtdmodulosArredondado X $potenciaModulo W");
+$pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
     $pdf->Text(149, 57, "$potenciaGerador kWp");
     $pdf->Text(152, 71.5, "$metrosOcupados m²");
     $pdf->Text(152, 85, "$peso kg");
