@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Cálculos iniciais da proposta
 
-    $geracao = $potenciaGerador * 3.9 * 30;
+    $geracao = $potenciaGerador * 3.72 * 30;
     $qtdmodulos = ($potenciaGerador*1000)/$potenciaModulo;
     $qtdmodulosArredondado = round($qtdmodulos);
     $metrosOcupados = $qtdmodulosArredondado * 2.9;
@@ -147,39 +147,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Condicional do preço do padrão de energia
     switch ($padrao) {
         case "2x50A":
-            $padrao = 2512.88;
+            $padrao = 1453.08;
             $descPadrao = "2x50A";
             break;
         case "3x50A":
-            $padrao = 2941.22;
+            $padrao = 1616.52;
             $descPadrao = "3x50A";
             break;
         case "3x63A":
-            $padrao = 2815.24;
+            $padrao = 1999.65;
             $descPadrao = "3x63A";
             break;
         case "3x80A":
-            $padrao = 3190.17;
+            $padrao = 2978.64;
             $descPadrao = "3x80A";
             break;
         case "3x100A":
-            $padrao = 4870.36;
+            $padrao = 2945.12;
             $descPadrao = "3x100A";
             break;
         case "3x125A":
-            $padrao = 8539.65;
+            $padrao = 4322.44;
             $descPadrao = "3x125A";
             break;
         case "3x150A":
-            $padrao = 10366.42;
+            $padrao = 4952.11;
             $descPadrao = "3x150A";
             break;
         case "3x175A":
-            $padrao = 11279.8;
+            $padrao = 5948.65;
             $descPadrao = "3x175A";
             break;
         case "3x200A":
-            $padrao = 12969.57;
+            $padrao = 6265.52;
             $descPadrao = "3x200A";
             break;
         case "":
