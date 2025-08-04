@@ -454,7 +454,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (!isset($_POST['acao']) || (isset($_
     $pdf->setPrintHeader(false); $pdf->setPrintFooter(false); $pdf->SetMargins(0, 0, 0, true); $pdf->SetAutoPageBreak(FALSE, 0);
 
     // Adiciona as páginas de imagem de fundo
-    $imagens_fundo = ['PL1.png', 'PL2.png', 'PL3.png', 'PL4.png'];
+    $imagens_fundo = ['PL1.png', 'PL3.png', 'PL4.png'];
     foreach ($imagens_fundo as $idx => $img_nome) {
         $pdf->AddPage();
         if (file_exists(__DIR__ . '/' . $img_nome)) { // Verifica se a imagem existe na mesma pasta do script
