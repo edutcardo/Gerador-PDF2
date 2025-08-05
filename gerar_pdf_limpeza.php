@@ -422,7 +422,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (!isset($_POST['acao']) || (isset($_
     elseif ($qtdmodulos <= 500) { $custolimpezamodulo = 4.5; $custofixo = 900; }
     else { $custolimpezamodulo = 4; $custofixo = 1200; } // Para mais de 500 módulos
 
-
     $k6_comissao_val = 0.05; // Comissão de 5%
     $estrutura_j4 = "TELHADO"; // Exemplo, poderia vir do form
     $fator_estrutura_solo = ($estrutura_j4 == "SOLO" ? 1.0 : 1.0); // Ajustar se houver diferença
@@ -475,7 +474,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (!isset($_POST['acao']) || (isset($_
 
     $pdf->SetFont('helvetica', 'B', 10); $pdf->SetXY(175, 280); $pdf->Cell(0, 10, $dataAtual, 0, 0, 'R');
     
-    $pdf->SetFont('helvetica', 'B', 14); $pdf->SetTextColor(255, 255, 255); $line_height = 7;
+    $pdf->SetFont('helvetica', 'B', 14); $pdf->SetTextColor(0,0,0); $line_height = 7;
     
     $pdf->SetXY(18.4, 71); $pdf->MultiCell(170, $line_height,"Cliente: " .$nome, 0, 'L');
     $potenciaTotalSistemaKWp_formatted = number_format($potenciaTotalSistemaKWp, 2, ',', '.');
@@ -494,7 +493,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (!isset($_POST['acao']) || (isset($_
         // Ajustar a altura da MultiCell para o aviso se necessário
         $pdf->MultiCell(170, $line_height - 2, $aviso_deslocamento_pdf, 0, 'L');
         $current_y_pdf += ($line_height - 2);
-        $pdf->SetTextColor(255, 255, 255); // Restaura a cor do texto para branco
+        $pdf->SetTextColor(0,0,0); // Restaura a cor do texto para branco
         $pdf->SetFont('helvetica', 'B', 14); // Restaura a fonte principal
     }
     $current_y_pdf += 1; // Pequeno espaço antes dos custos
