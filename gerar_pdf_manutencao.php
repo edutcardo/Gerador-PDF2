@@ -78,12 +78,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
     
-    // --- CABEÇALHO ---
-    $pdf->SetY(22);
-    $pdf->SetFont('helvetica', 'B', 20);
-    $pdf->Cell(0, 10, 'CANAL VERDE', 0, 1, 'C');
-    $pdf->SetFont('helvetica', '', 11);
-    $pdf->Cell(0, 10, 'COOPERATIVA DE ENERGIAS RENOVÁVEIS', 0, 1, 'C');
 
     // --- TÍTULO DA PROPOSTA ---
     $pdf->SetY(44);
@@ -112,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // --- SEÇÃO VALORES DOS SERVIÇOS ---
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Cell(0, 8, 'Valores dos Serviços', 0, 1, 'C', $desenhar_elementos);
+    $pdf->Cell(0, 30, 'Valores dos Serviços', 0, 1, 'C', $desenhar_elementos);
     $pdf->Ln(2);
 
     $pdf->SetFont('helvetica', 'B', 10);
@@ -142,9 +136,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Cell(50, 10, 'R$ ' . number_format($custo_total, 2, ',', '.'), 1, 1, 'C', $desenhar_elementos);
     
+    $pdf->Ln(10); // Adiciona um espaço antes da nova seção
+$pdf->SetFont('helvetica', 'B', 12);
+$pdf->Cell(0, 8, 'Formas de Pagamento', 0, 1, 'L');
+$pdf->SetFont('helvetica', '', 11);
+$pdf->Cell(0, 7, 'Pagamento via boleto bancário.', 0, 1, 'L');
     // --- CONTATO ---
     // AJUSTE: Valor aumentado para 65 para descer o bloco de contato ao máximo.
-    $pdf->Ln(80); 
+    $pdf->Ln(46); 
     
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Cell(0, 8, 'Entre em Contato', 0, 1, 'C');
