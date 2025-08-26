@@ -7,6 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome = isset($_POST['nome']) ? $_POST['nome'] : 'Informar';
     $endereco = isset($_POST['endereco']) ? $_POST['endereco'] : 'Informar';
     $cidade = isset($_POST['cidade']) ? $_POST['cidade'] : 'Informar';
+    $uf = isset($_POST['uf']) ? $_POST['uf'] : 'Informar'; // <-- ADICIONAR ESTA LINHA
     $uc = isset($_POST['uc']) ? $_POST['uc'] : '0000';
     $media = isset($_POST['media']) && $_POST['media'] !== '' ? floatval($_POST['media']) : 1;
     $iluminacao = $_POST['iluminacao'];
@@ -95,6 +96,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $potenciaGerador = $potenciaGerador * $multiplicador;
     $potenciaInversor = $potenciaInversor * $multiplicador;
     $precoKit = ($precoKit + $precoPlaca) * $multiplicador;
+
+    //     // NOVO CÓDIGO INSERIDO AQUI
+    // // Adicional de custo para projetos em SP com potência específica
+    // if (strtoupper($uf) === 'SP' && $potenciaInversor > 75 && $potenciaInversor <= 350) {
+    //     $precoKit += 290000.00; // Adiciona o valor de R$ 290.000,00 ao preço do kit
+    // }
+    // // FIM DO NOVO CÓDIGO
 
     if ($estrutura === "SOLO") {
 
@@ -427,7 +435,10 @@ function calcularParcela_corrigido($taxa, $nper, $vp, $vf = 0, $tipo = 0) {
 
 
     $precoFinal =(((($precoKit + $opcao_adicional + $transformador) * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto) + $maoObraSolo ;
-    
+    // Adicional de custo para projetos em SP com potência específica (adicionado ao valor final)
+if (strtoupper($uf) === 'SP' && $potenciaInversor > 75 && $potenciaInversor <= 350) {
+    $precoFinal += 471544.71;
+}
 
     $descrição2 = "";
     $descrição3 = "";
