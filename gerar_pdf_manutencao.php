@@ -134,8 +134,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $custolimpezamodulo = 10.00;
             $custofixo = 80.00;
         } elseif ($qtdmodulos <= 30) {
-            $custolimpezamodulo = 8.15; // Ajustado
-            $custofixo = 109.00;      // Ajustado
+            $custolimpezamodulo = 9; // Ajustado
+            $custofixo = 110.00;      // Ajustado
         } elseif ($qtdmodulos <= 40) {
             $custolimpezamodulo = 8.00;
             $custofixo = 150.00;
