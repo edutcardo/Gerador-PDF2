@@ -185,15 +185,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // 4. Montar a tabela de serviços para o PDF
         $pdf->Cell(130, 7, 'Tipo de Serviço', 1, 0, 'C', $desenhar_elementos);
-        $pdf->Cell(50, 7, 'Valor', 1, 1, 'C', $desenhar_elementos);
+        $pdf->Cell(50, 7, 'Valor Total', 1, 1, 'C', $desenhar_elementos);
 
         $pdf->SetFont('helvetica', '', 10);
         // Linha para limpeza avulsa
-        $pdf->Cell(130, 7, 'Limpeza de Módulos Fotovoltáicos (Avulso)', 1, 0, 'L');
+        $pdf->Cell(130, 7, 'Limpeza de '.$qtdmodulos.' Módulos Fotovoltáicos (Avulso)', 1, 0, 'L');
         $pdf->Cell(50, 7, 'R$ ' . number_format($Preco_Final_1x, 2, ',', '.'), 1, 1, 'C');
         
         // Linha para o pacote de 3 limpezas
-        $texto_pacote = 'Pacote 3 Limpezas (3x de R$ ' . number_format($Preco_Final_Unitario_Pacote, 2, ',', '.');
+        $texto_pacote = 'Pacote 3 Limpezas (3x de R$ ' . number_format($Preco_Final_Unitario_Pacote, 2, ',', '.',).')';
         $pdf->Cell(130, 7, $texto_pacote, 1, 0, 'L');
         $pdf->Cell(50, 7, 'R$ ' . number_format($Preco_Final_Total_Pacote, 2, ',', '.'), 1, 1, 'C');
 
