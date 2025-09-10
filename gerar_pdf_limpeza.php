@@ -410,18 +410,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (!isset($_POST['acao']) || (isset($_
     $econDiferenca = $econMensalComLimp - $econMensalSemLimp; // E11
 
     // Tabela de Custo por Módulo (ajustar conforme sua planilha)
-    $custolimpezamodulo = 0; $custofixo = 0;
-    if ($qtdmodulos <= 0) { $custolimpezamodulo = 10; $custofixo = 80; } // Caso base ou erro
-    elseif ($qtdmodulos <= 10) { $custolimpezamodulo = 10; $custofixo = 80; }
-    elseif ($qtdmodulos <= 30) { $custolimpezamodulo = 9; $custofixo = 110; }
-    elseif ($qtdmodulos <= 40) { $custolimpezamodulo = 8; $custofixo = 150; }
-    elseif ($qtdmodulos <= 100) { $custolimpezamodulo = 7; $custofixo = 250; }
-    elseif ($qtdmodulos <= 150) { $custolimpezamodulo = 6; $custofixo = 400; }
-    elseif ($qtdmodulos <= 200) { $custolimpezamodulo = 5.5; $custofixo = 500; }
-    elseif ($qtdmodulos <= 300) { $custolimpezamodulo = 5; $custofixo = 650; }
-    elseif ($qtdmodulos <= 500) { $custolimpezamodulo = 4.5; $custofixo = 900; }
-    else { $custolimpezamodulo = 4; $custofixo = 1200; } // Para mais de 500 módulos
-
+        if ($qtdmodulos <= 10) {
+            $custolimpezamodulo = 10.00;
+            $custofixo = 80.00;
+        } elseif ($qtdmodulos <= 30) {
+            $custolimpezamodulo = 9; // Ajustado
+            $custofixo = 110.00;      // Ajustado
+        } elseif ($qtdmodulos <= 40) {
+            $custolimpezamodulo = 8.00;
+            $custofixo = 150.00;
+        } elseif ($qtdmodulos <= 100) {
+            $custolimpezamodulo = 7.00;
+            $custofixo = 250.00;
+        } elseif ($qtdmodulos <= 150) {
+            $custolimpezamodulo = 6.00;
+            $custofixo = 400.00;
+        } elseif ($qtdmodulos <= 200) {
+            $custolimpezamodulo = 5.50;
+            $custofixo = 500.00;
+        } elseif ($qtdmodulos <= 300) {
+            $custolimpezamodulo = 5.00;
+            $custofixo = 650.00;
+        } elseif ($qtdmodulos <= 500) {
+            $custolimpezamodulo = 4.50;
+            $custofixo = 900.00;
+        } else { // > 500
+            $custolimpezamodulo = 4.00;
+            $custofixo = 1200.00;
+        }
     $k6_comissao_val = 0.05; // Comissão de 5%
     $estrutura_j4 = "TELHADO"; // Exemplo, poderia vir do form
     $fator_estrutura_solo = ($estrutura_j4 == "SOLO" ? 1.0 : 1.0); // Ajustar se houver diferença
