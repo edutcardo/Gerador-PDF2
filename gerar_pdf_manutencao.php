@@ -69,7 +69,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetX(20); $pdf->Cell(20, 7, 'Nome:', 0, 0, 'L'); $pdf->MultiCell(0, 7, $nome, 0, 'L');
     $pdf->SetX(20); $pdf->Cell(20, 7, 'Endereço:', 0, 0, 'L'); $pdf->MultiCell(0, 7, $endereco, 0, 'L');
     $pdf->SetX(20); $pdf->Cell(20, 7, 'Cidade:', 0, 0, 'L'); $pdf->MultiCell(0, 7, $cidade_input, 0, 'L');
-    $pdf->SetX(20); $pdf->Cell(20, 7, 'Usina:', 0, 0, 'L'); $pdf->MultiCell(0, 7, $usina, 0, 'L');
     $pdf->Ln(5);
 
     // --- TÍTULO DA SEÇÃO DE VALORES ---
@@ -105,16 +104,15 @@ if ($tipo_servico_principal == 'Limpeza de módulos fotovoltáicos') {
     $denominador_comissao_limpeza = (1 - $taxa_comissao_limpeza);
     $desconto_fator = 1 - $desconto_pacote_3_limpezas;
 
-    // Define o custo de deslocamento dinâmico baseado no formulário
-    $custo_deslocamento = ($distancia_km > 0 ? $distancia_km * 1.00 : 0) ;
-            $deslocamento_fixo_calculo = 26.25; 
-    $Custo_Base = ($qtdmodulos * $custolimpezamodulo) + $custofixo;
+// Define o custo de deslocamento (R$ 2,00/km para consistência com o front-end)
+$custo_deslocamento = ($distancia_km > 0 ? $distancia_km * 2.00 : 0);
+        $deslocamento_fixo_calculo = 26.25;
+$Custo_Base = ($qtdmodulos * $custolimpezamodulo) + $custofixo;
 
-    // Fórmulas que NÃO incluem o deslocamento
-    $Preco_Limpeza_1x = ($Custo_Base + $deslocamento_fixo_calculo) / $denominador_comissao_limpeza;
-    $Preco_Unitario_Pacote = (($Custo_Base * $desconto_fator) + $deslocamento_fixo_calculo) / $denominador_comissao_limpeza;
-    $Preco_Total_Pacote = $Preco_Unitario_Pacote * 3;
-
+// Fórmulas que AGORA incluem o deslocamento
+$Preco_Limpeza_1x = ($Custo_Base + $deslocamento_fixo_calculo + $custo_deslocamento) / $denominador_comissao_limpeza;
+$Preco_Unitario_Pacote = (($Custo_Base * $desconto_fator) + $deslocamento_fixo_calculo + $custo_deslocamento) / $denominador_comissao_limpeza;
+$Preco_Total_Pacote = $Preco_Unitario_Pacote * 3; // <<< ADICIONE ESTA LINHA
     // Monta a tabela COM a linha de deslocamento separada
     $pdf->SetFont('helvetica', 'B', 10);
     $pdf->Cell(130, 7, 'Tipo de Serviço', 1, 0, 'C');
@@ -128,11 +126,6 @@ if ($tipo_servico_principal == 'Limpeza de módulos fotovoltáicos') {
     $pdf->Cell(130, 7, $texto_pacote, 1, 0, 'L');
     $pdf->Cell(50, 7, 'R$ ' . number_format($Preco_Total_Pacote, 2, ',', '.'), 1, 1, 'C');
 
-    // Adiciona a linha de deslocamento SE ele existir
-    if ($custo_deslocamento > 0) {
-        $pdf->Cell(130, 7, 'Taxa de Deslocamento (' . $distancia_km . ' km)', 1, 0, 'L');
-        $pdf->Cell(50, 7, 'R$ ' . number_format($custo_deslocamento, 2, ',', '.'), 1, 1, 'C');
-    }
 
 
     } else {
@@ -152,17 +145,32 @@ if ($tipo_servico_principal == 'Limpeza de módulos fotovoltáicos') {
         $pdf->Cell(50, 7, 'Valor', 1, 1, 'C');
         $pdf->SetFont('helvetica', '', 10);
 
-        $custo_total = 0;
-        if (!empty($servicos_selecionados)) {
-            foreach ($servicos_selecionados as $servico) {
-                $nome_servico = $servico['nome'] ?? 'N/A';
-                $custo_servico = $servico['custo'] ?? 0;
-                $custo_total += floatval($custo_servico);
-                
-                $pdf->Cell(130, 7, $nome_servico, 1, 0, 'L');
-                $pdf->Cell(50, 7, 'R$ ' . number_format($custo_servico, 2, ',', '.'), 1, 1, 'C');
-            }
+if (!empty($servicos_selecionados)) {
+    $custo_deslocamento_total = 0;
+    $servicos_para_exibir = [];
+
+    // Primeiro, separe o deslocamento dos outros serviços
+    foreach ($servicos_selecionados as $servico) {
+        if (strpos($servico['nome'], 'Taxa de Deslocamento') !== false) {
+            $custo_deslocamento_total += floatval($servico['custo'] ?? 0);
+        } else {
+            $servicos_para_exibir[] = $servico;
         }
+    }
+
+    // Se houver deslocamento e outros serviços, some o custo ao primeiro serviço
+    if ($custo_deslocamento_total > 0 && !empty($servicos_para_exibir)) {
+        $servicos_para_exibir[0]['custo'] += $custo_deslocamento_total;
+    }
+
+    // Agora, exiba os serviços já com o valor do deslocamento somado
+    foreach ($servicos_para_exibir as $servico) {
+        $nome_servico = $servico['nome'] ?? 'N/A';
+        $custo_servico = $servico['custo'] ?? 0;
+        $pdf->Cell(130, 7, $nome_servico, 1, 0, 'L');
+        $pdf->Cell(50, 7, 'R$ ' . number_format($custo_servico, 2, ',', '.'), 1, 1, 'C');
+    }
+}
         
         $pdf->Ln(2);
         }

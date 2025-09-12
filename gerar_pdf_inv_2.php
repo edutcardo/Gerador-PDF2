@@ -50,10 +50,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $adicionais_inclusos = [];
 
     if ($adicional_padrao_selecionado) {
-        $adicionais_inclusos[] = 'Padrão de Entrada incluso';
+        $adicionais_inclusos[] = 'PADRÃO DE ENTRADA DE ENERGIA CONFORME CONCESSIONÁRIA';
     }
     if ($adicional_sala_tecnica_selecionado) {
-        $adicionais_inclusos[] = 'Sala Técnica inclusa';
+        $adicionais_inclusos[] = 'SALA TÉCNICA PARA INSTALAÇÃO DO INVERSOR';
     }
 
     if (!empty($adicionais_inclusos)) {
@@ -626,11 +626,11 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     // Escrever os dados extraídos no PDF
     if (empty($matches)) {
         if (strtoupper($estrutura) == 'SOLO') {
-            $descricaoEstrutura = "ESTRUTURA DE SOLO BIPOSTE";
+            $descricaoEstrutura = "ESTRUTURA DE SOLO BIPOSTE AÇO GALVANIZADO";
         } elseif (strtoupper($estrutura) == 'TELHADO') {
             // Quando você decidir a descrição para telhado, coloque aqui.
             // Por enquanto, vou colocar um exemplo:
-            $descricaoEstrutura = "ESTRUTURA PARA TELHADO CERÂMICO";
+            $descricaoEstrutura = "ESTRUTURA PARA TELHADO";
         } else {
             // Opcional: Uma descrição padrão caso a variável não seja nem SOLO nem TELHADO
             $descricaoEstrutura = "ESTRUTURA A DEFINIR";
@@ -640,10 +640,12 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
         $pdf->Text(16, $y + 3, "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO AESOLAR/ZNSHINE/SINE/RONMA 700W");
         $pdf->Text(16, $y + 10, "$multiplicador INVERSOR SOLAR CHINT/SAJ/SOLIS/SOLPLANET $fabricante DE $potenciaInversorUnitario KW");
         $pdf->Text(16, $y + 17, $descricaoEstrutura); // <-- AQUI USAMOS A VARIÁVEL
-        $pdf->Text(16, $y + 24, "CABEAMENTO CC 1.8 Kvcc");
-        $pdf->Text(16, $y + 31, "INSTALAÇÃO");
-        $pdf->Text(16, $y + 38, "RAMAL DE LIGAÇÃO 20 METROS");
-        $pdf->Text(16, $y + 45, "$texto_final_adicionais");
+        $pdf->Text(16, $y + 24, "CABEAMENTO CC 1.8 KVCC – USO EXPECIFICO PARA USINA SOLAR FOTOVOLTAICA");
+        $pdf->Text(16, $y + 31, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+        $pdf->Text(16, $y + 38, "RAMAL DE LIGAÇÃO LIMITADO Á 20 METROS ENTRE INVERSOR E PADRÃO DE ENTRADA");
+        $pdf->Text(16, $y + 45, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMATICOS (CONSULTE AS CONDIÇÕES)");
+        $pdf->Text(16, $y + 52, "CONTRATO DE COMPRA DE ENERGIA, GARANTIDO PELA COOPERATIVA CANAL VERDE");
+        $pdf->Text(16, $y + 59, "$texto_final_adicionais");
     } else {
         foreach ($matches as $match) {
             $sku = trim($match[1]);
