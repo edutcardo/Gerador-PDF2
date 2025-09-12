@@ -5,6 +5,8 @@ require_once('vendor/autoload.php'); // Ou o caminho correto, se você não esti
 
 // Verifica se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    
     // Variáveis que já estavam corretas
     $nome = isset($_POST['nome']) ? $_POST['nome'] : 'Informar';
     $endereco = isset($_POST['endereco']) ? $_POST['endereco'] : 'Informar';
@@ -35,6 +37,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $opcao_adicional = isset($_POST['opcao_adicional']) ? $_POST['opcao_adicional'] : '';
     $usina = isset($_POST['usina']) ? $_POST['usina'] : '';
     $tensaoSaida = isset($_POST['tensaoSaida']) ? $_POST['tensaoSaida'] : '';
+
+
+    // 1. Captura as 4 variáveis individuais. A verificação `!empty` retorna true/false.
+    $adicional_padrao_selecionado       = !empty($_POST['adicionalPadrao']);
+    $adicional_sala_tecnica_selecionado = !empty($_POST['adicionalSalaTecnica']);
+    $adicional_cocamar_selecionado      = !empty($_POST['adicionalCocamar']);
+
+    // 2. Monta as strings de texto baseadas nas variáveis booleanas
+    $texto_padrao_e_sala = '';
+    $texto_cocamar = '';
+    $adicionais_inclusos = [];
+
+    if ($adicional_padrao_selecionado) {
+        $adicionais_inclusos[] = 'Padrão de Entrada';
+    }
+    if ($adicional_sala_tecnica_selecionado) {
+        $adicionais_inclusos[] = 'Sala Técnica';
+    }
+
+    if (!empty($adicionais_inclusos)) {
+        $texto_padrao_e_sala = 'Adicionais inclusos: ' . implode(' e ', $adicionais_inclusos) . '.';
+    }
+    if ($adicional_cocamar_selecionado) {
+        $texto_cocamar = 'Orçamento liberado para uso da Cocamar.';
+    }
+
+$texto_final_adicionais = trim($texto_padrao_e_sala . ' ' . $texto_cocamar);
 
     class DataProcessor {
         /**
@@ -517,7 +546,9 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
 
+
     
+
     $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
     $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador kWp");
     $pdf->Text(34.6, 178.75, "Geração Estimada: $geracao kWh");
@@ -612,7 +643,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
         $pdf->Text(16, $y + 24, "CABEAMENTO CC 1.8 Kvcc");
         $pdf->Text(16, $y + 31, "INSTALAÇÃO");
         $pdf->Text(16, $y + 38, "RAMAL DE LIGAÇÃO 20 METROS");
-        $pdf->Text(16, $y + 45, "$descrição5");
+        $pdf->Text(16, $y + 45, "$texto_final_adicionais");
     } else {
         foreach ($matches as $match) {
             $sku = trim($match[1]);
@@ -634,6 +665,8 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
             $y += max($linhaAltura, $pdf->GetY() - $y);
         }
     }
+
+
 
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(50, 50, 50);
@@ -802,6 +835,7 @@ $pdf->Text(80, 220, "$TIR_formatado");
 $pdf->Text(127, 220, "$TaxaLucratividade_formatada");
 $pdf->Text(172, 220, "$ROI_formatado");
     $pdf->Text(80, 98, "Tributação vigente: $tributario");
+
 
     // Dados para o gráfico
     $values = [$retornoVerde, $liquidoVerde, $imposto, $demanda, $seguro, $manutencao];
