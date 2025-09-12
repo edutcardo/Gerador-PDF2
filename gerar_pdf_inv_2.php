@@ -50,17 +50,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $adicionais_inclusos = [];
 
     if ($adicional_padrao_selecionado) {
-        $adicionais_inclusos[] = 'Padrão de Entrada';
+        $adicionais_inclusos[] = 'Padrão de Entrada incluso';
     }
     if ($adicional_sala_tecnica_selecionado) {
-        $adicionais_inclusos[] = 'Sala Técnica';
+        $adicionais_inclusos[] = 'Sala Técnica inclusa';
     }
 
     if (!empty($adicionais_inclusos)) {
-        $texto_padrao_e_sala = 'Adicionais inclusos: ' . implode(' e ', $adicionais_inclusos) . '.';
+        $texto_padrao_e_sala = '' . implode(' e ', $adicionais_inclusos) . '.';
     }
     if ($adicional_cocamar_selecionado) {
-        $texto_cocamar = 'Orçamento liberado para uso da Cocamar.';
+        $texto_cocamar = 'Liberado Cocamar.';
     }
 
 $texto_final_adicionais = trim($texto_padrao_e_sala . ' ' . $texto_cocamar);
