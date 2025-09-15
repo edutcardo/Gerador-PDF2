@@ -37,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $opcao_adicional = isset($_POST['opcao_adicional']) ? $_POST['opcao_adicional'] : '';
     $usina = isset($_POST['usina']) ? $_POST['usina'] : '';
     $tensaoSaida = isset($_POST['tensaoSaida']) ? $_POST['tensaoSaida'] : '';
+$adicionalAPlus = isset($_POST['adicionalAPlus']) ? trim($_POST['adicionalAPlus']) : '';
 
 
     // 1. Captura as 4 variáveis individuais. A verificação `!empty` retorna true/false.
@@ -50,14 +51,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $adicionais_inclusos = [];
 
     if ($adicional_padrao_selecionado) {
-        $adicionais_inclusos[] = 'PADRÃO DE ENTRADA DE ENERGIA CONFORME CONCESSIONÁRIA';
+        $adicionais_inclusos[] = 'PADRÃO DE ENERGIA INCLUSO';
     }
     if ($adicional_sala_tecnica_selecionado) {
-        $adicionais_inclusos[] = 'SALA TÉCNICA PARA INSTALAÇÃO DO INVERSOR';
+        $adicionais_inclusos[] = 'SALA TÉCNICA PARA INVERSOR';
     }
 
     if (!empty($adicionais_inclusos)) {
-        $texto_padrao_e_sala = '' . implode(' e ', $adicionais_inclusos) . '.';
+        $texto_padrao_e_sala = '' . implode(' E ', $adicionais_inclusos) . '.';
     }
     if ($adicional_cocamar_selecionado) {
         $texto_cocamar = 'Liberado Cocamar.';
@@ -607,13 +608,26 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     // Extrair os dados da tabela
     preg_match_all('/<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>/', $componentes, $matches, PREG_SET_ORDER);
     
-    // Ajuste na altura da descrição
-    $y = 66; // Posição inicial Y
-    $linhaAltura = 8; // Altura de cada linha no PDF
-    $larguraDescricao = 180; // Ajuste para a largura da descrição
-    $larguraQuantidade = 20; // Ajuste para a largura da quantidade
-    $maxY = 280; // Limite Y da página
-    
+// Posição Y inicial e altura da linha (permanecem os mesmos)
+$y = 66;
+$linhaAltura = 8;
+$maxY = 280;
+
+// 1. DEFINIÇÃO DAS MARGENS E POSIÇÕES (baseado no seu código)
+$margemEsquerda = 16;  // Você começa a escrever em X = 16
+$margemDireita = 10;   // Uma margem segura de 10mm no lado direito
+$posicaoXDescricao = 27; // A descrição começa na posição X = 27
+
+// 2. CÁLCULO DA LARGURA DA COLUNA DE QUANTIDADE
+// A quantidade vai da margem esquerda (16) até o início da descrição (27)
+$larguraQuantidade = $posicaoXDescricao - $margemEsquerda; // Resultado será 11
+
+// 3. CÁLCULO DA LARGURA DA COLUNA DE DESCRIÇÃO
+// A largura da descrição é a largura total da página (210mm para A4)
+// menos a posição onde a descrição começa, menos a margem direita.
+$larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; // Ex: 210 - 27 - 10 = 173
+
+// ========================================================
     // Função para adicionar uma nova página se necessário
     function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
         if ($y + $linhaAltura > $maxY) {
@@ -638,44 +652,67 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
 
         // 2. Imprime o bloco de texto, usando a variável que acabamos de definir
         $pdf->Text(16, $y + 3, "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO AESOLAR/ZNSHINE/SINE/RONMA 700W");
-        $pdf->Text(16, $y + 10, "$multiplicador INVERSOR SOLAR CHINT/SAJ/SOLIS/SOLPLANET $fabricante DE $potenciaInversorUnitario KW");
-        $pdf->Text(16, $y + 17, $descricaoEstrutura); // <-- AQUI USAMOS A VARIÁVEL
-        $pdf->Text(16, $y + 24, "CABEAMENTO CC 1.8 KVCC – USO EXPECIFICO PARA USINA SOLAR FOTOVOLTAICA");
-        $pdf->Text(16, $y + 31, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-        $pdf->Text(16, $y + 38, "RAMAL DE LIGAÇÃO LIMITADO Á 20 METROS ENTRE INVERSOR E PADRÃO DE ENTRADA");
-        $pdf->Text(16, $y + 45, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMATICOS (CONSULTE AS CONDIÇÕES)");
-        $pdf->Text(16, $y + 52, "CONTRATO DE COMPRA DE ENERGIA, GARANTIDO PELA COOPERATIVA CANAL VERDE");
-        $pdf->Text(16, $y + 59, "$texto_final_adicionais");
+        $pdf->Text(16, $y + 12, "$multiplicador INVERSOR SOLAR CHINT/SAJ/SOLIS/SOLPLANET $fabricante DE $potenciaInversorUnitario KW");
+        $pdf->Text(16, $y + 21, $descricaoEstrutura); // <-- AQUI USAMOS A VARIÁVEL
+        $pdf->Text(16, $y + 30, "CABEAMENTO CC 1.8 KVCC – USO EXPECIFICO PARA USINA SOLAR");
+        $pdf->Text(16, $y + 39, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+        $pdf->Text(16, $y + 48, "RAMAL DE LIGAÇÃO LIMITADO Á 20 METROS (INVERSOR AO PADRÃO)");
+        $pdf->Text(16, $y + 57, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMATICOS");
+        $pdf->Text(16, $y + 66, "CONTRATO DE COMPRA DE ENERGIA, GARANTIDO PELA CANAL VERDE");
+        $pdf->Text(16, $y + 75, "$texto_final_adicionais");
+    // --- Configurações da Fonte (defina antes do loop) ---
     } else {
-        foreach ($matches as $match) {
-            $sku = trim($match[1]);
-            $quantidade = (trim($match[2])) * $multiplicador;
-            $descricao = trim($match[3]);
-    
-            // Verificar se há espaço suficiente para escrever na página
-            $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
-    
-            // Adicionar quantidade, com ajuste para subir um pouco
-            $pdf->SetXY(16, $y - 0.9); // Ajuste para subir um pouco a posição Y
-            $pdf->Cell($larguraQuantidade, $linhaAltura, $quantidade, 0, 0, 'L'); // Alinhamento à esquerda
-    
-            // Adicionar a descrição com quebra automática de linha
-            $pdf->SetXY(27, $y); // Ajuste a posição X para alinhar a descrição
-            $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0);
-    
-            // Atualizar Y para a próxima linha somente após o MultiCell
-            $y += max($linhaAltura, $pdf->GetY() - $y);
+    // --- Configurações da Fonte ---
+    $defaultFontSize = 13.5;
+    $minFontSize = 7;
+    $fontStyle = 'B';
+    $fontFamily = 'helvetica';
+
+    foreach ($matches as $match) {
+        $sku = trim($match[1]);
+        $quantidade = (trim($match[2])) * $multiplicador;
+        $descricao = trim($match[3]);
+        
+        $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
+
+        // --- Impressão da Quantidade ---
+        // A fonte da quantidade deve ser a padrão
+        $pdf->SetFont($fontFamily, $fontStyle, $defaultFontSize);
+        $pdf->SetXY(16, $y); // Simplificado o Y para alinhar melhor
+        $pdf->Cell($larguraQuantidade, $linhaAltura, $quantidade, 0, 0, 'L');
+        
+        // --- Lógica para a Descrição ---
+        $currentFontSize = $defaultFontSize;
+        $pdf->SetFont($fontFamily, $fontStyle, $currentFontSize);
+        
+        // Loop de ajuste de fonte
+        while ($pdf->GetStringWidth($descricao) > $larguraDescricao && $currentFontSize > $minFontSize) {
+            $currentFontSize -= 0.5;
+            $pdf->SetFont($fontFamily, $fontStyle, $currentFontSize);
         }
+        
+        // Escreve a descrição com a fonte já ajustada
+        $pdf->SetXY(27, $y);
+        // O último parâmetro '1' move o cursor para a próxima linha automaticamente
+        $pdf->Cell($larguraDescricao, $linhaAltura, $descricao, 0, 1, 'L'); 
+        
+        // Atualiza a posição Y para o próximo item
+        $y = $pdf->GetY();
     }
+    // Garante que a fonte volte ao normal para qualquer coisa escrita DEPOIS do loop
+    $pdf->SetFont($fontFamily, $fontStyle, $defaultFontSize);
+}
 
-
-
+    if (!empty($adicionalAPlus)) {
+        $adicionalAPlus = "*";
+    }
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(50, 50, 50);
     $pdf->Text(16, 150, "$textoPadrao");
 
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(113, 164, "$adicionalAPlus");
     $pdf->Text(152, 164, "$precoFinalRs");
 
     $pdf->SetFont('helvetica', 'B', 15);
