@@ -37,8 +37,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $opcao_adicional = isset($_POST['opcao_adicional']) ? $_POST['opcao_adicional'] : '';
     $usina = isset($_POST['usina']) ? $_POST['usina'] : '';
     $tensaoSaida = isset($_POST['tensaoSaida']) ? $_POST['tensaoSaida'] : '';
-$adicionalAPlus = isset($_POST['adicionalAPlus']) ? trim($_POST['adicionalAPlus']) : '';
+    $adicionalAPlus = isset($_POST['adicionalAPlus']) ? trim($_POST['adicionalAPlus']) : '';
+$adicionalBrita = !empty($_POST['adicionalBrita']);
+$adicionalGrade = !empty($_POST['adicionalGrade']);
+$adicionalAlambrado = !empty($_POST['adicionalAlambrado']);
+$adicionalIndicacao = isset($_POST['adicionalIndicacao']) ? trim($_POST['adicionalIndicacao']) : '';
 
+
+// 1. Cria um array para armazenar os textos dos itens selecionados
+$adicionais_seguranca_inclusos = [];
+
+// 2. Verifica cada variável e adiciona o texto correspondente ao array
+if ($adicionalBrita) {
+    $adicionais_seguranca_inclusos[] = 'BRITA';
+}
+if ($adicionalGrade) {
+    $adicionais_seguranca_inclusos[] = 'GRADE';
+}
+if ($adicionalAlambrado) {
+    $adicionais_seguranca_inclusos[] = 'ALAMBRADO';
+}
+
+// 3. Monta a string final com base na quantidade de itens no array
+$texto_seguranca = '';
+$total_adicionais_seguranca = count($adicionais_seguranca_inclusos);
+
+if ($total_adicionais_seguranca > 0) {
+    if ($total_adicionais_seguranca == 1) {
+        // Se houver apenas 1 item
+        $texto_seguranca = 'INCLUSO ' . $adicionais_seguranca_inclusos[0];
+    } else {
+        // Se houver 2 ou mais itens, prepara para usar vírgula e "E"
+        $ultimo_item = array_pop($adicionais_seguranca_inclusos); // Pega o último item
+        $primeiros_itens = implode(', ', $adicionais_seguranca_inclusos); // Junta os outros com vírgula
+        $texto_seguranca = 'INCLUSO ' . $primeiros_itens . ' E ' . $ultimo_item;
+    }
+}
+// =======================================================================
+// FIM DO NOVO CÓDIGO
+// =======================================================================
 
     // 1. Captura as 4 variáveis individuais. A verificação `!empty` retorna true/false.
     $adicional_padrao_selecionado       = !empty($_POST['adicionalPadrao']);
@@ -66,6 +103,14 @@ $adicionalAPlus = isset($_POST['adicionalAPlus']) ? trim($_POST['adicionalAPlus'
 
 $texto_final_adicionais = trim($texto_padrao_e_sala . ' ' . $texto_cocamar);
 
+// =======================================================================
+// NOVO CÓDIGO PARA CALCULAR A POTÊNCIA DO MÓDULO
+// =======================================================================
+$potModuloCalculado = 0; // Inicia com 0 para segurança
+if ($qtdmodulosArredondado > 0) {
+    // Divide a potência total em Watts pelo número de placas
+    $potModuloCalculado = round(($potenciaGerador * 1000) / $qtdmodulosArredondado); 
+}
     class DataProcessor {
         /**
          * Processa valores monetários removendo formatação
@@ -133,12 +178,12 @@ $potenciaModulo = verificarValor2($potenciaModulo);
     $potenciaInversor = $potenciaInversor * $multiplicador;
     $precoKit = ($precoKit + $precoPlaca) * $multiplicador;
 
-        // NOVO CÓDIGO INSERIDO AQUI
-    // Adicional de custo para projetos em SP com potência específica
-    if (strtoupper($uf) === 'SP' && $potenciaInversor > 75 && $potenciaInversor <= 350) {
-        $precoKit += 290000.00; // Adiciona o valor de R$ 290.000,00 ao preço do kit
-    }
-    // FIM DO NOVO CÓDIGO
+    //     // NOVO CÓDIGO INSERIDO AQUI
+    // // Adicional de custo para projetos em SP com potência específica
+    // if (strtoupper($uf) === 'SP' && $potenciaInversor > 75 && $potenciaInversor <= 350) {
+    //     $precoKit += 290000.00; // Adiciona o valor de R$ 290.000,00 ao preço do kit
+    // }
+    // // FIM DO NOVO CÓDIGO
     
     function calcularTributario($potenciaInversor) {
         if ($potenciaInversor <= 75) {
@@ -280,9 +325,9 @@ function calcularParcela_corrigido($taxa, $nper, $vp, $vf = 0, $tipo = 0) {
 
     $precoFinal =($precoKit ) ;
     // Adicional de custo para projetos em SP com potência específica (adicionado ao valor final)
-if (strtoupper($uf) === 'SP' && $potenciaInversor > 75 && $potenciaInversor <= 350) {
-    $precoFinal += 471544.71;
-}
+// if (strtoupper($uf) === 'SP' && $potenciaInversor > 75 && $potenciaInversor <= 350) {
+//     $precoFinal += 471544.71;
+// }
 
     $descrição2 = "";
     $descrição3 = "";
@@ -651,7 +696,7 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
         }
 
         // 2. Imprime o bloco de texto, usando a variável que acabamos de definir
-        $pdf->Text(16, $y + 3, "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO AESOLAR/ZNSHINE/SINE/RONMA 700W");
+        $pdf->Text(16, $y + 3, "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO AESOLAR/ZNSHINE/SINE/RONMA $potenciaModulo W");
         $pdf->Text(16, $y + 12, "$multiplicador INVERSOR SOLAR CHINT/SAJ/SOLIS/SOLPLANET $fabricante DE $potenciaInversorUnitario KW");
         $pdf->Text(16, $y + 21, $descricaoEstrutura); // <-- AQUI USAMOS A VARIÁVEL
         $pdf->Text(16, $y + 30, "CABEAMENTO CC 1.8 KVCC – USO EXPECIFICO PARA USINA SOLAR");
@@ -660,7 +705,9 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
         $pdf->Text(16, $y + 57, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMATICOS");
         $pdf->Text(16, $y + 66, "CONTRATO DE COMPRA DE ENERGIA, GARANTIDO PELA CANAL VERDE");
         $pdf->Text(16, $y + 75, "$texto_final_adicionais");
-    // --- Configurações da Fonte (defina antes do loop) ---
+    $pdf->Text(16, $y + 84, "$texto_seguranca"); 
+    
+        // --- Configurações da Fonte (defina antes do loop) ---
     } else {
     // --- Configurações da Fonte ---
     $defaultFontSize = 13.5;
@@ -706,13 +753,16 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     if (!empty($adicionalAPlus)) {
         $adicionalAPlus = "*";
     }
+        if (!empty($adicionalIndicacao)) {
+        $adicionalIndicacao = "*";
+    }
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(50, 50, 50);
-    $pdf->Text(16, 150, "$textoPadrao");
 
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(113, 164, "$adicionalAPlus");
+    $pdf->Text(99, 164, "$adicionalIndicacao");
     $pdf->Text(152, 164, "$precoFinalRs");
 
     $pdf->SetFont('helvetica', 'B', 15);
