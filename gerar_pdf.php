@@ -622,16 +622,7 @@ $pdf->Text($xInicial, $yInicial - 10, 'Gráfico de Payback (25 anos)');
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('pg6.png', 0, 0, 210, 297);
     
-    // Definir fonte e adicionar conteúdo à sexta página
-    $pdf->SetFont('helvetica', 'B', 13);
-    $pdf->SetTextColor(255, 255, 255);
-    $pdf->Text(90, 50, "$fabricante ". round($potenciaInversor) ." kW");
-    $pdf->Text(155, 50, "10 ANOS");
-    $pdf->SetFont('helvetica', 'B', 9);
-    $pdf->Text(75,67, "$marca ". round($potenciaModulo) ." W");
-    $pdf->Text(146, 90, "$valorParcela3Rs");
-
-
+ 
     // Sétima Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('pg7.png', 0, 0, 210, 297);
