@@ -367,8 +367,6 @@ if ($diferencaGastosAno > 0) {
     $payback = 0;
     $paybackArredondado = 0;
 }
-    $retorno25anos = $diferencaGastosAno * 25;
-    $retorno25anosRs = 'R$ ' . number_format($retorno25anos, 2, ',', '.');
 
     $retornoVerde = $geracao * $inputValorCompensavel;
     $retornoAmarelo = $geracao * $bandeiraAmarela;
@@ -545,7 +543,7 @@ $fluxoCaixaPrimeiroAno = $mediaLiquidoMensal * 12;
 
 // --- PARÂMETROS PARA AJUSTE ---
 // O PDF não informa estas taxas, então são hipóteses para você ajustar.
-$taxaCrescimentoAnualFluxoCaixa = 0.086; // Altere este valor para alinhar com o PDF!
+$taxaCrescimentoAnualFluxoCaixa = 0.00; // Altere este valor para alinhar com o PDF!
 $taxaMinimaAtratividade = 0.10;          // TMA de 10% a.a. para o cálculo do VPL.
 
 $fluxosDeCaixaAnuais = [];
