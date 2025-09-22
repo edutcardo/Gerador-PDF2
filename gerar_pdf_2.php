@@ -21,7 +21,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $padrao = $_POST['padrao'];
     // As variáveis abaixo não são mais usadas no cálculo do preço final.
     // $desconto = $_POST['desconto'];
-    // $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
+    $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
+    $indicacao = isset($_POST['indicacao']) && $_POST['indicacao'] !== '' ? floatval($_POST['indicacao']) : 0;
 
     $media = $geracao;
 
@@ -202,8 +203,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(92, 157.9, "$metrosOcupados m²");
     $pdf->Text(99, 164.70, "$qtdmodulosArredondado Placas");
     $pdf->Text(63.7, 171, "$potenciaGerador kWp");
-    $pdf->Text(61.7, 178.2, "$media kWh");
-    $pdf->Text(60.7, 185, "$geracao kWh");
+    $pdf->Text(61.7, 178.2, "$mediaArredondado kWh");
+    $pdf->Text(60.7, 185, "$geracaoArredondado kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text(21, 225.5, "$dataAtual");
@@ -230,7 +231,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
     $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
-    $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ " . round($potenciaInversor) . " KW");
+    $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
     $pdf->Text(23, 196, "ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO");
     $pdf->Text(23, 204, "CABEAMENTO CC 1.8 KVCC - USO ESPECÍFICO PARA USINA SOLAR");
     $pdf->Text(23, 212, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
@@ -251,6 +252,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(93, 61.5, "$gastoComGeradorRs");
     $pdf->Text(135, 45, "$diferencaGastosAnoRs");
     $pdf->Text(138, 61.5, "$diferencaGastosRs");
+// CÓDIGO CORRIGIDO
+// ... (código anterior da página 5) ...
+ $pdf->Text(138, 61.5, "$diferencaGastosRs");
+
+    // --- INÍCIO DA LÓGICA CORRIGIDA ---
+
+    // 1. PRIMEIRO, definimos a fonte e a cor PRETA para o restante do conteúdo
+   $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+
+    // 2. Lógica para o asterisco da ESQUERDA (agora será desenhado em preto)
+    if ($indicacao == 1) {
+        $pdf->Text(23, 98.5, '*');
+    }
+
+    // 4. Lógica para o asterisco da DIREITA (agora será desenhado em preto)
+    if ($valoramais <> 0) {
+        $larguraPreco = $pdf->GetStringWidth($precoFinalRs);
+        $pdf->Text(45, 98.5, '*');
+    }
+    // --- FIM DA LÓGICA CORRIGIDA ---
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(147, 98.5, "$precoFinalRs");
@@ -288,11 +310,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $pdf->SetFillColor(60, 179, 113);
             $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF');
             $pdf->SetFont('helvetica', '', 8);
-            $pdf->Text($xPos - 1, $linhaBase + 3, (string)$ano);
+            $pdf->Text($xPos - 2, $linhaBase + 3, (string)$ano);
             if ($ano % 2 == 1) {
-                $valorTexto = number_format($valor, 0, ',', '.');
-                $yTexto = $valor >= 0 ? $yBarra - 5 : $yBarra + $barHeight + 3;
-                $pdf->Text($xPos - 2, $yTexto, $valorTexto);
+                $valorTexto = 'R$ ' . number_format($valor, 0, ',', '.');                $yTexto = $valor >= 0 ? $yBarra - 5 : $yBarra + $barHeight + 3;
+    $pdf->Text($xPos - 6, $yTexto, $valorTexto); // Linha modificada para dar mais espaço
             }
             $xPos += $larguraBarra + $espacoEntreBarras;
         }
