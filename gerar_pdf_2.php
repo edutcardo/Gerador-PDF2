@@ -23,13 +23,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // $desconto = $_POST['desconto'];
     $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
     $indicacao = isset($_POST['indicacao']) && $_POST['indicacao'] !== '' ? floatval($_POST['indicacao']) : 0;
+    $orientacao = ($_POST['orientacao']);
 
-    $media = $geracao;
 
     // Cálculos iniciais da proposta
     $geracao = $potenciaGerador * 3.72 * 30;
+    switch ($orientacao) {
+    case "Leste":
+    case "Oeste":
+        // Aplica uma perda de 7% para orientações Leste ou Oeste
+        $geracao *= 0.93; // (100% - 7% = 93%)
+        break;
+    case "Sul":
+        // Aplica uma perda de 14% para orientação Sul
+        $geracao *= 0.86; // (100% - 14% = 86%)
+        break;
+    // Nenhuma ação é necessária para "Norte" ou outros valores (default),
+    // pois não há perda de geração a ser aplicada.
+}
     
-    $media = $geracao;
+
     $qtdmodulos = ($potenciaGerador*1000)/$potenciaModulo;
     $qtdmodulosArredondado = round($qtdmodulos);
     $metrosOcupados = $qtdmodulosArredondado * 2.9;

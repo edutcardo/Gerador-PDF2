@@ -697,7 +697,7 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
         $pdf->Text(16, $y + 3, "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO AESOLAR/ZNSHINE/SINE/RONMA $potenciaModulo W");
         $pdf->Text(16, $y + 12, "$multiplicador INVERSOR SOLAR CHINT/SAJ/SOLIS/SOLPLANET $fabricante DE $potenciaInversorUnitario KW");
         $pdf->Text(16, $y + 21, $descricaoEstrutura); // <-- AQUI USAMOS A VARIÁVEL
-        $pdf->Text(16, $y + 30, "CABEAMENTO CC 1.8 KVCC – USO EXPECIFICO PARA USINA SOLAR");
+        $pdf->Text(16, $y + 30, "CABEAMENTO CC 1.8 KVCC – USO ESPECÍFICO PARA USINA SOLAR");
         $pdf->Text(16, $y + 39, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
         $pdf->Text(16, $y + 48, "RAMAL DE LIGAÇÃO LIMITADO Á 20 METROS (INVERSOR AO PADRÃO)");
         $pdf->Text(16, $y + 57, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMATICOS");
