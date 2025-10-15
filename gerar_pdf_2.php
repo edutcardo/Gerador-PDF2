@@ -41,7 +41,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Nenhuma ação é necessária para "Norte" ou outros valores (default),
     // pois não há perda de geração a ser aplicada.
 }
-    
+        if ($media == 1) {
+        $media = $geracao;
+    }
 
     $qtdmodulos = ($potenciaGerador*1000)/$potenciaModulo;
     $qtdmodulosArredondado = round($qtdmodulos);
