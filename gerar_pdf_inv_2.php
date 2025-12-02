@@ -38,10 +38,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usina = isset($_POST['usina']) ? $_POST['usina'] : '';
     $tensaoSaida = isset($_POST['tensaoSaida']) ? $_POST['tensaoSaida'] : '';
     $adicionalAPlus = isset($_POST['adicionalAPlus']) ? trim($_POST['adicionalAPlus']) : '';
-$adicionalBrita = !empty($_POST['adicionalBrita']);
-$adicionalGrade = !empty($_POST['adicionalGrade']);
-$adicionalAlambrado = !empty($_POST['adicionalAlambrado']);
-$adicionalIndicacao = isset($_POST['adicionalIndicacao']) ? trim($_POST['adicionalIndicacao']) : '';
+    $adicionalBrita = !empty($_POST['adicionalBrita']);
+    $adicionalGrade = !empty($_POST['adicionalGrade']);
+    $adicionalAlambrado = !empty($_POST['adicionalAlambrado']);
+    $adicionalIndicacao = isset($_POST['adicionalIndicacao']) ? trim($_POST['adicionalIndicacao']) : '';
+    $geracao = isset($_POST['geracaoKwhMes']) ? floatval($_POST['geracaoKwhMes']) : 0;
 
 
 // 1. Cria um array para armazenar os textos dos itens selecionados
@@ -77,7 +78,7 @@ if ($total_adicionais_seguranca > 0) {
 // FIM DO NOVO CÓDIGO
 // =======================================================================
 
-    // 1. Captura as 4 variáveis individuais. A verificação `!empty` retorna true/false.
+    // 1. Captura as 4 variáveis individuais. A verificação !empty retorna true/false.
     $adicional_padrao_selecionado       = !empty($_POST['adicionalPadrao']);
     $adicional_sala_tecnica_selecionado = !empty($_POST['adicionalSalaTecnica']);
     $adicional_cocamar_selecionado      = !empty($_POST['adicionalCocamar']);
@@ -228,8 +229,6 @@ $potenciaModulo = verificarValor2($potenciaModulo);
     $demanda = abs(calcularDemanda($potenciaInversor, $precoDemanda, $qtdDemanda, $iluminacao, $media));
 
     // Cálculos iniciais da proposta
-
-    $geracao = ($potenciaGerador * 3.8 * 30);
     $qtdmodulos = ($potenciaGerador*1000)/$potenciaModulo;
     $qtdmodulosArredondado = (round($qtdmodulos));
     $metrosOcupados = ($qtdmodulosArredondado * $m2placa)* $multiplicador;
@@ -334,8 +333,8 @@ function calcularParcela_corrigido($taxa, $nper, $vp, $vf = 0, $tipo = 0) {
     $descrição4 = "";
     $descrição5 = "";
 
-    
-    $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
+    $precoFinal += 5611.95;
+    $precoFinalRs = 'R$. ' . number_format($precoFinal, 2, ',', '.');
 // CÓDIGO NOVO (CORRETO) A SER INSERIDO NO LUGAR
 // --- Exemplo de uso com suas variáveis ---
 $taxa = 0.015; // Taxa de juros mensal (1.5%)
@@ -649,7 +648,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     );
     
     // Extrair os dados da tabela
-    preg_match_all('/<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>/', $componentes, $matches, PREG_SET_ORDER);
+    preg_match_all('/<td>\s*(.?)\s<\/td>\s*<td>\s*(.?)\s<\/td>\s*<td>\s*(.?)\s<\/td>/', $componentes, $matches, PREG_SET_ORDER);
     
 // Posição Y inicial e altura da linha (permanecem os mesmos)
 $y = 66;
@@ -1109,7 +1108,7 @@ $pdf->Text(172, 220, "$ROI_formatado");
         $erro = "Erro ao processar dados: " . $e->getMessage();
         error_log($erro);
         throw $e;
-    }
-    
+}
+
 }
 ?>

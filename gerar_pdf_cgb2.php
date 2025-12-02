@@ -4,9 +4,6 @@ require_once('vendor/autoload.php'); // Ou o caminho correto, se você não esti
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $input = file_get_contents("php://input");
@@ -54,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // --- Cálculos Anuais ---
     $valorAnualComparacao = $valorMensalComparacao * 12;
     $input7_propostaAnual = $input7_proposta_float * 12;
-    $economiaAnual = $economiaMensal * 12; // Esta é a diferença anual baseada nos valores ajustados
+    $economiaAnual = $input4_valor_float; // Esta é a diferença anual baseada nos valores ajustados
 
     // Formatação dos valores anuais para o PDF
     $valorAnualComparacao_s = number_format($valorAnualComparacao, 2, ',', '.');
