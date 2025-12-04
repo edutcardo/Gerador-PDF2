@@ -39,6 +39,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Economia mensal
     $economiaMensal = $valorMensalComparacao - $input7_proposta_float;
+//NOVA REGRA
+    $novaRegra = $valorMensalComparacao - ($input4_valor_float/12);
+    $novaRegras = number_format($novaRegra, 2, ',', '.');
 
     // Formatação dos valores mensais para o PDF
     $input3s = number_format($input3_valor_float, 2, ',', '.');
@@ -49,14 +52,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // $economiaMensal_s = number_format($economiaMensal, 2, ',', '.');
 
     // --- Cálculos Anuais ---
+    // $valorAnualComparacao = $valorMensalComparacao * 12;
     $valorAnualComparacao = $valorMensalComparacao * 12;
-    $input7_propostaAnual = $input7_proposta_float * 12;
+    $input7_propostaAnual = $novaRegra * 12;
     $economiaAnual = $input4_valor_float; // Esta é a diferença anual baseada nos valores ajustados
 
     // Formatação dos valores anuais para o PDF
     $valorAnualComparacao_s = number_format($valorAnualComparacao, 2, ',', '.');
     $input7_propostaAnual_s = number_format($input7_propostaAnual, 2, ',', '.');
     $economiaAnual_s = number_format($economiaAnual, 2, ',', '.');
+
+
 
     // Criação do PDF
     $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -80,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Valores mensais atualizados
     $pdf->Text(165, 47.5, "$valorMensalComparacao_s"); // Era $input5s
     $pdf->Text(50, 97, "$valorMensalComparacao_s");    // Era $input5s
-    $pdf->Text(142, 97, "$input7_proposta_s");       // Era $input7s
+    $pdf->Text(142, 97, "$novaRegras");       // Era $input7s
 
     // $input3s e $input4s - Mantidos como no original, formatados a partir de input3_valor e input4_valor
     $pdf->Text(50, 128, "$input3s");

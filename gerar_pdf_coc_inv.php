@@ -602,113 +602,143 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Quarta Página
     $pdf->AddPage();  // Adiciona a quarta página
-    $pdf->Image('pg4.png', 0, 0, 210, 297);
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(0, 100, 0);
-    $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
-    $pdf->Text(149, 57, "$potenciaGerador kWp");
-    $pdf->Text(152, 71.5, "$metrosOcupados m²");
-    $pdf->Text(152, 85, "$peso kg");
-    $pdf->Text(142, 98.5, "$mediaArredondado kWh mensal");
-    $pdf->Text(142, 112, "$geracaoArredondado kWh mensal");
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
-    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
-    $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
-    $pdf->Text(23, 196, "ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO");
-    $pdf->Text(23, 204, "CABEAMENTO CC 1.8 KVCC - USO ESPECÍFICO PARA USINA SOLAR");
-    $pdf->Text(23, 212, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-    $pdf->Text(23, 220, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
-    $pdf->Text(23, 228, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
+    $pdf->Image('PGCOC4.png', 0, 0, 210, 297);
+
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(16, 256, "$textoPadrao");
-    // Página 5
+    $retornoVerdeRs = 'R$ ' . number_format($retornoVerde, 2, ',', '.');
+    $retornoAmareloRs = 'R$ ' . number_format($retornoAmarelo, 2, ',', '.');
+    $retornoVermelhoRs = 'R$ ' . number_format($retornoVermelho, 2, ',', '.');
+    $retornoVermelhoP1Rs = 'R$ ' . number_format($retornoVermelhoP1, 2, ',', '.');
+    $rentabilidadeVerdeRs = number_format($rentabilidadeVerde, 2, ',', '.') . '%';
+    $rentabilidadeAmarelaRs = number_format($rentabilidadeAmarela, 2, ',', '.') . '%';
+    $rentabilidadeVermelhaRs = number_format($rentabilidadeVermelha, 2, ',', '.') . '%';
+    $rentabilidadeVermelhaP1Rs = number_format($rentabilidadeVermelhaP1, 2, ',', '.') . '%';
 
-    $pdf->AddPage();
-    $pdf->Image('pg5.png', 0, 0, 210, 297);
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(255, 255, 255);
-    $pdf->Text(45, 45, "$gastoSemGeradorAnoRs");
-    $pdf->Text(47.5, 61.5, "$gastoSemGeradorRs");
-    $pdf->Text(91, 45, "$gastoComGeradorAnoRs");
-    $pdf->Text(93, 61.5, "$gastoComGeradorRs");
-    $pdf->Text(135, 45, "$diferencaGastosAnoRs");
-    $pdf->Text(138, 61.5, "$diferencaGastosRs");
-// CÓDIGO CORRIGIDO
-// ... (código anterior da página 5) ...
- $pdf->Text(138, 61.5, "$diferencaGastosRs");
-
-    // --- INÍCIO DA LÓGICA CORRIGIDA ---
-
-    // 1. PRIMEIRO, definimos a fonte e a cor PRETA para o restante do conteúdo
-   $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-
-    // 2. Lógica para o asterisco da ESQUERDA (agora será desenhado em preto)
-    if ($indicacao == 1) {
-        $pdf->Text(23, 98.5, '*');
-    }
-
-    // 4. Lógica para o asterisco da DIREITA (agora será desenhado em preto)
-    if ($valoramais <> 0) {
-        $larguraPreco = $pdf->GetStringWidth($precoFinalRs);
-        $pdf->Text(45, 98.5, '*');
-    }
-    // --- FIM DA LÓGICA CORRIGIDA ---
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(147, 98.5, "$precoFinalRs");
-    $pdf->SetFont('helvetica', 'B', 15);
-    $pdf->Text(26, 123, "36 X $valorParcelaRs");
-    $pdf->Text(85, 123, "48 X $valorParcela2Rs");
-    $pdf->Text(146, 123, "60 X $valorParcela3Rs");
-    $pdf->Text(152, 166, "$paybackArredondado anos");
-    $pdf->Text(143, 178, "$retorno25anosRs");
+    $seguroRs = 'R$ ' . number_format($seguro, 2, ',', '.');
+    $manutencaoRs = 'R$ ' . number_format($manutencao, 2, ',', '.');
+    $impostoRs = 'R$ ' . number_format($imposto, 2, ',', '.');
+    $demandaRs = 'R$ ' . number_format($demanda, 2, ',', '.');
+    $liquidoVerdeRs = 'R$ ' . number_format($liquidoVerde, 2, ',', '.');
+    $liquidoAmareloRs = 'R$ ' . number_format($liquidoAmarelo, 2, ',', '.');
+    $liquidoVermelhoRs = 'R$ ' . number_format($liquidoVermelho, 2, ',', '.');
+    $liquidoVermelhoP1Rs = 'R$ ' . number_format($liquidoVermelhoP1, 2, ',', '.');
+    $mediaLiquido = ($liquidoVerde + $liquidoAmarelo + $liquidoVermelho + $liquidoVermelhoP1) / 4;
+    $mediaLiquidoRs =  'R$ ' . number_format($mediaLiquido, 2, ',', '.');
     
-    // Gráfico de Payback
-    $dados = [];
-    $retornoAcumulado = 0;
-    if (is_numeric($precoFinal) && is_numeric($diferencaGastosAno) && $diferencaGastosAno > 0) {
-        for ($ano = 1; $ano <= 25; $ano++) {
-            $retornoAcumulado += $diferencaGastosAno;
-            $dados[$ano] = $retornoAcumulado - $precoFinal;
-        }
-    }
+    $pdf->Text(61, 122, "$retornoVerdeRs");
+    $pdf->Text(98, 122, "$retornoAmareloRs");
+    $pdf->Text(135, 122, "$retornoVermelhoRs");
+    $pdf->Text(172, 122, "$retornoVermelhoP1Rs");
 
-    if (!empty($dados)) {
-        $xInicial = 20; $yInicial = 213; $larguraGrafico = 160; $alturaGrafico = 60;
-        $larguraBarra = 5; $espacoEntreBarras = 2; $linhaBase = $yInicial + $alturaGrafico;
-        $min = min($dados); $max = max($dados);
-        $escalaY = ($max - $min > 0) ? $alturaGrafico / ($max - $min) : 0;
-        $pdf->SetDrawColor(0, 0, 0);
-        $pdf->Line($xInicial, $linhaBase, $xInicial + $larguraGrafico, $linhaBase);
-        $pdf->Line($xInicial, $linhaBase - $alturaGrafico, $xInicial, $linhaBase);
-        $pdf->SetFont('helvetica', 'B', 12);
-        $pdf->Text($xInicial, $yInicial - 10, 'Gráfico de Payback (25 anos)');
-        $xPos = $xInicial;
-        foreach ($dados as $ano => $valor) {
-            $barHeight = abs($valor * $escalaY);
-            $yBarra = ($valor >= 0) ? $linhaBase - $barHeight : $linhaBase;
-            $pdf->SetFillColor(60, 179, 113);
-            $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF');
-            $pdf->SetFont('helvetica', '', 8);
-            $pdf->Text($xPos - 2, $linhaBase + 3, (string)$ano);
-            if ($ano % 2 == 1) {
-                $valorTexto = 'R$ ' . number_format($valor, 0, ',', '.');                $yTexto = $valor >= 0 ? $yBarra - 5 : $yBarra + $barHeight + 3;
-    $pdf->Text($xPos - 6, $yTexto, $valorTexto); // Linha modificada para dar mais espaço
-            }
-            $xPos += $larguraBarra + $espacoEntreBarras;
-        }
-    } else {
+    $pdf->Text(64, 134.5, "$seguroRs");
+    $pdf->Text(101, 134.5, "$seguroRs");
+    $pdf->Text(138, 134.5, "$seguroRs");
+    $pdf->Text(175, 134.5, "$seguroRs");
+
+    $pdf->Text(63, 145, "$manutencaoRs");
+    $pdf->Text(100, 145, "$manutencaoRs");
+    $pdf->Text(137, 145, "$manutencaoRs");
+    $pdf->Text(174, 145, "$manutencaoRs");
+
+    $pdf->Text(64, 156.5, "$impostoRs");
+    $pdf->Text(101, 156.5, "$impostoRs");
+    $pdf->Text(138, 156.5, "$impostoRs");
+    $pdf->Text(175, 156.5, "$impostoRs");
+
+    $pdf->Text(63, 167.5, "$demandaRs");
+    $pdf->Text(100, 167.5, "$demandaRs");
+    $pdf->Text(137, 167.5, "$demandaRs");
+    $pdf->Text(174, 167.5, "$demandaRs");
+
+    $pdf->Text(66, 180, "$rentabilidadeVerdeRs");
+    $pdf->Text(103, 180, "$rentabilidadeAmarelaRs");
+    $pdf->Text(141, 180, "$rentabilidadeVermelhaRs");
+    $pdf->Text(177, 180, "$rentabilidadeVermelhaP1Rs");
+
+    $pdf->SetTextColor(255, 255, 255);
+    $pdf->Text(61, 192.2, "$liquidoVerdeRs");
+    $pdf->Text(98, 192.2, "$liquidoAmareloRs");
+    $pdf->Text(135, 192.2, "$liquidoVermelhoRs");
+    $pdf->Text(172, 192.2, "$liquidoVermelhoP1Rs");
+
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(172, 203.5, "$mediaLiquidoRs");
+
+    $pdf->Text(27, 220, "$VPLP");
+    $pdf->Text(80, 220, "$TIRP");
+    $pdf->Text(127, 220, "$lucratividadeFormatada");
+    $pdf->Text(172, 220, "$ROIPorcentagem");
+    $pdf->Text(80, 99, "Tributação vigente: $tributario");
+
+    // Dados para o gráfico
+    $values = [$retornoVerde, $liquidoVerde, $imposto, $demanda, $seguro, $manutencao];
+    $labels = ['Receita', 'Líquido', 'Impostos', 'Demanda', 'Seguro', 'Opex/Limpeza'];
+
+    // Configurações do gráfico
+    $x = 27; // Margem inicial
+    $y = 240; // Posição vertical inicial
+    $barWidth = 15; // Largura das barras
+    $maxBarHeight = 30; // Altura máxima das barras
+    $gap = 10;
+    $pageWidth = 170; // Largura total da área utilizável (A4 menos margens)
+
+    // Ajustar espaçamento entre barras dinamicamente
+    $chartWidth = (count($values) * $barWidth); 
+    $gap = ($pageWidth - $chartWidth) / (count($values) - 1);
+
+    // Limite superior do gráfico (valor máximo representado)
+    $limitValue = max($values) > 0 ? max($values) : 1; // Evitar divisão por zero
+    $scalingFactor = $maxBarHeight / $limitValue;
+
+    // Cores das barras
+    $colors = [
+        [70, 130, 180], // Blue
+        [220, 20, 60],  // Red
+        [85, 107, 47],  // Green
+        [128, 0, 128],  // Purple
+        [0, 128, 128],  // Teal
+        [255, 165, 0]   // Orange
+    ];
+
+    // Desenhar barras
+    foreach ($values as $index => $value) {
+        $barHeight = $value * $scalingFactor; // Altura da barra proporcional ao valor
+        $pdf->SetFillColor($colors[$index][0], $colors[$index][1], $colors[$index][2]);
+        $pdf->Rect($x, $y + ($maxBarHeight - $barHeight), $barWidth, $barHeight, 'DF'); // Desenhar barra
+
+        // Adicionar valor acima da barra
         $pdf->SetFont('helvetica', 'B', 10);
-        $pdf->Text(20, 230, 'Gráfico de Payback não disponível.');
-    }
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->Text($x, $y + ($maxBarHeight - $barHeight) - 7, 'R$' . number_format($value, 2, ',', '.'));
 
+        // Adicionar rótulo abaixo da barra
+        $pdf->SetFont('helvetica', '', 8);
+        $pdf->Text($x, $y + $maxBarHeight + 5, $labels[$index]);
+
+        // Incrementar posição horizontal
+        $x += $barWidth + $gap;
+    }
+    // Quinta Página 
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('PGCOC5.png', 0, 0, 210, 297);
+    
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
 
+    // Quinta Página 
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('PGCOC6.png', 0, 0, 210, 297);
+    
+    $pdf->SetFont('helvetica', 'B', 20);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(125, 64, "$precoFinalRs");
+    $pdf->Text(40, 64, "$potenciaGerador kWp");
+
+    $valorSafrasRs =  'R$ ' . number_format($valorSafras, 2, ',', '.');
+    $pdf->Text(90, 150, "$qtdSafras Safra(s)");
+    $pdf->Text(70, 160, "Pelo valor de: $valorSafrasRs");
+    $pdf->Text(60, 170, "Datado em: $dataSafras");
 
     // Sexta Página 
     $pdf->AddPage();  // Adiciona a primeira página
