@@ -527,12 +527,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à sexta página
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(255, 255, 255);
-    $pdf->SetFont('helvetica', 'B', 9);
-    $pdf->Text(39, 169, "$fabricante $potenciaInversor kW");
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->Text(41, 167, "CHINT/SAJ/SOLIS/SOLPLANET");
+        $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->Text(50, 171, "$potenciaInversor kW - MONO 220V");
+    
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->Text(112, 168, "10 ANOS");
-    $pdf->SetFont('helvetica', 'B', 8.5);
-    $pdf->Text(39,184, "$marca $potenciaModulo W");
+    $pdf->SetFont('helvetica', 'B', 9.5);
+    $pdf->Text(39,182, "AESOLAR/ZNSHINE/SINE/RENEPV");
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->Text(62,186, "$potenciaModulo W");
+    
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->Text(112, 183, "12 ANOS");
 
@@ -549,56 +555,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->SetFont('helvetica', 'B', 7);
 
-    $componentes = html_entity_decode($componentes);
-    $componentes = str_replace(
-        ["<\/th>", "<\/td>", "<\/tr>", "<\/table>"], 
-        ["</th>", "</td>", "</tr>", "</table>"], 
-        $componentes
-    );
-    
-    // Extrair os dados da tabela
-    preg_match_all('/<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>/', $componentes, $matches, PREG_SET_ORDER);
-    
-    // Ajuste na altura da descrição
-    $y = 243; // Posição inicial Y
-    $linhaAltura = 2; // Altura de cada linha no PDF
-    $larguraDescricao = 180; // Ajuste para a largura da descrição
-    $larguraQuantidade = 20; // Ajuste para a largura da quantidade
-    $maxY = 280; // Limite Y da página
-    
-    // Função para adicionar uma nova página se necessário
-    function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
-        if ($y + $linhaAltura > $maxY) {
-            $pdf->AddPage(); // Adiciona uma nova página
-            return 10; // Reseta a posição Y após a nova página
-        }
-        return $y;
-    }
-    
-    // Escrever os dados extraídos no PDF
-    if (empty($matches)) {
-        $pdf->Text(10, $y + 1.5, "Nenhum dado encontrado.");
-    } else {
-        foreach ($matches as $match) {
-            $sku = trim($match[1]);
-            $quantidade = trim($match[2]);
-            $descricao = trim($match[3]);
-    
-            // Verificar se há espaço suficiente para escrever na página
-            $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
-    
-            // Adicionar quantidade, com ajuste para subir um pouco
-            $pdf->SetXY(22, $y); // Ajuste para subir um pouco a posição Y
-            $pdf->Cell($larguraQuantidade, $linhaAltura, $quantidade, 0, 0, 'L'); // Alinhamento à esquerda
-    
-            // Adicionar a descrição com quebra automática de linha
-            $pdf->SetXY(29, $y); // Ajuste a posição X para alinhar a descrição
-            $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0);
-    
-            // Atualizar Y para a próxima linha somente após o MultiCell
-            $y += max($linhaAltura, $pdf->GetY() - $y);
-        }
-    }
+
 
     // Quarta Página
     $pdf->AddPage();  // Adiciona a quarta página
