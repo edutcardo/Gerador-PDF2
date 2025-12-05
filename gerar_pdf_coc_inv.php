@@ -837,8 +837,8 @@ if (isset($precoFinal) && is_numeric($precoFinal) && isset($diferencaGastosAno) 
 
 if (!empty($dados)) {
     // --- 1. Configurações de Dimensões e Posição (Ajustadas para ficar maior como na foto) ---
-    $xInicial = 30;         // Margem esquerda maior para caber o título do eixo Y
-    $yInicialTop = 225;      // Posição do topo do gráfico na página
+    $xInicial = 18;         // Margem esquerda maior para caber o título do eixo Y
+    $yInicialTop = 227;      // Posição do topo do gráfico na página
     $larguraGrafico = 170;  // Mais largo para acomodar 25 barras confortavelmente
     $alturaGrafico = 40;   // Bem mais alto para caber os rótulos verticais
     $larguraBarra = 5;
@@ -865,7 +865,6 @@ if (!empty($dados)) {
     // Título Principal
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(50, 50, 70); // Cor cinza escuro para o título
-    $pdf->Text($xInicial, $yInicialTop - 25, 'Gráfico de Payback');
 
     // Subtítulo "Lucro Total"
     $pdf->SetFont('helvetica', 'B', 14);
@@ -879,7 +878,7 @@ if (!empty($dados)) {
         $pdf->StartTransform();
         // Rotaciona 90 graus. Posiciona no meio da altura do gráfico, à esquerda.
         $pdf->Rotate(90, $xInicial - 15, $yInicialTop + ($alturaGrafico / 2));
-        $pdf->Text($xInicial - 15, $yInicialTop + ($alturaGrafico / 2), 'Retorno Financeiro');
+
         $pdf->StopTransform();
     } else {
         // Fallback se não suportar rotação: texto normal
