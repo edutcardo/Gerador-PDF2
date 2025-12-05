@@ -608,30 +608,30 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(255, 255, 255);
     $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->Text(41, 167, "CHINT/SAJ/SOLIS/SOLPLANET");
-        $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->Text(50, 171, "$potenciaInversor kW - MONO 220V");
-    
-    $pdf->SetFont('helvetica', 'B', 13);
-    $pdf->Text(112, 168, "10 ANOS");
-    $pdf->SetFont('helvetica', 'B', 9.5);
-    $pdf->Text(39,182, "AESOLAR/ZNSHINE/SINE/RENEPV");
+    $pdf->Text(52, 172, "CHINT/SAJ/SOLIS/SOLPLANET");
     $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->Text(62,186, "$potenciaModulo W");
+    $pdf->Text(62, 176, "$potenciaInversor kW - MONO 220V");
     
     $pdf->SetFont('helvetica', 'B', 13);
-    $pdf->Text(112, 183, "12 ANOS");
+    $pdf->Text(126, 173, "10 ANOS");
+    $pdf->SetFont('helvetica', 'B', 9.5);
+    $pdf->Text(51,187, "AESOLAR/ZNSHINE/SINE/RENEPV");
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->Text(74,191, "$potenciaModulo W");
+    
+    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->Text(126, 188, "12 ANOS");
 
 
 
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(0, 0, 0);
 
-    $pdf->Text(65, 233, "$qtdmodulosArredondado");
-    $pdf->Text(92, 233, "$potenciaInversor kW");
-    $pdf->Text(116, 233, "$potenciaGerador kWp");
-    $pdf->Text(145, 233, "$geracaoArredondado kWh");
-    $pdf->Text(174.5, 233, "$geracaoAnual kWh");
+    $pdf->Text(65, 238, "$qtdmodulosArredondado");
+    $pdf->Text(92, 238, "$potenciaInversor kW");
+    $pdf->Text(116, 238, "$potenciaGerador kWp");
+    $pdf->Text(145, 238, "$geracaoArredondado kWh");
+    $pdf->Text(174.5, 238, "$geracaoAnual kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
 
