@@ -642,12 +642,13 @@ $geracaoAnual_formatado = number_format($geracaoAnual, 2, ',', '.');
 
     $pdf->Text(65, 238, "$qtdmodulosArredondado");
     $pdf->Text(92, 238, "$potenciaInversor kW");
-    $pdf->Text(116, 238, "$potenciaGerador_formatado kWp");
-    $pdf->Text(145, 238, "$geracao_formatado kWh");
-    $pdf->Text(174.5, 238, "$geracaoAnual_formatado kWh");
+    $pdf->Text(119, 238, "$potenciaGerador_formatado");
+    $pdf->Text(146, 238, "$geracao_formatado");
+    $pdf->Text(174.5, 238, "$geracaoAnual_formatado");
 
     $pdf->SetFont('helvetica', 'B', 12);
 
+$peso_formatado = number_format($peso, 2, ',', '.');
 
     // Quarta Página
     $pdf->AddPage();  // Adiciona a quarta página
@@ -657,7 +658,7 @@ $geracaoAnual_formatado = number_format($geracaoAnual, 2, ',', '.');
     $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
     $pdf->Text(149, 57, "$potenciaGerador_formatado kWp");
     $pdf->Text(152, 71.5, "$metrosOcupados_formatado m²");
-    $pdf->Text(152, 85, "$peso kg");
+    $pdf->Text(152, 85, "$peso_formatado kg");
     $pdf->Text(142, 98.5, "$media_formatado kWh mensal");
     $pdf->Text(142, 112, "$geracao_formatado kWh mensal");
     $pdf->SetTextColor(0, 0, 0);

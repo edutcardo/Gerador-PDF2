@@ -997,6 +997,9 @@ if (!empty($dados)) {
     $pdf->SetTextColor(255, 0, 0);
     $pdf->Text(20, 230, 'Não foi possível gerar o Gráfico de Payback (Faltam dados de investimento ou economia anual).');
 }
+
+$peso_formatado = number_format($peso, 2, ',', '.');
+
         // Quarta Página
     $pdf->AddPage();  // Adiciona a quarta página
     $pdf->Image('PGCOCDESC.png', 0, 0, 210, 297);
@@ -1005,8 +1008,8 @@ if (!empty($dados)) {
     $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
     $pdf->Text(149, 57, "$potenciaGerador_formatado kWp");
     $pdf->Text(152, 71.5, "$metrosOcupados_formatado m²");
-    $pdf->Text(152, 85, "$peso kg");
-    $pdf->Text(142, 98.5, "$mediaArredondado kWh mensal");
+    $pdf->Text(152, 85, "$peso_formatado kg");
+    $pdf->Text(142, 98.5, "$geracao_formatado kWh mensal");
     $pdf->Text(142, 112, "$geracao_formatado kWh mensal");
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
