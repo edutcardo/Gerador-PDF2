@@ -736,7 +736,7 @@ $retornoAcumulado = 0;
 // Verifica se os dados necessários existem e são válidos
 if (isset($precoFinal) && is_numeric($precoFinal) && isset($diferencaGastosAno) && is_numeric($diferencaGastosAno) && $diferencaGastosAno > 0) {
     for ($ano = 1; $ano <= 25; $ano++) {
-        $retornoAcumulado += $diferencaGastosAno;
+        $retornoAcumulado += ($diferencaGastosAno);
         // O dado é o saldo acumulado menos o investimento inicial
         $dados[$ano] = $retornoAcumulado - $precoFinal;
     }
