@@ -545,60 +545,135 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
 
-    // Dados para o gráfico
-    $data = [$jan3, $fev3, $mar3, $abr3, $mai3, $jun3, $jul3, $ago3, $set3, $out3, $nov3, $dez3]; // Valores para as barras
-    $labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
+// --- INÍCIO DOS DADOS DE EXEMPLO ---
+// Supondo que estas são as suas variáveis originais de CONSUMO (Barras Vermelhas)
+$dataGeracao= [$jan3, $fev3, $mar3, $abr3, $mai3, $jun3, $jul3, $ago3, $set3, $out3, $nov3, $dez3];
 
-    // Definindo as cores para as barras
-    $barColor = [1, 133, 56];  // Cor Verde Canal
-
-    // Posições e tamanho do gráfico
-    $x = 23;  // Posição X para o gráfico
-    $y = 260; // Posição Y para o gráfico (mais para baixo na página)
-    $barWidth = 5; // Largura das barras
-    $gap = 15;  // Distância entre as barras
-    $maxBarHeight = 40; // Altura máxima do gráfico (limite)
-
-    // Determinando o maior valor para escalar as barras
-    $maxValue = max($data);
-
-    // Desenhar a moldura ao redor do gráfico
-    $molduraX = $x - 5; // Ajuste para começar um pouco antes das barras
-    $molduraY = $y - $maxBarHeight - 7; // Ajuste para incluir espaço acima das barras
-    $molduraWidth = count($data) * $gap; // Largura total baseada no número de barras e espaçamento
-    $molduraHeight = $maxBarHeight + 10; // Altura total (incluindo margem superior e inferior)
-
-    $pdf->SetDrawColor(0, 0, 0); // Cor da moldura (preto)
-    $pdf->SetLineWidth(0.006); // Espessura da linha da moldura
-    $pdf->Rect($molduraX, $molduraY, $molduraWidth, $molduraHeight, 'D'); // 'D' para apenas desenhar a linha
+// --- VOCÊ PRECISA INSERIR SUAS VARIÁVEIS DE GERAÇÃO AQUI ---
+// Criei dados fictícios para GERAÇÃO (Barras Verdes) para o exemplo funcionar.
+// Substitua pelas suas variáveis reais ($geracaoJan, etc.)
+$gJan=$geracao / 1000; $gFev=$geracao / 1000; $gMar=$geracao / 1000; $gAbr=$geracao / 1000; $gMai=$geracao / 1000; $gJun=$geracao / 1000;
+$gJul=$geracao / 1000; $gAgo=$geracao / 1000; $gSet=$geracao / 1000; $gOut=$geracao / 1000; $gNov=$geracao / 1000; $gDez=$geracao / 1000;
+$dataConsumo = [$gJan, $gFev, $gMar, $gAbr, $gMai, $gJun, $gJul, $gAgo, $gSet, $gOut, $gNov, $gDez];
+// --- FIM DOS DADOS DE EXEMPLO ---
 
 
-    // Desenhando as barras e adicionando os valores
-    foreach ($data as $index => $value) {
-    // Calculando a altura proporcional da barra
-    $barHeight = ($value / $maxValue) * $maxBarHeight;
+$labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
 
-    // Desenhando cada barra
-    $pdf->SetFillColor(60, 179, 113); // Verde
-    $pdf->Rect($x + ($index * $gap), $y - $barHeight, $barWidth, $barHeight, 'DF'); // Barra
+// Definindo as cores (RGB) baseadas na imagem alvo
+// Verde (para borda da Geração)
+$colGerR = 0; $colGerG = 128; $colGerB = 0;
+// Vermelho (para preenchimento do Consumo)
+$colConR = 204; $colConG = 0; $colConB = 0;
 
-    // Adicionando o valor acima da barra
-    $pdf->SetFont('helvetica', '', 10);
+// Posições e tamanho do gráfico
+$x = 18;  // Posição X inicial
+$y = 256; // Posição Y da linha de base
+$barWidth = 4; // Largura individual de CADA barra (reduzi um pouco para caber o par)
+$gap = 16;  // Distância entre o INÍCIO de um grupo de meses e o próximo. Deve ser maior que 2 * $barWidth.
+$maxBarHeight = 40; // Altura máxima do gráfico
+
+// --- CRUCIAL: Determinando o maior valor GLOBAL para escalar as barras corretamente ---
+// Precisamos saber qual é o maior valor entre TODAS as gerações e TODOS os consumos.
+$maxValConsumo = empty($dataConsumo) ? 0 : max($dataConsumo);
+$maxValGeracao = empty($dataGeracao) ? 0 : max($dataGeracao);
+// O valor máximo para a escala é o maior entre os dois conjuntos
+$maxValueGlobal = max($maxValConsumo, $maxValGeracao);
+
+// Prevenção contra divisão por zero se os dados estiverem vazios
+if ($maxValueGlobal == 0) { $maxValueGlobal = 1; }
+
+
+// Configuração de fonte para o gráfico
+$pdf->SetFont('helvetica', '', 8); // Fonte ligeiramente menor para ajudar a caber
+$pdf->SetLineWidth(0.3); // Espessura da linha para a barra verde
+
+// --- LOOP DE DESENHO PRINCIPAL ---
+foreach ($labels as $index => $label) {
+
+    // Obter valores atuais
+    // Usa 0 se não houver dado para aquele índice para evitar erros
+    $valGeracao = isset($dataGeracao[$index]) ? $dataGeracao[$index] : 0;
+    $valConsumo = isset($dataConsumo[$index]) ? $dataConsumo[$index] : 0;
+
+    // Calculando a altura proporcional de cada barra usando o Máximo Global
+    $hGeracao = ($valGeracao / $maxValueGlobal) * $maxBarHeight;
+    $hConsumo = ($valConsumo / $maxValueGlobal) * $maxBarHeight;
+
+    // --- CÁLCULO DAS POSIÇÕES X ---
+    // Posição X da primeira barra (Geração - Verde)
+    $xPosGeracao = $x + ($index * $gap);
+    // Posição X da segunda barra (Consumo - Vermelho), posicionada logo após a primeira
+    $xPosConsumo = $xPosGeracao + $barWidth;
+
+
+    // --- DESENHAR BARRA 1: GERAÇÃO (Borda Verde, Fundo Branco) ---
+    // Conforme a imagem: Apenas a borda é colorida ('D' = Draw border)
+    $pdf->SetDrawColor($colGerR, $colGerG, $colGerB);
+    // Se quiser o fundo branco explicitamente, descomente a linha abaixo e use 'DF' no Rect
+    // $pdf->SetFillColor(255, 255, 255);
+    $pdf->Rect($xPosGeracao, $y - $hGeracao, $barWidth, $hGeracao, 'D');
+
+
+    // --- DESENHAR BARRA 2: CONSUMO (Preenchimento Vermelho) ---
+    // Conforme a imagem: A barra é preenchida ('F' = Fill)
+    $pdf->SetFillColor($colConR, $colConG, $colConB);
+    // Opcional: Se quiser uma borda na barra vermelha também, defina SetDrawColor e use 'DF'
+    $pdf->Rect($xPosConsumo, $y - $hConsumo, $barWidth, $hConsumo, 'F');
+
+
+    // --- RÓTULOS DOS MESES (Abaixo das barras) ---
     $pdf->SetTextColor(0, 0, 0);
-    $valueX = $x + ($index * $gap) + ($barWidth / 2) - 5; // Ajuste para centralizar o texto
-    $valueY = $y - $barHeight - 5; // Ajuste para posicionar acima da barra
-    $pdf->Text($valueX, $valueY, (string)$value); // Adiciona o valor como texto
-}
-    // Adicionando rótulos nas barras
-    $pdf->SetFont('helvetica', '', 10);
-    $pdf->SetTextColor(0, 0, 0);
-    foreach ($labels as $index => $label) {
-        // Centralizar os rótulos horizontalmente e posicionar abaixo das barras
-        $labelX = $x + ($index * $gap) + ($barWidth / 2) - (strlen($label) * 1.5); // Ajuste baseado no comprimento do texto
-        $labelY = $y + 5; // Posição logo abaixo da barra
-        $pdf->Text($labelX, $labelY, $label);
+    // Precisamos centralizar o rótulo abaixo do PAR de barras.
+    // O centro matemático do par de barras é a posição X da primeira barra + a largura de uma barra.
+    $centerXp = $xPosGeracao + $barWidth;
+
+    // Calcula a largura do texto para centralizar perfeitamente
+    $textWidth = $pdf->GetStringWidth($label);
+    $labelX = $centerXp - ($textWidth / 2);
+    $labelY = $y + 5; // Posição logo abaixo da linha de base
+    $pdf->Text($labelX, $labelY, $label);
+
+    /*
+    // --- OPCIONAL: VALORES ACIMA DAS BARRAS ---
+    // Com barras duplas, os valores podem ficar encavalados. Se quiser tentar, descomente abaixo.
+    $pdf->SetFont('helvetica', '', 7);
+    // Valor Geração
+    if($valGeracao > 0) {
+         $valGerX = ($xPosGeracao + $barWidth/2) - ($pdf->GetStringWidth($valGeracao)/2);
+         $pdf->Text($valGerX, $y - $hGeracao - 2, $valGeracao);
     }
-    
+    // Valor Consumo
+    if($valConsumo > 0) {
+         $valConX = ($xPosConsumo + $barWidth/2) - ($pdf->GetStringWidth($valConsumo)/2);
+         $pdf->Text($valConX, $y - $hConsumo - 2, $valConsumo);
+    }
+    $pdf->SetFont('helvetica', '', 8); // Retorna a fonte
+    */
+}
+
+// --- LINHA DE BASE DO GRÁFICO (Eixo X) ---
+$pdf->SetDrawColor(150, 150, 150); // Cinza claro
+$pdf->SetLineWidth(0.1);
+$larguraTotalGrafico = (count($labels) * $gap) + $barWidth; // Cálculo aproximado da largura total
+$pdf->Line($x - 2, $y, $x + $larguraTotalGrafico, $y);
+
+// --- LEGENDA SIMPLES (Essencial para gráficos de barras duplas) ---
+$legendX = $x + 10;
+$legendY = $y + 15;
+
+$pdf->SetFont('helvetica', '', 9);
+
+// Item Geração
+$pdf->SetDrawColor($colGerR, $colGerG, $colGerB);
+$pdf->Rect($legendX, $legendY, 8, 4, 'D');
+$pdf->SetTextColor(0,0,0);
+
+$pdf->SetFillColor($colConR, $colConG, $colConB);
+$pdf->Rect($legendX + 40, $legendY, 8, 4, 'F');
+$pdf->SetTextColor(0,0,0);
+$pdf->Text($legendX + 50, $legendY , utf8_decode("Consumo"));
+$pdf->Text(43, 271, "Geração");
 
     // Terceira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
