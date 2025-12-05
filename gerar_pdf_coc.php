@@ -440,6 +440,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Data atual
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
+$geracao_formatado = number_format($geracao, 2, ',', '.');
+$potenciaGerador_formatado = number_format($potenciaGerador, 2, ',', '.');
+$media_formatado = number_format($media, 2, ',', '.') ;
+$metrosOcupados_formatado = number_format($metrosOcupados, 2, ',', '.');
 
 
     // Criação do PDF
@@ -459,11 +463,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
     
-    $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
+    $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados_formatado m²");
     $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
-    $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador kWp");
-    $pdf->Text(34.6, 178.75, "Média de Consumo: $media kWh");
-    $pdf->Text(34.6, 185, "Geração Estimada: $geracao kWh");
+    $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador_formatado kWp");
+    $pdf->Text(34.6, 178.75, "Média de Consumo: $media_formatado kWh");
+    $pdf->Text(34.6, 185, "Geração Estimada: $geracao_formatado kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text(180, 295, "$dataAtual");
@@ -630,14 +634,17 @@ $pdf->Text(43, 271, "Geração");
     $pdf->Text(126, 188, "12 ANOS");
 
 
-    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
+
+$geracaoAnual_formatado = number_format($geracaoAnual, 2, ',', '.');
+
 
     $pdf->Text(65, 238, "$qtdmodulosArredondado");
     $pdf->Text(92, 238, "$potenciaInversor kW");
-    $pdf->Text(116, 238, "$potenciaGerador kWp");
-    $pdf->Text(145, 238, "$geracaoArredondado kWh");
-    $pdf->Text(174.5, 238, "$geracaoAnual kWh");
+    $pdf->Text(116, 238, "$potenciaGerador_formatado kWp");
+    $pdf->Text(145, 238, "$geracao_formatado kWh");
+    $pdf->Text(174.5, 238, "$geracaoAnual_formatado kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
 
@@ -648,11 +655,11 @@ $pdf->Text(43, 271, "Geração");
     $pdf->SetFont('helvetica', 'B', 14);
     $pdf->SetTextColor(0, 100, 0);
     $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
-    $pdf->Text(149, 57, "$potenciaGerador kWp");
-    $pdf->Text(152, 71.5, "$metrosOcupados m²");
+    $pdf->Text(149, 57, "$potenciaGerador_formatado kWp");
+    $pdf->Text(152, 71.5, "$metrosOcupados_formatado m²");
     $pdf->Text(152, 85, "$peso kg");
-    $pdf->Text(142, 98.5, "$mediaArredondado kWh mensal");
-    $pdf->Text(142, 112, "$geracaoArredondado kWh mensal");
+    $pdf->Text(142, 98.5, "$media_formatado kWh mensal");
+    $pdf->Text(142, 112, "$geracao_formatado kWh mensal");
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
     $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");

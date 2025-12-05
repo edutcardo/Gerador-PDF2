@@ -507,6 +507,10 @@ $TIR_formatado = number_format($tir * 100, 2, ',', '.') . '%';
 $ROI_formatado = number_format($roi * 100, 2, ',', '.') . '%';
 $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '.') . '%';
 
+$geracao_formatado = number_format($geracao, 2, ',', '.') ;
+$potenciaGerador_formatado = number_format($potenciaGerador, 2, ',', '.');
+$metrosOcupados_formatado = number_format($metrosOcupados, 2, ',', '.');
+
     
     // Data atual
     $formatoData = 'd/m/Y';
@@ -529,11 +533,10 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
     
-    $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados m²");
+    $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados_formatado m²");
     $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
-    $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador kWp");
-    $pdf->Text(34.6, 178.75, "Média de Consumo: $media kWh");
-    $pdf->Text(34.6, 185, "Geração Estimada: $geracao kWh");
+    $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador_formatado kWp");
+    $pdf->Text(34.6, 178.75, "Geração Estimada: $geracao_formatado kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text(180, 295, "$dataAtual");
@@ -552,10 +555,6 @@ $dataGeracao= [$jan3, $fev3, $mar3, $abr3, $mai3, $jun3, $jul3, $ago3, $set3, $o
 // --- VOCÊ PRECISA INSERIR SUAS VARIÁVEIS DE GERAÇÃO AQUI ---
 // Criei dados fictícios para GERAÇÃO (Barras Verdes) para o exemplo funcionar.
 // Substitua pelas suas variáveis reais ($geracaoJan, etc.)
-$gJan=$geracao / 1000; $gFev=$geracao / 1000; $gMar=$geracao / 1000; $gAbr=$geracao / 1000; $gMai=$geracao / 1000; $gJun=$geracao / 1000;
-$gJul=$geracao / 1000; $gAgo=$geracao / 1000; $gSet=$geracao / 1000; $gOut=$geracao / 1000; $gNov=$geracao / 1000; $gDez=$geracao / 1000;
-$dataConsumo = [$gJan, $gFev, $gMar, $gAbr, $gMai, $gJun, $gJul, $gAgo, $gSet, $gOut, $gNov, $gDez];
-// --- FIM DOS DADOS DE EXEMPLO ---
 
 
 $labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
@@ -567,10 +566,10 @@ $colGerR = 0; $colGerG = 128; $colGerB = 0;
 $colConR = 204; $colConG = 0; $colConB = 0;
 
 // Posições e tamanho do gráfico
-$x = 18;  // Posição X inicial
+$x = 46;  // Posição X inicial
 $y = 256; // Posição Y da linha de base
 $barWidth = 4; // Largura individual de CADA barra (reduzi um pouco para caber o par)
-$gap = 16;  // Distância entre o INÍCIO de um grupo de meses e o próximo. Deve ser maior que 2 * $barWidth.
+$gap = 11;  // Distância entre o INÍCIO de um grupo de meses e o próximo. Deve ser maior que 2 * $barWidth.
 $maxBarHeight = 40; // Altura máxima do gráfico
 
 // --- CRUCIAL: Determinando o maior valor GLOBAL para escalar as barras corretamente ---
@@ -619,8 +618,6 @@ foreach ($labels as $index => $label) {
     // Conforme a imagem: A barra é preenchida ('F' = Fill)
     $pdf->SetFillColor($colConR, $colConG, $colConB);
     // Opcional: Se quiser uma borda na barra vermelha também, defina SetDrawColor e use 'DF'
-    $pdf->Rect($xPosConsumo, $y - $hConsumo, $barWidth, $hConsumo, 'F');
-
 
     // --- RÓTULOS DOS MESES (Abaixo das barras) ---
     $pdf->SetTextColor(0, 0, 0);
@@ -668,12 +665,7 @@ $pdf->SetFont('helvetica', '', 9);
 $pdf->SetDrawColor($colGerR, $colGerG, $colGerB);
 $pdf->Rect($legendX, $legendY, 8, 4, 'D');
 $pdf->SetTextColor(0,0,0);
-
-$pdf->SetFillColor($colConR, $colConG, $colConB);
-$pdf->Rect($legendX + 40, $legendY, 8, 4, 'F');
-$pdf->SetTextColor(0,0,0);
-$pdf->Text($legendX + 50, $legendY , utf8_decode("Consumo"));
-$pdf->Text(43, 271, "Geração");
+$pdf->Text(68, 271, "Geração");
 
     // Terceira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
@@ -702,11 +694,14 @@ $pdf->Text(43, 271, "Geração");
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(0, 0, 0);
 
+$geracaoAnual_formatado = number_format($geracaoAnual, 2, ',', '.');
+
+
     $pdf->Text(65, 238, "$qtdmodulosArredondado");
     $pdf->Text(92, 238, "$potenciaInversor kW");
-    $pdf->Text(116, 238, "$potenciaGerador kWp");
-    $pdf->Text(145, 238, "$geracaoArredondado kWh");
-    $pdf->Text(174.5, 238, "$geracaoAnual kWh");
+    $pdf->Text(119, 238, "$potenciaGerador_formatado");
+    $pdf->Text(146, 238, "$geracao_formatado");
+    $pdf->Text(174.5, 238, "$geracaoAnual_formatado");
 
     $pdf->SetFont('helvetica', 'B', 12);
 
@@ -1008,11 +1003,11 @@ if (!empty($dados)) {
     $pdf->SetFont('helvetica', 'B', 14);
     $pdf->SetTextColor(0, 100, 0);
     $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
-    $pdf->Text(149, 57, "$potenciaGerador kWp");
-    $pdf->Text(152, 71.5, "$metrosOcupados m²");
+    $pdf->Text(149, 57, "$potenciaGerador_formatado kWp");
+    $pdf->Text(152, 71.5, "$metrosOcupados_formatado m²");
     $pdf->Text(152, 85, "$peso kg");
     $pdf->Text(142, 98.5, "$mediaArredondado kWh mensal");
-    $pdf->Text(142, 112, "$geracaoArredondado kWh mensal");
+    $pdf->Text(142, 112, "$geracao_formatado kWh mensal");
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
     $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
