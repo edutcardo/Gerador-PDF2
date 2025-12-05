@@ -668,7 +668,22 @@ $pdf->Text(43, 271, "Geração");
     // Página 5
 
     $pdf->AddPage();
-    $pdf->Image('PGCOCANALISE.png', 0, 0, 210, 297);
+    $pdf->Image('PGCOCANALISEs.png', 0, 0, 210, 297);
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(255, 255, 255);
+    $pdf->Text(45, 45, "$gastoSemGeradorAnoRs");
+    $pdf->Text(47.5, 61.5, "$gastoSemGeradorRs");
+    $pdf->Text(91, 45, "$gastoComGeradorAnoRs");
+    $pdf->Text(93, 61.5, "$gastoComGeradorRs");
+    $pdf->Text(135, 45, "$diferencaGastosAnoRs");
+    $pdf->Text(138, 61.5, "$diferencaGastosRs");
+// CÓDIGO CORRIGIDO
+// ... (código anterior da página 5) ...
+ $pdf->Text(138, 61.5, "$diferencaGastosRs");
+
+    // --- INÍCIO DA LÓGICA CORRIGIDA ---
+
+
 
 
     // 1. PRIMEIRO, definimos a fonte e a cor PRETA para o restante do conteúdo
