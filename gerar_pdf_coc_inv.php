@@ -284,11 +284,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $precoFinal = ($precoKit);
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
-    $payback = $precoFinal / $liquidoVerdeAnual;
-    $paybackArredondado = round($payback);
-    $retorno25anos = $diferencaGastosAno * 25;
-    $retorno25anosRs = 'R$ ' . number_format($retorno25anos, 2, ',', '.');
-
+ 
     //Cálculos investidor
     $bandeiraAmarela = $inputValorCompensavel + 0.01885;
     $bandeiraVermelha = $inputValorCompensavel + 0.04463;
@@ -311,6 +307,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $liquidoVermelho = $retornoVermelho - $seguro - $manutencao - $imposto - $demanda;
     $liquidoVermelhoP1 = $retornoVermelhoP1 - $seguro - $manutencao - $imposto - $demanda;
     $liquidoVerdeAnual = $liquidoVerde * 12;
+
+
+    $payback = $precoFinal / $liquidoVerdeAnual;
+    $paybackArredondado = round($payback) - 1;
+    $retorno25anos = $liquidoVerdeAnual * 25;
+    $retorno25anosRs = 'R$ ' . number_format($retorno25anos, 2, ',', '.');
+
 
     function calcularParcela($taxa, $nper, $vp, $vf = 0, $tipo = 0)
     {
