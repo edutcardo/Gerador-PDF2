@@ -831,44 +831,10 @@ $pdf->Text(172, 220, "$ROI_formatado");
         $x += $barWidth + $gap;
     }
 
-        // Quarta Página
-    $pdf->AddPage();  // Adiciona a quarta página
-    $pdf->Image('PGCOCDESC.png', 0, 0, 210, 297);
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(0, 100, 0);
-    $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
-    $pdf->Text(149, 57, "$potenciaGerador kWp");
-    $pdf->Text(152, 71.5, "$metrosOcupados m²");
-    $pdf->Text(152, 85, "$peso kg");
-    $pdf->Text(142, 98.5, "$mediaArredondado kWh mensal");
-    $pdf->Text(142, 112, "$geracaoArredondado kWh mensal");
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
-    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
-    $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
-    $pdf->Text(23, 196, "ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO");
-    $pdf->Text(23, 204, "CABEAMENTO CC 1.8 KVCC - USO ESPECÍFICO PARA USINA SOLAR");
-    $pdf->Text(23, 212, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-    $pdf->Text(23, 220, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
-    $pdf->Text(23, 228, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
-    $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(16, 256, "$textoPadrao");
 
-    
     $pdf->AddPage();
     $pdf->Image('PGCOCANALISE.png', 0, 0, 210, 297);
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(255, 255, 255);
-    $pdf->Text(45, 45, "$gastoSemGeradorAnoRs");
-    $pdf->Text(47.5, 61.5, "$gastoSemGeradorRs");
-    $pdf->Text(91, 45, "$gastoComGeradorAnoRs");
-    $pdf->Text(93, 61.5, "$gastoComGeradorRs");
-    $pdf->Text(135, 45, "$diferencaGastosAnoRs");
-    $pdf->Text(138, 61.5, "$diferencaGastosRs");
-// CÓDIGO CORRIGIDO
-// ... (código anterior da página 5) ...
- $pdf->Text(138, 61.5, "$diferencaGastosRs");
+
 
     // --- INÍCIO DA LÓGICA CORRIGIDA ---
 
@@ -1036,6 +1002,31 @@ if (!empty($dados)) {
     $pdf->SetTextColor(255, 0, 0);
     $pdf->Text(20, 230, 'Não foi possível gerar o Gráfico de Payback (Faltam dados de investimento ou economia anual).');
 }
+        // Quarta Página
+    $pdf->AddPage();  // Adiciona a quarta página
+    $pdf->Image('PGCOCDESC.png', 0, 0, 210, 297);
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(0, 100, 0);
+    $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
+    $pdf->Text(149, 57, "$potenciaGerador kWp");
+    $pdf->Text(152, 71.5, "$metrosOcupados m²");
+    $pdf->Text(152, 85, "$peso kg");
+    $pdf->Text(142, 98.5, "$mediaArredondado kWh mensal");
+    $pdf->Text(142, 112, "$geracaoArredondado kWh mensal");
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
+    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
+    $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
+    $pdf->Text(23, 196, "ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO");
+    $pdf->Text(23, 204, "CABEAMENTO CC 1.8 KVCC - USO ESPECÍFICO PARA USINA SOLAR");
+    $pdf->Text(23, 212, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+    $pdf->Text(23, 220, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
+    $pdf->Text(23, 228, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
+    $pdf->SetFont('helvetica', 'B', 12);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(16, 256, "$textoPadrao");
+
+    
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);

@@ -475,59 +475,137 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
 
-    // Dados para o gráfico
-    $data = [$jan3, $fev3, $mar3, $abr3, $mai3, $jun3, $jul3, $ago3, $set3, $out3, $nov3, $dez3]; // Valores para as barras
-    $labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
 
-    // Definindo as cores para as barras
-    $barColor = [1, 133, 56];  // Cor Verde Canal
+// --- INÍCIO DOS DADOS DE EXEMPLO ---
+// Supondo que estas são as suas variáveis originais de CONSUMO (Barras Vermelhas)
+$dataGeracao= [$jan3, $fev3, $mar3, $abr3, $mai3, $jun3, $jul3, $ago3, $set3, $out3, $nov3, $dez3];
 
-    // Posições e tamanho do gráfico
-    $x = 23;  // Posição X para o gráfico
-    $y = 260; // Posição Y para o gráfico (mais para baixo na página)
-    $barWidth = 5; // Largura das barras
-    $gap = 15;  // Distância entre as barras
-    $maxBarHeight = 36; // Altura máxima do gráfico (limite)
-
-    // Determinando o maior valor para escalar as barras
-    $maxValue = max($data);
-
-    // Desenhar a moldura ao redor do gráfico
-    $molduraX = $x - 5; // Ajuste para começar um pouco antes das barras
-    $molduraY = $y - $maxBarHeight - 7; // Ajuste para incluir espaço acima das barras
-    $molduraWidth = count($data) * $gap; // Largura total baseada no número de barras e espaçamento
-    $molduraHeight = $maxBarHeight + 10; // Altura total (incluindo margem superior e inferior)
-
-    $pdf->SetDrawColor(0, 0, 0); // Cor da moldura (preto)
-    $pdf->SetLineWidth(0.006); // Espessura da linha da moldura
-    $pdf->Rect($molduraX, $molduraY, $molduraWidth, $molduraHeight, 'D'); // 'D' para apenas desenhar a linha
+// --- VOCÊ PRECISA INSERIR SUAS VARIÁVEIS DE GERAÇÃO AQUI ---
+// Criei dados fictícios para GERAÇÃO (Barras Verdes) para o exemplo funcionar.
+// Substitua pelas suas variáveis reais ($geracaoJan, etc.)
+$gJan=$geracao / 1000; $gFev=$geracao / 1000; $gMar=$geracao / 1000; $gAbr=$geracao / 1000; $gMai=$geracao / 1000; $gJun=$geracao / 1000;
+$gJul=$geracao / 1000; $gAgo=$geracao / 1000; $gSet=$geracao / 1000; $gOut=$geracao / 1000; $gNov=$geracao / 1000; $gDez=$geracao / 1000;
+$dataConsumo = [$gJan, $gFev, $gMar, $gAbr, $gMai, $gJun, $gJul, $gAgo, $gSet, $gOut, $gNov, $gDez];
+// --- FIM DOS DADOS DE EXEMPLO ---
 
 
-    // Desenhando as barras e adicionando os valores
-    foreach ($data as $index => $value) {
-    // Calculando a altura proporcional da barra
-    $barHeight = ($value / $maxValue) * $maxBarHeight;
+$labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
 
-    // Desenhando cada barra
-    $pdf->SetFillColor(60, 179, 113); // Verde
-    $pdf->Rect($x + ($index * $gap), $y - $barHeight, $barWidth, $barHeight, 'DF'); // Barra
+// Definindo as cores (RGB) baseadas na imagem alvo
+// Verde (para borda da Geração)
+$colGerR = 0; $colGerG = 128; $colGerB = 0;
+// Vermelho (para preenchimento do Consumo)
+$colConR = 204; $colConG = 0; $colConB = 0;
 
-    // Adicionando o valor acima da barra
-    $pdf->SetFont('helvetica', '', 10);
+// Posições e tamanho do gráfico
+$x = 18;  // Posição X inicial
+$y = 256; // Posição Y da linha de base
+$barWidth = 4; // Largura individual de CADA barra (reduzi um pouco para caber o par)
+$gap = 16;  // Distância entre o INÍCIO de um grupo de meses e o próximo. Deve ser maior que 2 * $barWidth.
+$maxBarHeight = 40; // Altura máxima do gráfico
+
+// --- CRUCIAL: Determinando o maior valor GLOBAL para escalar as barras corretamente ---
+// Precisamos saber qual é o maior valor entre TODAS as gerações e TODOS os consumos.
+$maxValConsumo = empty($dataConsumo) ? 0 : max($dataConsumo);
+$maxValGeracao = empty($dataGeracao) ? 0 : max($dataGeracao);
+// O valor máximo para a escala é o maior entre os dois conjuntos
+$maxValueGlobal = max($maxValConsumo, $maxValGeracao);
+
+// Prevenção contra divisão por zero se os dados estiverem vazios
+if ($maxValueGlobal == 0) { $maxValueGlobal = 1; }
+
+
+// Configuração de fonte para o gráfico
+$pdf->SetFont('helvetica', '', 8); // Fonte ligeiramente menor para ajudar a caber
+$pdf->SetLineWidth(0.3); // Espessura da linha para a barra verde
+
+// --- LOOP DE DESENHO PRINCIPAL ---
+foreach ($labels as $index => $label) {
+
+    // Obter valores atuais
+    // Usa 0 se não houver dado para aquele índice para evitar erros
+    $valGeracao = isset($dataGeracao[$index]) ? $dataGeracao[$index] : 0;
+    $valConsumo = isset($dataConsumo[$index]) ? $dataConsumo[$index] : 0;
+
+    // Calculando a altura proporcional de cada barra usando o Máximo Global
+    $hGeracao = ($valGeracao / $maxValueGlobal) * $maxBarHeight;
+    $hConsumo = ($valConsumo / $maxValueGlobal) * $maxBarHeight;
+
+    // --- CÁLCULO DAS POSIÇÕES X ---
+    // Posição X da primeira barra (Geração - Verde)
+    $xPosGeracao = $x + ($index * $gap);
+    // Posição X da segunda barra (Consumo - Vermelho), posicionada logo após a primeira
+    $xPosConsumo = $xPosGeracao + $barWidth;
+
+
+    // --- DESENHAR BARRA 1: GERAÇÃO (Borda Verde, Fundo Branco) ---
+    // Conforme a imagem: Apenas a borda é colorida ('D' = Draw border)
+    $pdf->SetDrawColor($colGerR, $colGerG, $colGerB);
+    // Se quiser o fundo branco explicitamente, descomente a linha abaixo e use 'DF' no Rect
+    // $pdf->SetFillColor(255, 255, 255);
+    $pdf->Rect($xPosGeracao, $y - $hGeracao, $barWidth, $hGeracao, 'D');
+
+
+    // --- DESENHAR BARRA 2: CONSUMO (Preenchimento Vermelho) ---
+    // Conforme a imagem: A barra é preenchida ('F' = Fill)
+    $pdf->SetFillColor($colConR, $colConG, $colConB);
+    // Opcional: Se quiser uma borda na barra vermelha também, defina SetDrawColor e use 'DF'
+    $pdf->Rect($xPosConsumo, $y - $hConsumo, $barWidth, $hConsumo, 'F');
+
+
+    // --- RÓTULOS DOS MESES (Abaixo das barras) ---
     $pdf->SetTextColor(0, 0, 0);
-    $valueX = $x + ($index * $gap) + ($barWidth / 2) - 5; // Ajuste para centralizar o texto
-    $valueY = $y - $barHeight - 5; // Ajuste para posicionar acima da barra
-    $pdf->Text($valueX, $valueY, (string)$value); // Adiciona o valor como texto
-}
-    // Adicionando rótulos nas barras
-    $pdf->SetFont('helvetica', '', 10);
-    $pdf->SetTextColor(0, 0, 0);
-    foreach ($labels as $index => $label) {
-        // Centralizar os rótulos horizontalmente e posicionar abaixo das barras
-        $labelX = $x + ($index * $gap) + ($barWidth / 2) - (strlen($label) * 1.5); // Ajuste baseado no comprimento do texto
-        $labelY = $y + 5; // Posição logo abaixo da barra
-        $pdf->Text($labelX, $labelY, $label);
+    // Precisamos centralizar o rótulo abaixo do PAR de barras.
+    // O centro matemático do par de barras é a posição X da primeira barra + a largura de uma barra.
+    $centerXp = $xPosGeracao + $barWidth;
+
+    // Calcula a largura do texto para centralizar perfeitamente
+    $textWidth = $pdf->GetStringWidth($label);
+    $labelX = $centerXp - ($textWidth / 2);
+    $labelY = $y + 5; // Posição logo abaixo da linha de base
+    $pdf->Text($labelX, $labelY, $label);
+
+    /*
+    // --- OPCIONAL: VALORES ACIMA DAS BARRAS ---
+    // Com barras duplas, os valores podem ficar encavalados. Se quiser tentar, descomente abaixo.
+    $pdf->SetFont('helvetica', '', 7);
+    // Valor Geração
+    if($valGeracao > 0) {
+         $valGerX = ($xPosGeracao + $barWidth/2) - ($pdf->GetStringWidth($valGeracao)/2);
+         $pdf->Text($valGerX, $y - $hGeracao - 2, $valGeracao);
     }
+    // Valor Consumo
+    if($valConsumo > 0) {
+         $valConX = ($xPosConsumo + $barWidth/2) - ($pdf->GetStringWidth($valConsumo)/2);
+         $pdf->Text($valConX, $y - $hConsumo - 2, $valConsumo);
+    }
+    $pdf->SetFont('helvetica', '', 8); // Retorna a fonte
+    */
+}
+
+// --- LINHA DE BASE DO GRÁFICO (Eixo X) ---
+$pdf->SetDrawColor(150, 150, 150); // Cinza claro
+$pdf->SetLineWidth(0.1);
+$larguraTotalGrafico = (count($labels) * $gap) + $barWidth; // Cálculo aproximado da largura total
+$pdf->Line($x - 2, $y, $x + $larguraTotalGrafico, $y);
+
+// --- LEGENDA SIMPLES (Essencial para gráficos de barras duplas) ---
+$legendX = $x + 10;
+$legendY = $y + 15;
+
+$pdf->SetFont('helvetica', '', 9);
+
+// Item Geração
+$pdf->SetDrawColor($colGerR, $colGerG, $colGerB);
+$pdf->Rect($legendX, $legendY, 8, 4, 'D');
+$pdf->SetTextColor(0,0,0);
+
+$pdf->SetFillColor($colConR, $colConG, $colConB);
+$pdf->Rect($legendX + 40, $legendY, 8, 4, 'F');
+$pdf->SetTextColor(0,0,0);
+$pdf->Text($legendX + 50, $legendY , utf8_decode("Consumo"));
+$pdf->Text(43, 271, "Geração");
+
 
     // Terceira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
@@ -537,33 +615,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(255, 255, 255);
     $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->Text(41, 167, "CHINT/SAJ/SOLIS/SOLPLANET");
-        $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->Text(50, 171, "$potenciaInversor kW - MONO 220V");
-    
-    $pdf->SetFont('helvetica', 'B', 13);
-    $pdf->Text(112, 168, "10 ANOS");
-    $pdf->SetFont('helvetica', 'B', 9.5);
-    $pdf->Text(39,182, "AESOLAR/ZNSHINE/SINE/RENEPV");
+    $pdf->Text(52, 172, "CHINT/SAJ/SOLIS/SOLPLANET");
     $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->Text(62,186, "$potenciaModulo W");
+    $pdf->Text(62, 176, "$potenciaInversor kW - MONO 220V");
     
     $pdf->SetFont('helvetica', 'B', 13);
-    $pdf->Text(112, 183, "12 ANOS");
-
+    $pdf->Text(126, 173, "10 ANOS");
+    $pdf->SetFont('helvetica', 'B', 9.5);
+    $pdf->Text(51,187, "AESOLAR/ZNSHINE/SINE/RENEPV");
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->Text(74,191, "$potenciaModulo W");
+    
+    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->Text(126, 188, "12 ANOS");
 
 
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(0, 0, 0);
 
-    $pdf->Text(65, 233, "$qtdmodulosArredondado");
-    $pdf->Text(92, 233, "$potenciaInversor kW");
-    $pdf->Text(116, 233, "$potenciaGerador kWp");
-    $pdf->Text(145, 233, "$geracaoArredondado kWh");
-    $pdf->Text(174.5, 233, "$geracaoAnual kWh");
+    $pdf->Text(65, 238, "$qtdmodulosArredondado");
+    $pdf->Text(92, 238, "$potenciaInversor kW");
+    $pdf->Text(116, 238, "$potenciaGerador kWp");
+    $pdf->Text(145, 238, "$geracaoArredondado kWh");
+    $pdf->Text(174.5, 238, "$geracaoAnual kWh");
 
-    $pdf->SetFont('helvetica', 'B', 7);
-
+    $pdf->SetFont('helvetica', 'B', 12);
 
 
     // Quarta Página
@@ -593,19 +669,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->AddPage();
     $pdf->Image('PGCOCANALISE.png', 0, 0, 210, 297);
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(255, 255, 255);
-    $pdf->Text(45, 45, "$gastoSemGeradorAnoRs");
-    $pdf->Text(47.5, 61.5, "$gastoSemGeradorRs");
-    $pdf->Text(91, 45, "$gastoComGeradorAnoRs");
-    $pdf->Text(93, 61.5, "$gastoComGeradorRs");
-    $pdf->Text(135, 45, "$diferencaGastosAnoRs");
-    $pdf->Text(138, 61.5, "$diferencaGastosRs");
-// CÓDIGO CORRIGIDO
-// ... (código anterior da página 5) ...
- $pdf->Text(138, 61.5, "$diferencaGastosRs");
 
-    // --- INÍCIO DA LÓGICA CORRIGIDA ---
 
     // 1. PRIMEIRO, definimos a fonte e a cor PRETA para o restante do conteúdo
    $pdf->SetFont('helvetica', 'B', 16);
@@ -642,34 +706,145 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    if (!empty($dados)) {
-        $xInicial = 20; $yInicial = 213; $larguraGrafico = 160; $alturaGrafico = 50;
-        $larguraBarra = 5; $espacoEntreBarras = 2; $linhaBase = $yInicial + $alturaGrafico;
-        $min = min($dados); $max = max($dados);
-        $escalaY = ($max - $min > 0) ? $alturaGrafico / ($max - $min) : 0;
-        $pdf->SetDrawColor(0, 0, 0);
-        $pdf->Line($xInicial, $linhaBase, $xInicial + $larguraGrafico, $linhaBase);
-        $pdf->Line($xInicial, $linhaBase - $alturaGrafico, $xInicial, $linhaBase);
-        $pdf->SetFont('helvetica', 'B', 12);
-        $pdf->Text($xInicial, $yInicial - 10, 'Gráfico de Payback (25 anos)');
-        $xPos = $xInicial;
-        foreach ($dados as $ano => $valor) {
-            $barHeight = abs($valor * $escalaY);
-            $yBarra = ($valor >= 0) ? $linhaBase - $barHeight : $linhaBase;
-            $pdf->SetFillColor(60, 179, 113);
-            $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF');
-            $pdf->SetFont('helvetica', '', 8);
-            $pdf->Text($xPos - 2, $linhaBase + 3, (string)$ano);
-            if ($ano % 2 == 1) {
-                $valorTexto = 'R$ ' . number_format($valor, 0, ',', '.');                $yTexto = $valor >= 0 ? $yBarra - 5 : $yBarra + $barHeight + 3;
-    $pdf->Text($xPos - 6, $yTexto, $valorTexto); // Linha modificada para dar mais espaço
-            }
-            $xPos += $larguraBarra + $espacoEntreBarras;
-        }
-    } else {
-        $pdf->SetFont('helvetica', 'B', 10);
-        $pdf->Text(20, 230, 'Gráfico de Payback não disponível.');
+// Gráfico de Payback
+$dados = [];
+$retornoAcumulado = 0;
+
+// Verifica se os dados necessários existem e são válidos
+if (isset($precoFinal) && is_numeric($precoFinal) && isset($diferencaGastosAno) && is_numeric($diferencaGastosAno) && $diferencaGastosAno > 0) {
+    for ($ano = 1; $ano <= 25; $ano++) {
+        $retornoAcumulado += $diferencaGastosAno;
+        // O dado é o saldo acumulado menos o investimento inicial
+        $dados[$ano] = $retornoAcumulado - $precoFinal;
     }
+}
+
+if (!empty($dados)) {
+    // --- 1. Configurações de Dimensões e Posição (Ajustadas para ficar maior como na foto) ---
+    $xInicial = 18;         // Margem esquerda maior para caber o título do eixo Y
+    $yInicialTop = 227;      // Posição do topo do gráfico na página
+    $larguraGrafico = 170;  // Mais largo para acomodar 25 barras confortavelmente
+    $alturaGrafico = 40;   // Bem mais alto para caber os rótulos verticais
+    $larguraBarra = 5;
+    $espacoEntreBarras = 1.8; // Ajuste fino para caber as 25 barras na largura
+
+    // --- 2. Cálculos de Escala e Linha Zero ---
+    $min = min($dados);
+    $max = max($dados);
+    // Garante que o 0 esteja no range, caso todos os dados sejam positivos ou todos negativos
+    $minScale = min(0, $min);
+    $maxScale = max(0, $max);
+    $rangeTotal = $maxScale - $minScale;
+
+    // Evita divisão por zero se o range for 0
+    $escalaY = ($rangeTotal > 0) ? $alturaGrafico / $rangeTotal : 0;
+
+    // Calcula onde fica a linha visual do ZERO (R$ 0,00) no eixo Y.
+    // A distância do topo ($maxScale) até o zero é proporcional ao valor de $maxScale.
+    $yLinhaZero = $yInicialTop + ($maxScale * $escalaY);
+
+
+    // --- 3. Desenhando Títulos e Eixos ---
+
+    // Título Principal
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(50, 50, 70); // Cor cinza escuro para o título
+
+    // Subtítulo "Lucro Total"
+    $pdf->SetFont('helvetica', 'B', 14);
+    // Centraliza aproximadamente sobre o gráfico
+    $pdf->Text($xInicial + ($larguraGrafico / 2) - 15, $yInicialTop - 10, 'Lucro Total');
+
+    // Rótulo do Eixo Y (Rotacionado) - REQUER TCPDF ou extensão FPDF
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->SetTextColor(100, 100, 100);
+    if (method_exists($pdf, 'StartTransform')) {
+        $pdf->StartTransform();
+        // Rotaciona 90 graus. Posiciona no meio da altura do gráfico, à esquerda.
+        $pdf->Rotate(90, $xInicial - 15, $yInicialTop + ($alturaGrafico / 2));
+
+        $pdf->StopTransform();
+    } else {
+        // Fallback se não suportar rotação: texto normal
+        $pdf->Text($xInicial - 25, $yInicialTop, 'Retorno');
+        $pdf->Text($xInicial - 25, $yInicialTop+5, 'Financeiro');
+    }
+
+
+    // Desenha a LINHA BASE (Linha do Zero) - Cinza, um pouco mais grossa
+    $pdf->SetLineWidth(0.4);
+    $pdf->SetDrawColor(180, 180, 180); // Cinza claro
+    $pdf->Line($xInicial, $yLinhaZero, $xInicial + $larguraGrafico, $yLinhaZero);
+
+    // --- 4. Loop para desenhar Barras e Rótulos ---
+    $xPos = $xInicial + ($espacoEntreBarras * 2); // Pequeno recuo inicial
+    $pdf->SetLineWidth(0.2); // Volta para linha fina para as barras
+
+    foreach ($dados as $ano => $valor) {
+        // Altura da barra é sempre positiva para o cálculo do retângulo
+        $barHeight = abs($valor * $escalaY);
+
+        // Determina a posição Y inicial e a cor da barra
+        if ($valor >= 0) {
+            // Valor Positivo: Barra sobe a partir da linha zero
+            $yBarra = $yLinhaZero - $barHeight;
+            // Ponto de ancoragem para o texto (logo acima da barra)
+            $yTextoAnchor = $yBarra - 1;
+        } else {
+            // Valor Negativo: Barra desce a partir da linha zero
+            $yBarra = $yLinhaZero;
+            // Ponto de ancoragem para o texto (logo abaixo da barra, que na rotação fica "acima" visualmente)
+             $yTextoAnchor = $yBarra + $barHeight + 1;
+        }
+
+        // Configura cor da barra (Verde Neon brilhante com borda preta)
+        $pdf->SetFillColor(0, 255, 127); // SpringGreen (mais parecido com a imagem)
+        $pdf->SetDrawColor(0, 0, 0);     // Borda preta
+        $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF');
+
+        // Rótulo do Ano (Eixo X) na parte inferior
+        $pdf->SetFont('helvetica', '', 8);
+        $pdf->SetTextColor(0, 0, 0);
+        // Posiciona o ano abaixo da linha mais baixa do gráfico
+        $yAno = $yInicialTop + $alturaGrafico + 3;
+        // Centraliza o número do ano na largura da barra
+        $pdf->Text($xPos + ($larguraBarra/2) - 1, $yAno, (string)$ano);
+
+
+        // Rótulo do Valor (Rotacionado Verticalmente)
+        // Mostra para TODOS os anos, com 2 casas decimais
+        $pdf->SetFont('helvetica', '', 7); // Fonte menor para caber
+        $valorTexto = 'R$ ' . number_format($valor, 2, ',', '.');
+
+        // Calcula o centro X da barra para alinhar o texto
+        $xTextoAnchor = $xPos + ($larguraBarra / 2);
+        // Pequeno ajuste vertical para centralizar a fonte na rotação
+        $ajusteFonteRotacao = 1;
+
+        if (method_exists($pdf, 'StartTransform')) {
+             // --- INÍCIO ROTAÇÃO TCPDF ---
+            $pdf->StartTransform();
+            // Rotaciona 90 graus em torno do ponto de ancoragem.
+            // O texto é desenhado "deitado", e a rotação o coloca em pé.
+            $pdf->Rotate(90, $xTextoAnchor, $yTextoAnchor);
+            $pdf->Text($xTextoAnchor - $ajusteFonteRotacao, $yTextoAnchor, $valorTexto);
+            $pdf->StopTransform();
+             // --- FIM ROTAÇÃO TCPDF ---
+        } else {
+            // Fallback ruim se não houver rotação: mostra horizontal (vai ficar sobreposto)
+             $pdf->Text($xPos-5, $yBarra - 2, $valorTexto);
+        }
+
+
+        // Avança a posição X para a próxima barra
+        $xPos += $larguraBarra + $espacoEntreBarras;
+    }
+} else {
+    // Caso não haja dados válidos
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->SetTextColor(255, 0, 0);
+    $pdf->Text(20, 230, 'Não foi possível gerar o Gráfico de Payback (Faltam dados de investimento ou economia anual).');
+}
 
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
