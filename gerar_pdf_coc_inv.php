@@ -284,7 +284,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $precoFinal = ($precoKit);
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
-    $payback = $precoFinal / $diferencaGastosAno;
+    $payback = $precoFinal / $liquidoVerdeAnual;
     $paybackArredondado = round($payback);
     $retorno25anos = $diferencaGastosAno * 25;
     $retorno25anosRs = 'R$ ' . number_format($retorno25anos, 2, ',', '.');
