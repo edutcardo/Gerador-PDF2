@@ -822,45 +822,146 @@ $pdf->Text(172, 220, "$ROI_formatado");
     $pdf->Text(152, 166, "$paybackArredondado anos");
     $pdf->Text(143, 178, "$retorno25anosRs");
     
-    // Gráfico de Payback
-    $dados = [];
-    $retornoAcumulado = 0;
-    if (is_numeric($precoFinal) && is_numeric($diferencaGastosAno) && $diferencaGastosAno > 0) {
-        for ($ano = 1; $ano <= 25; $ano++) {
-            $retornoAcumulado += $diferencaGastosAno;
-            $dados[$ano] = $retornoAcumulado - $precoFinal;
-        }
-    }
+// Gráfico de Payback
+$dados = [];
+$retornoAcumulado = 0;
 
-    if (!empty($dados)) {
-        $xInicial = 20; $yInicial = 213; $larguraGrafico = 160; $alturaGrafico = 50;
-        $larguraBarra = 5; $espacoEntreBarras = 2; $linhaBase = $yInicial + $alturaGrafico;
-        $min = min($dados); $max = max($dados);
-        $escalaY = ($max - $min > 0) ? $alturaGrafico / ($max - $min) : 0;
-        $pdf->SetDrawColor(0, 0, 0);
-        $pdf->Line($xInicial, $linhaBase, $xInicial + $larguraGrafico, $linhaBase);
-        $pdf->Line($xInicial, $linhaBase - $alturaGrafico, $xInicial, $linhaBase);
-        $pdf->SetFont('helvetica', 'B', 12);
-        $pdf->Text($xInicial, $yInicial - 10, 'Gráfico de Payback (25 anos)');
-        $xPos = $xInicial;
-        foreach ($dados as $ano => $valor) {
-            $barHeight = abs($valor * $escalaY);
-            $yBarra = ($valor >= 0) ? $linhaBase - $barHeight : $linhaBase;
-            $pdf->SetFillColor(60, 179, 113);
-            $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF');
-            $pdf->SetFont('helvetica', '', 8);
-            $pdf->Text($xPos - 2, $linhaBase + 3, (string)$ano);
-            if ($ano % 2 == 1) {
-                $valorTexto = 'R$ ' . number_format($valor, 0, ',', '.');                $yTexto = $valor >= 0 ? $yBarra - 5 : $yBarra + $barHeight + 3;
-    $pdf->Text($xPos - 6, $yTexto, $valorTexto); // Linha modificada para dar mais espaço
-            }
-            $xPos += $larguraBarra + $espacoEntreBarras;
-        }
+// Verifica se os dados necessários existem e são válidos
+if (isset($precoFinal) && is_numeric($precoFinal) && isset($diferencaGastosAno) && is_numeric($diferencaGastosAno) && $diferencaGastosAno > 0) {
+    for ($ano = 1; $ano <= 25; $ano++) {
+        $retornoAcumulado += $diferencaGastosAno;
+        // O dado é o saldo acumulado menos o investimento inicial
+        $dados[$ano] = $retornoAcumulado - $precoFinal;
+    }
+}
+
+if (!empty($dados)) {
+    // --- 1. Configurações de Dimensões e Posição (Ajustadas para ficar maior como na foto) ---
+    $xInicial = 30;         // Margem esquerda maior para caber o título do eixo Y
+    $yInicialTop = 225;      // Posição do topo do gráfico na página
+    $larguraGrafico = 170;  // Mais largo para acomodar 25 barras confortavelmente
+    $alturaGrafico = 40;   // Bem mais alto para caber os rótulos verticais
+    $larguraBarra = 5;
+    $espacoEntreBarras = 1.8; // Ajuste fino para caber as 25 barras na largura
+
+    // --- 2. Cálculos de Escala e Linha Zero ---
+    $min = min($dados);
+    $max = max($dados);
+    // Garante que o 0 esteja no range, caso todos os dados sejam positivos ou todos negativos
+    $minScale = min(0, $min);
+    $maxScale = max(0, $max);
+    $rangeTotal = $maxScale - $minScale;
+
+    // Evita divisão por zero se o range for 0
+    $escalaY = ($rangeTotal > 0) ? $alturaGrafico / $rangeTotal : 0;
+
+    // Calcula onde fica a linha visual do ZERO (R$ 0,00) no eixo Y.
+    // A distância do topo ($maxScale) até o zero é proporcional ao valor de $maxScale.
+    $yLinhaZero = $yInicialTop + ($maxScale * $escalaY);
+
+
+    // --- 3. Desenhando Títulos e Eixos ---
+
+    // Título Principal
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(50, 50, 70); // Cor cinza escuro para o título
+    $pdf->Text($xInicial, $yInicialTop - 25, 'Gráfico de Payback');
+
+    // Subtítulo "Lucro Total"
+    $pdf->SetFont('helvetica', 'B', 14);
+    // Centraliza aproximadamente sobre o gráfico
+    $pdf->Text($xInicial + ($larguraGrafico / 2) - 15, $yInicialTop - 10, 'Lucro Total');
+
+    // Rótulo do Eixo Y (Rotacionado) - REQUER TCPDF ou extensão FPDF
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->SetTextColor(100, 100, 100);
+    if (method_exists($pdf, 'StartTransform')) {
+        $pdf->StartTransform();
+        // Rotaciona 90 graus. Posiciona no meio da altura do gráfico, à esquerda.
+        $pdf->Rotate(90, $xInicial - 15, $yInicialTop + ($alturaGrafico / 2));
+        $pdf->Text($xInicial - 15, $yInicialTop + ($alturaGrafico / 2), 'Retorno Financeiro');
+        $pdf->StopTransform();
     } else {
-        $pdf->SetFont('helvetica', 'B', 10);
-        $pdf->Text(20, 230, 'Gráfico de Payback não disponível.');
+        // Fallback se não suportar rotação: texto normal
+        $pdf->Text($xInicial - 25, $yInicialTop, 'Retorno');
+        $pdf->Text($xInicial - 25, $yInicialTop+5, 'Financeiro');
     }
 
+
+    // Desenha a LINHA BASE (Linha do Zero) - Cinza, um pouco mais grossa
+    $pdf->SetLineWidth(0.4);
+    $pdf->SetDrawColor(180, 180, 180); // Cinza claro
+    $pdf->Line($xInicial, $yLinhaZero, $xInicial + $larguraGrafico, $yLinhaZero);
+
+    // --- 4. Loop para desenhar Barras e Rótulos ---
+    $xPos = $xInicial + ($espacoEntreBarras * 2); // Pequeno recuo inicial
+    $pdf->SetLineWidth(0.2); // Volta para linha fina para as barras
+
+    foreach ($dados as $ano => $valor) {
+        // Altura da barra é sempre positiva para o cálculo do retângulo
+        $barHeight = abs($valor * $escalaY);
+
+        // Determina a posição Y inicial e a cor da barra
+        if ($valor >= 0) {
+            // Valor Positivo: Barra sobe a partir da linha zero
+            $yBarra = $yLinhaZero - $barHeight;
+            // Ponto de ancoragem para o texto (logo acima da barra)
+            $yTextoAnchor = $yBarra - 1;
+        } else {
+            // Valor Negativo: Barra desce a partir da linha zero
+            $yBarra = $yLinhaZero;
+            // Ponto de ancoragem para o texto (logo abaixo da barra, que na rotação fica "acima" visualmente)
+             $yTextoAnchor = $yBarra + $barHeight + 1;
+        }
+
+        // Configura cor da barra (Verde Neon brilhante com borda preta)
+        $pdf->SetFillColor(0, 255, 127); // SpringGreen (mais parecido com a imagem)
+        $pdf->SetDrawColor(0, 0, 0);     // Borda preta
+        $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF');
+
+        // Rótulo do Ano (Eixo X) na parte inferior
+        $pdf->SetFont('helvetica', '', 8);
+        $pdf->SetTextColor(0, 0, 0);
+        // Posiciona o ano abaixo da linha mais baixa do gráfico
+        $yAno = $yInicialTop + $alturaGrafico + 3;
+        // Centraliza o número do ano na largura da barra
+        $pdf->Text($xPos + ($larguraBarra/2) - 1, $yAno, (string)$ano);
+
+
+        // Rótulo do Valor (Rotacionado Verticalmente)
+        // Mostra para TODOS os anos, com 2 casas decimais
+        $pdf->SetFont('helvetica', '', 7); // Fonte menor para caber
+        $valorTexto = 'R$ ' . number_format($valor, 2, ',', '.');
+
+        // Calcula o centro X da barra para alinhar o texto
+        $xTextoAnchor = $xPos + ($larguraBarra / 2);
+        // Pequeno ajuste vertical para centralizar a fonte na rotação
+        $ajusteFonteRotacao = 1;
+
+        if (method_exists($pdf, 'StartTransform')) {
+             // --- INÍCIO ROTAÇÃO TCPDF ---
+            $pdf->StartTransform();
+            // Rotaciona 90 graus em torno do ponto de ancoragem.
+            // O texto é desenhado "deitado", e a rotação o coloca em pé.
+            $pdf->Rotate(90, $xTextoAnchor, $yTextoAnchor);
+            $pdf->Text($xTextoAnchor - $ajusteFonteRotacao, $yTextoAnchor, $valorTexto);
+            $pdf->StopTransform();
+             // --- FIM ROTAÇÃO TCPDF ---
+        } else {
+            // Fallback ruim se não houver rotação: mostra horizontal (vai ficar sobreposto)
+             $pdf->Text($xPos-5, $yBarra - 2, $valorTexto);
+        }
+
+
+        // Avança a posição X para a próxima barra
+        $xPos += $larguraBarra + $espacoEntreBarras;
+    }
+} else {
+    // Caso não haja dados válidos
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->SetTextColor(255, 0, 0);
+    $pdf->Text(20, 230, 'Não foi possível gerar o Gráfico de Payback (Faltam dados de investimento ou economia anual).');
+}
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
