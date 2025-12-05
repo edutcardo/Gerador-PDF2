@@ -27,6 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $qtdSafras = $_POST['qtdSafras'];
     $dataSafras = $_POST['dataSafras'];
     //Tributação
+
     function calcularTributario($potenciaInversor) {
         if ($potenciaInversor <= 75) {
             $tributario = "MEI";
@@ -47,31 +48,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $precoDemanda = 50; // Preço da demanda
     $qtdDemanda = 3; // Quantidade de demanda
 
-    function calcularDemanda($potenciaInversor, $precoDemanda, $qtdDemanda, $iluminacao, $media) {
-        // Valores fixos definidos
-        $AA12 = 1; // Equivalente a 'PLANILHA RESUMO'!AA12
-        $TUSDG = 8.6760; // Equivalente a 'PLANILHA RESUMO'!R26
-        $Q77 = 0; // Valor de Q77 não foi especificado, ajuste conforme necessário
-        $S77 = 0; // Valor de S77 não foi especificado, ajuste conforme necessário
-    
-        // Cálculo principal
-        if ($AA12 * $potenciaInversor <= 75) {
-            $resultado = ($media * 0.83) + $iluminacao;
-        } else {
-            $resultado = ($potenciaInversor * $AA12 * $TUSDG) + $S77;
-        }
-    
-        // Subtrações
-        $demanda = $resultado - ($precoDemanda * $qtdDemanda);
-    
-        return $demanda;
-    }
-    
-    $demanda = calcularDemanda($potenciaInversor, $precoDemanda, $qtdDemanda, $iluminacao, $media);
+function calcularDemanda($potenciaInversor, $precoDemanda, $qtdDemanda, $iluminacao, $media) {
+    // Valores fixos definidos
+    $AA12 = 1;       // Equivalente a 'PLANILHA RESUMO'!AA12
+    $TUSDG = 8.6760; // Equivalente a 'PLANILHA RESUMO'!R26
+    $S77 = 0;        // Ajuste conforme necessário
 
+    // Cálculo principal
+    if ($AA12 * $potenciaInversor <= 75) {
+        $resultado = ($media * 0.83) + $iluminacao;
+    } else {
+        $resultado = ($potenciaInversor * $AA12 * $TUSDG) + $S77;
+    }
+
+    // Subtrações
+    $calculoFinal = $resultado - ($precoDemanda * $qtdDemanda);
+
+    // A função abs() transforma qualquer número negativo em positivo
+    return abs($calculoFinal);
+}
+
+$demanda = calcularDemanda($potenciaInversor, $precoDemanda, $qtdDemanda, $iluminacao, $media);
     // Cálculos iniciais da proposta
 
     $geracao = $potenciaGerador * 3.9 * 30;
+$media = $geracao;
     $qtdmodulos = ($potenciaGerador*1000)/$potenciaModulo;
     $qtdmodulosArredondado = round($qtdmodulos);
     $metrosOcupados = $qtdmodulosArredondado * 2.9;
@@ -191,30 +192,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $valorFixo = calcularFixo($potenciaGerador);
 
-    function calcularParcela($taxa, $nper, $vp, $vf = 0, $tipo = 0) {
-        if ($taxa == 0) {
-            return -($vp + $vf) / $nper;
-        } else {
-            $valorParcela = ($vp * pow(1 + $taxa, $nper) + $vf) * $taxa / ((1 + $taxa * $tipo) * (pow(1 + $taxa, $nper) - 1));
-            return -$valorParcela;
-        }
-    }
-    
-    // Exemplo de uso
-    $taxa = 0.015; // Taxa de juros mensal (1.5% convertido para decimal)
-    $nper = -36;    // Número de períodos
-    $nper2 = -48;    // Número de períodos
-    $nper3 = -60;    // Número de períodos
-    $vp = 36000;   // Valor presente do empréstimo
-    $vf = 0;       // Valor futuro (geralmente 0, se não especificado)
-    $tipo = 0;     // Tipo (0 = fim do período, 1 = início do período)
-    
-    $valorParcela = calcularParcela($taxa, $nper, $vp, $vf, $tipo);
-    $valorParcela2 = calcularParcela($taxa, $nper2, $vp, $vf, $tipo);
-    $valorParcela3 = calcularParcela($taxa, $nper3, $vp, $vf, $tipo);
-    $valorParcelaRs = 'R$ ' . number_format($valorParcela, 2, ',', '.');
-    $valorParcela2Rs = 'R$ ' . number_format($valorParcela2, 2, ',', '.');
-    $valorParcela3Rs = 'R$ ' . number_format($valorParcela3, 2, ',', '.');
 
         // Cálculo do desconto no preço do kit
         if ($desconto == "" || $desconto == "selecione um desconto") {
@@ -268,7 +245,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
 
-    $precoFinal =(($precoKit * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto ;
+    $precoFinal =($precoKit ) ;
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
     $payback = $precoFinal / $diferencaGastosAno;
@@ -293,6 +270,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $liquidoVermelho = $retornoVermelho - $seguro - $manutencao - $imposto - $demanda;
     $liquidoVermelhoP1 = $retornoVermelhoP1 - $seguro - $manutencao - $imposto - $demanda;
 
+
+        function calcularParcela($taxa, $nper, $vp, $vf = 0, $tipo = 0) {
+        bcscale(10);
+        $taxa_str = (string)$taxa;
+        $nper_str = (string)abs($nper);
+        $vp_str   = (string)$vp;
+        $vf_str   = (string)$vf;
+        if (bccomp($taxa_str, '0') == 0) {
+            $soma_valores = bcadd($vp_str, $vf_str);
+            return bcdiv(bcmul($soma_valores, '-1'), $nper_str, 2);
+        }
+        $um_mais_i = bcadd('1', $taxa_str);
+        $fator_potencia = bcpow($um_mais_i, $nper_str);
+        $numerador_parcial = bcmul($vp_str, $taxa_str);
+        $numerador = bcmul($numerador_parcial, $fator_potencia);
+        $denominador = bcsub($fator_potencia, '1');
+        $valorParcela = bcdiv($numerador, $denominador, 2);
+        return bcmul($valorParcela, '-1', 2);
+    }
+
+    $taxa = 0.015;
+    $vp = $precoFinal;
+    $vf = 0;
+    $tipo = 0;
+    $nper1 = 36;
+    $nper2 = 48;
+    $nper3 = 60;
+    $valorParcela = calcularParcela($taxa, $nper1, $vp, $vf, $tipo);
+    $valorParcelaRs = 'R$ '. number_format(abs((float)$valorParcela), 2, ',', '.');
+    $valorParcela2 = calcularParcela($taxa, $nper2, $vp, $vf, $tipo);
+    $valorParcela2Rs = 'R$ '. number_format(abs((float)$valorParcela2), 2, ',', '.');
+    $valorParcela3 = calcularParcela($taxa, $nper3, $vp, $vf, $tipo);
+    $valorParcela3Rs = 'R$ '. number_format(abs((float)$valorParcela3), 2, ',', '.');
+
     
     function calcularImposto($tributario, $retornoVerde) {
         $imposto = 0; // Inicializa a variável para evitar erros
@@ -300,18 +311,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         switch ($tributario) {
             case "MEI":
                 $imposto = 76.6;
+
                 break;
             case "SIMPLES NACIONAL 7,3%":
                 $imposto = $retornoVerde * 0.073;
+
                 break;
             case "SIMPLES NACIONAL 9,5%":
                 $imposto = $retornoVerde * 0.095;
+               
                 break;
             case "LUCRO PRESUMIDO":
                 $imposto = $retornoVerde * 0.113;
+             
                 break;
             default:
                 $imposto = false; // Caso o valor de $tributario não seja reconhecido
+           
+                
                 break;
         }
     
@@ -432,7 +449,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
 
-
     // Criação do PDF
     $pdf = new TCPDF();
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
@@ -527,12 +543,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à sexta página
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(255, 255, 255);
-    $pdf->SetFont('helvetica', 'B', 9);
-    $pdf->Text(39, 169, "$fabricante $potenciaInversor kW");
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->Text(41, 167, "CHINT/SAJ/SOLIS/SOLPLANET");
+        $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->Text(50, 171, "$potenciaInversor kW - MONO 220V");
+    
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->Text(112, 168, "10 ANOS");
-    $pdf->SetFont('helvetica', 'B', 8.5);
-    $pdf->Text(39,184, "$marca $potenciaModulo W");
+    $pdf->SetFont('helvetica', 'B', 9.5);
+    $pdf->Text(39,182, "AESOLAR/ZNSHINE/SINE/RENEPV");
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->Text(62,186, "$potenciaModulo W");
+    
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->Text(112, 183, "12 ANOS");
 
@@ -547,64 +569,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(145, 233, "$geracaoArredondado kWh");
     $pdf->Text(174.5, 233, "$geracaoAnual kWh");
 
-    $pdf->SetFont('helvetica', 'B', 7);
-
-    $componentes = html_entity_decode($componentes);
-    $componentes = str_replace(
-        ["<\/th>", "<\/td>", "<\/tr>", "<\/table>"], 
-        ["</th>", "</td>", "</tr>", "</table>"], 
-        $componentes
-    );
-    
-    // Extrair os dados da tabela
-    preg_match_all('/<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>\s*<td>\s*(.*?)\s*<\/td>/', $componentes, $matches, PREG_SET_ORDER);
-    
-    // Ajuste na altura da descrição
-    $y = 243; // Posição inicial Y
-    $linhaAltura = 2; // Altura de cada linha no PDF
-    $larguraDescricao = 180; // Ajuste para a largura da descrição
-    $larguraQuantidade = 20; // Ajuste para a largura da quantidade
-    $maxY = 280; // Limite Y da página
-    
-    // Função para adicionar uma nova página se necessário
-    function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
-        if ($y + $linhaAltura > $maxY) {
-            $pdf->AddPage(); // Adiciona uma nova página
-            return 10; // Reseta a posição Y após a nova página
-        }
-        return $y;
-    }
-    
-    // Escrever os dados extraídos no PDF
-    if (empty($matches)) {
-        $pdf->Text(10, $y + 1.5, "Nenhum dado encontrado.");
-    } else {
-        foreach ($matches as $match) {
-            $sku = trim($match[1]);
-            $quantidade = trim($match[2]);
-            $descricao = trim($match[3]);
-    
-            // Verificar se há espaço suficiente para escrever na página
-            $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
-    
-            // Adicionar quantidade, com ajuste para subir um pouco
-            $pdf->SetXY(22, $y); // Ajuste para subir um pouco a posição Y
-            $pdf->Cell($larguraQuantidade, $linhaAltura, $quantidade, 0, 0, 'L'); // Alinhamento à esquerda
-    
-            // Adicionar a descrição com quebra automática de linha
-            $pdf->SetXY(29, $y); // Ajuste a posição X para alinhar a descrição
-            $pdf->MultiCell($larguraDescricao, $linhaAltura, $descricao, 0, 'L', 0);
-    
-            // Atualizar Y para a próxima linha somente após o MultiCell
-            $y += max($linhaAltura, $pdf->GetY() - $y);
-        }
-    }
-
-    // Quarta Página
-    $pdf->AddPage();  // Adiciona a quarta página
-    $pdf->Image('PGCOC4.png', 0, 0, 210, 297);
-
     $pdf->SetFont('helvetica', 'B', 12);
+
+    // Sexta Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('PGCOC4.png', 0, 0, 210, 297);
     $retornoVerdeRs = 'R$ ' . number_format($retornoVerde, 2, ',', '.');
     $retornoAmareloRs = 'R$ ' . number_format($retornoAmarelo, 2, ',', '.');
     $retornoVermelhoRs = 'R$ ' . number_format($retornoVermelho, 2, ',', '.');
@@ -664,11 +633,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(172, 203.5, "$mediaLiquidoRs");
 
-    $pdf->Text(27, 220, "$VPLP");
-    $pdf->Text(80, 220, "$TIRP");
-    $pdf->Text(127, 220, "$lucratividadeFormatada");
-    $pdf->Text(172, 220, "$ROIPorcentagem");
-    $pdf->Text(80, 99, "Tributação vigente: $tributario");
+    $pdf->SetFont('helvetica', 10);
+    // Formatação dos resultados para exibição no PDF
+    $VPL_formatado = 'R$ ' . number_format($VPL, 2, ',', '.');
+    $TIR_formatado = number_format($TIR * 100, 2, ',', '.') . '%';
+    $ROI_formatado = number_format($ROI * 100, 2, ',', '.') . '%';
+    $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '.') . '%';
+
+    $pdf->Text(27, 220, "$VPL_formatado");
+    $pdf->Text(80, 220, "$TIR_formatado");
+    $TaxaLucratividade_formatada = $lucratividadeFormatada;      // Já está formatada
+    $pdf->Text(172, 220, "$ROI_formatado");
+    $pdf->Text(80, 98, "Tributação vigente: $tributario");
+
 
     // Dados para o gráfico
     $values = [$retornoVerde, $liquidoVerde, $imposto, $demanda, $seguro, $manutencao];
@@ -718,6 +695,116 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Incrementar posição horizontal
         $x += $barWidth + $gap;
     }
+
+        // Quarta Página
+    $pdf->AddPage();  // Adiciona a quarta página
+    $pdf->Image('PGCOCDESC.png', 0, 0, 210, 297);
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(0, 100, 0);
+    $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
+    $pdf->Text(149, 57, "$potenciaGerador kWp");
+    $pdf->Text(152, 71.5, "$metrosOcupados m²");
+    $pdf->Text(152, 85, "$peso kg");
+    $pdf->Text(142, 98.5, "$mediaArredondado kWh mensal");
+    $pdf->Text(142, 112, "$geracaoArredondado kWh mensal");
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
+    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
+    $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
+    $pdf->Text(23, 196, "ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO");
+    $pdf->Text(23, 204, "CABEAMENTO CC 1.8 KVCC - USO ESPECÍFICO PARA USINA SOLAR");
+    $pdf->Text(23, 212, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+    $pdf->Text(23, 220, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
+    $pdf->Text(23, 228, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
+    $pdf->SetFont('helvetica', 'B', 12);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(16, 256, "$textoPadrao");
+
+    
+    $pdf->AddPage();
+    $pdf->Image('PGCOCANALISE.png', 0, 0, 210, 297);
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(255, 255, 255);
+    $pdf->Text(45, 45, "$gastoSemGeradorAnoRs");
+    $pdf->Text(47.5, 61.5, "$gastoSemGeradorRs");
+    $pdf->Text(91, 45, "$gastoComGeradorAnoRs");
+    $pdf->Text(93, 61.5, "$gastoComGeradorRs");
+    $pdf->Text(135, 45, "$diferencaGastosAnoRs");
+    $pdf->Text(138, 61.5, "$diferencaGastosRs");
+// CÓDIGO CORRIGIDO
+// ... (código anterior da página 5) ...
+ $pdf->Text(138, 61.5, "$diferencaGastosRs");
+
+    // --- INÍCIO DA LÓGICA CORRIGIDA ---
+
+    // 1. PRIMEIRO, definimos a fonte e a cor PRETA para o restante do conteúdo
+   $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+
+    // 2. Lógica para o asterisco da ESQUERDA (agora será desenhado em preto)
+    if ($indicacao == 1) {
+        $pdf->Text(23, 98.5, '*');
+    }
+
+    // 4. Lógica para o asterisco da DIREITA (agora será desenhado em preto)
+    if ($valoramais <> 0) {
+        $larguraPreco = $pdf->GetStringWidth($precoFinalRs);
+        $pdf->Text(45, 98.5, '*');
+    }
+    // --- FIM DA LÓGICA CORRIGIDA ---
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(147, 98.5, "$precoFinalRs");
+    $pdf->SetFont('helvetica', 'B', 15);
+    $pdf->Text(26, 123, "36 X $valorParcelaRs");
+    $pdf->Text(85, 123, "48 X $valorParcela2Rs");
+    $pdf->Text(146, 123, "60 X $valorParcela3Rs");
+    $pdf->Text(152, 166, "$paybackArredondado anos");
+    $pdf->Text(143, 178, "$retorno25anosRs");
+    
+    // Gráfico de Payback
+    $dados = [];
+    $retornoAcumulado = 0;
+    if (is_numeric($precoFinal) && is_numeric($diferencaGastosAno) && $diferencaGastosAno > 0) {
+        for ($ano = 1; $ano <= 25; $ano++) {
+            $retornoAcumulado += $diferencaGastosAno;
+            $dados[$ano] = $retornoAcumulado - $precoFinal;
+        }
+    }
+
+    if (!empty($dados)) {
+        $xInicial = 20; $yInicial = 213; $larguraGrafico = 160; $alturaGrafico = 50;
+        $larguraBarra = 5; $espacoEntreBarras = 2; $linhaBase = $yInicial + $alturaGrafico;
+        $min = min($dados); $max = max($dados);
+        $escalaY = ($max - $min > 0) ? $alturaGrafico / ($max - $min) : 0;
+        $pdf->SetDrawColor(0, 0, 0);
+        $pdf->Line($xInicial, $linhaBase, $xInicial + $larguraGrafico, $linhaBase);
+        $pdf->Line($xInicial, $linhaBase - $alturaGrafico, $xInicial, $linhaBase);
+        $pdf->SetFont('helvetica', 'B', 12);
+        $pdf->Text($xInicial, $yInicial - 10, 'Gráfico de Payback (25 anos)');
+        $xPos = $xInicial;
+        foreach ($dados as $ano => $valor) {
+            $barHeight = abs($valor * $escalaY);
+            $yBarra = ($valor >= 0) ? $linhaBase - $barHeight : $linhaBase;
+            $pdf->SetFillColor(60, 179, 113);
+            $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF');
+            $pdf->SetFont('helvetica', '', 8);
+            $pdf->Text($xPos - 2, $linhaBase + 3, (string)$ano);
+            if ($ano % 2 == 1) {
+                $valorTexto = 'R$ ' . number_format($valor, 0, ',', '.');                $yTexto = $valor >= 0 ? $yBarra - 5 : $yBarra + $barHeight + 3;
+    $pdf->Text($xPos - 6, $yTexto, $valorTexto); // Linha modificada para dar mais espaço
+            }
+            $xPos += $larguraBarra + $espacoEntreBarras;
+        }
+    } else {
+        $pdf->SetFont('helvetica', 'B', 10);
+        $pdf->Text(20, 230, 'Gráfico de Payback não disponível.');
+    }
+
+    // Definir fonte e adicionar conteúdo à quinta página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+
     // Quinta Página 
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCOC5.png', 0, 0, 210, 297);
@@ -725,20 +812,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
-
-    // Quinta Página 
-    $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCOC6.png', 0, 0, 210, 297);
-    
-    $pdf->SetFont('helvetica', 'B', 20);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(125, 64, "$precoFinalRs");
-    $pdf->Text(40, 64, "$potenciaGerador kWp");
-
-    $valorSafrasRs =  'R$ ' . number_format($valorSafras, 2, ',', '.');
-    $pdf->Text(90, 150, "$qtdSafras Safra(s)");
-    $pdf->Text(70, 160, "Pelo valor de: $valorSafrasRs");
-    $pdf->Text(60, 170, "Datado em: $dataSafras");
 
     // Sexta Página 
     $pdf->AddPage();  // Adiciona a primeira página

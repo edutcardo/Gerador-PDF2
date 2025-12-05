@@ -191,30 +191,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $valorFixo = calcularFixo($potenciaGerador);
 
-    function calcularParcela($taxa, $nper, $vp, $vf = 0, $tipo = 0) {
-        if ($taxa == 0) {
-            return -($vp + $vf) / $nper;
-        } else {
-            $valorParcela = ($vp * pow(1 + $taxa, $nper) + $vf) * $taxa / ((1 + $taxa * $tipo) * (pow(1 + $taxa, $nper) - 1));
-            return -$valorParcela;
-        }
-    }
-    
-    // Exemplo de uso
-    $taxa = 0.015; // Taxa de juros mensal (1.5% convertido para decimal)
-    $nper = -36;    // Número de períodos
-    $nper2 = -48;    // Número de períodos
-    $nper3 = -60;    // Número de períodos
-    $vp = 36000;   // Valor presente do empréstimo
-    $vf = 0;       // Valor futuro (geralmente 0, se não especificado)
-    $tipo = 0;     // Tipo (0 = fim do período, 1 = início do período)
-    
-    $valorParcela = calcularParcela($taxa, $nper, $vp, $vf, $tipo);
-    $valorParcela2 = calcularParcela($taxa, $nper2, $vp, $vf, $tipo);
-    $valorParcela3 = calcularParcela($taxa, $nper3, $vp, $vf, $tipo);
-    $valorParcelaRs = 'R$ ' . number_format($valorParcela, 2, ',', '.');
-    $valorParcela2Rs = 'R$ ' . number_format($valorParcela2, 2, ',', '.');
-    $valorParcela3Rs = 'R$ ' . number_format($valorParcela3, 2, ',', '.');
 
         // Cálculo do desconto no preço do kit
         if ($desconto == "" || $desconto == "selecione um desconto") {
@@ -268,7 +244,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
 
-    $precoFinal =(($precoKit * $margem) + ($mobra * $qtdmodulosArredondado) + $valorFixo + $valoramais + $padrao) * $desconto ;
+    $precoFinal =($precoKit ) ;
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
 
     $payback = $precoFinal / $diferencaGastosAno;
@@ -292,6 +268,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $liquidoAmarelo = $retornoAmarelo - $seguro - $manutencao - $imposto - $demanda;
     $liquidoVermelho = $retornoVermelho - $seguro - $manutencao - $imposto - $demanda;
     $liquidoVermelhoP1 = $retornoVermelhoP1 - $seguro - $manutencao - $imposto - $demanda;
+
+        function calcularParcela($taxa, $nper, $vp, $vf = 0, $tipo = 0) {
+        bcscale(10);
+        $taxa_str = (string)$taxa;
+        $nper_str = (string)abs($nper);
+        $vp_str   = (string)$vp;
+        $vf_str   = (string)$vf;
+        if (bccomp($taxa_str, '0') == 0) {
+            $soma_valores = bcadd($vp_str, $vf_str);
+            return bcdiv(bcmul($soma_valores, '-1'), $nper_str, 2);
+        }
+        $um_mais_i = bcadd('1', $taxa_str);
+        $fator_potencia = bcpow($um_mais_i, $nper_str);
+        $numerador_parcial = bcmul($vp_str, $taxa_str);
+        $numerador = bcmul($numerador_parcial, $fator_potencia);
+        $denominador = bcsub($fator_potencia, '1');
+        $valorParcela = bcdiv($numerador, $denominador, 2);
+        return bcmul($valorParcela, '-1', 2);
+    }
+
+    $taxa = 0.015;
+    $vp = $precoFinal;
+    $vf = 0;
+    $tipo = 0;
+    $nper1 = 36;
+    $nper2 = 48;
+    $nper3 = 60;
+    $valorParcela = calcularParcela($taxa, $nper1, $vp, $vf, $tipo);
+    $valorParcelaRs = 'R$ '. number_format(abs((float)$valorParcela), 2, ',', '.');
+    $valorParcela2 = calcularParcela($taxa, $nper2, $vp, $vf, $tipo);
+    $valorParcela2Rs = 'R$ '. number_format(abs((float)$valorParcela2), 2, ',', '.');
+    $valorParcela3 = calcularParcela($taxa, $nper3, $vp, $vf, $tipo);
+    $valorParcela3Rs = 'R$ '. number_format(abs((float)$valorParcela3), 2, ',', '.');
 
     
     function calcularImposto($tributario, $retornoVerde) {
@@ -478,7 +487,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $y = 260; // Posição Y para o gráfico (mais para baixo na página)
     $barWidth = 5; // Largura das barras
     $gap = 15;  // Distância entre as barras
-    $maxBarHeight = 40; // Altura máxima do gráfico (limite)
+    $maxBarHeight = 36; // Altura máxima do gráfico (limite)
 
     // Determinando o maior valor para escalar as barras
     $maxValue = max($data);
@@ -559,7 +568,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Quarta Página
     $pdf->AddPage();  // Adiciona a quarta página
-    $pdf->Image('pg4.png', 0, 0, 210, 297);
+    $pdf->Image('PGCOCDESC.png', 0, 0, 210, 297);
     $pdf->SetFont('helvetica', 'B', 14);
     $pdf->SetTextColor(0, 100, 0);
     $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
@@ -583,7 +592,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Página 5
 
     $pdf->AddPage();
-    $pdf->Image('pg5.png', 0, 0, 210, 297);
+    $pdf->Image('PGCOCANALISE.png', 0, 0, 210, 297);
     $pdf->SetFont('helvetica', 'B', 14);
     $pdf->SetTextColor(255, 255, 255);
     $pdf->Text(45, 45, "$gastoSemGeradorAnoRs");
@@ -634,7 +643,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (!empty($dados)) {
-        $xInicial = 20; $yInicial = 213; $larguraGrafico = 160; $alturaGrafico = 60;
+        $xInicial = 20; $yInicial = 213; $larguraGrafico = 160; $alturaGrafico = 50;
         $larguraBarra = 5; $espacoEntreBarras = 2; $linhaBase = $yInicial + $alturaGrafico;
         $min = min($dados); $max = max($dados);
         $escalaY = ($max - $min > 0) ? $alturaGrafico / ($max - $min) : 0;
