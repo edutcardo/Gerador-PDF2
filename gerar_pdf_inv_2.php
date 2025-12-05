@@ -915,11 +915,11 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     $pdf->Text(172, 203.5, "$mediaLiquidoRs");
 
     $pdf->SetFont('helvetica', 10);
-// CÓDIGO NOVO E CORRIGIDO
-$pdf->Text(27, 220, "$VPL_formatado");
-$pdf->Text(80, 220, "$TIR_formatado");
-$pdf->Text(127, 220, "$TaxaLucratividade_formatada");
-$pdf->Text(172, 220, "$ROI_formatado");
+    $pdf->Text(27, 220, "$VPL_formatado");
+    $pdf->Text(80, 220, "$TIR_formatado");
+    $pdf->Text(127, 220, "$TaxaLucratividade_formatada");
+    $pdf->Text(172, 220, "$ROI_formatado");
+    // CÓDIGO NOVO E CORRIGIDO
     $pdf->Text(80, 98, "Tributação vigente: $tributario");
 
 

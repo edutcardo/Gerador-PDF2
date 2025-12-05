@@ -243,6 +243,36 @@ $media = $geracao;
             $padrao = 0; // Caso não corresponda a nenhuma opção válida
             break;
     }
+        function calcularImposto($tributario, $retornoVerde) {
+        $imposto = 0; // Inicializa a variável para evitar erros
+    
+        switch ($tributario) {
+            case "MEI":
+                $imposto = 76.6;
+
+                break;
+            case "SIMPLES NACIONAL 7,3%":
+                $imposto = $retornoVerde * 0.073;
+
+                break;
+            case "SIMPLES NACIONAL 9,5%":
+                $imposto = $retornoVerde * 0.095;
+               
+                break;
+            case "LUCRO PRESUMIDO":
+                $imposto = $retornoVerde * 0.113;
+             
+                break;
+            default:
+                $imposto = false; // Caso o valor de $tributario não seja reconhecido
+           
+                
+                break;
+        }
+    
+        return $imposto;
+    }
+
 
 
     $precoFinal =($precoKit ) ;
@@ -261,6 +291,11 @@ $media = $geracao;
     $retornoAmarelo = $geracao * $bandeiraAmarela;
     $retornoVermelho = $geracao * $bandeiraVermelha;
     $retornoVermelhoP1 = $geracao * $bandeiraVermelhaP1;
+
+    $imposto = calcularImposto($tributario, $retornoVerde);
+    $seguro = ($precoFinal * 0.007) /12;
+
+
     $rentabilidadeVerde = ($retornoVerde / $precoFinal) * 100;
     $rentabilidadeAmarela = ($retornoAmarelo / $precoFinal) * 100;
     $rentabilidadeVermelha = ($retornoVermelho / $precoFinal)* 100;
@@ -305,37 +340,7 @@ $media = $geracao;
     $valorParcela3Rs = 'R$ '. number_format(abs((float)$valorParcela3), 2, ',', '.');
 
     
-    function calcularImposto($tributario, $retornoVerde) {
-        $imposto = 0; // Inicializa a variável para evitar erros
-    
-        switch ($tributario) {
-            case "MEI":
-                $imposto = 76.6;
 
-                break;
-            case "SIMPLES NACIONAL 7,3%":
-                $imposto = $retornoVerde * 0.073;
-
-                break;
-            case "SIMPLES NACIONAL 9,5%":
-                $imposto = $retornoVerde * 0.095;
-               
-                break;
-            case "LUCRO PRESUMIDO":
-                $imposto = $retornoVerde * 0.113;
-             
-                break;
-            default:
-                $imposto = false; // Caso o valor de $tributario não seja reconhecido
-           
-                
-                break;
-        }
-    
-        return $imposto;
-    }
-    $imposto = calcularImposto($tributario, $retornoVerde);
-    $seguro = ($precoFinal * 0.007) /12;
 
     $irradiacao = [5888, 5792, 5219, 4544, 3636, 3333, 3529, 4451, 4683, 5311, 5969, 6327];
 
@@ -417,34 +422,92 @@ $media = $geracao;
     // Estimação de porcentagem do payback com relação aos 25 anos
     $percentualPayback = ($payback / 25) * 100; // Porcentagem do payback no total de 25 anos
 
-    // Agora, para a TIR, podemos considerar a porcentagem do payback como um valor aproximado da TIR
-    // Isso é uma aproximação simples, pois o tempo de payback e TIR não são diretamente proporcionais, mas podemos usar essa lógica para um valor aproximado.
-    $TIR = $percentualPayback; // Converte a porcentagem em valor decimal para TIR
-    $TIRP  = number_format($TIR, 2, ',', '.') . '%';
-
-    // Exemplo de receita anual usando a bandeira verde
-    $receitasAnuais = $retornoVerde * 12; // Receita mensal vezes 12 meses
-
-    // Exemplo de custo anual
-    $custosAnuais = ($manutencao + $seguro + $imposto + $demanda) * 12;
-
-    // Calcular lucratividade
-    $lucratividade = (($receitasAnuais - $custosAnuais) / $receitasAnuais) * 100;
-
-    // Formatando a lucratividade como porcentagem
-    $lucratividadeFormatada = number_format($lucratividade, 2, ',', '.') . '%';
-
-    // Função para calcular o ROI
-    function calcularROI($retornoVerde, $precoFinal) {
-        return ((($retornoVerde*12*25) - $precoFinal) / $precoFinal) * 100;
+function calcularVPL_variavel($investimento, $fluxosDeCaixa, $taxaDesconto) {
+    $vpl = -$investimento;
+    foreach ($fluxosDeCaixa as $ano => $fluxo) {
+        $vpl += $fluxo / pow(1 + $taxaDesconto, $ano + 1);
     }
+    return $vpl;
+}
 
-    // Calcula o ROI e armazena na variável $ROI
-    $ROI = calcularROI($retornoVerde, $precoFinal);
+/**
+ * Calcula a Taxa Interna de Retorno (TIR) para um fluxo de caixa VARIÁVEL.
+ */
+function calcularTIR_variavel($investimento, $fluxosDeCaixa, $maxIteracoes = 1000, $precisao = 1e-7) {
+    $taxaMin = -0.99;
+    $taxaMax = 1.0;
+    for ($i = 0; $i < $maxIteracoes; $i++) {
+        $taxaMedia = ($taxaMin + $taxaMax) / 2;
+        if (abs($taxaMedia) < $precisao) $taxaMedia = $precisao;
+        $vplCalculado = calcularVPL_variavel($investimento, $fluxosDeCaixa, $taxaMedia);
+        if (abs($vplCalculado) < $precisao) {
+            return $taxaMedia;
+        }
+        if ($vplCalculado > 0) {
+            $taxaMin = $taxaMedia;
+        } else {
+            $taxaMax = $taxaMedia;
+        }
+    }
+    return ($taxaMin + $taxaMax) / 2;
+}
 
-    // Formatação do ROI para apresentação
-    $ROIPorcentagem = number_format($ROI, 2, ',', '.') . '%';
+/**
+ * Calcula o Retorno sobre o Investimento (ROI) para todo o período.
+ */
+function calcularROI($investimento, $ganhoLiquidoTotal) {
+    if ($investimento == 0) return 0;
+    return ($ganhoLiquidoTotal - $investimento) / $investimento;
+}
 
+/**
+ * Calcula a "Taxa de Lucratividade" (Margem Líquida Média).
+ */
+function calcularTaxaLucratividade($receitaMedia, $liquidoMedio) {
+    if ($receitaMedia == 0) return 0;
+    return $liquidoMedio / $receitaMedia;
+}
+
+/**
+ * =======================================================================
+ * CÁLCULO CENTRALIZADO DAS MÉTRICAS FINANCEIRAS
+ * =======================================================================
+ */
+
+$investimentoInicial = $precoFinal;
+$periodoAnos = 25;
+
+$mediaLiquidoMensal = ($liquidoVerde + $liquidoAmarelo + $liquidoVermelho + $liquidoVermelhoP1) / 4;
+$fluxoCaixaPrimeiroAno = $mediaLiquidoMensal * 12;
+
+// --- PARÂMETROS PARA AJUSTE ---
+// O PDF não informa estas taxas, então são hipóteses para você ajustar.
+$taxaCrescimentoAnualFluxoCaixa = 0.00; // Altere este valor para alinhar com o PDF!
+$taxaMinimaAtratividade = 0.10;          // TMA de 10% a.a. para o cálculo do VPL.
+
+$fluxosDeCaixaAnuais = [];
+$ganhoLiquidoTotalPeriodo = 0;
+for ($ano = 0; $ano < $periodoAnos; $ano++) {
+    $fluxoDoAno = $fluxoCaixaPrimeiroAno * pow(1 + $taxaCrescimentoAnualFluxoCaixa, $ano);
+    $fluxosDeCaixaAnuais[] = $fluxoDoAno;
+    $ganhoLiquidoTotalPeriodo += $fluxoDoAno;
+}
+
+// Execução das funções financeiras com os dados corretos
+$vpl = calcularVPL_variavel($investimentoInicial, $fluxosDeCaixaAnuais, $taxaMinimaAtratividade);
+$tir = calcularTIR_variavel($investimentoInicial, $fluxosDeCaixaAnuais);
+$roi = calcularROI($investimentoInicial, $ganhoLiquidoTotalPeriodo);
+
+$receitaMediaMensal = ($retornoVerde + $retornoAmarelo + $retornoVermelho + $retornoVermelhoP1) / 4;
+$taxaLucratividade = calcularTaxaLucratividade($receitaMediaMensal, $mediaLiquidoMensal);
+
+// Formatação dos resultados para exibição no PDF
+$VPL_formatado = 'R$ ' . number_format($vpl, 2, ',', '.');
+$TIR_formatado = number_format($tir * 100, 2, ',', '.') . '%';
+$ROI_formatado = number_format($roi * 100, 2, ',', '.') . '%';
+$TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '.') . '%';
+
+    
     // Data atual
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
@@ -535,6 +598,7 @@ $media = $geracao;
         $labelY = $y + 5; // Posição logo abaixo da barra
         $pdf->Text($labelX, $labelY, $label);
     }
+    
 
     // Terceira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
@@ -635,16 +699,12 @@ $media = $geracao;
 
     $pdf->SetFont('helvetica', 10);
     // Formatação dos resultados para exibição no PDF
-    $VPL_formatado = 'R$ ' . number_format($VPL, 2, ',', '.');
-    $TIR_formatado = number_format($TIR * 100, 2, ',', '.') . '%';
-    $ROI_formatado = number_format($ROI * 100, 2, ',', '.') . '%';
-    $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '.') . '%';
-
-    $pdf->Text(27, 220, "$VPL_formatado");
-    $pdf->Text(80, 220, "$TIR_formatado");
-    $TaxaLucratividade_formatada = $lucratividadeFormatada;      // Já está formatada
-    $pdf->Text(172, 220, "$ROI_formatado");
+$pdf->Text(27, 220, "$VPL_formatado");
+$pdf->Text(80, 220, "$TIR_formatado");
+$pdf->Text(127, 220, "$TaxaLucratividade_formatada");
+$pdf->Text(172, 220, "$ROI_formatado");
     $pdf->Text(80, 98, "Tributação vigente: $tributario");
+
 
 
     // Dados para o gráfico
