@@ -1128,7 +1128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(23, 212, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
     $pdf->Text(23, 220, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
     $pdf->Text(23, 228, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
-    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->SetFont('helvetica', 'B', 11);
     $pdf->Text(23, 236, "$texto_seguranca");
     $pdf->Text(23, 244, "$texto_final_adicionais");
     $pdf->SetFont('helvetica', 'B', 12);
