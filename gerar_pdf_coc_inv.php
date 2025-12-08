@@ -1,33 +1,117 @@
 <?php
 require_once('vendor/autoload.php'); // Ou o caminho correto, se você não estiver usando o Composer
-
-// Verifica se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nome = $_POST['nome'];
-    $endereco = $_POST['endereco'];
-    $cidade = $_POST['cidade'];
-    $uc = $_POST['uc'];
-    $media = $_POST['media'];
-    $iluminacao = $_POST['iluminacao'];
-    $potenciaGerador = $_POST['potenciaGerador'];
-    $componentes = $_POST['componentes'];
-    $potenciaModulo = $_POST['potenciaModulo'];
-    $numeroDeFases = $_POST['numeroDeFases'];
-    $precoKit = $_POST['precoKit'];
-    $irradiacao = $_POST['irradiacao'];
-    $marca = $_POST['marca'];
-    $fabricante = $_POST['fabricante'];
-    $potenciaInversor = $_POST['potenciaInversor'];
-    $padrao = $_POST['padrao'];
-    $desconto = $_POST['desconto'];
-    $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
-    $inputConcessionaria = $_POST['inputConcessionaria'];
-    $inputValorCompensavel = $_POST['inputValorCompensavel'];
-    $valorSafras = $_POST['valorSafras'];
-    $qtdSafras = $_POST['qtdSafras'];
-    $dataSafras = $_POST['dataSafras'];
-    //Tributação
 
+    // --- 1. CAPTURA E SANITIZAÇÃO BÁSICA ---
+    $nome = isset($_POST['nome']) ? $_POST['nome'] : 'Informar';
+    $endereco = isset($_POST['endereco']) ? $_POST['endereco'] : 'Informar';
+    $cidade = isset($_POST['cidade']) ? $_POST['cidade'] : 'Informar';
+    $uf = isset($_POST['uf']) ? $_POST['uf'] : 'Informar';
+    $uc = isset($_POST['uc']) ? $_POST['uc'] : '0000';
+    $media = isset($_POST['media']) && $_POST['media'] !== '' ? floatval($_POST['media']) : 1;
+    $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
+
+    $iluminacao = isset($_POST['iluminacao']) ? floatval($_POST['iluminacao']) : 0;
+    $potenciaGerador = isset($_POST['potenciaGerador']) ? floatval($_POST['potenciaGerador']) : 0;
+    $componentes = isset($_POST['componentes']) ? $_POST['componentes'] : '';
+    $potenciaModulo = isset($_POST['potenciaModulo']) ? floatval($_POST['potenciaModulo']) : 0;
+    $numeroDeFases = isset($_POST['numeroDeFases']) ? $_POST['numeroDeFases'] : '';
+    $precoKit = isset($_POST['precoKit']) ? floatval($_POST['precoKit']) : 0;
+    $irradiacao = isset($_POST['irradiacao']) ? $_POST['irradiacao'] : '';
+    $marca = isset($_POST['marca']) ? $_POST['marca'] : '';
+    $fabricante = isset($_POST['fabricante']) ? $_POST['fabricante'] : '';
+    $potenciaInversor = isset($_POST['potenciaInversor']) ? floatval($_POST['potenciaInversor']) : 0;
+    $padrao = isset($_POST['padrao']) ? $_POST['padrao'] : '';
+    $desconto = isset($_POST['desconto']) ? $_POST['desconto'] : '';
+    $inputConcessionaria = isset($_POST['inputConcessionaria']) ? $_POST['inputConcessionaria'] : '';
+    $inputValorCompensavel = isset($_POST['inputValorCompensavel']) ? floatval($_POST['inputValorCompensavel']) : 0;
+    $multiplicador = isset($_POST['multiplicador']) ? intval($_POST['multiplicador']) : 1;
+    $quantidadePlacas = isset($_POST['quantidadePlacas']) ? intval($_POST['quantidadePlacas']) : 0;
+    $estrutura = isset($_POST['estrutura']) ? $_POST['estrutura'] : '';
+    $usina = isset($_POST['usina']) ? $_POST['usina'] : '';
+    $adicionalAPlus = isset($_POST['adicionalAPlus']) ? trim($_POST['adicionalAPlus']) : '';
+    $adicionalIndicacao = isset($_POST['adicionalIndicacao']) ? trim($_POST['adicionalIndicacao']) : '';
+    $geracao = isset($_POST['geracaoKwhMes']) ? floatval($_POST['geracaoKwhMes']) : 0;
+
+    // --- 2. CAPTURA DOS NOVOS VALORES E FLAGS (Lógica Atualizada) ---
+
+    // Captura se o item foi selecionado (verifica se não está vazio)
+    $temPadrao = !empty($_POST['adicionalPadrao']);
+    $temSalaTecnica = !empty($_POST['adicionalSalaTecnica']);
+    $temBrita = !empty($_POST['adicionalBrita']);
+    $temGrade = !empty($_POST['adicionalGrade']);
+    $temAlambrado = !empty($_POST['adicionalAlambrado']);
+    $temCocamar = !empty($_POST['adicionalCocamar']);
+
+    // Captura os valores monetários (convertendo string para float)
+    $valPadrao = $_POST['valorPadrao'];
+    $valSalaTecnica = $_POST['valorSalaTecnica'];
+    $valBrita = $_POST['valorBrita'];
+    $valGrade = $_POST['valorGrade'];
+    $valAlambrado = $_POST['valorAlambrado'];
+
+    // Função auxiliar para formatar moeda
+    function fmtMoeda($valor)
+    {
+        return 'R$ ' . number_format($valor, 2, ',', '.');
+    }
+
+    // --- 3. LÓGICA PARA INFRAESTRUTURA (Padrão e Sala Técnica) ---
+    // Formato: PADRÃO DE ENERGIA (R$) INCLUSO E SALA TÉCNICA (R$) PARA INVERSOR.
+
+    $parts_infra = [];
+
+    if ($temPadrao) {
+        $parts_infra[] = 'PADRÃO DE ENERGIA (' . fmtMoeda($valPadrao) . ') INCLUSO';
+    }
+    if ($temSalaTecnica) {
+        $parts_infra[] = 'SALA TÉCNICA (' . fmtMoeda($valSalaTecnica) . ') PARA INVERSOR';
+    }
+
+    $texto_padrao_e_sala = '';
+    if (!empty($parts_infra)) {
+        // Junta com " E " se houver os dois, ou mostra só um
+        $texto_padrao_e_sala = implode(' E ', $parts_infra) . '.';
+    }
+
+    // Adiciona Cocamar se necessário
+    $texto_cocamar = $temCocamar ? ' Liberado Cocamar.' : '';
+
+    // Texto Final de Adicionais (Linha 1 de observações)
+    $texto_final_adicionais = trim($texto_padrao_e_sala . $texto_cocamar);
+    $texto_final_adicionais = wordwrap($texto_final_adicionais, 50, "\n");
+
+
+    // --- 4. LÓGICA PARA SEGURANÇA/SOLO (Brita, Grade, Alambrado) ---
+    // Formato: INCLUSO BRITA (R$), GRADE (R$) E ALAMBRADO (R$)
+
+    $parts_seguranca = [];
+
+    if ($temBrita) {
+        $parts_seguranca[] = 'BRITA (' . fmtMoeda($valBrita) . ')';
+    }
+    if ($temGrade) {
+        $parts_seguranca[] = 'GRADE (' . fmtMoeda($valGrade) . ')';
+    }
+    if ($temAlambrado) {
+        $parts_seguranca[] = 'ALAMBRADO (' . fmtMoeda($valAlambrado) . ')';
+    }
+
+    $texto_seguranca = '';
+    $count_seg = count($parts_seguranca);
+
+    if ($count_seg > 0) {
+        if ($count_seg == 1) {
+            $texto_seguranca = 'INCLUSO ' . $parts_seguranca[0];
+        } else {
+            // Pega o último item
+            $ultimo_item = array_pop($parts_seguranca);
+            // Junta os anteriores com vírgula
+            $primeiros = implode(', ', $parts_seguranca);
+            // Monta a frase final
+            $texto_seguranca = 'INCLUSO ' . $primeiros . ' E ' . $ultimo_item;
+        }
+    }
     function calcularTributario($potenciaInversor)
     {
         if ($potenciaInversor <= 75) {
@@ -1044,6 +1128,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(23, 212, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
     $pdf->Text(23, 220, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
     $pdf->Text(23, 228, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
+    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->Text(23, 236, "$texto_seguranca");
+    $pdf->Text(23, 244, "$texto_final_adicionais");
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(16, 256, "$textoPadrao");
