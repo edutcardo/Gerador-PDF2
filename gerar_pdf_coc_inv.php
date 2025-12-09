@@ -1120,6 +1120,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(142, 98.5, "$geracao_formatado kWh mensal");
     $pdf->Text(142, 112, "$geracao_formatado kWh mensal");
     $pdf->SetTextColor(0, 0, 0);
+    $pdf->SetFont('helvetica', 'B', 11);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
     $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
     $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
@@ -1128,7 +1129,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(23, 212, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
     $pdf->Text(23, 220, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
     $pdf->Text(23, 228, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
-    $pdf->SetFont('helvetica', 'B', 11);
     $pdf->Text(23, 236, "$texto_seguranca");
     $pdf->Text(23, 244, "$texto_final_adicionais");
     $pdf->SetFont('helvetica', 'B', 12);

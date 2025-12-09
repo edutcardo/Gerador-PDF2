@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Assegura que os inputs usados em operações aritméticas sejam tratados como números (float)
     $input5_base_float = (float)$input5_base;
     $input7_proposta_float = (float)$input7_proposta;
-    $input3_valor_float = (float)$input3_valor;
+    $input3_base_float = (float) $input3_valor;
     $input4_valor_float = (float)$input4_valor;
 
     // Valor mensal que será usado para comparação (ex: fatura atual ajustada com taxas/impostos)
@@ -44,8 +44,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $novaRegras = number_format($novaRegra, 2, ',', '.');
 
     // Formatação dos valores mensais para o PDF
-    $input3s = number_format($input3_valor_float, 2, ',', '.');
+    $input3s = number_format($input3_base_float, 2, ',', '.');
     $input4s = number_format($input4_valor_float, 2, ',', '.');
+    $input5s = number_format($input5_base_float, 2, ',', '.');
+
     $valorMensalComparacao_s = number_format($valorMensalComparacao, 2, ',', '.');
     $input7_proposta_s = number_format($input7_proposta_float, 2, ',', '.');
     // Se precisar exibir a economia mensal no PDF, descomente a linha abaixo:
@@ -62,7 +64,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $input7_propostaAnual_s = number_format($input7_propostaAnual, 2, ',', '.');
     $economiaAnual_s = number_format($economiaAnual, 2, ',', '.');
 
-
+    $ValorInteiroMenosEconomia = $input5_base_float - $input3_base_float;
+    $ValorInteiroMenosEconomias = number_format($ValorInteiroMenosEconomia, 2, ',', '.');
 
     // Criação do PDF
     $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -83,10 +86,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Certifique-se que $consumomes é um valor adequado para exibição aqui
     $pdf->Text(62, 47.5, "$consumomes kWh");
 
+    
     // Valores mensais atualizados
-    $pdf->Text(165, 47.5, "$valorMensalComparacao_s"); // Era $input5s
-    $pdf->Text(50, 97, "$valorMensalComparacao_s");    // Era $input5s
-    $pdf->Text(142, 97, "$novaRegras");       // Era $input7s
+    $pdf->Text(165, 47.5, "$input5s"); // Era $input5s
+    $pdf->Text(50, 97, "$input5s");    // Era $input5s
+    $pdf->Text(142, 97, "$ValorInteiroMenosEconomias");       // Era $input7s
 
     // $input3s e $input4s - Mantidos como no original, formatados a partir de input3_valor e input4_valor
     $pdf->Text(50, 128, "$input3s");
