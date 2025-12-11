@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $metrosOcupados = $qtdmodulosArredondado * 2.9;
 
     // Cálculos PGCV4
-    $peso = $qtdmodulosArredondado * 33;
+    $peso = (($qtdmodulosArredondado * 33) / $metrosOcupados);
     $percentualSolar = ($geracao / $media) * 100;
     $percentualSolarArredondado = round($percentualSolar);
     $mediaArredondado = round($media);
@@ -472,14 +472,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
 
-    $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados_formatado m²");
-    $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
-    $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador_formatado kWp");
-    $pdf->Text(34.6, 178.75, "Média de Consumo: $media_formatado kWh");
-    $pdf->Text(34.6, 185, "Geração Estimada: $geracao_formatado kWh");
+    $pdf->Text(34.6, 160, "Disponibilidade de área necessária:");
+    $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos:");
+    $pdf->Text(34.6, 172.5, "Potência do Projeto:");
+    $pdf->Text(34.6, 178.75, "Média de Consumo:");
+    $pdf->Text(34.6, 185, "Geração Estimada:");
 
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(180, 280, "$dataAtual");
+    $pdf->Text(102, 160, "$metrosOcupados_formatado m²");
+    $pdf->Text(108, 166.25, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
+    $pdf->Text(73, 172.5, "$potenciaGerador_formatado kWp");
+    $pdf->Text(74, 178.75, "$media_formatado kWh");
+    $pdf->Text(72, 185, "$geracao_formatado kWh");
+
+
+    $pdf->SetFont('helvetica', 'B', 12);
+    $pdf->Text(34.6, 220, "Data:");
+    $pdf->Text(34.6, 226.25, "Responsável Técnico:");
+    $pdf->Text(34.6, 232.5, "CREA-PR:");
+    $pdf->Text(34.6, 238.75, "CPF:");
+
+    $pdf->SetFont('helvetica', 12);
+    $pdf->Text(46, 220.05, "$dataAtual");
+    $pdf->Text(80, 226.30, "Eduardo Garcia Ribeiro");
+    $pdf->Text(56, 232.55, "160034/D");
+    $pdf->Text(46.6, 238.75, "085.271.859-46");
+
+    $pdf->SetFont('helvetica', 'B', 12);
 
 
     // Segunda Página (com a imagem genérica e gráfico)
@@ -618,22 +637,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $larguraTotalGrafico = (count($labels) * $gap) + $barWidth; // Cálculo aproximado da largura total
     $pdf->Line($x - 2, $y, $x + $larguraTotalGrafico, $y);
 
+    // 1. Calcular as Médias
+    $countGer = count($dataGeracao);
+    $mediaGeracao = $countGer > 0 ? array_sum($dataGeracao) / $countGer : 0;
+
+    $countCon = count($dataConsumo);
+    $mediaConsumo = $countCon > 0 ? array_sum($dataConsumo) / $countCon : 0;
+
+    // 2. Calcular a altura Y das linhas (usando a mesma escala das barras)
+    // Altura em unidades
+    $hMediaGer = ($mediaGeracao / $maxValueGlobal) * $maxBarHeight;
+    $hMediaCon = ($mediaConsumo / $maxValueGlobal) * $maxBarHeight;
+
+    // Posição Y final
+    $yMediaGer = $y - $hMediaGer;
+    $yMediaCon = $y - $hMediaCon;
+
+    // 3. Configurar Estilo da Linha para Tracejado (Dash)
+    // O array 'dash' define o padrão: 2 unidades riscado, 2 unidades espaço
+    $pdf->SetLineStyle(array('width' => 0.2, 'cap' => 'butt', 'join' => 'miter', 'dash' => '3,3', 'color' => array(0, 0, 0)));
+
+    // 4. Desenhar Linha de Média GERAÇÃO (Verde)
+    if ($mediaGeracao > 0) {
+        $pdf->SetDrawColor($colGerR, $colGerG, $colGerB); // Cor Verde definida anteriormente
+        $pdf->Line($x, $yMediaGer, $x + $larguraTotalGrafico, $yMediaGer);
+    }
+
+    // 5. Desenhar Linha de Média CONSUMO (Vermelho)
+    if ($mediaConsumo > 0) {
+        $pdf->SetDrawColor($colConR, $colConG, $colConB); // Cor Vermelha definida anteriormente
+        $pdf->Line($x, $yMediaCon, $x + $larguraTotalGrafico, $yMediaCon);
+    }
+
+    // 6. IMPORTANTE: Restaurar o estilo da linha para Sólido
+    // Para não deixar a legenda ou as bordas seguintes tracejadas
+    $pdf->SetLineStyle(array('width' => 0.1, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)));
     // --- LEGENDA SIMPLES (Essencial para gráficos de barras duplas) ---
     $legendX = $x + 10;
     $legendY = $y + 15;
 
     $pdf->SetFont('helvetica', '', 9);
 
-    // Item Geração
-    $pdf->SetDrawColor($colGerR, $colGerG, $colGerB);
-    $pdf->Rect($legendX, $legendY, 8, 4, 'D');
-    $pdf->SetTextColor(0, 0, 0);
-
-    $pdf->SetFillColor($colConR, $colConG, $colConB);
-    $pdf->Rect($legendX + 40, $legendY, 8, 4, 'F');
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text($legendX + 50, $legendY, utf8_decode("Consumo"));
-    $pdf->Text(43, 271, "Geração");
 
 
     // Terceira Página (com a imagem undo.jpeg)
@@ -683,7 +727,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
     $pdf->Text(149, 57, "$potenciaGerador_formatado kWp");
     $pdf->Text(152, 71.5, "$metrosOcupados_formatado m²");
-    $pdf->Text(152, 85, "$peso_formatado kg");
+    $pdf->Text(149, 85, "$peso_formatado Kg/m²");
     $pdf->Text(142, 98.5, "$media_formatado kWh mensal");
     $pdf->Text(142, 112, "$geracao_formatado kWh mensal");
     $pdf->SetTextColor(0, 0, 0);
@@ -709,10 +753,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(91, 45, "$gastoComGeradorAnoRs");
     $pdf->Text(93, 61.5, "$gastoComGeradorRs");
     $pdf->Text(135, 45, "$diferencaGastosAnoRs");
-    $pdf->Text(138, 61.5, "$diferencaGastosRs");
-    // CÓDIGO CORRIGIDO
-// ... (código anterior da página 5) ...
-    $pdf->Text(138, 61.5, "$diferencaGastosRs");
+    $pdf->Text(128, 61.5, "$diferencaGastosRs");
+
+    $porEconMensal = ($diferencaGastos / $precoFinal) * 100;
+    $pdf->SetFont('helvetica', 'B', 12);
+    $porEconMensals = ("(" . number_format($porEconMensal, 2, ',', '.') . '%' . ")");
+    $pdf->Text(152, 62, "$porEconMensals");
+
 
     // --- INÍCIO DA LÓGICA CORRIGIDA ---
 
@@ -898,6 +945,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
 
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('PGCOC5.png', 0, 0, 210, 297);
 
     // Sexta Página 
     $pdf->AddPage();  // Adiciona a primeira página
