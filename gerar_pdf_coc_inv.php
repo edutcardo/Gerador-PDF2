@@ -174,9 +174,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     function calcularManutencao($qtdmodulosArredondado)
     {
         if ($qtdmodulosArredondado >= 10) {
-            $manutencao = (150 / pow($qtdmodulosArredondado, 0.485) + 10 - 20 / $qtdmodulosArredondado) * $qtdmodulosArredondado;
+            $manutencao = (320 / pow($qtdmodulosArredondado, 0.485) + 10 - 20 / $qtdmodulosArredondado) * $qtdmodulosArredondado;
         } else {
-            $manutencao = (150 / pow(10, 0.485) + 10 - 20 / 10) * 10;
+            $manutencao = (320 / pow(10, 0.485) + 10 - 20 / 10) * 10;
         }
 
         return $manutencao / 12; // Divide o resultado por 12 conforme a fórmula original
@@ -1148,18 +1148,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Image('PGCOC9.png', 0, 0, 210, 297);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->SetFont('helvetica', 'B', 11);
-    $pdf->Text(23, 50, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
-    $pdf->Text(23, 58, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
-    $pdf->Text(23, 66, "ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO");
-    $pdf->Text(23, 74, "CABEAMENTO CC 1.8 KVCC - USO ESPECÍFICO PARA USINA SOLAR");
-    $pdf->Text(23, 82, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-    $pdf->Text(23, 90, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
-    $pdf->Text(23, 98, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
-    $pdf->Text(23, 106, "$texto_seguranca");
-    $pdf->Text(23, 114, "$texto_final_adicionais");
+    $pdf->Text(23, 30, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
+    $pdf->Text(23, 38, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
+    $pdf->Text(23, 46, "ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO");
+    $pdf->Text(23, 54, "CABEAMENTO CC 1.8 KVCC - USO ESPECÍFICO PARA USINA SOLAR");
+    $pdf->Text(23, 62, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+    $pdf->Text(23, 70, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
+    $pdf->Text(23, 78, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
+    $pdf->Text(23, 86, "$texto_seguranca");
+    $pdf->Text(23, 94, "$texto_final_adicionais");
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(16, 122, "$textoPadrao");
+    $pdf->Text(16, 102, "$textoPadrao");
 
 
     // Definir fonte e adicionar conteúdo à quinta página
