@@ -659,166 +659,112 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Image('PGCOC2.png', 0, 0, 210, 297);
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
-
-    // --- INÍCIO DOS DADOS DE EXEMPLO ---
-// Supondo que estas são as suas variáveis originais de CONSUMO (Barras Vermelhas)
+// --- CONFIGURAÇÃO DOS DADOS ---
+// Supondo que $jan3, $fev3... sejam suas variáveis de GERAÇÃO.
     $dataGeracao = [$jan3, $fev3, $mar3, $abr3, $mai3, $jun3, $jul3, $ago3, $set3, $out3, $nov3, $dez3];
+    $labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
-    // --- VOCÊ PRECISA INSERIR SUAS VARIÁVEIS DE GERAÇÃO AQUI ---
-// Criei dados fictícios para GERAÇÃO (Barras Verdes) para o exemplo funcionar.
-// Substitua pelas suas variáveis reais ($geracaoJan, etc.)
-
-
-    $labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; // Rótulos (meses)
-
-    // Definindo as cores (RGB) baseadas na imagem alvo
-// Verde (para borda da Geração)
+    // --- CORES ---
+// Verde (para borda da Geração e linha média)
     $colGerR = 0;
     $colGerG = 128;
     $colGerB = 0;
-    // Vermelho (para preenchimento do Consumo)
-    $colConR = 204;
-    $colConG = 0;
-    $colConB = 0;
 
-    // Posições e tamanho do gráfico
-    $x = 46;  // Posição X inicial
-    $y = 256; // Posição Y da linha de base
-    $barWidth = 4; // Largura individual de CADA barra (reduzi um pouco para caber o par)
-    $gap = 11;  // Distância entre o INÍCIO de um grupo de meses e o próximo. Deve ser maior que 2 * $barWidth.
-    $maxBarHeight = 40; // Altura máxima do gráfico
+    // --- POSICIONAMENTO E DIMENSÕES ---
+    $x = 28;            // Posição X inicial
+    $y = 256;           // Posição Y da linha de base (chão do gráfico)
+    $barWidth = 6;      // Largura da barra (aumentei um pouco pois agora é barra única)
+    $gap = 14;          // Distância entre o INÍCIO de uma barra e a próxima
+    $maxBarHeight = 40; // Altura máxima visual do gráfico
 
-    // --- CRUCIAL: Determinando o maior valor GLOBAL para escalar as barras corretamente ---
-// Precisamos saber qual é o maior valor entre TODAS as gerações e TODOS os consumos.
-    $maxValConsumo = empty($dataConsumo) ? 0 : max($dataConsumo);
-    $maxValGeracao = empty($dataGeracao) ? 0 : max($dataGeracao);
-    // O valor máximo para a escala é o maior entre os dois conjuntos
-    $maxValueGlobal = max($maxValConsumo, $maxValGeracao);
-
-    // Prevenção contra divisão por zero se os dados estiverem vazios
-    if ($maxValueGlobal == 0) {
+    // --- ESCALA ---
+// Define o valor máximo apenas baseado na Geração para escalar as barras
+    $maxValueGlobal = empty($dataGeracao) ? 1 : max($dataGeracao);
+    if ($maxValueGlobal == 0)
         $maxValueGlobal = 1;
-    }
 
+    // Configuração de fonte
+    $pdf->SetFont('helvetica', '', 8);
+    $pdf->SetLineWidth(0.3);
 
-    // Configuração de fonte para o gráfico
-    $pdf->SetFont('helvetica', '', 8); // Fonte ligeiramente menor para ajudar a caber
-    $pdf->SetLineWidth(0.3); // Espessura da linha para a barra verde
-
-    // --- LOOP DE DESENHO PRINCIPAL ---
+    // =============================================================================
+// 1. LOOP DAS BARRAS
+// =============================================================================
     foreach ($labels as $index => $label) {
-
-        // Obter valores atuais
-        // Usa 0 se não houver dado para aquele índice para evitar erros
+        // Valor atual (proteção contra índice inexistente)
         $valGeracao = isset($dataGeracao[$index]) ? $dataGeracao[$index] : 0;
-        $valConsumo = isset($dataConsumo[$index]) ? $dataConsumo[$index] : 0;
 
-        // Calculando a altura proporcional de cada barra usando o Máximo Global
+        // Altura proporcional
         $hGeracao = ($valGeracao / $maxValueGlobal) * $maxBarHeight;
-        $hConsumo = ($valConsumo / $maxValueGlobal) * $maxBarHeight;
 
-        // --- CÁLCULO DAS POSIÇÕES X ---
-        // Posição X da primeira barra (Geração - Verde)
-        $xPosGeracao = $x + ($index * $gap);
-        // Posição X da segunda barra (Consumo - Vermelho), posicionada logo após a primeira
-        $xPosConsumo = $xPosGeracao + $barWidth;
+        // Posição X da barra atual
+        $xPos = $x + ($index * $gap);
 
-
-        // --- DESENHAR BARRA 1: GERAÇÃO (Borda Verde, Fundo Branco) ---
-        // Conforme a imagem: Apenas a borda é colorida ('D' = Draw border)
+        // --- DESENHAR BARRA (Geração) ---
+        // Cor da linha (Borda Verde)
         $pdf->SetDrawColor($colGerR, $colGerG, $colGerB);
-        // Se quiser o fundo branco explicitamente, descomente a linha abaixo e use 'DF' no Rect
-        // $pdf->SetFillColor(255, 255, 255);
-        $pdf->Rect($xPosGeracao, $y - $hGeracao, $barWidth, $hGeracao, 'D');
+        // 'D' = Draw border only (Apenas contorno, sem preenchimento, conforme imagem)
+        // Se quiser fundo branco opaco, use $pdf->SetFillColor(255,255,255) e mude 'D' para 'DF'
+        $pdf->Rect($xPos + 3, $y - $hGeracao, $barWidth, $hGeracao, 'D');
 
-
-        // --- DESENHAR BARRA 2: CONSUMO (Preenchimento Vermelho) ---
-        // Conforme a imagem: A barra é preenchida ('F' = Fill)
-        $pdf->SetFillColor($colConR, $colConG, $colConB);
-        // Opcional: Se quiser uma borda na barra vermelha também, defina SetDrawColor e use 'DF'
-
-        // --- RÓTULOS DOS MESES (Abaixo das barras) ---
+        // --- RÓTULOS (Meses) ---
         $pdf->SetTextColor(0, 0, 0);
-        // Precisamos centralizar o rótulo abaixo do PAR de barras.
-        // O centro matemático do par de barras é a posição X da primeira barra + a largura de uma barra.
-        $centerXp = $xPosGeracao + $barWidth;
 
-        // Calcula a largura do texto para centralizar perfeitamente
+        // Centralizar texto abaixo da barra
+        $centerX = $xPos + ($barWidth / 2);
         $textWidth = $pdf->GetStringWidth($label);
-        $labelX = $centerXp - ($textWidth / 2);
-        $labelY = $y + 5; // Posição logo abaixo da linha de base
-        $pdf->Text($labelX, $labelY, $label);
+        $labelX = $centerX - ($textWidth / 2);
 
-        /*
-        // --- OPCIONAL: VALORES ACIMA DAS BARRAS ---
-        // Com barras duplas, os valores podem ficar encavalados. Se quiser tentar, descomente abaixo.
-        $pdf->SetFont('helvetica', '', 7);
-        // Valor Geração
-        if($valGeracao > 0) {
-             $valGerX = ($xPosGeracao + $barWidth/2) - ($pdf->GetStringWidth($valGeracao)/2);
-             $pdf->Text($valGerX, $y - $hGeracao - 2, $valGeracao);
-        }
-        // Valor Consumo
-        if($valConsumo > 0) {
-             $valConX = ($xPosConsumo + $barWidth/2) - ($pdf->GetStringWidth($valConsumo)/2);
-             $pdf->Text($valConX, $y - $hConsumo - 2, $valConsumo);
-        }
-        $pdf->SetFont('helvetica', '', 8); // Retorna a fonte
-        */
+        $pdf->Text($labelX, $y + 4, $label);
     }
 
-    // --- LINHA DE BASE DO GRÁFICO (Eixo X) ---
-    $pdf->SetDrawColor(150, 150, 150); // Cinza claro
+    // --- LINHA DE BASE (Eixo X) ---
+    $pdf->SetDrawColor(150, 150, 150);
     $pdf->SetLineWidth(0.1);
-    $larguraTotalGrafico = (count($labels) * $gap) + $barWidth; // Cálculo aproximado da largura total
-    $pdf->Line($x - 2, $y, $x + $larguraTotalGrafico, $y);
-    // -------------------------------------------------------------------------
-    // --- INÍCIO: LINHA TRACEJADA DA MÉDIA (GERAÇÃO) ---
-    // -------------------------------------------------------------------------
+    // Calcula largura total baseado no número de labels
+    $larguraTotal = (count($labels) * $gap);
+    $pdf->Line($x - 2, $y, $x + $larguraTotal, $y);
 
-    // 1. Calcular a média aritmética dos valores de Geração
-    // Verifica se o array tem dados e remove caracteres de formatação se necessário, 
-    // mas como você preencheu $jan3, $fev3 etc com number_format, o PHP costuma converter na soma.
-    // O ideal é somar os números puros, mas aqui usaremos o array existente.
-    $somaGeracao = array_sum($dataGeracao);
-    $qtdGeracao = count($dataGeracao);
-    $mediaGeracao = ($qtdGeracao > 0) ? $somaGeracao / $qtdGeracao : 0;
+    // =============================================================================
+// 2. LINHA TRACEJADA DA MÉDIA
+// =============================================================================
 
-    // 2. Calcular a altura Y proporcional (mesma lógica das barras)
-    $hMedia = ($maxValueGlobal > 0) ? ($mediaGeracao / $maxValueGlobal) * $maxBarHeight : 0;
+    // Calcular média
+    $soma = array_sum($dataGeracao);
+    $qtd = count($dataGeracao);
+    $media = ($qtd > 0) ? $soma / $qtd : 0;
 
-    // A posição Y é a linha de base ($y) MENOS a altura calculada
+    // Altura da linha média
+    $hMedia = ($media / $maxValueGlobal) * $maxBarHeight;
     $yPosMedia = $y - $hMedia;
 
-    // 3. Configurar estilo da linha (Tracejada e Verde)
-    // Usa as mesmas cores definidas para a geração: $colGerR, $colGerG, $colGerB
-    // 'dash' => '3,2' significa: traço de 3mm, espaço de 2mm
+    // Estilo Tracejado (Verde)
+// Nota: 'dash' funciona bem no TCPDF. No FPDF padrão pode exigir script add-on.
     $pdf->SetLineStyle(array('dash' => '3,2', 'color' => array($colGerR, $colGerG, $colGerB)));
     $pdf->SetLineWidth(0.3);
 
-    // 4. Desenhar a linha de ponta a ponta do gráfico
-    $pdf->Line($x, $yPosMedia, $x + $larguraTotalGrafico, $yPosMedia);
+    // Desenha a linha cruzando todo o gráfico
+    $pdf->Line($x, $yPosMedia, $x + $larguraTotal, $yPosMedia);
 
-    // 5. IMPORTANTE: Restaurar o estilo de linha para sólido (padrão) para não afetar o resto do PDF
+    // Restaura linha sólida para o resto do PDF
     $pdf->SetLineStyle(array('dash' => 0));
 
-    // -------------------------------------------------------------------------
-    // --- FIM: LINHA TRACEJADA DA MÉDIA ---
-    // -------------------------------------------------------------------------
-
-
-    // --- LEGENDA SIMPLES (Essencial para gráficos de barras duplas) ---
-    $legendX = $x + 10;
+    // =============================================================================
+// 3. LEGENDA
+// =============================================================================
+    $legendX = $x + 10; // Ajuste conforme necessário
     $legendY = $y + 15;
 
     $pdf->SetFont('helvetica', '', 9);
-
-    // Item Geração
-    $pdf->SetDrawColor($colGerR, $colGerG, $colGerB);
-    $pdf->Rect($legendX, $legendY, 8, 4, 'D');
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(68, 271, "Geração");
 
+    // Ícone da legenda (Retângulo verde vazio)
+    $pdf->SetDrawColor($colGerR, $colGerG, $colGerB);
+    $pdf->SetLineWidth(0.3);
+    $pdf->Rect($legendX, $legendY, 8, 4, 'D');
+
+    // Texto da legenda
+    $pdf->Text($legendX + 10, $legendY, "Geração");
     // Terceira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCOC3.png', 0, 0, 210, 297);
