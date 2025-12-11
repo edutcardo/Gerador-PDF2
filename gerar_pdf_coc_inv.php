@@ -641,8 +641,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(34.6, 178.75, "Geração Estimada: $geracao_formatado kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(180, 280, "$dataAtual");
+    $pdf->Text(34.6, 220, "Data:");
+    $pdf->Text(34.6, 226.25, "Responsável Técnico:");
+    $pdf->Text(34.6, 232.5, "CREA-PR:");
+    $pdf->Text(34.6, 238.75, "CPF:");
 
+    $pdf->SetFont('helvetica', 12);
+    $pdf->Text(46, 220.05, "$dataAtual");
+    $pdf->Text(80, 226.30, "Eduardo Garcia Ribeiro");
+    $pdf->Text(56, 232.55, "160034/D");
+    $pdf->Text(46.6, 238.75, "085.271.859-46");
+
+    $pdf->SetFont('helvetica', 'B', 12);
 
     // Segunda Página (com a imagem genérica e gráfico)
     $pdf->AddPage();  // Adiciona a segunda página
@@ -762,6 +772,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetLineWidth(0.1);
     $larguraTotalGrafico = (count($labels) * $gap) + $barWidth; // Cálculo aproximado da largura total
     $pdf->Line($x - 2, $y, $x + $larguraTotalGrafico, $y);
+    // -------------------------------------------------------------------------
+    // --- INÍCIO: LINHA TRACEJADA DA MÉDIA (GERAÇÃO) ---
+    // -------------------------------------------------------------------------
+
+    // 1. Calcular a média aritmética dos valores de Geração
+    // Verifica se o array tem dados e remove caracteres de formatação se necessário, 
+    // mas como você preencheu $jan3, $fev3 etc com number_format, o PHP costuma converter na soma.
+    // O ideal é somar os números puros, mas aqui usaremos o array existente.
+    $somaGeracao = array_sum($dataGeracao);
+    $qtdGeracao = count($dataGeracao);
+    $mediaGeracao = ($qtdGeracao > 0) ? $somaGeracao / $qtdGeracao : 0;
+
+    // 2. Calcular a altura Y proporcional (mesma lógica das barras)
+    $hMedia = ($maxValueGlobal > 0) ? ($mediaGeracao / $maxValueGlobal) * $maxBarHeight : 0;
+
+    // A posição Y é a linha de base ($y) MENOS a altura calculada
+    $yPosMedia = $y - $hMedia;
+
+    // 3. Configurar estilo da linha (Tracejada e Verde)
+    // Usa as mesmas cores definidas para a geração: $colGerR, $colGerG, $colGerB
+    // 'dash' => '3,2' significa: traço de 3mm, espaço de 2mm
+    $pdf->SetLineStyle(array('dash' => '3,2', 'color' => array($colGerR, $colGerG, $colGerB)));
+    $pdf->SetLineWidth(0.3);
+
+    // 4. Desenhar a linha de ponta a ponta do gráfico
+    $pdf->Line($x, $yPosMedia, $x + $larguraTotalGrafico, $yPosMedia);
+
+    // 5. IMPORTANTE: Restaurar o estilo de linha para sólido (padrão) para não afetar o resto do PDF
+    $pdf->SetLineStyle(array('dash' => 0));
+
+    // -------------------------------------------------------------------------
+    // --- FIM: LINHA TRACEJADA DA MÉDIA ---
+    // -------------------------------------------------------------------------
+
 
     // --- LEGENDA SIMPLES (Essencial para gráficos de barras duplas) ---
     $legendX = $x + 10;
@@ -936,204 +980,186 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     $pdf->AddPage();
-    $pdf->Image('PGCOCANALISE.png', 0, 0, 210, 297);
+    $pdf->Image('PGCOC6.png', 0, 0, 210, 297);
+    $pdf->SetFont('helvetica', 'B', 24);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(120, 60, "$precoFinalRs");
+    $pdf->SetFont('helvetica', 'B', 24);
 
 
-    // --- INÍCIO DA LÓGICA CORRIGIDA ---
+    $pdf->Text(35, 60, "$potenciaGerador_formatado kWp");
 
-    // 1. PRIMEIRO, definimos a fonte e a cor PRETA para o restante do conteúdo
-    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetMargins(0, 0, 0);
+    $pdf->SetAutoPageBreak(FALSE);
+
+    // =========================================================================
+    // --- 1. LÓGICA DAS 3 SAFRAS (Cálculo e Exibição) ---
+    // =========================================================================
+
+    // Cálculos dos valores (33%, 33%, 34%)
+    // Certifique-se de que $precoFinal venha do seu script anterior
+    $valSafra33 = $precoFinal * 0.33;
+    $valSafra34 = $precoFinal * 0.34; // A última parcela é ligeiramente maior para fechar 100%
+
+    $strSafra33 = 'R$ ' . number_format($valSafra33, 2, ',', '.');
+    $strSafra34 = 'R$ ' . number_format($valSafra34, 2, ',', '.');
+    $strValorTotal = 'R$ ' . number_format($precoFinal, 2, ',', '.');
+
+    // Desenhar a Elipse (Oval) de fundo
+    // Ajuste as cores se necessário (Cinza claro no exemplo)
+    $pdf->SetFillColor(235, 235, 235);
+    $pdf->SetDrawColor(150, 150, 150);
+    // Ellipse(x, y, rx, ry) -> Centralizado horizontalmente (aprox 105)
+    $pdf->Ellipse(105, 160, 85, 25);
+
+    // Textos da Safra
     $pdf->SetTextColor(0, 0, 0);
 
-    // 2. Lógica para o asterisco da ESQUERDA (agora será desenhado em preto)
-    if ($indicacao == 1) {
-        $pdf->Text(23, 98.5, '*');
-    }
+    // Título "3 SAFRAS"
+    $pdf->SetFont('helvetica', 'B', 20);
+    $textoTitulo = "3 SAFRAS";
+    $wTitulo = $pdf->GetStringWidth($textoTitulo);
+    $pdf->Text(105 - ($wTitulo / 2), 152, $textoTitulo);
 
-    // 4. Lógica para o asterisco da DIREITA (agora será desenhado em preto)
-    if ($valoramais <> 0) {
-        $larguraPreco = $pdf->GetStringWidth($precoFinalRs);
-        $pdf->Text(45, 98.5, '*');
-    }
-    // --- FIM DA LÓGICA CORRIGIDA ---
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(147, 98.5, "$precoFinalRs");
-    $pdf->SetFont('helvetica', 'B', 15);
-    $pdf->Text(26, 123, "36 X $valorParcelaRs");
-    $pdf->Text(85, 123, "48 X $valorParcela2Rs");
-    $pdf->Text(146, 123, "60 X $valorParcela3Rs");
-    $pdf->Text(152, 166, "$paybackArredondado anos");
-    $pdf->Text(143, 178, "$retorno25anosRs");
+    // Linha de cálculo: "33% DE X + 33% DE X..."
+    $pdf->SetFont('helvetica', 'B', 10);
+    // Usando 200,00 como exemplo de visualização ou o valor real se quiser:
+    // Texto conforme a imagem (mostrando porcentagens do valor total)
+    $textoCalculo = "33% DE $strSafra33 + 33% DE $strSafra33 + 34% DE $strSafra34";
+    // Se quiser mostrar o valor da PARCELA, mude para:
+    // $textoCalculo = "33% ($strSafra33) + 33% ($strSafra33) + 34% ($strSafra34)";
 
-    // Gráfico de Payback
-    $dados = [];
+    $wCalculo = $pdf->GetStringWidth($textoCalculo);
+    $pdf->Text(105 - ($wCalculo / 2), 163, $textoCalculo);
+
+    // Datas das Safras (Datas futuras aproximadas ou estáticas conforme imagem)
+    // Para automatizar, você precisaria de lógica de data, aqui coloquei fixo como exemplo da imagem
+    $anoAtual = date('Y');
+    $proxAno = $anoAtual + 1;
+    $textoDatas = "Meses de safra: 02/$proxAno - 04/$proxAno - 06/$proxAno";
+    $wDatas = $pdf->GetStringWidth($textoDatas);
+    $pdf->Text(105 - ($wDatas / 2), 169, $textoDatas);
+
+
+    // =========================================================================
+    // --- 2. GRÁFICO DE PAYBACK (Movido para cima nesta página) ---
+    // =========================================================================
+
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(50, 50, 50);
+    $pdf->Text(83, 192, "Gráfico de Payback");
+
+    // --- Dados do Gráfico de Payback ---
+    // (Lógica reaproveitada do seu código anterior, mas posicionada aqui)
+    $dadosGrafico = [];
     $retornoAcumulado = 0;
 
-    // Verifica se os dados necessários existem e são válidos
-    if (isset($precoFinal) && is_numeric($precoFinal) && isset($diferencaGastosAno) && is_numeric($diferencaGastosAno) && $diferencaGastosAno > 0) {
+    // Recalcula o fluxo para o gráfico (Investimento negativo no ano 0, depois recupera)
+    // O gráfico da imagem mostra o saldo acumulado crescendo.
+    if (isset($precoFinal) && isset($liquidoVerdeAnual)) {
         for ($ano = 1; $ano <= 25; $ano++) {
             $retornoAcumulado += $liquidoVerdeAnual;
-            // O dado é o saldo acumulado menos o investimento inicial
-            $dados[$ano] = $retornoAcumulado - $precoFinal;
+            // O valor a ser plotado é o Saldo (Lucro - Investimento)
+            $dadosGrafico[$ano] = $retornoAcumulado - $precoFinal;
         }
     }
 
-    if (!empty($dados)) {
-        // --- 1. Configurações de Dimensões e Posição (Ajustadas para ficar maior como na foto) ---
-        $xInicial = 18;         // Margem esquerda maior para caber o título do eixo Y
-        $yInicialTop = 227;      // Posição do topo do gráfico na página
-        $larguraGrafico = 170;  // Mais largo para acomodar 25 barras confortavelmente
-        $alturaGrafico = 40;   // Bem mais alto para caber os rótulos verticais
-        $larguraBarra = 5;
-        $espacoEntreBarras = 1.8; // Ajuste fino para caber as 25 barras na largura
+    if (!empty($dadosGrafico)) {
+        // Configurações visuais do gráfico
+        $chartX = 33;       // Margem esquerda
+        $chartY = 250;      // Posição Y da LINHA BASE (Eixo X) - Ajustado para caber na pg
+        $chartHeight = 50;  // Altura visual máxima das barras
+        $barW = 5;          // Largura da barra
+        $gap = 1.5;         // Espaço entre barras
 
-        // --- 2. Cálculos de Escala e Linha Zero ---
-        $min = min($dados);
-        $max = max($dados);
-        // Garante que o 0 esteja no range, caso todos os dados sejam positivos ou todos negativos
-        $minScale = min(0, $min);
-        $maxScale = max(0, $max);
-        $rangeTotal = $maxScale - $minScale;
+        // Escala: Encontrar o maior valor para definir a altura máxima
+        $maxVal = max($dadosGrafico);
+        $minVal = min($dadosGrafico); // Provavelmente negativo nos primeiros anos
 
-        // Evita divisão por zero se o range for 0
-        $escalaY = ($rangeTotal > 0) ? $alturaGrafico / $rangeTotal : 0;
+        // Se o maior valor for 0 (erro), evita divisão por zero
+        $scale = ($maxVal != 0) ? $chartHeight / ($maxVal - min($minVal, 0)) : 1;
 
-        // Calcula onde fica a linha visual do ZERO (R$ 0,00) no eixo Y.
-        // A distância do topo ($maxScale) até o zero é proporcional ao valor de $maxScale.
-        $yLinhaZero = $yInicialTop + ($maxScale * $escalaY);
+        // Posição visual do ZERO (onde o saldo deixa de ser negativo)
+        // Se minVal for -100 e max for 1000, o zero está um pouco acima do fundo
+        // Para simplificar visualmente igual a imagem:
+        // A imagem mostra barras crescendo do fundo. Vamos fixar o fundo.
 
+        // Re-ajuste simples: Normalizar para desenhar apenas a barra positiva (ou negativa)
+        // A imagem mostra barras cinzas simples crescendo.
+        $maxAbs = max(abs($minVal), abs($maxVal));
+        $scaleSimple = $chartHeight / $maxAbs;
 
-        // --- 3. Desenhando Títulos e Eixos ---
+        $currentX = $chartX;
 
-        // Título Principal
-        $pdf->SetFont('helvetica', 'B', 16);
-        $pdf->SetTextColor(50, 50, 70); // Cor cinza escuro para o título
+        $pdf->SetFont('helvetica', '', 7); // Fonte pequena para os números
+        $pdf->SetLineWidth(0.1);
 
-        // Subtítulo "Lucro Total"
-        $pdf->SetFont('helvetica', 'B', 14);
-        // Centraliza aproximadamente sobre o gráfico
-        $pdf->Text($xInicial + ($larguraGrafico / 2) - 15, $yInicialTop - 10, 'Lucro Total');
+        foreach ($dadosGrafico as $ano => $valor) {
 
-        // Rótulo do Eixo Y (Rotacionado) - REQUER TCPDF ou extensão FPDF
-        $pdf->SetFont('helvetica', 'B', 10);
-        $pdf->SetTextColor(100, 100, 100);
-        if (method_exists($pdf, 'StartTransform')) {
+            // Altura da barra
+            $hBar = abs($valor) * $scaleSimple;
+
+            // Define cor: Cinza claro se negativo/pagando, Cinza escuro/Verde se lucrando?
+            // A imagem usa cinza claro.
+            $pdf->SetFillColor(200, 200, 200);
+            $pdf->SetDrawColor(100, 100, 100);
+
+            // Desenha barra
+            // Se valor < 0, a barra teoricamente seria para baixo, mas gráficos simples de payback
+            // costumam mostrar a "evolução" visual. Vamos desenhar do eixo para cima.
+            // Para ser fiel à lógica financeira:
+            if ($valor < 0) {
+                // Barra "negativa" (ainda pagando) - desenha do eixo para baixo ou cor diferente
+                $pdf->SetFillColor(150, 150, 150); // Cinza mais escuro
+                // Opção visual da imagem: parece que todas partem da mesma base.
+                // Vamos desenhar da base $chartY para cima.
+                $yBar = $chartY - $hBar;
+            } else {
+                // Lucro
+                $pdf->SetFillColor(220, 220, 220); // Cinza claro
+                $yBar = $chartY - $hBar;
+            }
+
+            // Desenhar Retângulo
+            $pdf->Rect($currentX, $yBar, $barW, $hBar, 'DF');
+
+            // Rótulo vertical (Valor) - Rotacionado
             $pdf->StartTransform();
-            // Rotaciona 90 graus. Posiciona no meio da altura do gráfico, à esquerda.
-            $pdf->Rotate(90, $xInicial - 15, $yInicialTop + ($alturaGrafico / 2));
-
+            $pdf->Rotate(90, $currentX + ($barW / 2), $yBar - 2);
+            $textoValor = "R$ " . number_format($valor, 2, ',', '.');
+            $pdf->Text($currentX + ($barW / 2), $yBar - 2, $textoValor);
             $pdf->StopTransform();
-        } else {
-            // Fallback se não suportar rotação: texto normal
-            $pdf->Text($xInicial - 25, $yInicialTop, 'Retorno');
-            $pdf->Text($xInicial - 25, $yInicialTop + 5, 'Financeiro');
+
+            // Rótulo Horizontal (Ano)
+            $pdf->Text($currentX + 1, $chartY + 2, $ano);
+
+            $currentX += ($barW + $gap);
         }
 
-
-        // Desenha a LINHA BASE (Linha do Zero) - Cinza, um pouco mais grossa
-        $pdf->SetLineWidth(0.4);
-        $pdf->SetDrawColor(180, 180, 180); // Cinza claro
-        $pdf->Line($xInicial, $yLinhaZero, $xInicial + $larguraGrafico, $yLinhaZero);
-
-        // --- 4. Loop para desenhar Barras e Rótulos ---
-        $xPos = $xInicial + ($espacoEntreBarras * 2); // Pequeno recuo inicial
-        $pdf->SetLineWidth(0.2); // Volta para linha fina para as barras
-
-        foreach ($dados as $ano => $valor) {
-            // Altura da barra é sempre positiva para o cálculo do retângulo
-            $barHeight = abs($valor * $escalaY);
-
-            // Determina a posição Y inicial e a cor da barra
-            if ($valor >= 0) {
-                // Valor Positivo: Barra sobe a partir da linha zero
-                $yBarra = $yLinhaZero - $barHeight;
-                // Ponto de ancoragem para o texto (logo acima da barra)
-                $yTextoAnchor = $yBarra - 1;
-            } else {
-                // Valor Negativo: Barra desce a partir da linha zero
-                $yBarra = $yLinhaZero;
-                // Ponto de ancoragem para o texto (logo abaixo da barra, que na rotação fica "acima" visualmente)
-                $yTextoAnchor = $yBarra + $barHeight + 1;
-            }
-
-            // Configura cor da barra (Verde Neon brilhante com borda preta)
-            $pdf->SetFillColor(0, 255, 127); // SpringGreen (mais parecido com a imagem)
-            $pdf->SetDrawColor(0, 0, 0);     // Borda preta
-            $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF');
-
-            // Rótulo do Ano (Eixo X) na parte inferior
-            $pdf->SetFont('helvetica', '', 8);
-            $pdf->SetTextColor(0, 0, 0);
-            // Posiciona o ano abaixo da linha mais baixa do gráfico
-            $yAno = $yInicialTop + $alturaGrafico + 3;
-            // Centraliza o número do ano na largura da barra
-            $pdf->Text($xPos + ($larguraBarra / 2) - 1, $yAno, (string) $ano);
-
-
-            // Rótulo do Valor (Rotacionado Verticalmente)
-            // Mostra para TODOS os anos, com 2 casas decimais
-            $pdf->SetFont('helvetica', '', 7); // Fonte menor para caber
-            $valorTexto = 'R$ ' . number_format($valor, 2, ',', '.');
-
-            // Calcula o centro X da barra para alinhar o texto
-            $xTextoAnchor = $xPos + ($larguraBarra / 2);
-            // Pequeno ajuste vertical para centralizar a fonte na rotação
-            $ajusteFonteRotacao = 1;
-
-            if (method_exists($pdf, 'StartTransform')) {
-                // --- INÍCIO ROTAÇÃO TCPDF ---
-                $pdf->StartTransform();
-                // Rotaciona 90 graus em torno do ponto de ancoragem.
-                // O texto é desenhado "deitado", e a rotação o coloca em pé.
-                $pdf->Rotate(90, $xTextoAnchor, $yTextoAnchor);
-                $pdf->Text($xTextoAnchor - $ajusteFonteRotacao, $yTextoAnchor, $valorTexto);
-                $pdf->StopTransform();
-                // --- FIM ROTAÇÃO TCPDF ---
-            } else {
-                // Fallback ruim se não houver rotação: mostra horizontal (vai ficar sobreposto)
-                $pdf->Text($xPos - 5, $yBarra - 2, $valorTexto);
-            }
-
-
-            // Avança a posição X para a próxima barra
-            $xPos += $larguraBarra + $espacoEntreBarras;
-        }
-    } else {
-        // Caso não haja dados válidos
-        $pdf->SetFont('helvetica', 'B', 10);
-        $pdf->SetTextColor(255, 0, 0);
-        $pdf->Text(20, 230, 'Não foi possível gerar o Gráfico de Payback (Faltam dados de investimento ou economia anual).');
+        // Legenda do Eixo Y (opcional)
+        $pdf->SetFont('helvetica', 'B', 8);
+        $pdf->StartTransform();
+        $pdf->Rotate(90, 15, 250);
+        $pdf->Text(15, 250, "Retorno Financeiro");
+        $pdf->StopTransform();
     }
-
-    $peso_formatado = number_format($peso, 2, ',', '.');
-
     // Quarta Página
     $pdf->AddPage();  // Adiciona a quarta página
-    $pdf->Image('PGCOCDESC.png', 0, 0, 210, 297);
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(0, 100, 0);
-    $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
-    $pdf->Text(149, 57, "$potenciaGerador_formatado kWp");
-    $pdf->Text(152, 71.5, "$metrosOcupados_formatado m²");
-    $pdf->Text(152, 85, "$peso_formatado kg");
-    $pdf->Text(142, 98.5, "$geracao_formatado kWh mensal");
-    $pdf->Text(142, 112, "$geracao_formatado kWh mensal");
+    $pdf->Image('PGCOC9.png', 0, 0, 210, 297);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->SetFont('helvetica', 'B', 11);
-    $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
-    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
-    $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
-    $pdf->Text(23, 196, "ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO");
-    $pdf->Text(23, 204, "CABEAMENTO CC 1.8 KVCC - USO ESPECÍFICO PARA USINA SOLAR");
-    $pdf->Text(23, 212, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-    $pdf->Text(23, 220, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
-    $pdf->Text(23, 228, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
-    $pdf->Text(23, 236, "$texto_seguranca");
-    $pdf->Text(23, 244, "$texto_final_adicionais");
+    $pdf->Text(23, 50, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
+    $pdf->Text(23, 58, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
+    $pdf->Text(23, 66, "ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO");
+    $pdf->Text(23, 74, "CABEAMENTO CC 1.8 KVCC - USO ESPECÍFICO PARA USINA SOLAR");
+    $pdf->Text(23, 82, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+    $pdf->Text(23, 90, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
+    $pdf->Text(23, 98, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
+    $pdf->Text(23, 106, "$texto_seguranca");
+    $pdf->Text(23, 114, "$texto_final_adicionais");
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(16, 256, "$textoPadrao");
+    $pdf->Text(16, 122, "$textoPadrao");
 
 
     // Definir fonte e adicionar conteúdo à quinta página

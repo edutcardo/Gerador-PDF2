@@ -67,6 +67,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ValorInteiroMenosEconomia = $input5_base_float - $input3_base_float;
     $ValorInteiroMenosEconomias = number_format($ValorInteiroMenosEconomia, 2, ',', '.');
 
+    $ValorInteiroMenosEconomiax = $input5_base_float - $input3_base_float;
+    $ValorInteiroMenosEconomiax12 = $ValorInteiroMenosEconomiax * 12;
+
+    $ValorInteiroMenosEconomiasx = number_format($ValorInteiroMenosEconomiax12, 2, ',', '.');
+
     // Criação do PDF
     $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
@@ -102,9 +107,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 16); // Reafirmar a fonte para a nova página, se necessário
     $pdf->SetTextColor(0, 0, 0); // Reafirmar a cor do texto
 
+    $input5Cheio = $input5_base_float * 12;
+    $input5Cheios = number_format($input5Cheio, 2, ',', '.');
+
+
     // Valores anuais atualizados
-    $pdf->Text(32, 152, "$valorAnualComparacao_s");   // Era $input5sx12s
-    $pdf->Text(98, 152, "$input7_propostaAnual_s");    // Era $input7sx12s
+    $pdf->Text(32, 152, "$input5Cheios");   // Era $input5sx12s
+    $pdf->Text(98, 152, "$ValorInteiroMenosEconomiasx");    // Era $input7sx12s
     $pdf->Text(165, 152, "$economiaAnual_s");         // Era $diferencas
 
     // Terceira Página (com a imagem EE3.png)
