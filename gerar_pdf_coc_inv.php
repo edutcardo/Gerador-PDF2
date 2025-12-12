@@ -635,10 +635,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
 
-    $pdf->Text(34.6, 160, "Disponibilidade de área necessária: $metrosOcupados_formatado m²");
-    $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
-    $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador_formatado kWp");
-    $pdf->Text(34.6, 178.75, "Geração Estimada: $geracao_formatado kWh");
+    $pdf->Text(34.6, 160, "Disponibilidade de área necessária:");
+    $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos:");
+    $pdf->Text(34.6, 172.5, "Potência do Projeto:");
+    $pdf->Text(34.6, 178.75, "Geração Estimada:");
+
+
+    $pdf->SetFont('helvetica', 'B', 12);
+    $pdf->Text(102, 160, "$metrosOcupados_formatado m²");
+    $pdf->Text(108, 166.25, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
+    $pdf->Text(73, 172.5, "$potenciaGerador_formatado kWp");
+    $pdf->Text(71, 178.75, "$geracao_formatado kWh");
+
 
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text(34.6, 220, "Data:");
@@ -758,13 +766,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', '', 9);
     $pdf->SetTextColor(0, 0, 0);
 
-    // Ícone da legenda (Retângulo verde vazio)
-    $pdf->SetDrawColor($colGerR, $colGerG, $colGerB);
-    $pdf->SetLineWidth(0.3);
-    $pdf->Rect($legendX, $legendY, 8, 4, 'D');
-
-    // Texto da legenda
-    $pdf->Text($legendX + 10, $legendY, "Geração");
     // Terceira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCOC3.png', 0, 0, 210, 297);
@@ -1096,16 +1097,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('helvetica', 'B', 11);
     $pdf->Text(23, 30, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
     $pdf->Text(23, 38, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
-    $pdf->Text(23, 46, "ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO");
-    $pdf->Text(23, 54, "CABEAMENTO CC 1.8 KVCC - USO ESPECÍFICO PARA USINA SOLAR");
-    $pdf->Text(23, 62, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-    $pdf->Text(23, 70, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
-    $pdf->Text(23, 78, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
-    $pdf->Text(23, 86, "$texto_seguranca");
-    $pdf->Text(23, 94, "$texto_final_adicionais");
-    $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(16, 102, "$textoPadrao");
+    $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
+    $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
+    $pdf->Text(23, 46, "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO") . " m";
+    $pdf->Text(23, 54, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
+    $pdf->Text(23, 62, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
+    $pdf->Text(23, 70, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+    $pdf->Text(23, 78, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
+    $pdf->Text(16, 86, "$textoPadrao");
+    $pdf->Text(23, 94, "$texto_seguranca");
+    $pdf->Text(23, 102, "$texto_final_adicionais");
+    $pdf->Text(16, 110, "$textoPadrao");
 
 
     // Definir fonte e adicionar conteúdo à quinta página

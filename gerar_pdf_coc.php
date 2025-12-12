@@ -450,7 +450,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
     $geracao_formatado = number_format($geracao, 2, ',', '.');
-    $potenciaGerador_formatado = number_format($potenciaGerador, 2, ',', '.');
+    $potenciaGerador_formatado = number_format($potenciaGerador, 3, ',', '.');
     $media_formatado = number_format($media, 2, ',', '.');
     $metrosOcupados_formatado = number_format($metrosOcupados, 2, ',', '.');
 
@@ -732,16 +732,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(142, 112, "$geracao_formatado kWh mensal");
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
-    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
-    $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
-    $pdf->Text(23, 196, "ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO");
-    $pdf->Text(23, 204, "CABEAMENTO CC 1.8 KVCC - USO ESPECÍFICO PARA USINA SOLAR");
-    $pdf->Text(23, 212, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-    $pdf->Text(23, 220, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
-    $pdf->Text(23, 228, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
+    $pdf->Text(23, 174, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
+    $pdf->Text(23, 182, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
+    $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
+    $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
+    $pdf->Text(23, 190, "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO") . " m";
+    $pdf->Text(23, 198, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
+    $pdf->Text(23, 206, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
+    $pdf->Text(23, 214, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+    $pdf->Text(23, 222, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(16, 256, "$textoPadrao");
+    $pdf->Text(16, 230, "$textoPadrao");
     // Página 5
 
     $pdf->AddPage();
@@ -758,7 +760,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $porEconMensal = ($diferencaGastos / $precoFinal) * 100;
     $pdf->SetFont('helvetica', 'B', 12);
     $porEconMensals = ("(" . number_format($porEconMensal, 2, ',', '.') . '%' . ")");
-    $pdf->Text(152, 62, "$porEconMensals");
+    $pdf->Text(155, 62, "$porEconMensals");
 
 
     // --- INÍCIO DA LÓGICA CORRIGIDA ---
