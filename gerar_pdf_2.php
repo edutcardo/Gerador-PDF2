@@ -247,15 +247,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
     $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
     $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
-    $pdf->Text(23, 196, "ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO");
-    $pdf->Text(23, 204, "CABEAMENTO CC 1.8 KVCC - USO ESPECÍFICO PARA USINA SOLAR");
-    $pdf->Text(23, 212, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-    $pdf->Text(23, 220, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
-    $pdf->Text(23, 228, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMÁTICOS");
+    $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
+    $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
+    $pdf->Text(23, 196, "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO") . " m";
+    $pdf->Text(23, 204, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
+    $pdf->Text(23, 212, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
+    $pdf->Text(23, 220, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+    $pdf->Text(23, 228, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(16, 256, "$textoPadrao");
-
+    $pdf->Text(23, 236, "$textoPadrao");
+    // Página 5
     // Página 5
     $pdf->AddPage();
     $pdf->Image('pg5.png', 0, 0, 210, 297);

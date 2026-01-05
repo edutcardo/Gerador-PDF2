@@ -333,7 +333,7 @@ function calcularParcela_corrigido($taxa, $nper, $vp, $vf = 0, $tipo = 0) {
     $descrição4 = "";
     $descrição5 = "";
 
-    $precoFinal += 5611.95;
+
     $precoFinalRs = 'R$. ' . number_format($precoFinal, 2, ',', '.');
 // CÓDIGO NOVO (CORRETO) A SER INSERIDO NO LUGAR
 // --- Exemplo de uso com suas variáveis ---
@@ -695,15 +695,18 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
         // 2. Imprime o bloco de texto, usando a variável que acabamos de definir
         $pdf->Text(16, $y + 3, "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO AESOLAR/ZNSHINE/SINE/RONMA $potenciaModulo W");
         $pdf->Text(16, $y + 12, "$multiplicador INVERSOR SOLAR CHINT/SAJ/SOLIS/SOLPLANET $fabricante DE $potenciaInversorUnitario KW");
-        $pdf->Text(16, $y + 21, $descricaoEstrutura); // <-- AQUI USAMOS A VARIÁVEL
-        $pdf->Text(16, $y + 30, "CABEAMENTO CC 1.8 KVCC – USO ESPECÍFICO PARA USINA SOLAR");
-        $pdf->Text(16, $y + 39, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-        $pdf->Text(16, $y + 48, "RAMAL DE LIGAÇÃO LIMITADO Á 20 METROS (INVERSOR AO PADRÃO)");
-        $pdf->Text(16, $y + 57, "1 (UM) ANO DE SEGURO CONTRA DANOS ELÉTRICOS E CLIMATICOS");
-        $pdf->Text(16, $y + 66, "CONTRATO DE COMPRA DE ENERGIA, GARANTIDO PELA CANAL VERDE");
-        $pdf->Text(16, $y + 75, "$texto_final_adicionais");
-    $pdf->Text(16, $y + 84, "$texto_seguranca"); 
-    
+        $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
+        $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
+        $pdf->Text(16, $y + 20, $qtdEstrutrura . " " . $descricaoEstrutura); // <-- AQUI USAMOS A VARIÁVEL
+        $pdf->Text(16, 94, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
+        $pdf->Text(16, 102, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
+        $pdf->Text(16, 110, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+        $pdf->Text(16, 118, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
+        $pdf->Text(16, 126, "$textoPadrao");
+        $pdf->Text(16, 134, "$texto_seguranca");
+        $pdf->Text(16, 142, "$texto_final_adicionais");
+
+
         // --- Configurações da Fonte (defina antes do loop) ---
     } else {
     // --- Configurações da Fonte ---
