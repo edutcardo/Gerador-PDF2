@@ -3,6 +3,8 @@ require_once('vendor/autoload.php'); // Ou o caminho correto, se você não esti
 
 // Verifica se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+
     $nome = $_POST['nome'];
     $endereco = $_POST['endereco'];
     $cidade = $_POST['cidade'];
@@ -23,10 +25,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // $desconto = $_POST['desconto'];
     $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
     $indicacao = isset($_POST['indicacao']) && $_POST['indicacao'] !== '' ? floatval($_POST['indicacao']) : 0;
-    $orientacao = ($_POST['orientacao']);
+    $orientacao = isset($dados['orientacao']) ? $dados['orientacao'] : '';
+    $solo = $_POST['solo'];
+    $carport = $_POST['carport'];
 
-
-    // Cálculos iniciais da proposta
     $geracao = $potenciaGerador * 3.72 * 30;
     switch ($orientacao) {
     case "Leste":
@@ -249,11 +251,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
-    $pdf->Text(23, 196, "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO") . " m";
+    // Verifica se é Solo
+    $textoEstrutura = "";
+
+    if ($solo == 1) {
+        $textoEstrutura = "ESTRUTURA SOLO";
+    } elseif ($carport == 1) {
+        $textoEstrutura = "ESTRUTURA CARPORT";
+    } else {
+        $textoEstrutura = "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO";
+    }
+
+    // Imprime o resultado final (UMA VEZ SÓ)
+    $pdf->Text(23, 196, $textoEstrutura);
+
     $pdf->Text(23, 204, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
     $pdf->Text(23, 212, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
     $pdf->Text(23, 220, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-    $pdf->Text(23, 228, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
+    $pdf->Text(23, 228, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO");
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(23, 236, "$textoPadrao");

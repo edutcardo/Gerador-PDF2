@@ -26,6 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $valorSafras = $_POST['valorSafras'];
     $qtdSafras = $_POST['qtdSafras'];
     $dataSafras = $_POST['dataSafras'];
+    $solo = $_POST['solo'];
+    $carport = $_POST['carport'];
     //Tributação
     function calcularTributario($potenciaInversor)
     {
@@ -472,6 +474,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(34.2, 110, "Cidade: $cidade");
     $pdf->Text(34.2, 138, "UC $uc");
 
+
     $pdf->Text(34.6, 160, "Disponibilidade de área necessária:");
     $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos:");
     $pdf->Text(34.6, 172.5, "Potência do Projeto:");
@@ -736,7 +739,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(23, 182, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
-    $pdf->Text(23, 190, "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO") . " m";
+    // Verifica se é Solo
+    $textoEstrutura = "";
+
+    if ($solo == 1) {
+        $textoEstrutura = "ESTRUTURA SOLO";
+    } elseif ($carport == 1) {
+        $textoEstrutura = "ESTRUTURA CARPORT";
+    } else {
+        $textoEstrutura = "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO";
+    }
+
+    // Imprime o resultado final (UMA VEZ SÓ)
+    $pdf->Text(23, 190, $textoEstrutura);
+
     $pdf->Text(23, 198, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
     $pdf->Text(23, 206, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
     $pdf->Text(23, 214, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
