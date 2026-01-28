@@ -763,51 +763,129 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Página 5
 
     $pdf->AddPage();
-    $pdf->Image('PGCOCANALISEs.png', 0, 0, 210, 297);
+    $pdf->Image('PGCOC6.png', 0, 0, 210, 297);
+    $pdf->SetFont('helvetica', 'B', 24);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(120, 60, "$precoFinalRs");
+    $pdf->SetFont('helvetica', 'B', 24);
+
+
+    $pdf->Text(35, 60, "$potenciaGerador_formatado kWp");
+
+    $pdf->SetMargins(0, 0, 0);
+    $pdf->SetAutoPageBreak(FALSE);
+
+    // =========================================================================
+    // --- 1. LÓGICA DAS 3 SAFRAS (Cálculo e Exibição) ---
+    // =========================================================================
+
+
+    // =========================================================================
+    // --- 2. GRÁFICO DE PAYBACK (Movido para cima nesta página) ---
+    // =========================================================================
+
     $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(255, 255, 255);
-    $pdf->Text(45, 45, "$gastoSemGeradorAnoRs");
-    $pdf->Text(47.5, 61.5, "$gastoSemGeradorRs");
-    $pdf->Text(91, 45, "$gastoComGeradorAnoRs");
-    $pdf->Text(93, 61.5, "$gastoComGeradorRs");
-    $pdf->Text(135, 45, "$diferencaGastosAnoRs");
-    $pdf->Text(128, 61.5, "$diferencaGastosRs");
+    $pdf->SetTextColor(50, 50, 50);
+    $pdf->Text(83, 192, "Gráfico de Payback");
 
-    $porEconMensal = ($diferencaGastos / $precoFinal) * 100;
-    $pdf->SetFont('helvetica', 'B', 12);
-    $porEconMensals = ("(" . number_format($porEconMensal, 2, ',', '.') . '%' . ")");
-    $pdf->Text(155, 62, "$porEconMensals");
+    // --- Dados do Gráfico de Payback ---
+    // (Lógica reaproveitada do seu código anterior, mas posicionada aqui)
+    $dadosGrafico = [];
+    $retornoAcumulado = 0;
 
-
-    // --- INÍCIO DA LÓGICA CORRIGIDA ---
-
-
-
-
-    // 1. PRIMEIRO, definimos a fonte e a cor PRETA para o restante do conteúdo
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-
-    // 2. Lógica para o asterisco da ESQUERDA (agora será desenhado em preto)
-    if ($indicacao == 1) {
-        $pdf->Text(23, 98.5, '*');
+    // Recalcula o fluxo para o gráfico (Investimento negativo no ano 0, depois recupera)
+    // O gráfico da imagem mostra o saldo acumulado crescendo.
+    if (isset($precoFinal) && isset($liquidoVerdeAnual)) {
+        for ($ano = 1; $ano <= 25; $ano++) {
+            $retornoAcumulado += $liquidoVerdeAnual;
+            // O valor a ser plotado é o Saldo (Lucro - Investimento)
+            $dadosGrafico[$ano] = $retornoAcumulado - $precoFinal;
+        }
     }
 
-    // 4. Lógica para o asterisco da DIREITA (agora será desenhado em preto)
-    if ($valoramais <> 0) {
-        $larguraPreco = $pdf->GetStringWidth($precoFinalRs);
-        $pdf->Text(45, 98.5, '*');
+    if (!empty($dadosGrafico)) {
+        // Configurações visuais do gráfico
+        $chartX = 33;       // Margem esquerda
+        $chartY = 250;      // Posição Y da LINHA BASE (Eixo X) - Ajustado para caber na pg
+        $chartHeight = 50;  // Altura visual máxima das barras
+        $barW = 5;          // Largura da barra
+        $gap = 1.5;         // Espaço entre barras
+
+        // Escala: Encontrar o maior valor para definir a altura máxima
+        $maxVal = max($dadosGrafico);
+        $minVal = min($dadosGrafico); // Provavelmente negativo nos primeiros anos
+
+        // Se o maior valor for 0 (erro), evita divisão por zero
+        $scale = ($maxVal != 0) ? $chartHeight / ($maxVal - min($minVal, 0)) : 1;
+
+        // Posição visual do ZERO (onde o saldo deixa de ser negativo)
+        // Se minVal for -100 e max for 1000, o zero está um pouco acima do fundo
+        // Para simplificar visualmente igual a imagem:
+        // A imagem mostra barras crescendo do fundo. Vamos fixar o fundo.
+
+        // Re-ajuste simples: Normalizar para desenhar apenas a barra positiva (ou negativa)
+        // A imagem mostra barras cinzas simples crescendo.
+        $maxAbs = max(abs($minVal), abs($maxVal));
+        $scaleSimple = $chartHeight / $maxAbs;
+
+        $currentX = $chartX;
+
+        $pdf->SetFont('helvetica', '', 7); // Fonte pequena para os números
+        $pdf->SetLineWidth(0.1);
+
+        foreach ($dadosGrafico as $ano => $valor) {
+
+            // Altura da barra
+            $hBar = abs($valor) * $scaleSimple;
+
+            // Define cor: Cinza claro se negativo/pagando, Cinza escuro/Verde se lucrando?
+            // A imagem usa cinza claro.
+            $pdf->SetFillColor(200, 200, 200);
+            $pdf->SetDrawColor(100, 100, 100);
+
+            // Desenha barra
+            // Se valor < 0, a barra teoricamente seria para baixo, mas gráficos simples de payback
+            // costumam mostrar a "evolução" visual. Vamos desenhar do eixo para cima.
+            // Para ser fiel à lógica financeira:
+            if ($valor < 0) {
+                // Barra "negativa" (ainda pagando) - desenha do eixo para baixo ou cor diferente
+                $pdf->SetFillColor(150, 150, 150); // Cinza mais escuro
+                // Opção visual da imagem: parece que todas partem da mesma base.
+                // Vamos desenhar da base $chartY para cima.
+                $yBar = $chartY - $hBar;
+            } else {
+                // Lucro
+                $pdf->SetFillColor(220, 220, 220); // Cinza claro
+                $yBar = $chartY - $hBar;
+            }
+
+            // Desenhar Retângulo
+            $pdf->Rect($currentX, $yBar, $barW, $hBar, 'DF');
+
+            // Rótulo vertical (Valor) - Rotacionado
+            $pdf->StartTransform();
+            $pdf->Rotate(90, $currentX + ($barW / 2), $yBar - 2);
+            $textoValor = "R$ " . number_format($valor, 2, ',', '.');
+            $pdf->Text($currentX + ($barW / 2), $yBar - 2, $textoValor);
+            $pdf->StopTransform();
+
+            // Rótulo Horizontal (Ano)
+            $pdf->Text($currentX + 1, $chartY + 2, $ano);
+
+            $currentX += ($barW + $gap);
+        }
+
+        // Legenda do Eixo Y (opcional)
+        $pdf->SetFont('helvetica', 'B', 8);
+        $pdf->StartTransform();
+        $pdf->Rotate(90, 15, 250);
+        $pdf->Text(15, 250, "Retorno Financeiro");
+        $pdf->StopTransform();
     }
-    // --- FIM DA LÓGICA CORRIGIDA ---
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(147, 98.5, "$precoFinalRs");
-    $pdf->SetFont('helvetica', 'B', 15);
-    $pdf->Text(26, 123, "36 X $valorParcelaRs");
-    $pdf->Text(85, 123, "48 X $valorParcela2Rs");
-    $pdf->Text(146, 123, "60 X $valorParcela3Rs");
-    $pdf->Text(152, 166, "$paybackArredondado anos");
-    $pdf->Text(143, 178, "$retorno25anosRs");
+
+
+
+
 
     // Gráfico de Payback
     $dados = [];
