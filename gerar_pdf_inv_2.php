@@ -171,7 +171,16 @@ $potenciaModulo = verificarValor2($potenciaModulo);
     }
     $potenciaInversorUnitario = $potenciaInversor;
 
-    $m2placa= 3.1;
+    $estrutura = strtoupper($estrutura);
+
+    if ($estrutura == 'TELHADO') {
+        $m2placa = 3.1;
+    } elseif ($estrutura == 'SOLO') {
+        $m2placa = 7.8;
+    } else {
+        // É boa prática definir um valor padrão caso não seja nenhum dos dois
+        $m2placa = 0;
+    }
     $precoPlaca = 0;
     $custoEstrutrura = 0;
     $maoObraSolo = 0;
@@ -589,9 +598,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
 
-
-    
-
+    $pdf->Text(34.6, 160, "Disponibilidade de área em metros²: $metrosOcupados m²");
     $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
     $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador kWp");
     $pdf->Text(34.6, 178.75, "Geração Estimada: $geracao kWh");
