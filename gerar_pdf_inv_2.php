@@ -408,7 +408,7 @@ if ($diferencaGastosAno > 0) {
         return $imposto;
     }
     $imposto = calcularImposto($tributario, $retornoVerde);
-    $seguro = ($precoFinal * 0.007) /12;
+    $seguro = ($precoFinal * 0.012) / 12;
 
     //Cálculos investidor
     $retornoVerde = $geracao * $inputValorCompensavel;
@@ -616,14 +616,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     // Terceira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGCV3.png', 0, 0, 210, 297);
-    
-    // Definir fonte e adicionar conteúdo à terceira página
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
 
-    $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCVEX.png', 0, 0, 210, 297);
-    
     // Definir fonte e adicionar conteúdo à terceira página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
@@ -636,7 +629,14 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
 
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
+    
+    // Definir fonte e adicionar conteúdo à terceira página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
 
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('PGCVEX.png', 0, 0, 210, 297);
+    
     // Definir fonte e adicionar conteúdo à quarta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
@@ -981,6 +981,16 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
         // Incrementar posição horizontal
         $x += $barWidth + $gap;
     }
+        // Definir fonte e adicionar conteúdo à terceira página
+    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetTextColor(0, 0, 0);
+
+    // Quarta Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('PGCV7.png', 0, 0, 210, 297);
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(255, 0, 0);
+
 
     // Nona Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página

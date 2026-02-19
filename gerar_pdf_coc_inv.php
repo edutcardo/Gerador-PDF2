@@ -804,6 +804,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->SetFont('helvetica', 'B', 12);
 
+    // Quarta Página
+    $pdf->AddPage();  // Adiciona a quarta página
+    $pdf->Image('PGCOC9.png', 0, 0, 210, 297);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->Text(23, 30, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
+    $pdf->Text(23, 38, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
+    $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
+    $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
+    $pdf->Text(23, 46, "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO") . " m";
+    $pdf->Text(23, 54, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
+    $pdf->Text(23, 62, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
+    $pdf->Text(23, 70, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+    $pdf->Text(23, 78, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
+    $pdf->Text(16, 86, "$textoPadrao");
+    $pdf->Text(23, 94, "$texto_seguranca");
+    $pdf->Text(23, 102, "$texto_final_adicionais");
+    $pdf->Text(16, 110, "$textoPadrao");
+
+
     $pdf->AddPage();
     $pdf->Image('PGCOC6.png', 0, 0, 210, 297);
     $pdf->SetFont('helvetica', 'B', 24);
@@ -919,26 +939,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdf->Text(15, 250, "Retorno Financeiro");
         $pdf->StopTransform();
     }
-    // Quarta Página
-    $pdf->AddPage();  // Adiciona a quarta página
-    $pdf->Image('PGCOC9.png', 0, 0, 210, 297);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->SetFont('helvetica', 'B', 11);
-    $pdf->Text(23, 30, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
-    $pdf->Text(23, 38, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
-    $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
-    $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
-    $pdf->Text(23, 46, "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO") . " m";
-    $pdf->Text(23, 54, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
-    $pdf->Text(23, 62, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
-    $pdf->Text(23, 70, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-    $pdf->Text(23, 78, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
-    $pdf->Text(16, 86, "$textoPadrao");
-    $pdf->Text(23, 94, "$texto_seguranca");
-    $pdf->Text(23, 102, "$texto_final_adicionais");
-    $pdf->Text(16, 110, "$textoPadrao");
-
-
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
