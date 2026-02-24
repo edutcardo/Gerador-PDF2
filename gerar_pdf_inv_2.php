@@ -701,7 +701,7 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
 
         // 2. Imprime o bloco de texto, usando a variável que acabamos de definir
         $pdf->Text(16, $y + 3, "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO AESOLAR/ZNSHINE/SINE/RONMA $potenciaModulo W");
-        $pdf->Text(16, $y + 12, "$multiplicador INVERSOR SOLAR CHINT/SAJ/SOLIS/SOLPLANET $fabricante DE $potenciaInversorUnitario KW");
+        $pdf->Text(16, $y + 12, "$multiplicador INVERSOR SOLAR CHINT/SAJ/SOLIS/GROWATT $fabricante DE $potenciaInversorUnitario KW");
         $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
         $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
         $pdf->Text(16, $y + 20, $qtdEstrutrura . " " . $descricaoEstrutura); // <-- AQUI USAMOS A VARIÁVEL
