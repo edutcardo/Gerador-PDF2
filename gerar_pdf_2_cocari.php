@@ -207,7 +207,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    $pdf->Image('PCORI1.png', 0, 0, 210, 297);
 
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
@@ -228,15 +228,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Segunda Página (com a imagem genérica e gráfico)
     $pdf->AddPage();  // Adiciona a segunda página
-    $pdf->Image('pg2.png', 0, 0, 210, 297);
+    $pdf->Image('PCORI2.png', 0, 0, 210, 297);
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
   $pdf->AddPage();
-    $pdf->Image('pg3.png', 0, 0, 210, 297);
+    $pdf->Image('PCORI3.png', 0, 0, 210, 297);
 
     // Página 4
     $pdf->AddPage();
-    $pdf->Image('pg4.png', 0, 0, 210, 297);
+    $pdf->Image('PCORI4.png', 0, 0, 210, 297);
     $pdf->SetFont('helvetica', 'B', 14);
     $pdf->SetTextColor(0, 100, 0);
     $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
@@ -275,7 +275,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Página 5
     // Página 5
     $pdf->AddPage();
-    $pdf->Image('pg5.png', 0, 0, 210, 297);
+    $pdf->Image('PCORI5.png', 0, 0, 210, 297);
     $pdf->SetFont('helvetica', 'B', 14);
     $pdf->SetTextColor(255, 255, 255);
     $pdf->Text(45, 45, "$gastoSemGeradorAnoRs");
@@ -356,13 +356,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Páginas restantes
     $pdf->AddPage();
-    $pdf->Image('pg6.png', 0, 0, 210, 297);
+    $pdf->Image('PCORI6.png', 0, 0, 210, 297);
     $pdf->AddPage();
-    $pdf->Image('pg7.png', 0, 0, 210, 297);
-    $pdf->AddPage();
-    $pdf->Image('pg8.png', 0, 0, 210, 297);
-    $pdf->AddPage();
-    $pdf->Image('pg9.png', 0, 0, 210, 297);
+    $pdf->Image('PCORIF.png', 0, 0, 210, 297);
+
 
     $pdf->Output('arquivo_gerado.pdf', 'I');
 }
