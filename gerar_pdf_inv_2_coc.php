@@ -43,6 +43,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $adicionalAlambrado = !empty($_POST['adicionalAlambrado']);
     $adicionalIndicacao = isset($_POST['adicionalIndicacao']) ? trim($_POST['adicionalIndicacao']) : '';
     $geracao = isset($_POST['geracaoKwhMes']) ? floatval($_POST['geracaoKwhMes']) : 0;
+    $usarValorNegociado = $_POST['usarValorNegociado'] ?? false;
+    $valorNegociado = floatval($_POST['valorNegociado'] ?? 0);
+
+    if ($usarValorNegociado && $valorNegociado > 0) {
+        // Usar o valor negociado nos cálculos
+    }
 
 
 // 1. Cria um array para armazenar os textos dos itens selecionados
@@ -575,8 +581,28 @@ $VPL_formatado = 'R$ ' . number_format($vpl, 2, ',', '.');
 $TIR_formatado = number_format($tir * 100, 2, ',', '.') . '%';
 $ROI_formatado = number_format($roi * 100, 2, ',', '.') . '%';
 $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '.') . '%';
+    // Valor Canal Verde = sempre 13% abaixo do precoFinal
+    $valorCanalVerde = $precoFinal * 0.87;
+    $valorCanalVerdeRs = 'R$ ' . number_format($valorCanalVerde, 2, ',', '.');
 
-    
+    // Valor Cocari = o que sobra entre o negociado e o mínimo da Canal Verde
+    $valorCocari = $valorNegociado - $valorCanalVerde;
+    $valorCocariPercentual = ($precoFinal > 0) ? ($valorCocari / $precoFinal) * 100 : 0;
+    $valorCocariPercentualFormatado = number_format($valorCocariPercentual, 2, ',', '.');
+    $valorCocariRs = 'R$ ' . number_format($valorCocari, 2, ',', '.');
+
+    // Desconto fornecido ao cliente
+    $descontoPercentual = ($precoFinal > 0 && $valorNegociado > 0)
+        ? (($valorNegociado - $precoFinal) / $precoFinal) * 100
+        : 0;
+    $descontoPercentualFormatado = number_format($descontoPercentual, 2, ',', '.') . '%';
+
+    // Strings formatadas
+    $precoFinalRs1 = 'R$ ' . number_format($precoFinal, 2, ',', '.');
+    $valorNegociadoRs = 'R$ ' . number_format($valorNegociado, 2, ',', '.');
+
+
+
     // Data atual
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
@@ -594,7 +620,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(34.2, 98, "Nome: $nome");
+    $pdf->Text(34.2, 98, "Nome: $nome $valorNegociado");
     $pdf->Text(34.2, 104, "Endereço: $endereco");
     $pdf->Text(34.2, 110, "Cidade: $cidade");
 
@@ -603,6 +629,16 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador kWp");
     $pdf->Text(34.6, 178.75, "Geração Estimada: $geracao kWh");
 
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->SetTextColor(34, 139, 34); // Verde
+
+    $pdf->Text(34.6, 193.2, "VALOR PROJETO: $precoFinalRs1");
+    $pdf->Text(34.6, 200, "VALOR FECHADO: $valorNegociadoRs");
+    $pdf->Text(34.6, 206.8, "DESCONTO FORNECIDO: $descontoPercentualFormatado");
+    $pdf->Text(34.6, 213.6, "VALOR COCARI ($valorCocariPercentualFormatado%): $valorCocariRs");
+    $pdf->Text(34.6, 220.4, "VALOR CANAL VERDE: $valorCanalVerdeRs");
+
+    $pdf->SetTextColor(0, 0, 0); // Resetar cor
 
 
 
@@ -680,8 +716,8 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
         }
 
         // 2. Imprime o bloco de texto, usando a variável que acabamos de definir
-        $pdf->Text(16, $y + 3, "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO AESOLAR/ZNSHINE/SINE/RONMA $potenciaModulo/610 W");
-        $pdf->Text(16, $y + 12, "$multiplicador INVERSOR SOLAR CHINT/SAJ/GROWATT $fabricante DE $potenciaInversorUnitario KW");
+        $pdf->Text(16, $y + 3, "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO $potenciaModulo/620 W");
+        $pdf->Text(16, $y + 12, "$multiplicador INVERSOR SOLAR SAJ/SOLIS/CHINT $fabricante DE $potenciaInversorUnitario KW");
         $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
         $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
         $pdf->Text(16, $y + 20, $qtdEstrutrura . " " . $descricaoEstrutura); // <-- AQUI USAMOS A VARIÁVEL

@@ -28,6 +28,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $orientacao = isset($dados['orientacao']) ? $dados['orientacao'] : '';
     $solo = $_POST['solo'];
     $carport = $_POST['carport'];
+    $usarValorNegociado = $_POST['usarValorNegociado'] ?? false;
+    $valorNegociado = floatval($_POST['valorNegociado'] ?? 0);
+    if ($usarValorNegociado && $valorNegociado > 0) {
+        // Usar o valor negociado nos cálculos
+    }
 
     $geracao = $potenciaGerador * 3.72 * 30;
     switch ($orientacao) {
@@ -198,6 +203,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fatorPotencia = $potenciaGerador * 30;
     $jan2 = $jan1 * $fatorPotencia; $fev2 = $fev1 * $fatorPotencia; $mar2 = $mar1 * $fatorPotencia; $abr2 = $abr1 * $fatorPotencia; $mai2 = $mai1 * $fatorPotencia; $jun2 = $jun1 * $fatorPotencia; $jul2 = $jul1 * $fatorPotencia; $ago2 = $ago1 * $fatorPotencia; $set2 = $set1 * $fatorPotencia; $out2 = $out1 * $fatorPotencia; $nov2 = $nov1 * $fatorPotencia; $dez2 = $dez1 * $fatorPotencia;
     $jan3 = number_format($jan2 / 1000, 3, '.', ''); $fev3 = number_format($fev2 / 1000, 3, '.', ''); $mar3 = number_format($mar2 / 1000, 3, '.', ''); $abr3 = number_format($abr2 / 1000, 3, '.', ''); $mai3 = number_format($mai2 / 1000, 3, '.', ''); $jun3 = number_format($jun2 / 1000, 3, '.', ''); $jul3 = number_format($jul2 / 1000, 3, '.', ''); $ago3 = number_format($ago2 / 1000, 3, '.', ''); $set3 = number_format($set2 / 1000, 3, '.', ''); $out3 = number_format($out2 / 1000, 3, '.', ''); $nov3 = number_format($nov2 / 1000, 3, '.', ''); $dez3 = number_format($dez2 / 1000, 3, '.', '');
+    // Valor Canal Verde = sempre 13% abaixo do precoFinal
+    $valorCanalVerde = $precoFinal * 0.87;
+    $valorCanalVerdeRs = 'R$ ' . number_format($valorCanalVerde, 2, ',', '.');
+
+    // Valor Cocari = o que sobra entre o negociado e o mínimo da Canal Verde
+    $valorCocari = $valorNegociado - $valorCanalVerde;
+    $valorCocariPercentual = ($precoFinal > 0) ? ($valorCocari / $precoFinal) * 100 : 0;
+    $valorCocariPercentualFormatado = number_format($valorCocariPercentual, 2, ',', '.');
+    $valorCocariRs = 'R$ ' . number_format($valorCocari, 2, ',', '.');
+
+    // Desconto fornecido ao cliente
+    $descontoPercentual = ($precoFinal > 0 && $valorNegociado > 0)
+        ? (($valorNegociado - $precoFinal) / $precoFinal) * 100
+        : 0;
+    $descontoPercentualFormatado = number_format($descontoPercentual, 2, ',', '.') . '%';
+
+    // Strings formatadas
+    $precoFinalRs1 = 'R$ ' . number_format($precoFinal, 2, ',', '.');
+    $valorNegociadoRs = 'R$ ' . number_format($valorNegociado, 2, ',', '.');
+
+
+
 
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
@@ -212,16 +239,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(21, 94, "Nome: $nome");
+    $pdf->Text(21, 94, "Nome: $nome $valorNegociado");
     $pdf->Text(21, 100, "Endereço: $endereco");
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
+
 
     $pdf->Text(95, 157.7, "$metrosOcupados m²");
     $pdf->Text(99, 164.70, "$qtdmodulosArredondado Placas");
     $pdf->Text(63.7, 171, "$potenciaGerador kWp");
     $pdf->Text(61.7, 178.2, "$mediaArredondado kWh");
     $pdf->Text(60.7, 185, "$geracaoArredondado kWh");
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->SetTextColor(34, 139, 34); // Verde
+
+    $pdf->Text(21, 193.2, "VALOR PROJETO: $precoFinalRs1");
+    $pdf->Text(21, 200, "VALOR FECHADO: $valorNegociadoRs");
+    $pdf->Text(21, 206.8, "DESCONTO FORNECIDO: $descontoPercentualFormatado");
+    $pdf->Text(21, 213.6, "VALOR COCARI ($valorCocariPercentualFormatado%): $valorCocariRs");
+    $pdf->Text(21, 220.4, "VALOR CANAL VERDE: $valorCanalVerdeRs");
+
+    $pdf->SetTextColor(0, 0, 0); // Resetar cor
 
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text(21, 225.5, "$dataAtual");
@@ -247,8 +285,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(142, 112, "$geracaoArredondado kWh mensal");
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
-    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . "/610 Wp ");
-    $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/GROWATT " . round($potenciaInversor) . " KW");
+    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR " . round($potenciaModulo) . "/620 Wp ");
+    $pdf->Text(23, 188, "1 INVERSOR 220V SAJ/SOLIS/CHINT " . round($potenciaInversor) . " KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
     // Verifica se é Solo
