@@ -239,7 +239,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(21, 94, "Nome: $nome $valorNegociado");
+    $pdf->Text(21, 94, "Nome: $nome");
     $pdf->Text(21, 100, "Endereço: $endereco");
     $pdf->Text(21, 106, "Cidade: $cidade");
     $pdf->Text(21, 128, "UC $uc");
@@ -250,19 +250,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(63.7, 171, "$potenciaGerador kWp");
     $pdf->Text(61.7, 178.2, "$mediaArredondado kWh");
     $pdf->Text(60.7, 185, "$geracaoArredondado kWh");
-    $pdf->SetFont('helvetica', 'B', 11);
-    $pdf->SetTextColor(34, 139, 34); // Verde
+    // Verifica se deve usar o valor negociado antes de imprimir no PDF
+    if ($usarValorNegociado) {
+        $pdf->SetFont('helvetica', 'B', 11);
+        $pdf->SetTextColor(34, 139, 34); // Verde
 
-    $pdf->Text(21, 193.2, "VALOR PROJETO: $precoFinalRs1");
-    $pdf->Text(21, 200, "VALOR FECHADO: $valorNegociadoRs");
-    $pdf->Text(21, 206.8, "DESCONTO FORNECIDO: $descontoPercentualFormatado");
-    $pdf->Text(21, 213.6, "VALOR COCARI ($valorCocariPercentualFormatado%): $valorCocariRs");
-    $pdf->Text(21, 220.4, "VALOR CANAL VERDE: $valorCanalVerdeRs");
+        $pdf->Text(21, 193.2, "VALOR PROJETO: $precoFinalRs1");
+        $pdf->Text(21, 200, "VALOR FECHADO: $valorNegociadoRs");
+        $pdf->Text(21, 206.8, "DESCONTO FORNECIDO: $descontoPercentualFormatado");
+        $pdf->Text(21, 213.6, "VALOR COCARI ($valorCocariPercentualFormatado%): $valorCocariRs");
+        $pdf->Text(21, 220.4, "VALOR CANAL VERDE: $valorCanalVerdeRs");
 
-    $pdf->SetTextColor(0, 0, 0); // Resetar cor
-
+        $pdf->SetTextColor(0, 0, 0); // Resetar cor
+    }
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(21, 225.5, "$dataAtual");
+    $pdf->Text(21, 280, "$dataAtual");
+
+    $pdf->SetFont('helvetica', 'I', 10);
+    $pdf->SetTextColor(100, 100, 100);
+    $pdf->Text(21, 286, "Este orçamento tem validade de 7 dias.");
+    $pdf->SetTextColor(0, 0, 0);
 
     // Segunda Página (com a imagem genérica e gráfico)
     $pdf->AddPage();  // Adiciona a segunda página

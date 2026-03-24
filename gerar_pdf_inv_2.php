@@ -604,8 +604,12 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $pdf->Text(34.6, 178.75, "Geração Estimada: $geracao kWh");
 
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(46, 223, "$dataAtual");
+    $pdf->Text(34.6, 280, "$dataAtual");
 
+    $pdf->SetFont('helvetica', 'I', 10);
+    $pdf->SetTextColor(100, 100, 100);
+    $pdf->Text(34.6, 286, "Este orçamento tem validade de 7 dias.");
+    $pdf->SetTextColor(0, 0, 0);
 
     // Segunda Página (com a imagem genérica e gráfico)
     $pdf->AddPage();  // Adiciona a segunda página
