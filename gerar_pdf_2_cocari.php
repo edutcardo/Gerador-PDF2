@@ -48,6 +48,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Nenhuma ação é necessária para "Norte" ou outros valores (default),
     // pois não há perda de geração a ser aplicada.
 }
+    if ($solo === true || $solo === "true" || $solo == 1) {
+        $geracao *= 1.10;
+    }
         if ($media == 1) {
         $media = $geracao;
     }
@@ -297,17 +300,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
     // Verifica se é Solo
+// Função que trata true, "true", 1, "1", "on", "sim" como verdadeiros
+    function ehVerdadeiro($valor)
+    {
+        if (is_bool($valor))
+            return $valor;
+        if (is_numeric($valor))
+            return $valor == 1;
+        if (is_string($valor)) {
+            $valor = strtolower(trim($valor));
+            return in_array($valor, ['true', '1', 'on', 'sim', 'yes']);
+        }
+        return false;
+    }
+
+    $solo = ehVerdadeiro($_POST['solo'] ?? false);
+    $carport = ehVerdadeiro($_POST['carport'] ?? false);
+    $indicacao = ehVerdadeiro($_POST['indicacao'] ?? false); // bônus: corrige o mesmo bug aqui
+
     $textoEstrutura = "";
 
-    if ($solo == 1) {
+    if ($solo) {
         $textoEstrutura = "ESTRUTURA SOLO";
-    } elseif ($carport == 1) {
+    } elseif ($carport) {
         $textoEstrutura = "ESTRUTURA CARPORT";
     } else {
         $textoEstrutura = "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO";
     }
 
-    // Imprime o resultado final (UMA VEZ SÓ)
     $pdf->Text(23, 196, $textoEstrutura);
 
     $pdf->Text(23, 204, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");

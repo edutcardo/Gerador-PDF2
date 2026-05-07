@@ -740,7 +740,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(142, 112, "$geracao_formatado kWh mensal");
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
-    $pdf->Text(23, 174, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
+    $pdf->Text(23, 174, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . "/620 Wp ");
     $pdf->Text(23, 182, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
@@ -753,6 +753,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $textoEstrutura = "ESTRUTURA CARPORT";
     } else {
         $textoEstrutura = "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO";
+    }
+    if ($solo === true || $solo === "true" || $solo == 1) {
+        $geracao *= 1.10;
     }
 
     // Imprime o resultado final (UMA VEZ SÓ)

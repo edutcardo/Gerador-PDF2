@@ -26,8 +26,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
     $indicacao = isset($_POST['indicacao']) && $_POST['indicacao'] !== '' ? floatval($_POST['indicacao']) : 0;
     $orientacao = isset($dados['orientacao']) ? $dados['orientacao'] : '';
-    $solo = $_POST['solo'];
-    $carport = $_POST['carport'];
+    $solo = false;
+    if (isset($_POST['solo'])) {
+        $soloRaw = $_POST['solo'];
+        if ($soloRaw === true || $soloRaw === "true" || $soloRaw == 1 || $soloRaw === "1") {
+            $solo = true;
+        }
+    }
+    if (!$solo && isset($_POST['estrutura'])) {
+        if (strtoupper(trim($_POST['estrutura'])) === 'SOLO') {
+            $solo = true;
+        }
+    }
+
+    $carport = false;
+    if (isset($_POST['carport'])) {
+        $carportRaw = $_POST['carport'];
+        if ($carportRaw === true || $carportRaw === "true" || $carportRaw == 1 || $carportRaw === "1") {
+            $carport = true;
+        }
+    }
 
     $geracao = $potenciaGerador * 3.72 * 30;
     switch ($orientacao) {
@@ -43,6 +61,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Nenhuma ação é necessária para "Norte" ou outros valores (default),
     // pois não há perda de geração a ser aplicada.
 }
+    if ($solo === true) {
+        $geracao *= 1.10;
+    }
         if ($media == 1) {
         $media = $geracao;
     }
@@ -252,16 +273,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(142, 112, "$geracaoArredondado kWh mensal");
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
-    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . "/610 Wp ");
+    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . "/620 Wp ");
     $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/GROWATT " . round($potenciaInversor) . " KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
     // Verifica se é Solo
     $textoEstrutura = "";
 
-    if ($solo == 1) {
+    if ($solo === true) {
         $textoEstrutura = "ESTRUTURA SOLO";
-    } elseif ($carport == 1) {
+    } elseif ($carport === true) {
         $textoEstrutura = "ESTRUTURA CARPORT";
     } else {
         $textoEstrutura = "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO";

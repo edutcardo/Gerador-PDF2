@@ -815,7 +815,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Image('PGCOC9.png', 0, 0, 210, 297);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->SetFont('helvetica', 'B', 11);
-    $pdf->Text(23, 30, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " Wp ");
+    $pdf->Text(23, 30, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . "/620 Wp ");
     $pdf->Text(23, 38, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
