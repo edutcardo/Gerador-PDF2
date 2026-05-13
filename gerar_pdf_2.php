@@ -274,7 +274,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
     $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . "/620 Wp ");
-    $pdf->Text(23, 188, "1 INVERSOR 220V CHINT/SAJ/GROWATT " . round($potenciaInversor) . " KW");
+    $pdf->Text(23, 188, "INVERSOR 220V CHINT/SAJ/GROWATT " . $potenciaInversor . " KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
     // Verifica se é Solo
