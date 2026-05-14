@@ -45,6 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $geracao = isset($_POST['geracaoKwhMes']) ? floatval($_POST['geracaoKwhMes']) : 0;
     $usarValorNegociado = $_POST['usarValorNegociado'] ?? false;
     $valorNegociado = floatval($_POST['valorNegociado'] ?? 0);
+    $vendedor = isset($_POST['vendedor']) ? $_POST['vendedor'] : '';
 
     if ($usarValorNegociado && $valorNegociado > 0) {
         // Usar o valor negociado nos cálculos
@@ -602,7 +603,6 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $valorNegociadoRs = 'R$ ' . number_format($valorNegociado, 2, ',', '.');
 
 
-
     // Data atual
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
@@ -628,6 +628,12 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $pdf->Text(34.6, 166.25, "Quantidade de Módulos Fotovoltáicos: $qtdmodulosArredondado Placas");
     $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador kWp");
     $pdf->Text(34.6, 178.75, "Geração Estimada: $geracao kWh");
+    if (!empty($vendedor)) {
+        $pdf->SetFont('helvetica', '', 9);
+        $pdf->SetTextColor(100, 100, 100);
+        $pdf->Text(21, 274, "Vendedor: $vendedor");
+        $pdf->SetTextColor(0, 0, 0);
+    }
 
     // Verifica se deve usar o valor negociado antes de imprimir no PDF
     if ($usarValorNegociado) {

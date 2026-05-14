@@ -32,6 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $adicionalAPlus = isset($_POST['adicionalAPlus']) ? trim($_POST['adicionalAPlus']) : '';
     $adicionalIndicacao = isset($_POST['adicionalIndicacao']) ? trim($_POST['adicionalIndicacao']) : '';
     $geracao = isset($_POST['geracaoKwhMes']) ? floatval($_POST['geracaoKwhMes']) : 0;
+    $vendedor = isset($_POST['vendedor']) ? $_POST['vendedor'] : '';
 
     // --- 2. CAPTURA DOS NOVOS VALORES E FLAGS (Lógica Atualizada) ---
 
@@ -613,7 +614,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $potenciaGerador_formatado = number_format($potenciaGerador, 2, ',', '.');
     $metrosOcupados_formatado = number_format($metrosOcupados, 2, ',', '.');
 
-
     // Data atual
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
@@ -642,10 +642,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(102, 160, "$metrosOcupados_formatado m²");
-    $pdf->Text(108, 166.25, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
-    $pdf->Text(73, 172.5, "$potenciaGerador_formatado kWp");
-    $pdf->Text(71, 178.75, "$geracao_formatado kWh");
+    $pdf->Text(115, 160, "$metrosOcupados_formatado m²");
+    $pdf->Text(115, 166.25, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
+    $pdf->Text(115, 172.5, "$potenciaGerador_formatado kWp");
+    $pdf->Text(115, 178.75, "$geracao_formatado kWh");
+    if (!empty($vendedor)) {
+        $pdf->SetFont('helvetica', '', 9);
+        $pdf->SetTextColor(100, 100, 100);
+        $pdf->Text(21, 274, "Vendedor: $vendedor");
+        $pdf->SetTextColor(0, 0, 0);
+    }
+
 
 
     $pdf->SetFont('helvetica', 'B', 12);
@@ -655,10 +662,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(34.6, 238.75, "CPF:");
 
     $pdf->SetFont('helvetica', 12);
-    $pdf->Text(46, 220.05, "$dataAtual");
-    $pdf->Text(80, 226.30, "Eduardo Garcia Ribeiro");
-    $pdf->Text(56, 232.55, "160034/D");
-    $pdf->Text(46.6, 238.75, "085.271.859-46");
+    $pdf->Text(85, 220, "$dataAtual");
+    $pdf->Text(85, 226.25, "Eduardo Garcia Ribeiro");
+    $pdf->Text(85, 232.5, "160034/D");
+    $pdf->Text(85, 238.75, "085.271.859-46");
 
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text(21, 280, "$dataAtual");

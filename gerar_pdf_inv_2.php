@@ -43,9 +43,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $adicionalAlambrado = !empty($_POST['adicionalAlambrado']);
     $adicionalIndicacao = isset($_POST['adicionalIndicacao']) ? trim($_POST['adicionalIndicacao']) : '';
     $geracao = isset($_POST['geracaoKwhMes']) ? floatval($_POST['geracaoKwhMes']) : 0;
+    $vendedor = isset($_POST['vendedor']) ? $_POST['vendedor'] : '';
 
-
-// 1. Cria um array para armazenar os textos dos itens selecionados
+    // 1. Cria um array para armazenar os textos dos itens selecionados
 $adicionais_seguranca_inclusos = [];
 
 // 2. Verifica cada variável e adiciona o texto correspondente ao array
@@ -576,7 +576,7 @@ $TIR_formatado = number_format($tir * 100, 2, ',', '.') . '%';
 $ROI_formatado = number_format($roi * 100, 2, ',', '.') . '%';
 $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '.') . '%';
 
-    
+
     // Data atual
     $formatoData = 'd/m/Y';
     $dataAtual = date($formatoData);
@@ -603,6 +603,12 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $pdf->Text(34.6, 172.5, "Potência do Projeto: $potenciaGerador kWp");
     $pdf->Text(34.6, 178.75, "Geração Estimada: $geracao kWh");
 
+    if (!empty($vendedor)) {
+        $pdf->SetFont('helvetica', '', 9);
+        $pdf->SetTextColor(100, 100, 100);
+        $pdf->Text(34.6, 274, "Vendedor: $vendedor");
+        $pdf->SetTextColor(0, 0, 0);
+    }
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text(34.6, 280, "$dataAtual");
 

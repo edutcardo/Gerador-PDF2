@@ -21,6 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fabricante = $_POST['fabricante'];
     $potenciaInversor = $_POST['potenciaInversor'];
     $padrao = $_POST['padrao'];
+    $vendedor = isset($_POST['vendedor']) ? $_POST['vendedor'] : '';
     // As variáveis abaixo não são mais usadas no cálculo do preço final.
     // $desconto = $_POST['desconto'];
     $valoramais = isset($_POST['valoramais']) && $_POST['valoramais'] !== '' ? floatval($_POST['valoramais']) : 0;
@@ -126,18 +127,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $textoPadrao = "";
     
     switch ($padrao) {
-        case "2x50A": $valorPadraoNumerico = 1453.08; $descPadrao = "2x50A"; break;
-        case "3x50A": $valorPadraoNumerico = 1616.52; $descPadrao = "3x50A"; break;
-        case "3x63A": $valorPadraoNumerico = 1999.65; $descPadrao = "3x63A"; break;
-        case "3x80A": $valorPadraoNumerico = 2978.64; $descPadrao = "3x80A"; break;
-        case "3x100A": $valorPadraoNumerico = 2945.12; $descPadrao = "3x100A"; break;
-        case "3x125A": $valorPadraoNumerico = 4322.44; $descPadrao = "3x125A"; break;
-        case "3x150A": $valorPadraoNumerico = 4952.11; $descPadrao = "3x150A"; break;
-        case "3x175A": $valorPadraoNumerico = 5948.65; $descPadrao = "3x175A"; break;
-        case "3x200A": $valorPadraoNumerico = 6265.52; $descPadrao = "3x200A"; break;
+        case "1x100A":
+            $valorPadraoNumerico = 3500.00;
+            $descPadrao = "1x100A";
+            break;
+        case "1x150A":
+            $valorPadraoNumerico = 6500.00;
+            $descPadrao = "1x150A";
+            break;
+        case "1x200A":
+            $valorPadraoNumerico = 9500.00;
+            $descPadrao = "1x200A";
+            break;
+        case "2x50A":
+            $valorPadraoNumerico = 2362.73;
+            $descPadrao = "2x50A";
+            break;
+        case "3x50A":
+            $valorPadraoNumerico = 2628.49;
+            $descPadrao = "3x50A";
+            break;
+        case "3x63A":
+            $valorPadraoNumerico = 3251.46;
+            $descPadrao = "3x63A";
+            break;
+        case "3x80A":
+            $valorPadraoNumerico = 4843.32;
+            $descPadrao = "3x80A";
+            break;
+        case "3x100A":
+            $valorPadraoNumerico = 4788.81;
+            $descPadrao = "3x100A";
+            break;
+        case "3x125A":
+            $valorPadraoNumerico = 7028.36;
+            $descPadrao = "3x125A";
+            break;
+        case "3x150A":
+            $valorPadraoNumerico = 8052.21;
+            $descPadrao = "3x150A";
+            break;
+        case "3x175A":
+            $valorPadraoNumerico = 9672.60;
+            $descPadrao = "3x175A";
+            break;
+        case "3x200A":
+            $valorPadraoNumerico = 10187.84;
+            $descPadrao = "3x200A";
+            break;
         default: $valorPadraoNumerico = 0; break;
     }
-    
     if ($valorPadraoNumerico > 0) {
         $padraoRs = 'R$ ' . number_format($valorPadraoNumerico, 2, ',', '.');
         $textoPadrao = "ENTRADA DE ENERGIA ($descPadrao) INCLUSO NO ORÇAMENTO: $padraoRs";
@@ -266,6 +305,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $pdf->SetTextColor(0, 0, 0); // Resetar cor
     }
+
+    if (!empty($vendedor)) {
+        $pdf->SetFont('helvetica', '', 9);
+        $pdf->SetTextColor(100, 100, 100);
+        $pdf->Text(21, 276, "Vendedor: $vendedor");
+        $pdf->SetTextColor(0, 0, 0);
+    }
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text(21, 280, "$dataAtual");
 
@@ -296,7 +342,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
     $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR " . round($potenciaModulo) . "/620 Wp ");
-    $pdf->Text(23, 188, "1 INVERSOR 220V SAJ/SOLIS/CHINT " . round($potenciaInversor) . " KW");
+    $pdf->Text(23, 188, "INVERSOR 220V SAJ/SOLIS/CHINT $potenciaInversor KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
     // Verifica se é Solo

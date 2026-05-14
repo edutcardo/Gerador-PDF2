@@ -28,6 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dataSafras = $_POST['dataSafras'];
     $solo = $_POST['solo'];
     $carport = $_POST['carport'];
+    $vendedor = isset($_POST['vendedor']) ? $_POST['vendedor'] : '';
     //Tributação
     function calcularTributario($potenciaInversor)
     {
@@ -212,42 +213,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $desconto = 1; // Valor padrão caso nenhum caso corresponda
     }
 
-    // Condicional do preço do padrão de energia
     switch ($padrao) {
+        case "1x100A":
+            $valorPadraoNumerico = 3500.00;
+            $descPadrao = "1x100A";
+            break;
+        case "1x150A":
+            $valorPadraoNumerico = 6500.00;
+            $descPadrao = "1x150A";
+            break;
+        case "1x200A":
+            $valorPadraoNumerico = 9500.00;
+            $descPadrao = "1x200A";
+            break;
         case "2x50A":
-            $padrao = 2512.88;
+            $valorPadraoNumerico = 2362.73;
+            $descPadrao = "2x50A";
             break;
         case "3x50A":
-            $padrao = 2941.22;
+            $valorPadraoNumerico = 2628.49;
+            $descPadrao = "3x50A";
             break;
         case "3x63A":
-            $padrao = 2815.24;
+            $valorPadraoNumerico = 3251.46;
+            $descPadrao = "3x63A";
             break;
         case "3x80A":
-            $padrao = 3190.17;
+            $valorPadraoNumerico = 4843.32;
+            $descPadrao = "3x80A";
             break;
         case "3x100A":
-            $padrao = 4870.36;
+            $valorPadraoNumerico = 4788.81;
+            $descPadrao = "3x100A";
             break;
         case "3x125A":
-            $padrao = 8539.65;
+            $valorPadraoNumerico = 7028.36;
+            $descPadrao = "3x125A";
             break;
         case "3x150A":
-            $padrao = 10366.42;
+            $valorPadraoNumerico = 8052.21;
+            $descPadrao = "3x150A";
             break;
         case "3x175A":
-            $padrao = 11279.8;
+            $valorPadraoNumerico = 9672.60;
+            $descPadrao = "3x175A";
             break;
         case "3x200A":
-            $padrao = 12969.57;
+            $valorPadraoNumerico = 10187.84;
+            $descPadrao = "3x200A";
             break;
-        case "":
-        case "selecione um padrao":
-            $padrao = 0;
-            break;
-        default:
-            $padrao = 0; // Caso não corresponda a nenhuma opção válida
-            break;
+
+    }
+    $textoPadrao = "";
+    if ($valorPadraoNumerico > 0) {
+        $padraoRs = 'R$ ' . number_format($valorPadraoNumerico, 2, ',', '.');
+        $textoPadrao = "ENTRADA DE ENERGIA ($descPadrao) INCLUSO NO ORÇAMENTO:
+  $padraoRs";
     }
 
 
@@ -494,7 +515,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(34.6, 226.25, "Responsável Técnico:");
     $pdf->Text(34.6, 232.5, "CREA-PR:");
     $pdf->Text(34.6, 238.75, "CPF:");
-
+    if (!empty($vendedor)) {
+        $pdf->SetFont('helvetica', '', 9);
+        $pdf->SetTextColor(100, 100, 100);
+        $pdf->Text(21, 276, "Vendedor: $vendedor");
+        $pdf->SetTextColor(0, 0, 0);
+    }
     $pdf->SetFont('helvetica', 12);
     $pdf->Text(46, 220.05, "$dataAtual");
     $pdf->Text(80, 226.30, "Eduardo Garcia Ribeiro");
@@ -741,7 +767,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
     $pdf->Text(23, 174, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . "/620 Wp ");
-    $pdf->Text(23, 182, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
+    $pdf->Text(23, 182, "INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET $potenciaInversor KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
     // Verifica se é Solo
@@ -767,7 +793,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(23, 222, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(16, 230, "$textoPadrao");
+    $pdf->Text(23, 230, "$textoPadrao");
     // Página 5
 
     $pdf->AddPage();
