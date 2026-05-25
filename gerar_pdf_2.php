@@ -144,6 +144,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $valorPadraoNumerico = 3500.00;
             $descPadrao = "1x100A";
             break;
+        case "1x50A urbano":
+            $valorPadraoNumerico = 1800.00;
+            $descPadrao = "1x50A (Mono Urbano 127V)";
+            break;
         case "1x150A":
             $valorPadraoNumerico = 6500.00;
             $descPadrao = "1x150A";

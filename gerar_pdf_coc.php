@@ -518,7 +518,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($vendedor)) {
         $pdf->SetFont('helvetica', '', 9);
         $pdf->SetTextColor(100, 100, 100);
-        $pdf->Text(21, 276, "Vendedor: $vendedor");
+        $pdf->Text(34.6, 276, "Vendedor: $vendedor");
         $pdf->SetTextColor(0, 0, 0);
     }
     $pdf->SetFont('helvetica', 12);
@@ -528,11 +528,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(46.6, 238.75, "085.271.859-46");
 
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(21, 280, "$dataAtual");
+    $pdf->Text(34.6, 280, "$dataAtual");
 
     $pdf->SetFont('helvetica', 'I', 10);
     $pdf->SetTextColor(100, 100, 100);
-    $pdf->Text(21, 286, "Este orçamento tem validade de 7 dias.");
+    $pdf->Text(34.6, 286, "Este orçamento tem validade de 7 dias.");
     $pdf->SetTextColor(0, 0, 0);
 
     // Segunda Página (com a imagem genérica e gráfico)

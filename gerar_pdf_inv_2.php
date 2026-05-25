@@ -941,7 +941,10 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     $pdf->Text(172, 220, "$ROI_formatado");
     // CÓDIGO NOVO E CORRIGIDO
     $pdf->Text(80, 98, "Tributação vigente: $tributario");
-
+    $pdf->SetTextColor(255, 0, 0);
+    $pdf->Text(19, 203, "Cálculo de acordo com reajuste (24/06)");
+    $pdf->SetFont('helvetica', 10);
+    $pdf->SetTextColor(0, 0, 0);
 
     // Dados para o gráfico
     $values = [$retornoVerde, $liquidoVerde, $imposto, $demanda, $seguro, $manutencao];
