@@ -15,6 +15,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $numeroDeFases = $_POST['numeroDeFases'];
     $precoKit = $_POST['precoKit'];
     $irradiacao = $_POST['irradiacao'];
+    // Converter para número
+    $irradiacaoValor = floatval($irradiacao);
+    if ($irradiacaoValor <= 0) {
+        $irradiacaoValor = 4.5; // valor default
+    }
     $marca = $_POST['marca'];
     $fabricante = $_POST['fabricante'];
     $potenciaInversor = $_POST['potenciaInversor'];
@@ -76,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Cálculos iniciais da proposta
 
-    $geracao = $potenciaGerador * 3.9 * 30;
+    $geracao = $potenciaGerador * $irradiacaoValor * 30;
     $qtdmodulos = ($potenciaGerador * 1000) / $potenciaModulo;
     $qtdmodulosArredondado = round($qtdmodulos);
     $metrosOcupados = $qtdmodulosArredondado * 2.9;
@@ -213,57 +218,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $desconto = 1; // Valor padrão caso nenhum caso corresponda
     }
 
-    switch ($padrao) {
-        case "1x100A":
-            $valorPadraoNumerico = 3500.00;
-            $descPadrao = "1x100A";
-            break;
-        case "1x150A":
-            $valorPadraoNumerico = 6500.00;
-            $descPadrao = "1x150A";
-            break;
-        case "1x200A":
-            $valorPadraoNumerico = 9500.00;
-            $descPadrao = "1x200A";
-            break;
-        case "2x50A":
-            $valorPadraoNumerico = 2362.73;
-            $descPadrao = "2x50A";
-            break;
-        case "3x50A":
-            $valorPadraoNumerico = 2628.49;
-            $descPadrao = "3x50A";
-            break;
-        case "3x63A":
-            $valorPadraoNumerico = 3251.46;
-            $descPadrao = "3x63A";
-            break;
-        case "3x80A":
-            $valorPadraoNumerico = 4843.32;
-            $descPadrao = "3x80A";
-            break;
-        case "3x100A":
-            $valorPadraoNumerico = 4788.81;
-            $descPadrao = "3x100A";
-            break;
-        case "3x125A":
-            $valorPadraoNumerico = 7028.36;
-            $descPadrao = "3x125A";
-            break;
-        case "3x150A":
-            $valorPadraoNumerico = 8052.21;
-            $descPadrao = "3x150A";
-            break;
-        case "3x175A":
-            $valorPadraoNumerico = 9672.60;
-            $descPadrao = "3x175A";
-            break;
-        case "3x200A":
-            $valorPadraoNumerico = 10187.84;
-            $descPadrao = "3x200A";
-            break;
+    $valorPadraoNumerico = isset($_POST['valorPadrao']) ?
+        floatval($_POST['valorPadrao']) : 0;
+    $descPadrao = $padrao;
 
-    }
     $textoPadrao = "";
     if ($valorPadraoNumerico > 0) {
         $padraoRs = 'R$ ' . number_format($valorPadraoNumerico, 2, ',', '.');
@@ -359,21 +317,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $imposto = calcularImposto($tributario, $retornoVerde);
     $seguro = ($precoFinal * 0.007) / 12;
 
-    $irradiacao = [5888, 5792, 5219, 4544, 3636, 3333, 3529, 4451, 4683, 5311, 5969, 6327];
+    $irradiacaoMensal = [
+        5888,
+        5792,
+        5219,
+        4544,
+        3636,
+        3333,
+        3529,
+        4451,
+        4683,
+        5311,
+        5969,
+        6327
+    ];
 
     //Cálculo de irradiação
-    $jan = $irradiacao[0];
-    $fev = $irradiacao[1];
-    $mar = $irradiacao[2];
-    $abr = $irradiacao[3];
-    $mai = $irradiacao[4];
-    $jun = $irradiacao[5];
-    $jul = $irradiacao[6];
-    $ago = $irradiacao[7];
-    $set = $irradiacao[8];
-    $out = $irradiacao[9];
-    $nov = $irradiacao[10];
-    $dez = $irradiacao[11];
+    $jan = $irradiacaoMensal[0];
+    $fev = $irradiacaoMensal[1];
+    $mar = $irradiacaoMensal[2];
+    $abr = $irradiacaoMensal[3];
+    $mai = $irradiacaoMensal[4];
+    $jun = $irradiacaoMensal[5];
+    $jul = $irradiacaoMensal[6];
+    $ago = $irradiacaoMensal[7];
+    $set = $irradiacaoMensal[8];
+    $out = $irradiacaoMensal[9];
+    $nov = $irradiacaoMensal[10];
+    $dez = $irradiacaoMensal[11];
 
     $jan1 = $jan * 1.076687117 / 5265 * 4 * 0.95;
     $fev1 = $fev * 1.076687117 / 5265 * 4 * 0.95;

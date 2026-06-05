@@ -17,6 +17,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $numeroDeFases = $_POST['numeroDeFases'];
     $precoKit = $_POST['precoKit'];
     $irradiacao = $_POST['irradiacao'];
+    // Converter para número
+    $irradiacaoValor = floatval($irradiacao);
+    if ($irradiacaoValor <= 0) {
+        $irradiacaoValor = 4.5; // valor default
+    }
     $marca = $_POST['marca'];
     $fabricante = $_POST['fabricante'];
     $potenciaInversor = $_POST['potenciaInversor'];
@@ -35,7 +40,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Usar o valor negociado nos cálculos
     }
 
-    $geracao = $potenciaGerador * 3.72 * 30;
+
+    $geracao = $potenciaGerador * $irradiacaoValor * 30;
     switch ($orientacao) {
     case "Leste":
     case "Oeste":
@@ -125,58 +131,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $valorPadraoNumerico = 0;
     $descPadrao = "";
     $textoPadrao = "";
-    
-    switch ($padrao) {
-        case "1x100A":
-            $valorPadraoNumerico = 3500.00;
-            $descPadrao = "1x100A";
-            break;
-        case "1x150A":
-            $valorPadraoNumerico = 6500.00;
-            $descPadrao = "1x150A";
-            break;
-        case "1x200A":
-            $valorPadraoNumerico = 9500.00;
-            $descPadrao = "1x200A";
-            break;
-        case "2x50A":
-            $valorPadraoNumerico = 2362.73;
-            $descPadrao = "2x50A";
-            break;
-        case "3x50A":
-            $valorPadraoNumerico = 2628.49;
-            $descPadrao = "3x50A";
-            break;
-        case "3x63A":
-            $valorPadraoNumerico = 3251.46;
-            $descPadrao = "3x63A";
-            break;
-        case "3x80A":
-            $valorPadraoNumerico = 4843.32;
-            $descPadrao = "3x80A";
-            break;
-        case "3x100A":
-            $valorPadraoNumerico = 4788.81;
-            $descPadrao = "3x100A";
-            break;
-        case "3x125A":
-            $valorPadraoNumerico = 7028.36;
-            $descPadrao = "3x125A";
-            break;
-        case "3x150A":
-            $valorPadraoNumerico = 8052.21;
-            $descPadrao = "3x150A";
-            break;
-        case "3x175A":
-            $valorPadraoNumerico = 9672.60;
-            $descPadrao = "3x175A";
-            break;
-        case "3x200A":
-            $valorPadraoNumerico = 10187.84;
-            $descPadrao = "3x200A";
-            break;
-        default: $valorPadraoNumerico = 0; break;
-    }
+    // Usar o valor enviado pelo sistema
+    $valorPadraoNumerico = isset($_POST['valorPadrao']) ?
+        floatval($_POST['valorPadrao']) : 0;
+    $descPadrao = $padrao;
+
     if ($valorPadraoNumerico > 0) {
         $padraoRs = 'R$ ' . number_format($valorPadraoNumerico, 2, ',', '.');
         $textoPadrao = "ENTRADA DE ENERGIA ($descPadrao) INCLUSO NO ORÇAMENTO: $padraoRs";
@@ -237,9 +196,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $retorno25anosRs = 'R$ ' . number_format($retorno25anos, 2, ',', '.');
 
     // ... (O restante do código para cálculo de irradiação e geração do PDF permanece o mesmo) ...
-    
-    $irradiacao = [5888, 5792, 5219, 4544, 3636, 3333, 3529, 4451, 4683, 5311, 5969, 6327];
-    $jan = $irradiacao[0]; $fev = $irradiacao[1]; $mar = $irradiacao[2]; $abr = $irradiacao[3]; $mai = $irradiacao[4]; $jun = $irradiacao[5]; $jul = $irradiacao[6]; $ago = $irradiacao[7]; $set = $irradiacao[8]; $out = $irradiacao[9]; $nov = $irradiacao[10]; $dez = $irradiacao[11];
+
+    $irradiacaoMensal = [
+        5888,
+        5792,
+        5219,
+        4544,
+        3636,
+        3333,
+        3529,
+        4451,
+        4683,
+        5311,
+        5969,
+        6327
+    ];
+    $jan = $irradiacaoMensal[0];
+    $fev = $irradiacaoMensal[1];
+    $mar =
+        $irradiacaoMensal[2];
+    $abr = $irradiacaoMensal[3];
+    $mai = $irradiacaoMensal[4];
+    $jun
+        = $irradiacaoMensal[5];
+    $jul = $irradiacaoMensal[6];
+    $ago = $irradiacaoMensal[7];
+    $set = $irradiacaoMensal[8];
+    $out = $irradiacaoMensal[9];
+    $nov =
+        $irradiacaoMensal[10];
+    $dez = $irradiacaoMensal[11];
     $fatorCalculo = 1.076687117 / 5265 * 4 * 0.95;
     $jan1 = $jan * $fatorCalculo; $fev1 = $fev * $fatorCalculo; $mar1 = $mar * $fatorCalculo; $abr1 = $abr * $fatorCalculo; $mai1 = $mai * $fatorCalculo; $jun1 = $jun * $fatorCalculo; $jul1 = $jul * $fatorCalculo; $ago1 = $ago * $fatorCalculo; $set1 = $set * $fatorCalculo; $out1 = $out * $fatorCalculo; $nov1 = $nov * $fatorCalculo; $dez1 = $dez * $fatorCalculo;
     $fatorPotencia = $potenciaGerador * 30;
@@ -342,7 +328,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
     $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR " . round($potenciaModulo) . "/620 Wp ");
-    $pdf->Text(23, 188, "INVERSOR 220V SAJ/SOLIS/CHINT $potenciaInversor KW");
+    $pdf->Text(23, 188, "INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET $potenciaInversor KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
     // Verifica se é Solo
