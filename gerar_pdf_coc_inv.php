@@ -826,7 +826,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(23, 38, "1 INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . round($potenciaInversor) . " KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
-    $pdf->Text(23, 46, "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO") . " m";
+    $textoEstrutura = (strtoupper(trim($estrutura)) === 'SOLO')
+        ? "$qtdEstrutrura ESTRUTURA SOLO"
+        : "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO";
+    $pdf->Text(23, 46, "$textoEstrutura");
     $pdf->Text(23, 54, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
     $pdf->Text(23, 62, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
     $pdf->Text(23, 70, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");

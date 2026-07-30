@@ -744,15 +744,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verifica se é Solo
     $textoEstrutura = "";
 
-    if ($solo == 1) {
+    if ($solo === true || $solo === "true" || $solo == 1) {
         $textoEstrutura = "ESTRUTURA SOLO";
-    } elseif ($carport == 1) {
+    } elseif ($carport === true || $carport === "true" || $carport == 1) {
         $textoEstrutura = "ESTRUTURA CARPORT";
     } else {
         $textoEstrutura = "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO";
-    }
-    if ($solo === true || $solo === "true" || $solo == 1) {
-        $geracao *= 1.10;
     }
 
     // Imprime o resultado final (UMA VEZ SÓ)
