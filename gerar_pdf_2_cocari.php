@@ -84,12 +84,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif ($numeroDeFases == 'trifasico') {
         $demandaMinima = 100;
     }
-    $gastoSemGerador = ($demandaMinima * 0.81) + $iluminacao + ($media * 0.81);
+    // Tarifa real da concessionaria (fallback pro valor antigo se nao vier)
+    $tarifaFinal = isset($_POST['tarifaFinal']) && floatval($_POST['tarifaFinal']) > 0
+        ? floatval($_POST['tarifaFinal']) : 0.81;
+    $fioB = isset($_POST['fioB']) ? floatval($_POST['fioB']) : 0;
+    $icmsRate = isset($_POST['icmsRate']) ? floatval($_POST['icmsRate']) : 0;
+
+    // Percentual do Fio B por ano (Lei 14.300)
+    $percentuaisFioB = [
+        2023 => 0.15,
+        2024 => 0.30,
+        2025 => 0.45,
+        2026 => 0.60,
+        2027 => 0.75,
+        2028 => 0.90,
+        2029 => 1.00
+    ];
+    $anoAtual = (int) date('Y');
+    $percentualFioB = isset($percentuaisFioB[$anoAtual]) ? $percentuaisFioB[$anoAtual] : 1.00;
+
+    // Detecta multiplas UCs (separadas por virgula ou barra)
+    $ucsSeparadas = preg_split('/[,\/]/', $uc);
+    $ucsValidas = array_filter(array_map('trim', $ucsSeparadas), function ($v) {
+        return $v !== '';
+    });
+    $numUCs = max(1, count($ucsValidas));
+
+    // Energia injetada (compensada) = o que e efetivamente gerado, limitado ao consumo
+    $energiaInjetada = min($media, $geracao);
+
+    $custoDisponibilidade = $demandaMinima * $tarifaFinal;
+    $custoFioBInjetado = $energiaInjetada * $fioB * $percentualFioB * (1 + $icmsRate);
+
+    $gastoSemGerador = ($media * $tarifaFinal) * $numUCs;
     $gastoSemGeradorRs = 'R$ ' . number_format($gastoSemGerador, 2, ',', '.');
     $gastoSemGeradorAno = $gastoSemGerador * 12;
     $gastoSemGeradorAnoRs = 'R$ ' . number_format($gastoSemGeradorAno, 2, ',', '.');
-    $gastoComGerador = ($demandaMinima * 0.81) + $iluminacao;
+    $gastoComGerador = ($custoDisponibilidade + $custoFioBInjetado) * $numUCs;
     $gastoComGeradorRs = 'R$ ' . number_format($gastoComGerador, 2, ',', '.');
+    
     $gastoComGeradorAno = $gastoComGerador * 12;
     $gastoComGeradorAnoRs = 'R$ ' . number_format($gastoComGeradorAno, 2, ',', '.');
     $diferencaGastos = $gastoSemGerador - $gastoComGerador;

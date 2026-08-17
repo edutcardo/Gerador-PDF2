@@ -637,8 +637,6 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $pdf->SetFont('helvetica', 'B', 14);
     $pdf->SetTextColor(255, 0, 0);
 
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
     
     // Definir fonte e adicionar conteúdo à terceira página
     $pdf->SetFont('helvetica', 'B', 16);
@@ -998,11 +996,11 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
 
-    // Quarta Página (com a imagem undo.jpeg)
-    $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('PGCV7.png', 0, 0, 210, 297);
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(255, 0, 0);
+    // // Quarta Página (com a imagem undo.jpeg)
+    // $pdf->AddPage();  // Adiciona a primeira página
+    // $pdf->Image('PGCV7.png', 0, 0, 210, 297);
+    // $pdf->SetFont('helvetica', 'B', 14);
+    // $pdf->SetTextColor(255, 0, 0);
 
 
     // Nona Página (com a imagem undo.jpeg)
