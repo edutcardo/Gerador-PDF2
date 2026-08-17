@@ -884,7 +884,7 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     $pdf->Text(160, 186, "$manutencaoRs");
 
     $pdf->Text(63, 195, "$impostoRs");
-    $pdf->Text(93, 195, "$impostoRs");
+    $pdf->Text(95, 195, "$impostoRs");
     $pdf->Text(128, 195, "$impostoRs");
     $pdf->Text(161, 195, "$impostoRs");
 
