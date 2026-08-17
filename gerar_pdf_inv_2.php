@@ -868,50 +868,70 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     $mediaLiquido = ($liquidoVerde + $liquidoAmarelo + $liquidoVermelho + $liquidoVermelhoP1) / 4;
     $mediaLiquidoRs =  'R$ ' . number_format($mediaLiquido, 2, ',', '.');
 
-    $pdf->Text(60, 170, "$retornoVerdeRs");
-    $pdf->Text(92, 170, "$retornoAmareloRs");
-    $pdf->Text(125, 170, "$retornoVermelhoRs");
-    $pdf->Text(158, 170, "$retornoVermelhoP1Rs");
+    // --- Valores centralizados na coluna -------------------------------------
+    // Cada valor é escrito CENTRALIZADO em torno do X da coluna (antes ficava
+    // alinhado à esquerda). Assim, se o número crescer, ele se expande para os dois
+    // lados e não estoura a linha pela direita. Se alguma coluna ficar levemente
+    // torta, ajuste apenas o X central correspondente logo abaixo.
+    if (!function_exists('escreverCentralizado')) {
+        function escreverCentralizado($pdf, $centroX, $y, $texto)
+        {
+            // Mede a largura na fonte ATUAL e desloca meia-largura para a esquerda.
+            $largura = $pdf->GetStringWidth($texto);
+            $pdf->Text($centroX - ($largura / 2), $y, $texto);
+        }
+    }
 
-    $pdf->Text(62, 178, "$seguroRs");
-    $pdf->Text(94, 178, "$seguroRs");
-    $pdf->Text(127, 178, "$seguroRs");
-    $pdf->Text(160, 178, "$seguroRs");
+    // Centro horizontal de cada coluna da tabela.
+    $cVerde = 72;
+    $cAmarela = 104;
+    $cVermelha = 137;
+    $cVermelhaP1 = 170;
 
-    $pdf->Text(62, 186, "$manutencaoRs");
-    $pdf->Text(94, 186, "$manutencaoRs");
-    $pdf->Text(127, 186, "$manutencaoRs");
-    $pdf->Text(160, 186, "$manutencaoRs");
+    escreverCentralizado($pdf, $cVerde, 170, $retornoVerdeRs);
+    escreverCentralizado($pdf, $cAmarela, 170, $retornoAmareloRs);
+    escreverCentralizado($pdf, $cVermelha, 170, $retornoVermelhoRs);
+    escreverCentralizado($pdf, $cVermelhaP1, 170, $retornoVermelhoP1Rs);
 
-    $pdf->Text(63, 195, "$impostoRs");
-    $pdf->Text(95, 195, "$impostoRs");
-    $pdf->Text(128, 195, "$impostoRs");
-    $pdf->Text(161, 195, "$impostoRs");
+    escreverCentralizado($pdf, $cVerde, 178, $seguroRs);
+    escreverCentralizado($pdf, $cAmarela, 178, $seguroRs);
+    escreverCentralizado($pdf, $cVermelha, 178, $seguroRs);
+    escreverCentralizado($pdf, $cVermelhaP1, 178, $seguroRs);
 
-    $pdf->Text(62, 204, "$demandaRs");
-    $pdf->Text(94, 204, "$demandaRs");
-    $pdf->Text(127, 204, "$demandaRs");
-    $pdf->Text(160, 204, "$demandaRs");
+    escreverCentralizado($pdf, $cVerde, 186, $manutencaoRs);
+    escreverCentralizado($pdf, $cAmarela, 186, $manutencaoRs);
+    escreverCentralizado($pdf, $cVermelha, 186, $manutencaoRs);
+    escreverCentralizado($pdf, $cVermelhaP1, 186, $manutencaoRs);
 
-    $pdf->Text(65, 211, "$rentabilidadeVerdeRs");
-    $pdf->Text(99, 211, "$rentabilidadeAmarelaRs");
-    $pdf->Text(131, 211, "$rentabilidadeVermelhaRs");
-    $pdf->Text(163, 211, "$rentabilidadeVermelhaP1Rs");
+    escreverCentralizado($pdf, $cVerde, 195, $impostoRs);
+    escreverCentralizado($pdf, $cAmarela, 195, $impostoRs);
+    escreverCentralizado($pdf, $cVermelha, 195, $impostoRs);
+    escreverCentralizado($pdf, $cVermelhaP1, 195, $impostoRs);
+
+    escreverCentralizado($pdf, $cVerde, 204, $demandaRs);
+    escreverCentralizado($pdf, $cAmarela, 204, $demandaRs);
+    escreverCentralizado($pdf, $cVermelha, 204, $demandaRs);
+    escreverCentralizado($pdf, $cVermelhaP1, 204, $demandaRs);
+
+    escreverCentralizado($pdf, $cVerde, 211, $rentabilidadeVerdeRs);
+    escreverCentralizado($pdf, $cAmarela, 211, $rentabilidadeAmarelaRs);
+    escreverCentralizado($pdf, $cVermelha, 211, $rentabilidadeVermelhaRs);
+    escreverCentralizado($pdf, $cVermelhaP1, 211, $rentabilidadeVermelhaP1Rs);
 
     $pdf->SetTextColor(75, 75, 75);
-    $pdf->Text(61, 219, "$liquidoVerdeRs");
-    $pdf->Text(93, 219, "$liquidoAmareloRs");
-    $pdf->Text(125, 219, "$liquidoVermelhoRs");
-    $pdf->Text(158, 219, "$liquidoVermelhoP1Rs");
+    escreverCentralizado($pdf, $cVerde, 219, $liquidoVerdeRs);
+    escreverCentralizado($pdf, $cAmarela, 219, $liquidoAmareloRs);
+    escreverCentralizado($pdf, $cVermelha, 219, $liquidoVermelhoRs);
+    escreverCentralizado($pdf, $cVermelhaP1, 219, $liquidoVermelhoP1Rs);
 
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(152, 230, "$mediaLiquidoRs");
+    escreverCentralizado($pdf, 162, 230, $mediaLiquidoRs);
 
     $pdf->SetFont('helvetica', 10);
-    $pdf->Text(22, 249, "$VPL_formatado");
-    $pdf->Text(71, 249, "$TIR_formatado");
-    $pdf->Text(115, 249, "$TaxaLucratividade_formatada");
-    $pdf->Text(157, 249, "$ROI_formatado");
+    escreverCentralizado($pdf, 33, 249, $VPL_formatado);
+    escreverCentralizado($pdf, 80, 249, $TIR_formatado);
+    escreverCentralizado($pdf, 124, 249, $TaxaLucratividade_formatada);
+    escreverCentralizado($pdf, 166, 249, $ROI_formatado);
     // CÓDIGO NOVO E CORRIGIDO
     $pdf->Text(6, 160, "Tributação vigente: $tributario");
     $pdf->SetTextColor(255, 0, 0);
