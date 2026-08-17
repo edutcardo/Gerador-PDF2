@@ -770,8 +770,8 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
 
 
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->SetTextColor(0, 0, 0);
 
+    $pdf->SetTextColor(75, 75, 75);
     $pdf->Text(54, 37, "$qtdmodulosArredondado");
     $pdf->Text(84, 37, "$potenciaInversor kW");
     $pdf->Text(113, 37, "$potenciaGerador kWp");
@@ -841,9 +841,9 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
 
     $pdf->SetFont('helvetica', 'B', 11);
     $pdf->SetTextColor(39, 84, 70);
-    $pdf->Text(23, 111.9, "$valorParcelaRs");
-    $pdf->Text(23, 116, "$valorParcela2Rs");
-    $pdf->Text(23, 120.4, "$valorParcela3Rs");
+    $pdf->Text(25, 111.9, "$valorParcelaRs");
+    $pdf->Text(25, 116, "$valorParcela2Rs");
+    $pdf->Text(25, 120.4, "$valorParcela3Rs");
 
 
     $pdf->SetTextColor(75, 75, 75);
@@ -918,13 +918,13 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     escreverCentralizado($pdf, $cVermelha, 211, $rentabilidadeVermelhaRs);
     escreverCentralizado($pdf, $cVermelhaP1, 211, $rentabilidadeVermelhaP1Rs);
 
-    $pdf->SetTextColor(75, 75, 75);
+    $pdf->SetTextColor(255, 255, 255);
     escreverCentralizado($pdf, $cVerde, 219, $liquidoVerdeRs);
     escreverCentralizado($pdf, $cAmarela, 219, $liquidoAmareloRs);
     escreverCentralizado($pdf, $cVermelha, 219, $liquidoVermelhoRs);
     escreverCentralizado($pdf, $cVermelhaP1, 219, $liquidoVermelhoP1Rs);
 
-    $pdf->SetTextColor(0, 0, 0);
+    $pdf->SetTextColor(75, 75, 75);
     escreverCentralizado($pdf, 162, 230, $mediaLiquidoRs);
 
     $pdf->SetFont('helvetica', 10);
@@ -952,10 +952,10 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     // Nona Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGINV9.png', 0, 0, 210, 297);
-    
-    // Definir fonte e adicionar conteúdo à nona página
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
+
+    // Decima primeira página Página (com a imagem undo.jpeg)
+    $pdf->AddPage();  // Adiciona a primeira página
+    $pdf->Image('PGINV10.png', 0, 0, 210, 297);
 
  
     // Decima primeira página Página (com a imagem undo.jpeg)
