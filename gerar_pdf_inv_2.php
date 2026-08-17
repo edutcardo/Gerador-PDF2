@@ -596,26 +596,27 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(37, 112, "EM MANUTENÇÃO - DESCONSIDERAR");
     // $nome
-    $pdf->Text(44, 117.9, "$endereco");
+    $pdf->Text(45, 117.9, "$endereco");
     $pdf->Text(40, 123.8, "$cidade");
 
-    $pdf->Text(82, 177.3, "$metrosOcupados m²");
-    $pdf->Text(85, 182.4, "$qtdmodulosArredondado Placas");
-    $pdf->Text(57, 189, "$potenciaGerador kWp");
-    $pdf->Text(59, 200.3, "$geracao kWh");
+    $pdf->Text(98, 177.4, "$metrosOcupados m²");
+    $pdf->Text(102, 182.9, "$qtdmodulosArredondado Placas");
+    $pdf->Text(64, 189, "$potenciaGerador kWp");
+    $pdf->Text(65, 194.1, "Não considerado");
+    $pdf->Text(63.1, 200.2, "$geracao kWh");
 
     if (!empty($vendedor)) {
         $pdf->SetFont('helvetica', '', 9);
         $pdf->SetTextColor(100, 100, 100);
-        $pdf->Text(34.6, 274, "Vendedor: $vendedor");
+        $pdf->Text(23, 282, "Vendedor: $vendedor");
         $pdf->SetTextColor(0, 0, 0);
     }
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(34.6, 200, "$dataAtual");
+    $pdf->Text(35, 217.7, "$dataAtual");
 
     $pdf->SetFont('helvetica', 'I', 10);
     $pdf->SetTextColor(100, 100, 100);
-    $pdf->Text(34.6, 286, "Este orçamento tem validade de 7 dias.");
+    $pdf->Text(23, 286, "Este orçamento tem validade de 7 dias.");
     $pdf->SetTextColor(0, 0, 0);
 
     // Segunda Página (com a imagem genérica e gráfico)
