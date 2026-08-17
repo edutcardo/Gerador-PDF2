@@ -593,6 +593,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
 
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
+    $pdf->SetTextColor(85, 85, 85);
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(37, 112, "$nome");
     $pdf->Text(45, 117.9, "$endereco");
@@ -830,18 +831,21 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->SetTextColor(50, 50, 50);
 
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(0, 0, 0);
+    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->SetTextColor(80, 80, 80);
     $pdf->Text(113, 164, "$adicionalAPlus");
     $pdf->Text(99, 164, "$adicionalIndicacao");
-    $pdf->Text(25, 91.1, "$precoFinalRs");
+    $pdf->Text(23, 91.6, "$precoFinalRs");
 
 
     $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->SetTextColor(39, 84, 70);
     $pdf->Text(23, 111.9, "$valorParcelaRs");
     $pdf->Text(23, 116, "$valorParcela2Rs");
-    $pdf->Text(23, 120.2, "$valorParcela3Rs");
+    $pdf->Text(23, 120.4, "$valorParcela3Rs");
 
+
+    $pdf->SetTextColor(50, 50, 50);
     $retornoVerdeRs = 'R$ ' . number_format($retornoVerde, 2, ',', '.');
     $retornoAmareloRs = 'R$ ' . number_format($retornoAmarelo, 2, ',', '.');
     $retornoVermelhoRs = 'R$ ' . number_format($retornoVermelho, 2, ',', '.');
@@ -863,50 +867,50 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     $mediaLiquido = ($liquidoVerde + $liquidoAmarelo + $liquidoVermelho + $liquidoVermelhoP1) / 4;
     $mediaLiquidoRs =  'R$ ' . number_format($mediaLiquido, 2, ',', '.');
 
-    $pdf->Text(61, 170, "$retornoVerdeRs");
+    $pdf->Text(60, 170, "$retornoVerdeRs");
     $pdf->Text(93, 170, "$retornoAmareloRs");
     $pdf->Text(125, 170, "$retornoVermelhoRs");
     $pdf->Text(158, 170, "$retornoVermelhoP1Rs");
 
     $pdf->Text(62, 178, "$seguroRs");
-    $pdf->Text(96, 178, "$seguroRs");
-    $pdf->Text(126, 178, "$seguroRs");
-    $pdf->Text(158, 178, "$seguroRs");
+    $pdf->Text(95, 178, "$seguroRs");
+    $pdf->Text(127, 178, "$seguroRs");
+    $pdf->Text(159, 178, "$seguroRs");
 
-    $pdf->Text(63, 186, "$manutencaoRs");
-    $pdf->Text(96, 186, "$manutencaoRs");
-    $pdf->Text(127, 186, "$manutencaoRs");
-    $pdf->Text(159, 186, "$manutencaoRs");
+    $pdf->Text(62, 186, "$manutencaoRs");
+    $pdf->Text(95, 186, "$manutencaoRs");
+    $pdf->Text(126, 186, "$manutencaoRs");
+    $pdf->Text(158, 186, "$manutencaoRs");
 
-    $pdf->Text(64, 195, "$impostoRs");
-    $pdf->Text(97, 195, "$impostoRs");
-    $pdf->Text(128, 195, "$impostoRs");
-    $pdf->Text(160, 195, "$impostoRs");
+    $pdf->Text(63, 195, "$impostoRs");
+    $pdf->Text(96, 195, "$impostoRs");
+    $pdf->Text(127, 195, "$impostoRs");
+    $pdf->Text(159, 195, "$impostoRs");
 
-    $pdf->Text(63, 204, "$demandaRs");
-    $pdf->Text(96, 204, "$demandaRs");
-    $pdf->Text(127, 204, "$demandaRs");
-    $pdf->Text(159, 204, "$demandaRs");
+    $pdf->Text(64, 204, "$demandaRs");
+    $pdf->Text(97, 204, "$demandaRs");
+    $pdf->Text(128, 204, "$demandaRs");
+    $pdf->Text(160, 204, "$demandaRs");
 
     $pdf->Text(66, 211, "$rentabilidadeVerdeRs");
     $pdf->Text(99, 211, "$rentabilidadeAmarelaRs");
     $pdf->Text(131, 211, "$rentabilidadeVermelhaRs");
-    $pdf->Text(164, 211, "$rentabilidadeVermelhaP1Rs");
+    $pdf->Text(163, 211, "$rentabilidadeVermelhaP1Rs");
 
     $pdf->SetTextColor(255, 255, 255);
     $pdf->Text(61, 219, "$liquidoVerdeRs");
-    $pdf->Text(95, 219, "$liquidoAmareloRs");
-    $pdf->Text(127, 219, "$liquidoVermelhoRs");
-    $pdf->Text(160, 219, "$liquidoVermelhoP1Rs");
+    $pdf->Text(93, 219, "$liquidoAmareloRs");
+    $pdf->Text(125, 219, "$liquidoVermelhoRs");
+    $pdf->Text(158, 219, "$liquidoVermelhoP1Rs");
 
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(152, 230, "$mediaLiquidoRs");
 
     $pdf->SetFont('helvetica', 10);
     $pdf->Text(22, 249, "$VPL_formatado");
-    $pdf->Text(75, 249, "$TIR_formatado");
+    $pdf->Text(71, 249, "$TIR_formatado");
     $pdf->Text(115, 249, "$TaxaLucratividade_formatada");
-    $pdf->Text(160, 249, "$ROI_formatado");
+    $pdf->Text(157, 249, "$ROI_formatado");
     // CÓDIGO NOVO E CORRIGIDO
     $pdf->Text(6, 160, "Tributação vigente: $tributario");
     $pdf->SetTextColor(255, 0, 0);
