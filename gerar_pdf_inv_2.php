@@ -358,15 +358,15 @@ $nper3 = 60;
 
 // Cálculo para 36 meses (chamando a nova função)
 $valorParcela = calcularParcela_corrigido($taxa, $nper1, $vp, $vf, $tipo);
-$valorParcelaRs = 'R$ '. number_format(abs((float)$valorParcela), 2, ',', '.');
+    $valorParcelaRs = number_format(abs((float) $valorParcela), 2, ',', '.');
 
 // Cálculo para 48 meses
 $valorParcela2 = calcularParcela_corrigido($taxa, $nper2, $vp, $vf, $tipo);
-$valorParcela2Rs = 'R$ '. number_format(abs((float)$valorParcela2), 2, ',', '.');
+    $valorParcela2Rs = number_format(abs((float) $valorParcela2), 2, ',', '.');
 
 // Cálculo para 60 meses
 $valorParcela3 = calcularParcela_corrigido($taxa, $nper3, $vp, $vf, $tipo);
-$valorParcela3Rs = 'R$ '. number_format(abs((float)$valorParcela3), 2, ',', '.');
+    $valorParcela3Rs = number_format(abs((float) $valorParcela3), 2, ',', '.');
   
 if ($diferencaGastosAno > 0) {
     $payback = $precoFinal / $diferencaGastosAno;
@@ -594,15 +594,14 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(37, 112, "EM MANUTENÇÃO - DESCONSIDERAR");
-    // $nome
+    $pdf->Text(37, 112, "$nome");
     $pdf->Text(45, 117.9, "$endereco");
     $pdf->Text(40, 123.8, "$cidade");
 
     $pdf->Text(98, 177.4, "$metrosOcupados m²");
     $pdf->Text(102, 182.9, "$qtdmodulosArredondado Placas");
     $pdf->Text(64, 189, "$potenciaGerador kWp");
-    $pdf->Text(65, 194.1, "Não considerado");
+    $pdf->Text(65, 194.2, "Não considerado");
     $pdf->Text(63.1, 200.2, "$geracao kWh");
 
     if (!empty($vendedor)) {
@@ -767,106 +766,52 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     $pdf->SetFont($fontFamily, $fontStyle, $defaultFontSize);
 }
 
-    if (!empty($adicionalAPlus)) {
-        $adicionalAPlus = "*";
-    }
-        if (!empty($adicionalIndicacao)) {
-        $adicionalIndicacao = "*";
-    }
-    $pdf->SetFont('helvetica', 'B', 13);
-    $pdf->SetTextColor(50, 50, 50);
-
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(113, 164, "$adicionalAPlus");
-    $pdf->Text(99, 164, "$adicionalIndicacao");
-    $pdf->Text(152, 164, "$precoFinalRs");
-
-    $pdf->SetFont('helvetica', 'B', 15);
-    $pdf->Text(26, 180, "36 X $valorParcelaRs");
-    $pdf->Text(85, 180, "48 X $valorParcela2Rs");
-    $pdf->Text(146, 180, "60 X $valorParcela3Rs");
 
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
 
-    $pdf->Text(59, 46, "$qtdmodulosArredondado");
-    $pdf->Text(85, 46, "$potenciaInversor kW");
-    $pdf->Text(110.5, 46, "$potenciaGerador kWp");
-    $pdf->Text(139, 46, "$geracaoArredondado kWh");
-    $pdf->Text(167, 46, "$geracaoAnual kWh");
+    $pdf->Text(54, 37, "$qtdmodulosArredondado");
+    $pdf->Text(84, 37, "$potenciaInversor kW");
+    $pdf->Text(113, 37, "$potenciaGerador kWp");
+    $pdf->Text(141, 37, "$geracaoArredondado kWh");
+    $pdf->Text(171, 37, "$geracaoAnual kWh");
 
-    // Dados do Payback
-    $anos = 25; // Total de anos
-
-    // Calcular o retorno verde anual
+    // Tempo de payback exibido de forma simples (ex.: "1 ano e 6 meses").
+    // Base: retorno anual da geração compensada (retornoVerde * 12) — a mesma que o
+    // gráfico anterior usava e exibia corretamente. NÃO usar $diferencaGastosAno aqui:
+    // neste PDF de investidor o consumo próprio é ~zero, então aquela base estoura o payback.
     $retornoAnualVerde = $retornoVerde * 12;
-
-    // Inicializar o acumulado de retorno
-    $dados = [];
-    $retornoAcumulado = 0;
-
-    // Calcular o retorno acumulado ao longo dos anos
-    for ($ano = 1; $ano <= $anos; $ano++) {
-        $retornoAcumulado += $retornoAnualVerde;
-        $dados[$ano] = $retornoAcumulado - $precoFinal; // Payback acumulado ao final de cada ano
+    if ($retornoAnualVerde > 0) {
+        $paybackAnos = $precoFinal / $retornoAnualVerde;
+    } else {
+        $paybackAnos = 0;
     }
 
-    // Configurações do gráfico
-    $xInicial = 17; // Posição X do gráfico
-    $yInicial = 228; // Posição Y do gráfico
-    $larguraGrafico = 160; // Largura total do gráfico
-    $alturaGrafico = 30; // Altura total do gráfico
-    $larguraBarra = 5; // Largura de cada barra
-    $espacoEntreBarras = 2; // Espaço entre as barras
-    $linhaBase = $yInicial + $alturaGrafico; // Posição da linha base (eixo X)
+    $anosPayback = (int) floor($paybackAnos);
+    $mesesPayback = (int) round(($paybackAnos - $anosPayback) * 12);
 
-    // Determinar o maior e menor valor
-    $min = min($dados);
-    $max = max($dados);
-    $escalaY = $alturaGrafico / ($max - $min); // Escala de altura por unidade
-
-    // Desenhar eixo X e Y
-    $pdf->SetDrawColor(0, 0, 0); // Preto
-    $pdf->Line($xInicial, $linhaBase, $xInicial + $larguraGrafico, $linhaBase); // Eixo X
-    $pdf->Line($xInicial, $linhaBase - $alturaGrafico, $xInicial, $linhaBase); // Eixo Y
-
-    // Desenhar as barras do gráfico
-    $xPos = $xInicial; // Posição inicial no eixo X
-    foreach ($dados as $ano => $valor) {
-        // Calcular altura da barra
-        $barHeight = abs($valor * $escalaY);
-    
-        // Determinar a posição Y da barra
-        if ($valor >= 0) {
-            $yBarra = $linhaBase - $barHeight; // Barra positiva
-        } else {
-            $yBarra = $linhaBase; // Barra negativa
-        }
-    
-        // Desenhar barra
-        $pdf->SetFillColor(60, 179, 113); // Verde
-        $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF'); // 'DF' para desenhar e preencher
-    
-        // Adicionar o ano abaixo da barra
-        $pdf->SetFont('helvetica', '', 8);
-        $pdf->Text($xPos - 1, $linhaBase + 3, (string)$ano);
-    
-        // Condição opcional para pular certas barras (exemplo: mostrar só em anos pares)
-        if ($ano % 2 == 0) { // Alterna entre anos pares ou um sim, um não
-            // Adicionar o valor na barra apenas condicionalmente
-            $valorTexto = 'R$ ' . number_format($valor, 0, ',', '.');
-            $yTexto = $valor >= 0 ? $yBarra - 5 : $yBarra + $barHeight + 3;
-            $pdf->Text($xPos - 2, $yTexto, $valorTexto);
-        }
-    
-        // Avançar posição X
-        $xPos += $larguraBarra + $espacoEntreBarras;
+    // O arredondamento dos meses pode chegar a 12; normaliza para +1 ano.
+    if ($mesesPayback >= 12) {
+        $anosPayback += 1;
+        $mesesPayback = 0;
     }
-    
-    // Título do gráfico
-    $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text($xInicial, $yInicial - 10, '');
+
+    // Monta o texto em português com plural correto.
+    if ($paybackAnos <= 0) {
+        $paybackTexto = 'Nao se paga no periodo analisado';
+    } else {
+        $partes = [];
+        if ($anosPayback > 0) {
+            $partes[] = $anosPayback . ($anosPayback == 1 ? ' ano' : ' anos');
+        }
+        if ($mesesPayback > 0) {
+            $partes[] = $mesesPayback . ($mesesPayback == 1 ? ' mês' : ' meses');
+        }
+        // Payback menor que meio mês: evita string vazia.
+        $paybackTexto = $partes ? implode(' e ', $partes) : 'Menos de 1 mês';
+    }
+
+
 
     // Definir fonte e adicionar conteúdo à quinta página
     $pdf->SetFont('helvetica', 12);
@@ -875,6 +820,28 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     // Sexta Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
     $pdf->Image('PGINV6.png', 0, 0, 210, 297);
+
+    if (!empty($adicionalAPlus)) {
+        $adicionalAPlus = "*";
+    }
+    if (!empty($adicionalIndicacao)) {
+        $adicionalIndicacao = "*";
+    }
+    $pdf->SetFont('helvetica', 'B', 13);
+    $pdf->SetTextColor(50, 50, 50);
+
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->Text(113, 164, "$adicionalAPlus");
+    $pdf->Text(99, 164, "$adicionalIndicacao");
+    $pdf->Text(25, 91.1, "$precoFinalRs");
+
+
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->Text(23, 111.9, "$valorParcelaRs");
+    $pdf->Text(23, 116, "$valorParcela2Rs");
+    $pdf->Text(23, 120.2, "$valorParcela3Rs");
+
     $retornoVerdeRs = 'R$ ' . number_format($retornoVerde, 2, ',', '.');
     $retornoAmareloRs = 'R$ ' . number_format($retornoAmarelo, 2, ',', '.');
     $retornoVermelhoRs = 'R$ ' . number_format($retornoVermelho, 2, ',', '.');
@@ -883,6 +850,7 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     $rentabilidadeAmarelaRs = number_format($rentabilidadeAmarela, 2, ',', '.') . '%';
     $rentabilidadeVermelhaRs = number_format($rentabilidadeVermelha, 2, ',', '.') . '%';
     $rentabilidadeVermelhaP1Rs = number_format($rentabilidadeVermelhaP1, 2, ',', '.') . '%';
+    $pdf->Text(73, 230, $paybackTexto);
 
     $seguroRs = 'R$ ' . number_format($seguro, 2, ',', '.');
     $manutencaoRs = 'R$ ' . number_format($manutencao, 2, ',', '.');
@@ -894,106 +862,57 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     $liquidoVermelhoP1Rs = 'R$ ' . number_format($liquidoVermelhoP1, 2, ',', '.');
     $mediaLiquido = ($liquidoVerde + $liquidoAmarelo + $liquidoVermelho + $liquidoVermelhoP1) / 4;
     $mediaLiquidoRs =  'R$ ' . number_format($mediaLiquido, 2, ',', '.');
-    
-    $pdf->Text(61, 122, "$retornoVerdeRs");
-    $pdf->Text(98, 122, "$retornoAmareloRs");
-    $pdf->Text(135, 122, "$retornoVermelhoRs");
-    $pdf->Text(172, 122, "$retornoVermelhoP1Rs");
 
-    $pdf->Text(64, 134.5, "$seguroRs");
-    $pdf->Text(101, 134.5, "$seguroRs");
-    $pdf->Text(138, 134.5, "$seguroRs");
-    $pdf->Text(175, 134.5, "$seguroRs");
+    $pdf->Text(61, 170, "$retornoVerdeRs");
+    $pdf->Text(93, 170, "$retornoAmareloRs");
+    $pdf->Text(125, 170, "$retornoVermelhoRs");
+    $pdf->Text(158, 170, "$retornoVermelhoP1Rs");
 
-    $pdf->Text(63, 145, "$manutencaoRs");
-    $pdf->Text(100, 145, "$manutencaoRs");
-    $pdf->Text(137, 145, "$manutencaoRs");
-    $pdf->Text(174, 145, "$manutencaoRs");
+    $pdf->Text(62, 178, "$seguroRs");
+    $pdf->Text(96, 178, "$seguroRs");
+    $pdf->Text(126, 178, "$seguroRs");
+    $pdf->Text(158, 178, "$seguroRs");
 
-    $pdf->Text(64, 156.5, "$impostoRs");
-    $pdf->Text(101, 156.5, "$impostoRs");
-    $pdf->Text(138, 156.5, "$impostoRs");
-    $pdf->Text(175, 156.5, "$impostoRs");
+    $pdf->Text(63, 186, "$manutencaoRs");
+    $pdf->Text(96, 186, "$manutencaoRs");
+    $pdf->Text(127, 186, "$manutencaoRs");
+    $pdf->Text(159, 186, "$manutencaoRs");
 
-    $pdf->Text(63, 167.5, "$demandaRs");
-    $pdf->Text(100, 167.5, "$demandaRs");
-    $pdf->Text(137, 167.5, "$demandaRs");
-    $pdf->Text(174, 167.5, "$demandaRs");
+    $pdf->Text(64, 195, "$impostoRs");
+    $pdf->Text(97, 195, "$impostoRs");
+    $pdf->Text(128, 195, "$impostoRs");
+    $pdf->Text(160, 195, "$impostoRs");
 
-    $pdf->Text(66, 180, "$rentabilidadeVerdeRs");
-    $pdf->Text(103, 180, "$rentabilidadeAmarelaRs");
-    $pdf->Text(141, 180, "$rentabilidadeVermelhaRs");
-    $pdf->Text(177, 180, "$rentabilidadeVermelhaP1Rs");
+    $pdf->Text(63, 204, "$demandaRs");
+    $pdf->Text(96, 204, "$demandaRs");
+    $pdf->Text(127, 204, "$demandaRs");
+    $pdf->Text(159, 204, "$demandaRs");
+
+    $pdf->Text(66, 211, "$rentabilidadeVerdeRs");
+    $pdf->Text(99, 211, "$rentabilidadeAmarelaRs");
+    $pdf->Text(131, 211, "$rentabilidadeVermelhaRs");
+    $pdf->Text(164, 211, "$rentabilidadeVermelhaP1Rs");
 
     $pdf->SetTextColor(255, 255, 255);
-    $pdf->Text(61, 192.2, "$liquidoVerdeRs");
-    $pdf->Text(98, 192.2, "$liquidoAmareloRs");
-    $pdf->Text(135, 192.2, "$liquidoVermelhoRs");
-    $pdf->Text(172, 192.2, "$liquidoVermelhoP1Rs");
+    $pdf->Text(61, 219, "$liquidoVerdeRs");
+    $pdf->Text(95, 219, "$liquidoAmareloRs");
+    $pdf->Text(127, 219, "$liquidoVermelhoRs");
+    $pdf->Text(160, 219, "$liquidoVermelhoP1Rs");
 
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(172, 203.5, "$mediaLiquidoRs");
+    $pdf->Text(152, 230, "$mediaLiquidoRs");
 
     $pdf->SetFont('helvetica', 10);
-    $pdf->Text(27, 220, "$VPL_formatado");
-    $pdf->Text(80, 220, "$TIR_formatado");
-    $pdf->Text(127, 220, "$TaxaLucratividade_formatada");
-    $pdf->Text(172, 220, "$ROI_formatado");
+    $pdf->Text(22, 249, "$VPL_formatado");
+    $pdf->Text(75, 249, "$TIR_formatado");
+    $pdf->Text(115, 249, "$TaxaLucratividade_formatada");
+    $pdf->Text(160, 249, "$ROI_formatado");
     // CÓDIGO NOVO E CORRIGIDO
-    $pdf->Text(80, 98, "Tributação vigente: $tributario");
+    $pdf->Text(6, 160, "Tributação vigente: $tributario");
     $pdf->SetTextColor(255, 0, 0);
-    $pdf->Text(19, 203, "Cálculo de acordo com reajuste (24/06)");
     $pdf->SetFont('helvetica', 10);
     $pdf->SetTextColor(0, 0, 0);
 
-    // Dados para o gráfico
-    $values = [$retornoVerde, $liquidoVerde, $imposto, $demanda, $seguro, $manutencao];
-    $labels = ['Receita', 'Líquido', 'Impostos', 'Demanda', 'Seguro', 'Opex/Limpeza'];
-
-    // Configurações do gráfico
-    $x = 27; // Margem inicial
-    $y = 240; // Posição vertical inicial
-    $barWidth = 15; // Largura das barras
-    $maxBarHeight = 30; // Altura máxima das barras
-    $gap = 10;
-    $pageWidth = 170; // Largura total da área utilizável (A4 menos margens)
-
-    // Ajustar espaçamento entre barras dinamicamente
-    $chartWidth = (count($values) * $barWidth); 
-    $gap = ($pageWidth - $chartWidth) / (count($values) - 1);
-
-    // Limite superior do gráfico (valor máximo representado)
-    $limitValue = max($values) > 0 ? max($values) : 1; // Evitar divisão por zero
-    $scalingFactor = $maxBarHeight / $limitValue;
-
-    // Cores das barras
-    $colors = [
-        [70, 130, 180], // Blue
-        [220, 20, 60],  // Red
-        [85, 107, 47],  // Green
-        [128, 0, 128],  // Purple
-        [0, 128, 128],  // Teal
-        [255, 165, 0]   // Orange
-    ];
-
-    // Desenhar barras
-    foreach ($values as $index => $value) {
-        $barHeight = $value * $scalingFactor; // Altura da barra proporcional ao valor
-        $pdf->SetFillColor($colors[$index][0], $colors[$index][1], $colors[$index][2]);
-        $pdf->Rect($x, $y + ($maxBarHeight - $barHeight), $barWidth, $barHeight, 'DF'); // Desenhar barra
-
-        // Adicionar valor acima da barra
-        $pdf->SetFont('helvetica', 'B', 10);
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->Text($x, $y + ($maxBarHeight - $barHeight) - 7, 'R$' . number_format($value, 2, ',', '.'));
-
-        // Adicionar rótulo abaixo da barra
-        $pdf->SetFont('helvetica', '', 8);
-        $pdf->Text($x, $y + $maxBarHeight + 5, $labels[$index]);
-
-        // Incrementar posição horizontal
-        $x += $barWidth + $gap;
-    }
         // Definir fonte e adicionar conteúdo à terceira página
     $pdf->SetFont('helvetica', 'B', 16);
     $pdf->SetTextColor(0, 0, 0);
