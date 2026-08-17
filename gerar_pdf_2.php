@@ -320,7 +320,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Image('pg4.png', 0, 0, 210, 297);
     $pdf->SetFont('helvetica', 'B', 14);
     $pdf->SetTextColor(0, 100, 0);
-    $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo));
+    $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
     $pdf->Text(149, 57, "$potenciaGerador kWp");
     $pdf->Text(152, 71.5, "$metrosOcupados m²");
     $pdf->Text(152, 85, "$peso kg");
@@ -328,7 +328,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(142, 112, "$geracaoArredondado kWh mensal");
     $pdf->SetTextColor(0, 0, 0);
     $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
-    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo));
+    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " W");
     $pdf->Text(23, 188, "INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . $potenciaInversor . " KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
