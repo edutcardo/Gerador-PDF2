@@ -593,16 +593,16 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
 
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
-    $pdf->SetTextColor(85, 85, 85);
-    $pdf->SetTextColor(0, 0, 0);
+    $pdf->SetTextColor(75, 75, 75);
+
     $pdf->Text(37, 112, "$nome");
     $pdf->Text(45, 117.9, "$endereco");
-    $pdf->Text(40, 123.8, "$cidade");
+    $pdf->Text(40, 123.7, "$cidade");
 
     $pdf->Text(98, 177.4, "$metrosOcupados m²");
-    $pdf->Text(102, 182.9, "$qtdmodulosArredondado Placas");
+    $pdf->Text(102, 183, "$qtdmodulosArredondado Placas");
     $pdf->Text(64, 189, "$potenciaGerador kWp");
-    $pdf->Text(65, 194.2, "Não considerado");
+    $pdf->Text(65, 194.3, "Não considerado");
     $pdf->Text(63.1, 200.2, "$geracao kWh");
 
     if (!empty($vendedor)) {
@@ -879,18 +879,18 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
 
     $pdf->Text(62, 186, "$manutencaoRs");
     $pdf->Text(95, 186, "$manutencaoRs");
-    $pdf->Text(126, 186, "$manutencaoRs");
-    $pdf->Text(158, 186, "$manutencaoRs");
+    $pdf->Text(128, 186, "$manutencaoRs");
+    $pdf->Text(159, 186, "$manutencaoRs");
 
     $pdf->Text(63, 195, "$impostoRs");
     $pdf->Text(96, 195, "$impostoRs");
     $pdf->Text(127, 195, "$impostoRs");
     $pdf->Text(159, 195, "$impostoRs");
 
-    $pdf->Text(64, 204, "$demandaRs");
-    $pdf->Text(97, 204, "$demandaRs");
-    $pdf->Text(128, 204, "$demandaRs");
-    $pdf->Text(160, 204, "$demandaRs");
+    $pdf->Text(63, 204, "$demandaRs");
+    $pdf->Text(96, 204, "$demandaRs");
+    $pdf->Text(127, 204, "$demandaRs");
+    $pdf->Text(159, 204, "$demandaRs");
 
     $pdf->Text(66, 211, "$rentabilidadeVerdeRs");
     $pdf->Text(99, 211, "$rentabilidadeAmarelaRs");
