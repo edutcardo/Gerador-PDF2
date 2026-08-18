@@ -438,6 +438,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (!isset($_POST['acao']) || (isset($_
             $custolimpezamodulo = 4.00;
             $custofixo = 1200.00;
         }
+    if (
+        isset($_POST['valor_modulo']) &&
+        is_numeric(str_replace(
+            ',',
+            '.',
+            $_POST['valor_modulo']
+        ))
+    ) {
+        $vm = floatval(str_replace(
+            ',',
+            '.',
+            $_POST['valor_modulo']
+        ));
+        if ($vm > 0) {
+            $custolimpezamodulo = $vm;
+            error_log("PHP PDF: valor_modulo   
+  manual aplicado: R$ " . $vm);
+        }
+    }
     $k6_comissao_val = 0.05; // Comissão de 5%
     $estrutura_j4 = "TELHADO"; // Exemplo, poderia vir do form
     $fator_estrutura_solo = ($estrutura_j4 == "SOLO" ? 1.0 : 1.0); // Ajustar se houver diferença
@@ -522,9 +541,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (!isset($_POST['acao']) || (isset($_
     $pdf->SetXY(18.4, $current_y_pdf); $pdf->MultiCell(170, $line_height,"Economia mensal sistema COM limpeza: R$ " .number_format($econMensalComLimp, 2, ',', '.'), 0, 'L'); $current_y_pdf += $line_height;
     $pdf->SetXY(18.4, $current_y_pdf); $pdf->MultiCell(170, $line_height,"Economia mensal sistema SEM limpeza: R$ " .number_format($econMensalSemLimp, 2, ',', '.'), 0, 'L'); $current_y_pdf += $line_height;
     $pdf->SetXY(18.4, $current_y_pdf); $pdf->MultiCell(170, $line_height,"Diferença na economia mensal: R$ " .number_format($econDiferenca, 2, ',', '.'), 0, 'L'); $current_y_pdf += $line_height + 5; // Espaço maior
-    
-    $pdf->SetFont('helvetica', 'B', 11.5); $pdf->SetXY(18.4, $current_y_pdf);
-    $pdf->MultiCell(173, $line_height-2,"Aderindo ao pacote de três limpezas anuais, além da manutenção preventiva, você ganhará o monitoramento online completo do seu sistema durante 1 ano!", 0, 'J'); // Justificado
+
+    $pdf->SetFont('helvetica', 'B', 11.5);
+    $pdf->SetXY(18.4, $current_y_pdf);
 
     // Nome do arquivo PDF
     $nomeArquivoLimpo = preg_replace('/[^A-Za-z0-9_\-]/', '_', $nome); // Limpa o nome do cliente para o nome do arquivo
