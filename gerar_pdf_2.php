@@ -345,7 +345,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Imprime o resultado final (UMA VEZ SÓ)
-    $pdf->Text(20, 176, $textoEstrutura);
+    $pdf->Text(17, 176, $textoEstrutura);
 
     $pdf->Text(17, 184, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
     $pdf->Text(17, 192, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
