@@ -278,29 +278,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Primeira Página (com a imagem undo.jpeg)
     $pdf->AddPage();  // Adiciona a primeira página
-    $pdf->Image('pg1.png', 0, 0, 210, 297);
+    $pdf->Image('PGAUT1.png', 0, 0, 210, 297);
 
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(21, 94, "Nome: $nome");
-    $pdf->Text(21, 100, "Endereço: $endereco");
-    $pdf->Text(21, 106, "Cidade: $cidade");
-    $pdf->Text(21, 128, "UC $uc");
+    $pdf->SetTextColor(85, 85, 85);
+    $pdf->Text(38, 91.1, "$nome");
+    $pdf->Text(44, 96.8, "$endereco");
+    $pdf->Text(40, 101.9, "$cidade");
+    $pdf->Text(23, 107.6, "UC(s): $uc");
 
-    $pdf->Text(95, 157.7, "$metrosOcupados m²");
-    $pdf->Text(99, 164.70, "$qtdmodulosArredondado Placas");
-    $pdf->Text(63.7, 171, "$potenciaGerador kWp");
-    $pdf->Text(61.7, 178.2, "$mediaArredondado kWh");
-    $pdf->Text(60.7, 185, "$geracaoArredondado kWh");
+    $pdf->Text(98, 156, "$metrosOcupados m²");
+    $pdf->Text(102.3, 161.7, "$qtdmodulosArredondado Placas");
+    $pdf->Text(64, 167.3, "$potenciaGerador kWp");
+    $pdf->Text(64.5, 173.1, "$mediaArredondado kWh");
+    $pdf->Text(64, 178.8, "$geracaoArredondado kWh");
     if (!empty($vendedor)) {
         $pdf->SetFont('helvetica', '', 9);
         $pdf->SetTextColor(100, 100, 100);
-        $pdf->Text(21, 282, "Vendedor: $vendedor");
+        $pdf->Text(38, 231.6, "$vendedor");
         $pdf->SetTextColor(0, 0, 0);
     }
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Text(21, 276, "$dataAtual");
+    $pdf->SetTextColor(85, 85, 85);
+    $pdf->Text(36, 196.35, "$dataAtual");
 
     $pdf->SetFont('helvetica', 'I', 10);
     $pdf->SetTextColor(100, 100, 100);
@@ -309,27 +310,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Segunda Página (com a imagem genérica e gráfico)
     $pdf->AddPage();  // Adiciona a segunda página
-    $pdf->Image('pg2.png', 0, 0, 210, 297);
+    $pdf->Image('PGINV2.png', 0, 0, 210, 297);
     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
   $pdf->AddPage();
-    $pdf->Image('pg3.png', 0, 0, 210, 297);
+    $pdf->Image('PGINV3.png', 0, 0, 210, 297);
 
     // Página 4
     $pdf->AddPage();
-    $pdf->Image('pg4.png', 0, 0, 210, 297);
+    $pdf->Image('PGAUT5.png', 0, 0, 210, 297);
     $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(255, 255, 255);
+    $pdf->Text(148, 32, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
     $pdf->SetTextColor(0, 100, 0);
-    $pdf->Text(148, 43.5, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
-    $pdf->Text(149, 57, "$potenciaGerador kWp");
-    $pdf->Text(152, 71.5, "$metrosOcupados m²");
-    $pdf->Text(152, 85, "$peso kg");
-    $pdf->Text(142, 98.5, "$mediaArredondado kWh mensal");
-    $pdf->Text(142, 112, "$geracaoArredondado kWh mensal");
+    $pdf->Text(149, 44, "$potenciaGerador kWp");
+    $pdf->Text(152, 55, "$metrosOcupados m²");
+    $pdf->Text(152, 66.7, "$peso kg");
+    $pdf->Text(142, 78, "$mediaArredondado kWh mensal");
+    $pdf->Text(142, 90, "$geracaoArredondado kWh mensal");
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(158, 141.5, "$percentualSolarArredondado %");
-    $pdf->Text(23, 180, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " W");
-    $pdf->Text(23, 188, "INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . $potenciaInversor . " KW");
+    $pdf->Text(17, 160, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " W");
+    $pdf->Text(17, 168, "INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . $potenciaInversor . " KW");
     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
     // Verifica se é Solo
@@ -344,30 +345,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Imprime o resultado final (UMA VEZ SÓ)
-    $pdf->Text(23, 196, $textoEstrutura);
+    $pdf->Text(20, 176, $textoEstrutura);
 
-    $pdf->Text(23, 204, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
-    $pdf->Text(23, 212, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
-    $pdf->Text(23, 220, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-    $pdf->Text(23, 228, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO");
+    $pdf->Text(17, 184, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
+    $pdf->Text(17, 192, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
+    $pdf->Text(17, 200, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+    $pdf->Text(17, 208, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO");
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(23, 236, "$textoPadrao");
+    $pdf->Text(17, 216, "$textoPadrao");
     // Página 5
     // Página 5
     $pdf->AddPage();
-    $pdf->Image('pg5.png', 0, 0, 210, 297);
-    $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->SetTextColor(255, 255, 255);
-    $pdf->Text(45, 45, "$gastoSemGeradorAnoRs");
-    $pdf->Text(47.5, 61.5, "$gastoSemGeradorRs");
-    $pdf->Text(91, 45, "$gastoComGeradorAnoRs");
-    $pdf->Text(93, 61.5, "$gastoComGeradorRs");
-    $pdf->Text(135, 45, "$diferencaGastosAnoRs");
-    $pdf->Text(138, 61.5, "$diferencaGastosRs");
-// CÓDIGO CORRIGIDO
-// ... (código anterior da página 5) ...
- $pdf->Text(138, 61.5, "$diferencaGastosRs");
+    $pdf->Image('PGAUT6.png', 0, 0, 210, 297);
+    $pdf->SetFont('helvetica', 'B', 15);
+    $pdf->SetTextColor(85, 85, 85);
+    $pdf->Text(27, 68, "$gastoSemGeradorAnoRs");
+    $pdf->Text(29.5, 96, "$gastoSemGeradorRs");
+    $pdf->Text(91, 68, "$gastoComGeradorAnoRs");
+    $pdf->Text(93, 96, "$gastoComGeradorRs");
+    $pdf->Text(145, 68, "$diferencaGastosAnoRs");
+    $pdf->Text(148, 96, "$diferencaGastosRs");
+    // // CÓDIGO CORRIGIDO
+// // ... (código anterior da página 5) ...
+//  $pdf->Text(138, 61.5, "$diferencaGastosRs");
 
     // --- INÍCIO DA LÓGICA CORRIGIDA ---
 
@@ -386,64 +387,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdf->Text(45, 98.5, '*');
     }
     // --- FIM DA LÓGICA CORRIGIDA ---
-    $pdf->SetFont('helvetica', 'B', 16);
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(147, 98.5, "$precoFinalRs");
-    $pdf->SetFont('helvetica', 'B', 15);
-    $pdf->Text(26, 123, "36 X $valorParcelaRs");
-    $pdf->Text(85, 123, "48 X $valorParcela2Rs");
-    $pdf->Text(146, 123, "60 X $valorParcela3Rs");
-    $pdf->Text(152, 166, "$paybackArredondado anos");
-    $pdf->Text(143, 178, "$retorno25anosRs");
-    
-    // Gráfico de Payback
-    $dados = [];
-    $retornoAcumulado = 0;
-    if (is_numeric($precoFinal) && is_numeric($diferencaGastosAno) && $diferencaGastosAno > 0) {
-        for ($ano = 1; $ano <= 25; $ano++) {
-            $retornoAcumulado += $diferencaGastosAno;
-            $dados[$ano] = $retornoAcumulado - $precoFinal;
-        }
-    }
+    $pdf->SetFont('helvetica', 'B', 18);
+    $pdf->SetTextColor(85, 85, 85);
+    $pdf->Text(136, 123, "Total: $precoFinalRs");
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->SetTextColor(39, 84, 70);
+    $pdf->Text(16, 117.9, "36 x $valorParcelaRs");
+    $pdf->Text(16, 122, "48 x $valorParcela2Rs");
+    $pdf->Text(16, 126.4, "60 x $valorParcela3Rs");
 
-    if (!empty($dados)) {
-        $xInicial = 20; $yInicial = 213; $larguraGrafico = 160; $alturaGrafico = 60;
-        $larguraBarra = 5; $espacoEntreBarras = 2; $linhaBase = $yInicial + $alturaGrafico;
-        $min = min($dados); $max = max($dados);
-        $escalaY = ($max - $min > 0) ? $alturaGrafico / ($max - $min) : 0;
-        $pdf->SetDrawColor(0, 0, 0);
-        $pdf->Line($xInicial, $linhaBase, $xInicial + $larguraGrafico, $linhaBase);
-        $pdf->Line($xInicial, $linhaBase - $alturaGrafico, $xInicial, $linhaBase);
-        $pdf->SetFont('helvetica', 'B', 12);
-        $pdf->Text($xInicial, $yInicial - 10, 'Gráfico de Payback (25 anos)');
-        $xPos = $xInicial;
-        foreach ($dados as $ano => $valor) {
-            $barHeight = abs($valor * $escalaY);
-            $yBarra = ($valor >= 0) ? $linhaBase - $barHeight : $linhaBase;
-            $pdf->SetFillColor(60, 179, 113);
-            $pdf->Rect($xPos, $yBarra, $larguraBarra, $barHeight, 'DF');
-            $pdf->SetFont('helvetica', '', 8);
-            $pdf->Text($xPos - 2, $linhaBase + 3, (string)$ano);
-            if ($ano % 2 == 1) {
-                $valorTexto = 'R$ ' . number_format($valor, 0, ',', '.');                $yTexto = $valor >= 0 ? $yBarra - 5 : $yBarra + $barHeight + 3;
-    $pdf->Text($xPos - 6, $yTexto, $valorTexto); // Linha modificada para dar mais espaço
-            }
-            $xPos += $larguraBarra + $espacoEntreBarras;
-        }
-    } else {
-        $pdf->SetFont('helvetica', 'B', 10);
-        $pdf->Text(20, 230, 'Gráfico de Payback não disponível.');
-    }
 
     // Páginas restantes
     $pdf->AddPage();
-    $pdf->Image('pg6.png', 0, 0, 210, 297);
+    $pdf->Image('PGINV9.png', 0, 0, 210, 297);
     $pdf->AddPage();
-    $pdf->Image('pg7.png', 0, 0, 210, 297);
+    $pdf->Image('PGINV11.png', 0, 0, 210, 297);
     $pdf->AddPage();
-    $pdf->Image('pg8.png', 0, 0, 210, 297);
-    $pdf->AddPage();
-    $pdf->Image('pg9.png', 0, 0, 210, 297);
+    $pdf->Image('PGINV12.png', 0, 0, 210, 297);
+    // $pdf->AddPage();
+    // $pdf->Image('PGINV9.png', 0, 0, 210, 297);
 
     $pdf->Output('arquivo_gerado.pdf', 'I');
 }
