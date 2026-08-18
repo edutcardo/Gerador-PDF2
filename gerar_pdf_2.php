@@ -283,7 +283,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Definir fonte e adicionar conteúdo à primeira página
     $pdf->SetFont('helvetica', 16);
     $pdf->SetTextColor(85, 85, 85);
-    $pdf->Text(38, 91.1, "$nome");
+    $pdf->Text(38, 91, "$nome");
     $pdf->Text(44, 96.8, "$endereco");
     $pdf->Text(40, 101.9, "$cidade");
     $pdf->Text(23, 107.6, "UC(s): $uc");
@@ -296,16 +296,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($vendedor)) {
         $pdf->SetFont('helvetica', '', 9);
         $pdf->SetTextColor(100, 100, 100);
-        $pdf->Text(38, 231.6, "$vendedor");
+        $pdf->Text(39, 231.6, "$vendedor");
         $pdf->SetTextColor(0, 0, 0);
     }
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(85, 85, 85);
-    $pdf->Text(36, 196.35, "$dataAtual");
+    $pdf->Text(35, 196.35, "$dataAtual");
 
     $pdf->SetFont('helvetica', 'I', 10);
     $pdf->SetTextColor(100, 100, 100);
-    $pdf->Text(21, 286, "Este orçamento tem validade de 7 dias.");
+    $pdf->Text(24, 236, "Este orçamento tem validade de 7 dias.");
     $pdf->SetTextColor(0, 0, 0);
 
     // Segunda Página (com a imagem genérica e gráfico)
@@ -389,7 +389,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // --- FIM DA LÓGICA CORRIGIDA ---
     $pdf->SetFont('helvetica', 'B', 18);
     $pdf->SetTextColor(85, 85, 85);
-    $pdf->Text(136, 123, "Total: $precoFinalRs");
+    $pdf->Text(106, 123, "Total: $precoFinalRs");
     $pdf->SetFont('helvetica', 'B', 11);
     $pdf->SetTextColor(39, 84, 70);
     $pdf->Text(16, 117.9, "36 x $valorParcelaRs");
