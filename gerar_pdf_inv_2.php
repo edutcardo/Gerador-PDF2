@@ -774,7 +774,7 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     $pdf->SetTextColor(75, 75, 75);
     $pdf->Text(54, 37, "$qtdmodulosArredondado");
     $pdf->Text(84, 37, "$potenciaInversor kW");
-    $pdf->Text(113, 37, "$potenciaGerador kWp");
+    $pdf->Text(111, 37, "$potenciaGerador kWp");
     $pdf->Text(141, 37, "$geracaoArredondado kWh");
     $pdf->Text(171, 37, "$geracaoAnual kWh");
 
@@ -855,7 +855,27 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     $rentabilidadeAmarelaRs = number_format($rentabilidadeAmarela, 2, ',', '.') . '%';
     $rentabilidadeVermelhaRs = number_format($rentabilidadeVermelha, 2, ',', '.') . '%';
     $rentabilidadeVermelhaP1Rs = number_format($rentabilidadeVermelhaP1, 2, ',', '.') . '%';
-    $pdf->Text(73, 230, $paybackTexto);
+    // Payback centralizado na caixa da arte, encolhendo a fonte se o texto for
+    // longo (ex.: "Nao se paga no periodo analisado") para NUNCA estourar a arte.
+    // Só há dois valores a ajustar caso a caixa mude: o centro X e a largura máx.
+    if (!function_exists('escreverCentralizadoNaCaixa')) {
+        function escreverCentralizadoNaCaixa($pdf, $centroX, $y, $texto, $larguraMax, $tamMin = 7)
+        {
+            $tamOriginal = $pdf->getFontSizePt();
+            $tam = $tamOriginal;
+            // Reduz o corpo da fonte até o texto caber na largura da caixa.
+            while ($tam > $tamMin && $pdf->GetStringWidth($texto) > $larguraMax) {
+                $tam -= 0.5;
+                $pdf->SetFontSize($tam);
+            }
+            $largura = $pdf->GetStringWidth($texto);
+            $pdf->Text($centroX - ($largura / 2), $y, $texto);
+            $pdf->SetFontSize($tamOriginal); // Restaura para não afetar os próximos textos.
+        }
+    }
+    $paybackCentroX = 83;      // Centro horizontal da caixa "Payback Simples".
+    $paybackLarguraMax = 42;   // Largura útil da caixa (mm) antes de estourar.
+    escreverCentralizadoNaCaixa($pdf, $paybackCentroX, 230, $paybackTexto, $paybackLarguraMax);
 
     $seguroRs = 'R$ ' . number_format($seguro, 2, ',', '.');
     $manutencaoRs = 'R$ ' . number_format($manutencao, 2, ',', '.');
@@ -933,7 +953,7 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; 
     escreverCentralizado($pdf, 124, 249, $TaxaLucratividade_formatada);
     escreverCentralizado($pdf, 166, 249, $ROI_formatado);
     // CÓDIGO NOVO E CORRIGIDO
-    $pdf->Text(6, 160, "Tributação vigente: $tributario");
+    $pdf->Text(16, 151, "Regime: $tributario");
     $pdf->SetTextColor(255, 0, 0);
     $pdf->SetFont('helvetica', 10);
     $pdf->SetTextColor(0, 0, 0);
