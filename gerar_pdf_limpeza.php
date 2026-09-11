@@ -438,23 +438,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (!isset($_POST['acao']) || (isset($_
             $custolimpezamodulo = 4.00;
             $custofixo = 1200.00;
         }
-    if (
-        isset($_POST['valor_modulo']) &&
-        is_numeric(str_replace(
-            ',',
-            '.',
-            $_POST['valor_modulo']
-        ))
-    ) {
-        $vm = floatval(str_replace(
-            ',',
-            '.',
-            $_POST['valor_modulo']
-        ));
+    // valor_modulo = PREÇO FINAL por módulo (opcional). Quando informado, o preço
+    // passa a ser EXATAMENTE qtd × valor — sem custo fixo, sem deslocamento, sem comissão.
+    // Em branco → usa a tabela de faixas normal.
+    $preco_final_por_modulo = null;
+    if (isset($_POST['valor_modulo']) && is_numeric(str_replace(',', '.', $_POST['valor_modulo']))) {
+        $vm = floatval(str_replace(',', '.', $_POST['valor_modulo']));
         if ($vm > 0) {
-            $custolimpezamodulo = $vm;
-            error_log("PHP PDF: valor_modulo   
-  manual aplicado: R$ " . $vm);
+            $preco_final_por_modulo = $vm;
+            error_log("PHP PDF: preço FINAL por módulo aplicado: R$ " . $vm);
         }
     }
     $k6_comissao_val = 0.05; // Comissão de 5%
@@ -465,11 +457,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (!isset($_POST['acao']) || (isset($_
     if ($denominador_comissao == 0) $denominador_comissao = 0.00001; // Evitar divisão por zero
     
     error_log("PHP PDF: Valores para B15: QtdModulos={$qtdmodulos}, CustoLimpezaModulo={$custolimpezamodulo}, CustoFixo={$custofixo}, Deslocamento={$deslocamento}");
-    $custototal_B15 = ($qtdmodulos * $custolimpezamodulo + $custofixo + $deslocamento) / $denominador_comissao * $fator_estrutura_solo;
+    $custototal_B15 = ($preco_final_por_modulo !== null)
+        ? ($qtdmodulos * $preco_final_por_modulo)
+        : (($qtdmodulos * $custolimpezamodulo + $custofixo + $deslocamento) / $denominador_comissao * $fator_estrutura_solo);
     error_log("PHP PDF: Custo Total B15 Calculado: R$ " . number_format($custototal_B15, 2));
 
     // Cálculos para pacote de 3 limpezas (exemplo, ajustar conforme sua lógica)
-    $f15_calc_raw = ($qtdmodulos * $custolimpezamodulo * 0.85 + $custofixo * 0.85 + $deslocamento) / $denominador_comissao * $fator_estrutura_solo; // Exemplo de desconto
+    $f15_calc_raw = ($preco_final_por_modulo !== null)
+        ? ($qtdmodulos * $preco_final_por_modulo * 0.85)
+        : (($qtdmodulos * $custolimpezamodulo * 0.85 + $custofixo * 0.85 + $deslocamento) / $denominador_comissao * $fator_estrutura_solo); // Exemplo de desconto
     $f15_text = "R$ " . number_format($f15_calc_raw, 2, ',', '.');
     $g15_calc_raw = $f15_calc_raw * 3; // Custo total do pacote
     $g15_text = "R$ " . number_format($g15_calc_raw, 2, ',', '.');

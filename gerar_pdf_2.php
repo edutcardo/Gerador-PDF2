@@ -16,6 +16,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $potenciaModulo = $_POST['potenciaModulo'];
     $numeroDeFases = $_POST['numeroDeFases'];
     $precoKit = $_POST['precoKit'];
+    $precoKitPrazo = isset($_POST['precoKitPrazo']) && $_POST['precoKitPrazo'] !== ''
+        ? floatval($_POST['precoKitPrazo'])
+        : 0;
     $irradiacao = $_POST['irradiacao'];
     // Converter para número
     $irradiacaoValor = floatval($irradiacao);
@@ -182,7 +185,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // ALTERAÇÃO PRINCIPAL: O preço final agora é exatamente o preço do kit.
     $precoFinal = $precoKit;
     $precoFinalRs = 'R$ ' . number_format($precoFinal, 2, ',', '.');
-    
+
+    $precoFinalPrazo = $precoKitPrazo;
+    $precoFinalPrazoRs = 'R$ ' . number_format($precoFinalPrazo, 2, ',', '.');
+
     // ==============================================================================
     // FIM DA MODIFICAÇÃO
     // ==============================================================================
@@ -350,10 +356,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->Text(17, 184, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
     $pdf->Text(17, 192, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
     $pdf->Text(17, 200, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
-    $pdf->Text(17, 208, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO");
+    $pdf->Text(17, 208, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
+    $pdf->Text(17, 216, "1 ANO DE SEGURO INCLUSO");
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->SetTextColor(0, 0, 0);
-    $pdf->Text(17, 216, "$textoPadrao");
+    $pdf->Text(17, 224, "$textoPadrao");
     // Página 5
     // Página 5
     $pdf->AddPage();
@@ -389,7 +396,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // --- FIM DA LÓGICA CORRIGIDA ---
     $pdf->SetFont('helvetica', 'B', 18);
     $pdf->SetTextColor(85, 85, 85);
-    $pdf->Text(106, 123, "Total: $precoFinalRs");
+    if ($precoFinalPrazo > 0) {
+        $pdf->Text(106, 120, "À vista: $precoFinalRs");
+        $pdf->Text(106, 127, "A prazo: $precoFinalPrazoRs");
+    } else {
+        // fallback: comportamento antigo (só o total à vista)
+        $pdf->Text(106, 123, "Total: $precoFinalRs");
+    }
     $pdf->SetFont('helvetica', 'B', 11);
     $pdf->SetTextColor(39, 84, 70);
     $pdf->Text(16, 117.9, "36 x $valorParcelaRs");
