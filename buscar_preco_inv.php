@@ -20,14 +20,21 @@ if ($conn->connect_error) {
 }
 
 // Define a query base
-$sql = "SELECT titulo, precoDoIntegrador, codProd, marca, fabricante, potenciaInversor, potenciaModulo, tensaoSaida, componentes, potenciaGerador 
+$sql = "SELECT titulo, precoDoIntegrador, codProd, marca, fabricante, potenciaInversor, potenciaModulo, tensaoSaida, componentes, potenciaGerador, estrutura
         FROM produtos";
 
 // Modifica a lógica com base na estrutura selecionada
 if (strtoupper($estrutura) === 'SOLO') {
-    // Apenas filtra por inversores
-    $sql .= " WHERE titulo REGEXP '[[:<:]]75kw[[:>:]]' LIMIT 200";
+    // Filtra por potência (título) E pela coluna estrutura = 'SOLO'. Antes só filtrava
+    // pelo título ("75kw"), sem checar a coluna estrutura nem trazê-la na resposta — a
+    // busca podia devolver produto de Telhado/Carport misturado, e o front (useInvestimento.ts)
+    // seleciona sempre o primeiro resultado sem validar o tipo. Achado 18/09/2026: uma
+    // proposta Solo saiu com preço ~19% mais caro, compatível com um item errado sendo
+    // selecionado primeiro.
+    $sql .= " WHERE titulo REGEXP '[[:<:]]75kw[[:>:]]' AND estrutura = ? LIMIT 200";
     $stmt = $conn->prepare($sql);
+    $estruturaSolo = 'SOLO';
+    $stmt->bind_param("s", $estruturaSolo);
 } else {
     // Define margem de tolerância e prepara 'where' pela potencia verbal
     $tolerancia = 0.5;
