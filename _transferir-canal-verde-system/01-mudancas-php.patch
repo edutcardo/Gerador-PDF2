@@ -1,0 +1,1074 @@
+diff --git a/gerar_pdf_2.php b/gerar_pdf_2.php
+index 1574749..8bffb01 100644
+--- a/gerar_pdf_2.php
++++ b/gerar_pdf_2.php
+@@ -1,5 +1,7 @@
+ <?php
+ require_once('vendor/autoload.php'); // Ou o caminho correto, se você não estiver usando o Composer
++// Funções de desenho compartilhadas pelas duas modalidades de proposta.
++require_once __DIR__ . '/pdf_helpers.php';
+ 
+ // Verifica se o formulário foi enviado
+ if ($_SERVER["REQUEST_METHOD"] == "POST") {
+@@ -322,25 +324,92 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
+   $pdf->AddPage();
+     $pdf->Image('PGINV3.png', 0, 0, 210, 297);
+ 
+-    // Página 4
++    // Página PGAUT5 — estudo de viabilidade + composição da proposta
+     $pdf->AddPage();
+     $pdf->Image('PGAUT5.png', 0, 0, 210, 297);
+-    $pdf->SetFont('helvetica', 'B', 14);
+-    $pdf->SetTextColor(255, 255, 255);
+-    $pdf->Text(148, 32, "$qtdmodulosArredondado X " . round($potenciaModulo) . " W");
+-    $pdf->SetTextColor(0, 100, 0);
+-    $pdf->Text(149, 44, "$potenciaGerador kWp");
+-    $pdf->Text(152, 55, "$metrosOcupados m²");
+-    $pdf->Text(152, 66.7, "$peso kg");
+-    $pdf->Text(142, 78, "$mediaArredondado kWh mensal");
+-    $pdf->Text(142, 90, "$geracaoArredondado kWh mensal");
+-    $pdf->SetTextColor(0, 0, 0);
+-    $pdf->Text(17, 160, "$qtdmodulosArredondado MÓDULO SOLAR SUNOVA/OSDA/RONMA " . round($potenciaModulo) . " W");
+-    $pdf->Text(17, 168, "INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET " . $potenciaInversor . " KW");
++
++    // -----------------------------------------------------------------------
++    // Coordenadas da arte PGAUT5, em milímetros (A4 210x297).
++    // A arte é a MESMA da PGINV14 (conferida pixel a pixel), por isso as
++    // medidas são idênticas às do gerador de investimento. Trocou a arte?
++    // Ajuste SÓ as constantes deste bloco.
++    // -----------------------------------------------------------------------
++    // Linhas da tabela do topo: Potência, Área Ocupada, Peso, Base do Consumo
++    // e Geração Estimada — valem para as duas colunas.
++    $viabLinhasY = array(43.2, 54.7, 66.2, 78.0, 89.5);
++    $viabColunaLargura = 36; // largura útil da coluna (a caixa da arte tem 38mm)
++
++    // Um "bloco" é a metade da página dedicada a uma tecnologia: a coluna dela
++    // na tabela do topo + a lista de composição + as caixas de preço + payback.
++    $blocosLayout = [
++        'LONGI' => [
++            'viabColunaX' => 137,   // centro da coluna "LONGI - BC"
++            'xQtd' => 16,           // coluna de quantidade da lista
++            'xDesc' => 27,          // coluna de descrição
++            'larguraDesc' => 105,   // vai até x=132, logo antes das caixas de preço
++            'yLista' => 140,        // 1a linha, abaixo de "LONGI - Tecnologia BC"
++            'alturaLista' => 45,    // até o topo da faixa "Payback:"
++            'xPreco' => 153,        // à direita dos rótulos da arte, que acabam em x=150
++            'larguraPreco' => 45,   // até x=198, borda interna da caixa escura
++            'yVista' => 152,
++            'yPrazo' => 166.8,      // as linhas de prazo ficam centradas na caixa
++            'passoPrazo' => 3.8,
++            'xPayback' => 50,       // logo após o rótulo "Payback:"
++            'yPayback' => 189,
++            'larguraPayback' => 57,
++        ],
++        'N-TYPE' => [
++            'viabColunaX' => 179,   // centro da coluna "N-TYPE"
++            'xQtd' => 16,
++            'xDesc' => 27,
++            'larguraDesc' => 105,
++            'yLista' => 205,        // 1a linha, abaixo de "Tecnologia N-TYPE"
++            'alturaLista' => 45,
++            'xPreco' => 153,
++            'larguraPreco' => 45,
++            'yVista' => 222,
++            'yPrazo' => 237.3,
++            'passoPrazo' => 3.8,
++            'xPayback' => 50,
++            'yPayback' => 256,
++            'larguraPayback' => 57,
++        ],
++    ];
++
++    // ----------------------------------------------------------------------
++    // Tempo de payback, exibido de forma simples (ex.: "1 ano e 6 meses").
++    // $payback já vem calculado em ANOS mais acima (preço final dividido pela
++    // economia anual); aqui ele só vira texto.
++    // ----------------------------------------------------------------------
++    $anosPayback = (int) floor($payback);
++    $mesesPayback = (int) round(($payback - $anosPayback) * 12);
++
++    // O arredondamento dos meses pode chegar a 12; normaliza para +1 ano.
++    if ($mesesPayback >= 12) {
++        $anosPayback += 1;
++        $mesesPayback = 0;
++    }
++
++    if ($payback <= 0) {
++        $paybackTexto = 'Nao se paga no periodo analisado';
++    } else {
++        $partes = [];
++        if ($anosPayback > 0) {
++            $partes[] = $anosPayback . ($anosPayback == 1 ? ' ano' : ' anos');
++        }
++        if ($mesesPayback > 0) {
++            $partes[] = $mesesPayback . ($mesesPayback == 1 ? ' mês' : ' meses');
++        }
++        // Payback menor que meio mês: evita string vazia.
++        $paybackTexto = $partes ? implode(' e ', $partes) : 'Menos de 1 mês';
++    }
++
++    // ----------------------------------------------------------------------
++    // Composição da proposta: a lista é FIXA nesta modalidade (o autoconsumo
++    // não recebe tabela de componentes do kit).
++    // ----------------------------------------------------------------------
+     $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
+     $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
+-    // Verifica se é Solo
+-    $textoEstrutura = "";
+ 
+     if ($solo === true) {
+         $textoEstrutura = "ESTRUTURA SOLO";
+@@ -350,21 +419,124 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
+         $textoEstrutura = "$qtdEstrutrura ESTRUTURA COLONIAL/FIBROMETAL/FIBROMADEIRA/METÁLICO";
+     }
+ 
+-    // Imprime o resultado final (UMA VEZ SÓ)
+-    $pdf->Text(17, 176, $textoEstrutura);
++    $itensComposicao = [
++        // Sem marca aqui de propósito: cada tecnologia troca esta linha pelo
++        // painel dela (ver trocarPainelNaComposicao mais abaixo).
++        ['qtd' => '', 'desc' => "$qtdmodulosArredondado MÓDULO SOLAR"],
++        ['qtd' => '', 'desc' => "INVERSOR 220V CHINT/SAJ/SOLIS/SOLPLANET $potenciaInversor KW"],
++        ['qtd' => '', 'desc' => $textoEstrutura],
++        ['qtd' => '', 'desc' => "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612"],
++        ['qtd' => '', 'desc' => "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612"],
++        ['qtd' => '', 'desc' => "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART"],
++        ['qtd' => '', 'desc' => "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)"],
++        ['qtd' => '', 'desc' => "1 ANO DE SEGURO INCLUSO"],
++        ['qtd' => '', 'desc' => $textoPadrao],
++    ];
++
++    // Valores da tabela "Estudo de viabilidade", na ordem de $viabLinhasY.
++    $viabValoresLongi = array(
++        number_format((float) $potenciaGerador, 2, ',', '.') . ' kWp',
++        number_format((float) $metrosOcupados, 2, ',', '.') . ' m²',
++        number_format((float) $peso, 0, ',', '.') . ' kg',
++        number_format((float) $mediaArredondado, 0, ',', '.') . ' kWh/mês',
++        number_format((float) $geracaoArredondado, 0, ',', '.') . ' kWh/mês',
++    );
++
++    // Linhas da caixa "À prazo". Quando o formulário manda um valor de preço a
++    // prazo, é ele que a arte quer mostrar; sem esse valor, caímos nas 3
++    // parcelas simuladas — mesma regra que a página de análise já usava.
++    if ($precoFinalPrazo > 0) {
++        $linhasPrazo = [$precoFinalPrazoRs];
++    } else {
++        $linhasPrazo = [
++            "36x de $valorParcelaRs",
++            "48x de $valorParcela2Rs",
++            "60x de $valorParcela3Rs",
++        ];
++    }
++
++    // =======================================================================
++    // PONTO ÚNICO DE LIGAÇÃO DAS TECNOLOGIAS — é SÓ AQUI que se mexe.
++    // -----------------------------------------------------------------------
++    // Hoje o orçamento que chega é um só, então o bloco N-TYPE repete os
++    // números do LONGI. É TEMPORÁRIO e combinado, para a página não sair pela
++    // metade enquanto a N-TYPE não tem valores próprios.
++    //
++    // ATENÇÃO: enquanto isso durar, a proposta mostra o MESMO preço nas duas
++    // tecnologias, e o cliente vê. Não publique sem os valores reais da
++    // N-TYPE, ou sem combinar que as duas custam igual.
++    //
++    // O painel JÁ é diferente entre as duas — é o único item da composição que
++    // muda. A faixa de potência é TEXTO de catálogo, não a potência do módulo
++    // do kit: o cálculo da quantidade de módulos continua usando
++    // $potenciaModulo, que é o número de verdade.
++    // =======================================================================
++    $potenciaPainelTexto = '600-625 W';
++    $descricaoPainelLongi = "MÓDULO SOLAR LONGI $potenciaPainelTexto";
++    $descricaoPainelNtype = "MÓDULO SOLAR ZNSHINE / RONMA / OSDA / WEG $potenciaPainelTexto";
++
++    $dadosLongi = [
++        'itens' => trocarPainelNaComposicao($itensComposicao, $descricaoPainelLongi),
++        'viabilidade' => $viabValoresLongi,
++        'vista' => $precoFinalRs,
++        'prazo' => $linhasPrazo,
++        'payback' => $paybackTexto,
++    ];
++
++    // TODO(N-TYPE): trocar 'vista', 'prazo', 'payback' e 'viabilidade' pelos
++    // valores próprios assim que o formulário começar a enviá-los.
++    $dadosNtype = $dadosLongi;
++    $dadosNtype['itens'] = trocarPainelNaComposicao($itensComposicao, $descricaoPainelNtype);
++
++    $blocos = [
++        'LONGI' => $dadosLongi,
++        'N-TYPE' => $dadosNtype,
++    ];
++
++    // ----------------------------------------------------------------------
++    // Desenho da página: uma coluna na tabela do topo e um bloco de
++    // composição/preços para cada tecnologia.
++    // ----------------------------------------------------------------------
++    $pdf->SetFont('helvetica', 'B', 11);
++    $pdf->SetTextColor(50, 50, 50);
++    foreach ($blocos as $tecnologia => $dados) {
++        $centroX = $blocosLayout[$tecnologia]['viabColunaX'];
++        foreach ($dados['viabilidade'] as $indice => $valor) {
++            escreverCentralizadoNaCaixa($pdf, $centroX, $viabLinhasY[$indice], $valor, $viabColunaLargura);
++        }
++    }
++
++    foreach ($blocos as $tecnologia => $dados) {
++        escreverBlocoTecnologia($pdf, $dados, $blocosLayout[$tecnologia]);
++    }
+ 
+-    $pdf->Text(17, 184, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
+-    $pdf->Text(17, 192, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
+-    $pdf->Text(17, 200, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+-    $pdf->Text(17, 208, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
+-    $pdf->Text(17, 216, "1 ANO DE SEGURO INCLUSO");
++    // Restaura a fonte/cor padrão antes da próxima página.
+     $pdf->SetFont('helvetica', 'B', 12);
+     $pdf->SetTextColor(0, 0, 0);
+-    $pdf->Text(17, 224, "$textoPadrao");
+-    // Página 5
+-    // Página 5
++    // Página PGAUT7 — análise financeira + garantia e degradação.
++    // Substitui a antiga PGAUT6. O topo ("Análise Financeira") é idêntico nas
++    // duas artes, por isso os 6 valores abaixo mantêm as coordenadas; o que
++    // mudou é a seção de garantia, que agora vem com a coluna "Marca" vazia
++    // na arte e é preenchida por código.
+     $pdf->AddPage();
+-    $pdf->Image('PGAUT6.png', 0, 0, 210, 297);
++    $pdf->Image('PGAUT7.png', 0, 0, 210, 297);
++
++    // Coluna "Marca" da tabela de garantia. Duas linhas por célula, como a
++    // arte comporta. Conteúdo definido pelo time comercial.
++    $marcaColunaX = 107;      // centro da coluna "Marca"
++    $marcaColunaLargura = 50; // largura útil da célula
++    $marcasGarantia = [
++        // [linha de cima, linha de baixo, y da 1a linha, y da 2a linha]
++        ['ZNSHINE, RONMA,', 'OSDA, LONGI, WEG', 153.5, 159.0],   // Inversor
++        ['CHINT, GROWATT,', 'SAJ, SOFAR, WEG', 169.0, 174.5],    // Módulo FV
++    ];
++    $pdf->SetFont('helvetica', 'B', 11);
++    $pdf->SetTextColor(85, 85, 85);
++    foreach ($marcasGarantia as $linha) {
++        escreverCentralizadoNaCaixa($pdf, $marcaColunaX, $linha[2], $linha[0], $marcaColunaLargura);
++        escreverCentralizadoNaCaixa($pdf, $marcaColunaX, $linha[3], $linha[1], $marcaColunaLargura);
++    }
++
+     $pdf->SetFont('helvetica', 'B', 15);
+     $pdf->SetTextColor(85, 85, 85);
+     $pdf->Text(27, 68, "$gastoSemGeradorAnoRs");
+@@ -394,20 +566,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
+         $pdf->Text(45, 98.5, '*');
+     }
+     // --- FIM DA LÓGICA CORRIGIDA ---
++    // Bloco de preço: a PGAUT7 não tem caixa para ele, é texto solto na faixa
++    // livre entre as notas de rodapé (acabam em y=113) e o título "Garantia e
++    // degradação" (começa em y=130). São 15mm — na PGAUT6 eram ~23, por isso
++    // as alturas abaixo subiram em relação à arte antiga.
++    // O mesmo valor também aparece na PGAUT5, por tecnologia.
+     $pdf->SetFont('helvetica', 'B', 18);
+     $pdf->SetTextColor(85, 85, 85);
+     if ($precoFinalPrazo > 0) {
+-        $pdf->Text(106, 120, "À vista: $precoFinalRs");
+-        $pdf->Text(106, 127, "A prazo: $precoFinalPrazoRs");
++        $pdf->Text(106, 115, "À vista: $precoFinalRs");
++        $pdf->Text(106, 121.5, "A prazo: $precoFinalPrazoRs");
+     } else {
+         // fallback: comportamento antigo (só o total à vista)
+-        $pdf->Text(106, 123, "Total: $precoFinalRs");
++        $pdf->Text(106, 118, "Total: $precoFinalRs");
+     }
+     $pdf->SetFont('helvetica', 'B', 11);
+     $pdf->SetTextColor(39, 84, 70);
+-    $pdf->Text(16, 117.9, "36 x $valorParcelaRs");
+-    $pdf->Text(16, 122, "48 x $valorParcela2Rs");
+-    $pdf->Text(16, 126.4, "60 x $valorParcela3Rs");
++    $pdf->Text(16, 116, "36 x $valorParcelaRs");
++    $pdf->Text(16, 120.1, "48 x $valorParcela2Rs");
++    $pdf->Text(16, 124.2, "60 x $valorParcela3Rs");
+ 
+ 
+     // Páginas restantes
+diff --git a/gerar_pdf_inv_2.php b/gerar_pdf_inv_2.php
+index 4c7f71e..fbf02f5 100644
+--- a/gerar_pdf_inv_2.php
++++ b/gerar_pdf_inv_2.php
+@@ -1,6 +1,8 @@
+ <?php
+ session_start();
+ require_once('vendor/autoload.php'); // Ou o caminho correto, se você não estiver usando o Composer
++// Funções de desenho compartilhadas pelas duas modalidades de proposta.
++require_once __DIR__ . '/pdf_helpers.php';
+ 
+ 
+ // Verifica se o formulário foi enviado
+@@ -266,7 +268,7 @@ if ($media > 0) {
+ 
+     $manutencao = calcularManutencao($qtdmodulosArredondado);
+ 
+-    //Cálculos PGINV5
++    // Cálculos de gasto com/sem gerador (usados no payback e na análise financeira)
+     $demandaMinima = 0; // Inicializa a variável
+ 
+     if ($numeroDeFases == 'mono rural') {
+@@ -587,7 +589,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
+     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
+     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
+ 
+-    // Primeira Página (com a imagem undo.jpeg)
++    // Página PGINV1 — capa, dados do cliente e resumo do sistema
+     $pdf->AddPage();  // Adiciona a primeira página
+     $pdf->Image('PGINV1.png', 0, 0, 210, 297);
+ 
+@@ -620,13 +622,13 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
+     $pdf->Text(23, 286, "Este orçamento tem validade de 7 dias.");
+     $pdf->SetTextColor(0, 0, 0);
+ 
+-    // Segunda Página (com a imagem genérica e gráfico)
++    // Página PGINV2 — institucional
+     $pdf->AddPage();  // Adiciona a segunda página
+     $pdf->Image('PGINV2.png', 0, 0, 210, 297);
+     $pdf->SetMargins(0, 0, 0); // Remove as margens esquerda, superior e direita
+     $pdf->SetAutoPageBreak(FALSE); // Desativa a quebra automática de página
+ 
+-    // Terceira Página (com a imagem undo.jpeg)
++    // Página PGINV3 — institucional
+     $pdf->AddPage();  // Adiciona a primeira página
+     $pdf->Image('PGINV3.png', 0, 0, 210, 297);
+ 
+@@ -652,136 +654,65 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
+     // $pdf->SetFont('helvetica', 'B', 16);
+     // $pdf->SetTextColor(0, 0, 0);
+ 
+-    // Quinta Página (com a imagem undo.jpeg)
+-    $pdf->AddPage();  // Adiciona a primeira página
+-    $pdf->Image('PGINV5.png', 0, 0, 210, 297);
+-    $pdf->SetFont('helvetica', 'B', 13.5);
+-    $pdf->SetTextColor(50, 50, 50);
+-
+-    $componentes = html_entity_decode($componentes);
+-    $componentes = str_replace(
+-        ["<\/th>", "<\/td>", "<\/tr>", "<\/table>"], 
+-        ["</th>", "</td>", "</tr>", "</table>"], 
+-        $componentes
+-    );
+-    
+-    // Extrair os dados da tabela
+-    preg_match_all('/<td>\s*(.?)\s<\/td>\s*<td>\s*(.?)\s<\/td>\s*<td>\s*(.?)\s<\/td>/', $componentes, $matches, PREG_SET_ORDER);
+-    
+-// Posição Y inicial e altura da linha (permanecem os mesmos)
+-$y = 66;
+-$linhaAltura = 8;
+-$maxY = 280;
+-
+-// 1. DEFINIÇÃO DAS MARGENS E POSIÇÕES (baseado no seu código)
+-$margemEsquerda = 16;  // Você começa a escrever em X = 16
+-$margemDireita = 10;   // Uma margem segura de 10mm no lado direito
+-$posicaoXDescricao = 27; // A descrição começa na posição X = 27
+-
+-// 2. CÁLCULO DA LARGURA DA COLUNA DE QUANTIDADE
+-// A quantidade vai da margem esquerda (16) até o início da descrição (27)
+-$larguraQuantidade = $posicaoXDescricao - $margemEsquerda; // Resultado será 11
+-
+-// 3. CÁLCULO DA LARGURA DA COLUNA DE DESCRIÇÃO
+-// A largura da descrição é a largura total da página (210mm para A4)
+-// menos a posição onde a descrição começa, menos a margem direita.
+-$larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita; // Ex: 210 - 27 - 10 = 173
+-
+-// ========================================================
+-    // Função para adicionar uma nova página se necessário
+-    function verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY) {
+-        if ($y + $linhaAltura > $maxY) {
+-            $pdf->AddPage(); // Adiciona uma nova página
+-            return 10; // Reseta a posição Y após a nova página
+-        }
+-        return $y;
+-    }
+-    
+-    // Escrever os dados extraídos no PDF
+-    if (empty($matches)) {
+-        if (strtoupper($estrutura) == 'SOLO') {
+-            $descricaoEstrutura = "ESTRUTURA DE SOLO BIPOSTE AÇO GALVANIZADO";
+-        } elseif (strtoupper($estrutura) == 'TELHADO') {
+-            // Quando você decidir a descrição para telhado, coloque aqui.
+-            // Por enquanto, vou colocar um exemplo:
+-            $descricaoEstrutura = "ESTRUTURA PARA TELHADO";
+-        } else {
+-            // Opcional: Uma descrição padrão caso a variável não seja nem SOLO nem TELHADO
+-            $descricaoEstrutura = "ESTRUTURA A DEFINIR";
+-        }
+-
+-        // 2. Imprime o bloco de texto, usando a variável que acabamos de definir
+-        $pdf->Text(16, $y + 3, "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO AESOLAR/ZNSHINE/SINE/RONMA $potenciaModulo W");
+-        $pdf->Text(16, $y + 12, "$multiplicador INVERSOR SOLAR CHINT/SAJ/GROWATT $fabricante DE $potenciaInversorUnitario KW");
+-        $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
+-        $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
+-        $pdf->Text(16, $y + 20, $qtdEstrutrura . " " . $descricaoEstrutura); // <-- AQUI USAMOS A VARIÁVEL
+-        $pdf->Text(16, 94, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612");
+-        $pdf->Text(16, 102, "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612");
+-        $pdf->Text(16, 110, "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART");
+-        $pdf->Text(16, 118, "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)");
+-        $pdf->Text(16, 126, "$textoPadrao");
+-        $pdf->Text(16, 134, "$texto_seguranca");
+-        $pdf->Text(16, 142, "$texto_final_adicionais");
+-
+-
+-        // --- Configurações da Fonte (defina antes do loop) ---
+-    } else {
+-    // --- Configurações da Fonte ---
+-    $defaultFontSize = 13.5;
+-    $minFontSize = 7;
+-    $fontStyle = 'B';
+-    $fontFamily = 'helvetica';
+-
+-    foreach ($matches as $match) {
+-        $sku = trim($match[1]);
+-        $quantidade = (trim($match[2])) * $multiplicador;
+-        $descricao = trim($match[3]);
+-        
+-        $y = verificaQuebraPagina($pdf, $y, $linhaAltura, $maxY);
+-
+-        // --- Impressão da Quantidade ---
+-        // A fonte da quantidade deve ser a padrão
+-        $pdf->SetFont($fontFamily, $fontStyle, $defaultFontSize);
+-        $pdf->SetXY(16, $y); // Simplificado o Y para alinhar melhor
+-        $pdf->Cell($larguraQuantidade, $linhaAltura, $quantidade, 0, 0, 'L');
+-        
+-        // --- Lógica para a Descrição ---
+-        $currentFontSize = $defaultFontSize;
+-        $pdf->SetFont($fontFamily, $fontStyle, $currentFontSize);
+-        
+-        // Loop de ajuste de fonte
+-        while ($pdf->GetStringWidth($descricao) > $larguraDescricao && $currentFontSize > $minFontSize) {
+-            $currentFontSize -= 0.5;
+-            $pdf->SetFont($fontFamily, $fontStyle, $currentFontSize);
+-        }
+-        
+-        // Escreve a descrição com a fonte já ajustada
+-        $pdf->SetXY(27, $y);
+-        // O último parâmetro '1' move o cursor para a próxima linha automaticamente
+-        $pdf->Cell($larguraDescricao, $linhaAltura, $descricao, 0, 1, 'L'); 
+-        
+-        // Atualiza a posição Y para o próximo item
+-        $y = $pdf->GetY();
+-    }
+-    // Garante que a fonte volte ao normal para qualquer coisa escrita DEPOIS do loop
+-    $pdf->SetFont($fontFamily, $fontStyle, $defaultFontSize);
+-}
+-
+-
+-    $pdf->SetFont('helvetica', 'B', 12);
+-
+-    $pdf->SetTextColor(75, 75, 75);
+-    $pdf->Text(54, 37, "$qtdmodulosArredondado");
+-    $pdf->Text(84, 37, "$potenciaInversor kW");
+-    $pdf->Text(111, 37, "$potenciaGerador kWp");
+-    $pdf->Text(141, 37, "$geracaoArredondado kWh");
+-    $pdf->Text(171, 37, "$geracaoAnual kWh");
+-
+-    // Tempo de payback exibido de forma simples (ex.: "1 ano e 6 meses").
+-    // Base: retorno anual da geração compensada (retornoVerde * 12) — a mesma que o
+-    // gráfico anterior usava e exibia corretamente. NÃO usar $diferencaGastosAno aqui:
+-    // neste PDF de investidor o consumo próprio é ~zero, então aquela base estoura o payback.
++    // Página PGINV14 — estudo de viabilidade + composição da proposta
++    $pdf->AddPage();
++    $pdf->Image('PGINV14.png', 0, 0, 210, 297);
++
++    // -----------------------------------------------------------------------
++    // Coordenadas da arte PGINV14, em milímetros (A4 210x297), conferidas
++    // sobre o PNG. Trocou a arte? Ajuste SÓ as constantes deste bloco.
++    // -----------------------------------------------------------------------
++    // Linhas da tabela do topo: Potência, Área Ocupada, Peso, Base do Consumo
++    // e Geração Estimada — valem para as duas colunas.
++    $viabLinhasY = array(43.2, 54.7, 66.2, 78.0, 89.5);
++    $viabColunaLargura = 36; // largura útil da coluna (a caixa da arte tem 38mm)
++
++    // Um "bloco" é a metade da página dedicada a uma tecnologia: a coluna dela
++    // na tabela do topo + a lista de composição + as caixas de preço + payback.
++    // Os dois blocos têm a mesma largura e a mesma altura de lista; só mudam
++    // de altura na página.
++    $blocosLayout = [
++        'LONGI' => [
++            'viabColunaX' => 137,   // centro da coluna "LONGI - BC"
++            'xQtd' => 16,           // coluna de quantidade da lista
++            'xDesc' => 27,          // coluna de descrição
++            'larguraDesc' => 105,   // vai até x=132, logo antes das caixas de preço
++            'yLista' => 140,        // 1a linha, abaixo de "LONGI - Tecnologia BC"
++            'alturaLista' => 45,    // até o topo da faixa "Payback:"
++            'xPreco' => 153,        // à direita dos rótulos da arte, que acabam em x=150
++            'larguraPreco' => 45,   // até x=198, borda interna da caixa escura
++            'yVista' => 152,
++            'yPrazo' => 166.8,      // as linhas de prazo ficam centradas na caixa
++            'passoPrazo' => 3.8,
++            'xPayback' => 50,       // logo após o rótulo "Payback:"
++            'yPayback' => 189,
++            'larguraPayback' => 57,
++        ],
++        'N-TYPE' => [
++            'viabColunaX' => 179,   // centro da coluna "N-TYPE"
++            'xQtd' => 16,
++            'xDesc' => 27,
++            'larguraDesc' => 105,
++            'yLista' => 205,        // 1a linha, abaixo de "Tecnologia N-TYPE"
++            'alturaLista' => 45,
++            'xPreco' => 153,
++            'larguraPreco' => 45,
++            'yVista' => 222,
++            'yPrazo' => 237.3,
++            'passoPrazo' => 3.8,
++            'xPayback' => 50,
++            'yPayback' => 256,
++            'larguraPayback' => 57,
++        ],
++    ];
++
++    // ----------------------------------------------------------------------
++    // Tempo de payback, exibido de forma simples (ex.: "1 ano e 6 meses").
++    // Base: retorno anual da geração compensada (retornoVerde * 12) — a mesma
++    // que o gráfico anterior usava e exibia corretamente. NÃO usar
++    // $diferencaGastosAno aqui: neste PDF de investidor o consumo próprio é
++    // ~zero, então aquela base estoura o payback.
++    // ----------------------------------------------------------------------
+     $retornoAnualVerde = $retornoVerde * 12;
+     if ($retornoAnualVerde > 0) {
+         $paybackAnos = $precoFinal / $retornoAnualVerde;
+@@ -813,37 +744,151 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita;
+         $paybackTexto = $partes ? implode(' e ', $partes) : 'Menos de 1 mês';
+     }
+ 
++    // ----------------------------------------------------------------------
++    // Composição da proposta: lista de itens do kit.
++    // ----------------------------------------------------------------------
++    $componentes = html_entity_decode($componentes);
++    $componentes = str_replace(
++        ["<\/th>", "<\/td>", "<\/tr>", "<\/table>"],
++        ["</th>", "</td>", "</tr>", "</table>"],
++        $componentes
++    );
++
++    // Extrair os dados da tabela
++    preg_match_all('/<td>\s*(.?)\s<\/td>\s*<td>\s*(.?)\s<\/td>\s*<td>\s*(.?)\s<\/td>/', $componentes, $matches, PREG_SET_ORDER);
+ 
++    $itensComposicao = [];
+ 
+-    // Definir fonte e adicionar conteúdo à quinta página
+-    $pdf->SetFont('helvetica', 12);
+-    $pdf->SetTextColor(0, 0, 0);
++    if (empty($matches)) {
++        // Sem tabela de componentes: monta a composição padrão do kit.
++        if (strtoupper($estrutura) == 'SOLO') {
++            $descricaoEstrutura = "ESTRUTURA DE SOLO BIPOSTE AÇO GALVANIZADO";
++        } elseif (strtoupper($estrutura) == 'TELHADO') {
++            // Quando você decidir a descrição para telhado, coloque aqui.
++            $descricaoEstrutura = "ESTRUTURA PARA TELHADO";
++        } else {
++            // Descrição padrão caso a estrutura não seja nem SOLO nem TELHADO.
++            $descricaoEstrutura = "ESTRUTURA A DEFINIR";
++        }
+ 
+-    // Sexta Página (com a imagem undo.jpeg)
+-    $pdf->AddPage();  // Adiciona a primeira página
+-    $pdf->Image('PGINV6.png', 0, 0, 210, 297);
++        $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
++        $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
+ 
+-    if (!empty($adicionalAPlus)) {
+-        $adicionalAPlus = "*";
+-    }
+-    if (!empty($adicionalIndicacao)) {
+-        $adicionalIndicacao = "*";
++        $itensComposicao = [
++            // Sem marca aqui de propósito: cada tecnologia troca esta linha
++            // pelo painel dela (ver trocarPainelNaComposicao mais abaixo).
++            ['qtd' => '', 'desc' => "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO"],
++            ['qtd' => '', 'desc' => "$multiplicador INVERSOR SOLAR CHINT/SAJ/GROWATT $fabricante DE $potenciaInversorUnitario KW"],
++            ['qtd' => '', 'desc' => "$qtdEstrutrura $descricaoEstrutura"],
++            ['qtd' => '', 'desc' => "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612"],
++            ['qtd' => '', 'desc' => "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612"],
++            ['qtd' => '', 'desc' => "INSTALAÇÃO / MÃO DE OBRA / EMISSÃO DE ART"],
++            ['qtd' => '', 'desc' => "RAMAL DE LIGAÇÃO LIMITADO A 10 METROS (INVERSOR PADRÃO)"],
++            ['qtd' => '', 'desc' => $texto_seguranca],
++            ['qtd' => '', 'desc' => $texto_final_adicionais],
++        ];
++    } else {
++        foreach ($matches as $match) {
++            // $match[1] é o SKU, hoje não exibido na proposta.
++            $itensComposicao[] = [
++                'qtd' => (string) ((trim($match[2])) * $multiplicador),
++                'desc' => trim($match[3]),
++            ];
++        }
+     }
+-    $pdf->SetFont('helvetica', 'B', 13);
++
++    // Valores da tabela "Estudo de viabilidade", na ordem de $viabLinhasY.
++    $viabValoresLongi = array(
++        number_format($potenciaGerador, 2, ',', '.') . ' kWp',
++        number_format($metrosOcupados, 2, ',', '.') . ' m²',
++        number_format($peso, 0, ',', '.') . ' kg',
++        number_format($mediaArredondado, 0, ',', '.') . ' kWh/mês',
++        number_format($geracaoArredondado, 0, ',', '.') . ' kWh/mês',
++    );
++
++    // =======================================================================
++    // PONTO ÚNICO DE LIGAÇÃO DAS TECNOLOGIAS — é SÓ AQUI que se mexe.
++    // -----------------------------------------------------------------------
++    // Hoje o orçamento que chega é um só, então o bloco N-TYPE é uma CÓPIA do
++    // LONGI. É uma decisão TEMPORÁRIA e combinada, para a página não sair pela
++    // metade enquanto a N-TYPE não tem números próprios.
++    //
++    // ATENÇÃO: enquanto esta cópia existir, a proposta mostra o MESMO preço nas
++    // duas tecnologias. Isso é visível para o cliente — não publique sem os
++    // valores reais da N-TYPE, ou sem combinar que as duas custam igual.
++    //
++    // Para ligar a N-TYPE de verdade: troque os valores da entrada 'N-TYPE'
++    // abaixo pelos campos que vierem do formulário. Nada mais no arquivo muda.
++    //
++    // Sobre 'prazo': é uma LISTA de linhas porque hoje mostramos as 3 parcelas
++    // (36x / 48x / 60x). Quando passar a chegar um valor único de "à prazo",
++    // basta deixar um item só na lista — o desenho já aceita os dois formatos.
++    // =======================================================================
++    // O painel é o ÚNICO item da composição que muda entre as duas
++    // tecnologias. A faixa de potência é TEXTO de catálogo ("600-625 W"), não
++    // a potência do módulo do kit: o cálculo da quantidade de módulos continua
++    // usando $potenciaModulo, que é o número de verdade.
++    $potenciaPainelTexto = '600-625 W';
++    $descricaoPainelLongi = "MODULOS FOTOVOLTÁICO LONGI $potenciaPainelTexto";
++    $descricaoPainelNtype = "MODULOS FOTOVOLTÁICO ZNSHINE / RONMA / OSDA / WEG $potenciaPainelTexto";
++
++    $dadosLongi = [
++        'itens' => trocarPainelNaComposicao($itensComposicao, $descricaoPainelLongi),
++        'viabilidade' => $viabValoresLongi,
++        'vista' => $precoFinalRs,
++        'prazo' => [
++            "36x de R$ $valorParcelaRs",
++            "48x de R$ $valorParcela2Rs",
++            "60x de R$ $valorParcela3Rs",
++        ],
++        'payback' => $paybackTexto,
++    ];
++
++    // O painel da N-TYPE já é o definitivo. O que ainda é cópia do LONGI são
++    // preço à vista, parcelas, payback e a coluna da tabela de viabilidade.
++    // TODO(N-TYPE): trocar 'vista', 'prazo', 'payback' e 'viabilidade' pelos
++    // valores próprios assim que o formulário começar a enviá-los.
++    $dadosNtype = $dadosLongi;
++    $dadosNtype['itens'] = trocarPainelNaComposicao($itensComposicao, $descricaoPainelNtype);
++
++    $blocos = [
++        'LONGI' => $dadosLongi,
++        'N-TYPE' => $dadosNtype,
++    ];
++
++    // ----------------------------------------------------------------------
++    // Desenho da página: uma coluna na tabela do topo e um bloco de
++    // composição/preços para cada tecnologia.
++    // ----------------------------------------------------------------------
++    $pdf->SetFont('helvetica', 'B', 11);
+     $pdf->SetTextColor(50, 50, 50);
++    foreach ($blocos as $tecnologia => $dados) {
++        $centroX = $blocosLayout[$tecnologia]['viabColunaX'];
++        foreach ($dados['viabilidade'] as $indice => $valor) {
++            escreverCentralizadoNaCaixa($pdf, $centroX, $viabLinhasY[$indice], $valor, $viabColunaLargura);
++        }
++    }
++
++    foreach ($blocos as $tecnologia => $dados) {
++        escreverBlocoTecnologia($pdf, $dados, $blocosLayout[$tecnologia]);
++    }
+ 
+-    $pdf->SetFont('helvetica', 'B', 13);
+-    $pdf->SetTextColor(80, 80, 80);
+-    $pdf->Text(113, 164, "$adicionalAPlus");
+-    $pdf->Text(99, 164, "$adicionalIndicacao");
+-    $pdf->Text(23, 91.6, "$precoFinalRs");
++    // Restaura a fonte/cor padrão antes da próxima página.
++    $pdf->SetFont('helvetica', 12);
++    $pdf->SetTextColor(0, 0, 0);
+ 
++    // Página PGINV13 — garantia e degradação do módulo.
++    // Arte 100% estática: marcas, prazos de garantia, gráfico de degradação e
++    // percentuais de eficiência já vêm desenhados no PNG. Nada a escrever por
++    // cima — se algum desses dados precisar variar por kit, a arte é que tem
++    // de abrir espaço primeiro.
++    $pdf->AddPage();
++    $pdf->Image('PGINV13.png', 0, 0, 210, 297);
++
++    // Página PGINV6 — análise financeira
++    $pdf->AddPage();
++    $pdf->Image('PGINV6.png', 0, 0, 210, 297);
+ 
+-    $pdf->SetFont('helvetica', 'B', 11);
+-    $pdf->SetTextColor(39, 84, 70);
+-    $pdf->Text(25, 111.9, "$valorParcelaRs");
+-    $pdf->Text(25, 116, "$valorParcela2Rs");
+-    $pdf->Text(25, 120.4, "$valorParcela3Rs");
+ 
+ 
+     $pdf->SetTextColor(75, 75, 75);
+@@ -858,21 +903,6 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita;
+     // Payback centralizado na caixa da arte, encolhendo a fonte se o texto for
+     // longo (ex.: "Nao se paga no periodo analisado") para NUNCA estourar a arte.
+     // Só há dois valores a ajustar caso a caixa mude: o centro X e a largura máx.
+-    if (!function_exists('escreverCentralizadoNaCaixa')) {
+-        function escreverCentralizadoNaCaixa($pdf, $centroX, $y, $texto, $larguraMax, $tamMin = 7)
+-        {
+-            $tamOriginal = $pdf->getFontSizePt();
+-            $tam = $tamOriginal;
+-            // Reduz o corpo da fonte até o texto caber na largura da caixa.
+-            while ($tam > $tamMin && $pdf->GetStringWidth($texto) > $larguraMax) {
+-                $tam -= 0.5;
+-                $pdf->SetFontSize($tam);
+-            }
+-            $largura = $pdf->GetStringWidth($texto);
+-            $pdf->Text($centroX - ($largura / 2), $y, $texto);
+-            $pdf->SetFontSize($tamOriginal); // Restaura para não afetar os próximos textos.
+-        }
+-    }
+     $paybackCentroX = 83;      // Centro horizontal da caixa "Payback Simples".
+     $paybackLarguraMax = 42;   // Largura útil da caixa (mm) antes de estourar.
+     escreverCentralizadoNaCaixa($pdf, $paybackCentroX, 230, $paybackTexto, $paybackLarguraMax);
+@@ -893,14 +923,6 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita;
+     // alinhado à esquerda). Assim, se o número crescer, ele se expande para os dois
+     // lados e não estoura a linha pela direita. Se alguma coluna ficar levemente
+     // torta, ajuste apenas o X central correspondente logo abaixo.
+-    if (!function_exists('escreverCentralizado')) {
+-        function escreverCentralizado($pdf, $centroX, $y, $texto)
+-        {
+-            // Mede a largura na fonte ATUAL e desloca meia-largura para a esquerda.
+-            $largura = $pdf->GetStringWidth($texto);
+-            $pdf->Text($centroX - ($largura / 2), $y, $texto);
+-        }
+-    }
+ 
+     // Centro horizontal de cada coluna da tabela.
+     $cVerde = 72;
+@@ -962,23 +984,23 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita;
+     $pdf->SetFont('helvetica', 'B', 16);
+     $pdf->SetTextColor(0, 0, 0);
+ 
+-    // Quarta Página (com a imagem undo.jpeg)
++    // Página PGINV7 — institucional
+     $pdf->AddPage();  // Adiciona a primeira página
+     $pdf->Image('PGINV7.png', 0, 0, 210, 297);
+     $pdf->SetFont('helvetica', 'B', 14);
+     $pdf->SetTextColor(255, 0, 0);
+ 
+ 
+-    // Nona Página (com a imagem undo.jpeg)
++    // Página PGINV9 — institucional
+     $pdf->AddPage();  // Adiciona a primeira página
+     $pdf->Image('PGINV9.png', 0, 0, 210, 297);
+ 
+-    // Decima primeira página Página (com a imagem undo.jpeg)
++    // Página PGINV10 — institucional
+     $pdf->AddPage();  // Adiciona a primeira página
+     $pdf->Image('PGINV10.png', 0, 0, 210, 297);
+ 
+- 
+-    // Decima primeira página Página (com a imagem undo.jpeg)
++
++    // Página PGINV11 — institucional
+     $pdf->AddPage();  // Adiciona a primeira página
+     $pdf->Image('PGINV11.png', 0, 0, 210, 297);
+     
+@@ -986,7 +1008,7 @@ $larguraDescricao = $pdf->GetPageWidth() - $posicaoXDescricao - $margemDireita;
+     $pdf->SetFont('helvetica', 'B', 16);
+     $pdf->SetTextColor(0, 0, 0);
+ 
+-    // Decima segunda página Página (com a imagem undo.jpeg)
++    // Página PGINV12 — institucional
+     $pdf->AddPage();  // Adiciona a primeira página
+     $pdf->Image('PGINV12.png', 0, 0, 210, 297);
+     
+diff --git a/pdf_helpers.php b/pdf_helpers.php
+new file mode 100644
+index 0000000..83e8994
+--- /dev/null
++++ b/pdf_helpers.php
+@@ -0,0 +1,288 @@
++<?php
++
++/**
++ * Helpers de escrita das propostas em PDF (TCPDF).
++ *
++ * Vivem aqui, e não dentro de cada gerador, porque as duas modalidades
++ * desenham a MESMA página de composição com artes diferentes:
++ *   - gerar_pdf_inv_2.php (investimento) → PGINV14
++ *   - gerar_pdf_2.php     (autoconsumo)  → PGAUT5
++ *
++ * Mudança de regra de desenho é feita uma vez, aqui, e vale para as duas.
++ *
++ * Todas as funções recebem o objeto TCPDF já criado e trabalham em
++ * MILÍMETROS, que é a unidade das artes (A4, 210x297).
++ */
++
++
++/**
++ * Escreve o texto CENTRALIZADO em torno de $centroX, na fonte corrente.
++ * Assim, se o número crescer, ele se expande para os dois lados e não
++ * estoura a arte pela direita.
++ */
++if (!function_exists('escreverCentralizado')) {
++    function escreverCentralizado($pdf, $centroX, $y, $texto)
++    {
++        // Mede a largura na fonte ATUAL e desloca meia-largura para a esquerda.
++        $largura = $pdf->GetStringWidth($texto);
++        $pdf->Text($centroX - ($largura / 2), $y, $texto);
++    }
++}
++
++/**
++ * Escreve alinhado à esquerda a partir de $x, ENCOLHENDO o corpo da fonte
++ * até o texto caber em $larguraMax (mm). Restaura a fonte original ao sair.
++ *
++ * Pré-condição: a fonte corrente já é a desejada para este texto.
++ * Pós-condição: nada é escrito além de $x + $larguraMax, exceto se nem o
++ *               tamanho mínimo couber (caso extremo, assumido aceitável).
++ */
++if (!function_exists('escreverAjustado')) {
++    function escreverAjustado($pdf, $x, $y, $texto, $larguraMax, $tamMin = 5.5)
++    {
++        $tamOriginal = $pdf->getFontSizePt();
++        $tam = $tamOriginal;
++        while ($tam > $tamMin && $pdf->GetStringWidth($texto) > $larguraMax) {
++            $tam -= 0.5;
++            $pdf->SetFontSize($tam);
++        }
++        $pdf->Text($x, $y, $texto);
++        $pdf->SetFontSize($tamOriginal); // Restaura para não afetar os próximos textos.
++    }
++}
++
++/**
++ * Escreve centralizado numa caixa da arte, encolhendo a fonte se preciso.
++ * Usado onde o texto tem tamanho imprevisível (ex.: "Nao se paga no
++ * periodo analisado"), para NUNCA estourar a caixa.
++ */
++if (!function_exists('escreverCentralizadoNaCaixa')) {
++    function escreverCentralizadoNaCaixa($pdf, $centroX, $y, $texto, $larguraMax, $tamMin = 7)
++    {
++        $tamOriginal = $pdf->getFontSizePt();
++        $tam = $tamOriginal;
++        // Reduz o corpo da fonte até o texto caber na largura da caixa.
++        while ($tam > $tamMin && $pdf->GetStringWidth($texto) > $larguraMax) {
++            $tam -= 0.5;
++            $pdf->SetFontSize($tam);
++        }
++        escreverCentralizado($pdf, $centroX, $y, $texto);
++        $pdf->SetFontSize($tamOriginal); // Restaura para não afetar os próximos textos.
++    }
++}
++
++/**
++ * Desenha a lista "Composição da Proposta" DENTRO do retângulo que a arte
++ * reserva, sem nunca invadir o bloco de preços/payback logo abaixo.
++ *
++ * Pré-condição: $itens é uma lista de ['qtd' => string, 'desc' => string].
++ *               'qtd' vazia => a linha ocupa a largura toda a partir de $xQtd.
++ * Pós-condição: todas as linhas ficam dentro de
++ *               [$yTopo, $yTopo + $alturaDisponivel]; a fonte é restaurada.
++ *
++ * A altura da linha e o corpo da fonte encolhem conforme a quantidade de
++ * itens — é isso que garante que um kit com muitos itens não vaze a arte.
++ *
++ * Limite prático: até ~18 itens o texto ainda respira. Acima disso o corpo
++ * mínimo (5,5pt) é atingido e as linhas começam a se encostar — se um kit
++ * assim aparecer, a arte precisa de mais espaço, não o código de menos fonte.
++ */
++if (!function_exists('escreverComposicao')) {
++    function escreverComposicao($pdf, array $itens, $xQtd, $xDesc, $yTopo, $alturaDisponivel, $larguraDesc, $tamMax = 13.5, $tamMin = 5.5)
++    {
++        // Linhas sem descrição (adicional não selecionado) não ocupam espaço.
++        $itens = array_values(array_filter($itens, function ($item) {
++            return isset($item['desc']) && trim($item['desc']) !== '';
++        }));
++
++        $total = count($itens);
++        if ($total === 0) {
++            return;
++        }
++
++        // Altura de linha: a padrão da arte (8mm), reduzida só se não couber.
++        $alturaLinha = min(8, $alturaDisponivel / $total);
++
++        // Corpo da fonte proporcional à entrelinha, limitado pelo tamanho
++        // padrão da arte e por um mínimo ainda legível em impressão.
++        $tamFonte = max($tamMin, min($tamMax, $alturaLinha * 2.4));
++
++        $familia = 'helvetica';
++        $estilo = 'B';
++        $larguraQtd = $xDesc - $xQtd;
++
++        // Um corpo de fonte ÚNICO para o bloco inteiro: encolher linha a
++        // linha deixaria a lista visivelmente desalinhada. Procura o maior
++        // tamanho em que TODAS as descrições cabem na faixa disponível.
++        while ($tamFonte > $tamMin) {
++            $pdf->SetFont($familia, $estilo, $tamFonte);
++            $todasCabem = true;
++            foreach ($itens as $item) {
++                $temQtd = isset($item['qtd']) && trim($item['qtd']) !== '';
++                $limite = $temQtd ? $larguraDesc : $larguraDesc + $larguraQtd;
++                if ($pdf->GetStringWidth(trim($item['desc'])) > $limite) {
++                    $todasCabem = false;
++                    break;
++                }
++            }
++            if ($todasCabem) {
++                break;
++            }
++            $tamFonte -= 0.5;
++        }
++
++        $y = $yTopo;
++        foreach ($itens as $item) {
++            $qtd = isset($item['qtd']) ? trim($item['qtd']) : '';
++            $desc = trim($item['desc']);
++
++            $pdf->SetFont($familia, $estilo, $tamFonte);
++
++            if ($qtd !== '') {
++                $pdf->Text($xQtd, $y, $qtd);
++                $xTexto = $xDesc;
++                $larguraTexto = $larguraDesc;
++            } else {
++                // Sem coluna de quantidade: a descrição usa a faixa inteira.
++                $xTexto = $xQtd;
++                $larguraTexto = $larguraDesc + $larguraQtd;
++            }
++
++            // Rede de segurança: se uma descrição sozinha ainda estourar no
++            // tamanho mínimo, SÓ ela encolhe mais — melhor que vazar a arte.
++            escreverAjustado($pdf, $xTexto, $y, $desc, $larguraTexto, $tamMin);
++
++            $y += $alturaLinha;
++        }
++    }
++}
++
++/**
++ * Desenha UM bloco de tecnologia da página PGINV14: a lista de composição,
++ * o preço à vista, as linhas de "à prazo" e o payback.
++ *
++ * LONGI e N-TYPE usam exatamente este mesmo desenho. Tudo que difere entre
++ * elas está em $dados (o QUE mostrar) e $caixa (ONDE mostrar) — por isso
++ * ligar a N-TYPE de verdade não exige tocar em nada aqui dentro.
++ *
++ * Pré-condição:
++ *   $dados = ['itens' => array, 'vista' => string, 'prazo' => string[],
++ *             'payback' => string]
++ *   $caixa = coordenadas em mm do bloco (ver $blocosLayout na página).
++ *   'prazo' é uma LISTA: hoje traz as 3 parcelas, amanhã pode trazer um
++ *   único valor de "à prazo" — nos dois casos o desenho é o mesmo.
++ * Pós-condição: nada é escrito fora das caixas que a arte reserva.
++ */
++if (!function_exists('escreverBlocoTecnologia')) {
++    function escreverBlocoTecnologia($pdf, array $dados, array $caixa)
++    {
++        // Cor da lista definida aqui de propósito: sem isto o bloco herdaria
++        // silenciosamente a cor deixada pelo bloco anterior.
++        $pdf->SetTextColor(50, 50, 50);
++        escreverComposicao(
++            $pdf,
++            $dados['itens'],
++            $caixa['xQtd'],
++            $caixa['xDesc'],
++            $caixa['yLista'],
++            $caixa['alturaLista'],
++            $caixa['larguraDesc']
++        );
++
++        // Caixas escuras da arte pedem texto branco.
++        $pdf->SetFont('helvetica', 'B', 13);
++        $pdf->SetTextColor(255, 255, 255);
++        escreverAjustado($pdf, $caixa['xPreco'], $caixa['yVista'], $dados['vista'], $caixa['larguraPreco']);
++
++        // Uma linha só (valor único de "à prazo") cabe no mesmo corpo do
++        // "à vista"; com as 3 parcelas empilhadas é preciso encolher.
++        $linhasPrazo = array_values($dados['prazo']);
++        $pdf->SetFont('helvetica', 'B', count($linhasPrazo) > 1 ? 9 : 13);
++        foreach ($linhasPrazo as $indice => $linha) {
++            escreverAjustado(
++                $pdf,
++                $caixa['xPreco'],
++                $caixa['yPrazo'] + ($indice * $caixa['passoPrazo']),
++                $linha,
++                $caixa['larguraPreco']
++            );
++        }
++
++        // A faixa do "Payback:" é clara: volta para o texto escuro.
++        $pdf->SetFont('helvetica', 'B', 11);
++        $pdf->SetTextColor(50, 50, 50);
++        escreverAjustado($pdf, $caixa['xPayback'], $caixa['yPayback'], $dados['payback'], $caixa['larguraPayback']);
++    }
++}
++
++/**
++ * Diz se a descrição de um item da composição é a linha do painel.
++ *
++ * É uma heurística sobre texto livre: no kit vindo do banco a descrição é
++ * digitada por gente. A linha precisa COMEÇAR com "módulo(s)" ou "painel",
++ * aceitando uma quantidade na frente ("84 MODULOS ..."). Exigir o início,
++ * e não apenas conter a palavra, evita confundir com itens que só citam o
++ * módulo — "ESTRUTURA PARA MÓDULOS", por exemplo.
++ *
++ * Se um kit usar outra palavra, a linha não é reconhecida e o painel entra
++ * como item extra (ver trocarPainelNaComposicao): o erro possível é um item
++ * a mais, nunca a proposta sem dizer qual módulo está sendo vendido.
++ *
++ * Não usa mb_* de propósito, para não depender da extensão mbstring: os
++ * acentos que importam são normalizados na mão antes do strtoupper.
++ */
++if (!function_exists('ehLinhaDePainel')) {
++    function ehLinhaDePainel($descricao)
++    {
++        $texto = strtr($descricao, [
++            'ó' => 'o', 'Ó' => 'O',
++            'á' => 'a', 'Á' => 'A',
++        ]);
++        $texto = strtoupper($texto);
++
++        // MODUL... cobre MODULO/MODULOS; PAINE... cobre PAINEL/PAINEIS.
++        return (bool) preg_match('/^\s*(?:[\d.,]+\s+)?(?:MODUL|PAINE)/', $texto);
++    }
++}
++
++/**
++ * Devolve a composição de UMA tecnologia, trocando apenas a linha do painel.
++ *
++ * O painel é o único item que muda entre LONGI e N-TYPE: inversor,
++ * estrutura, cabos e serviços são os mesmos nos dois blocos. Por isso a
++ * lista é montada uma vez e passada por aqui duas vezes.
++ *
++ * Pré-condição: $itens no formato de escreverComposicao(); $descricaoPainel
++ *   é o texto do módulo JÁ PRONTO, mas SEM quantidade.
++ * Pós-condição: devolve uma CÓPIA — $itens não é alterado, porque a mesma
++ *   lista alimenta as duas tecnologias.
++ */
++if (!function_exists('trocarPainelNaComposicao')) {
++    function trocarPainelNaComposicao(array $itens, $descricaoPainel)
++    {
++        foreach ($itens as $indice => $item) {
++            if (!ehLinhaDePainel($item['desc'])) {
++                continue;
++            }
++
++            // Na composição padrão a quantidade vem embutida no texto
++            // ("84 MODULOS ..."); nos kits do banco ela mora na coluna
++            // própria. Preserva as duas formas sem duplicar o número.
++            $temColunaQtd = isset($item['qtd']) && trim($item['qtd']) !== '';
++            $prefixoQtd = '';
++            if (!$temColunaQtd && preg_match('/^\s*([\d.,]+)\s+/', $item['desc'], $captura)) {
++                $prefixoQtd = $captura[1] . ' ';
++            }
++
++            $itens[$indice]['desc'] = $prefixoQtd . $descricaoPainel;
++
++            return $itens; // Só a primeira linha de módulo é o painel.
++        }
++
++        // Kit sem nenhuma linha de módulo: o painel entra como primeiro
++        // item, para a proposta nunca sair sem dizer o que está vendendo.
++        array_unshift($itens, ['qtd' => '', 'desc' => $descricaoPainel]);
++
++        return $itens;
++    }
++}
