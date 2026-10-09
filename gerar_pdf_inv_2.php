@@ -753,6 +753,36 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
         $paybackTexto = $partes ? implode(' e ', $partes) : 'Menos de 1 mês';
     }
 
+    // Payback da LONGI na página de Composição: usa o MESMO retorno anual +5% que a
+    // geração exibida ali (pedido do usuário, 09/10/2026) — senão a página mostraria
+    // "gera mais" e "payback igual/pior" ao mesmo tempo, o que não faz sentido pro
+    // cliente. $paybackTexto (baseline) continua intocado — é o que a página de Análise
+    // Financeira usa, que não compara tecnologias.
+    $retornoAnualVerdeLongi = $retornoAnualVerde * 1.05;
+    if ($retornoAnualVerdeLongi > 0) {
+        $paybackAnosLongi = $precoFinal / $retornoAnualVerdeLongi;
+    } else {
+        $paybackAnosLongi = 0;
+    }
+    $anosPaybackLongi = (int) floor($paybackAnosLongi);
+    $mesesPaybackLongi = (int) round(($paybackAnosLongi - $anosPaybackLongi) * 12);
+    if ($mesesPaybackLongi >= 12) {
+        $anosPaybackLongi += 1;
+        $mesesPaybackLongi = 0;
+    }
+    if ($paybackAnosLongi <= 0) {
+        $paybackTextoLongiBC = 'Nao se paga no periodo analisado';
+    } else {
+        $partesLongi = [];
+        if ($anosPaybackLongi > 0) {
+            $partesLongi[] = $anosPaybackLongi . ($anosPaybackLongi == 1 ? ' ano' : ' anos');
+        }
+        if ($mesesPaybackLongi > 0) {
+            $partesLongi[] = $mesesPaybackLongi . ($mesesPaybackLongi == 1 ? ' mês' : ' meses');
+        }
+        $paybackTextoLongiBC = $partesLongi ? implode(' e ', $partesLongi) : 'Menos de 1 mês';
+    }
+
     // ----------------------------------------------------------------------
     // Composição da proposta: lista de itens do kit.
     // ----------------------------------------------------------------------
@@ -866,7 +896,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
         'viabilidade' => $viabValoresLongi,
         'vista' => $precoFinalRs,
         'prazo' => [$precoFinalPrazoRs ?? 'Consulte'],
-        'payback' => $paybackTexto,
+        'payback' => $paybackTextoLongiBC,
     ];
 
     // N-TYPE: usa os preços próprios (`precoNtype`/`precoNtypePrazo`, mandados pelo
