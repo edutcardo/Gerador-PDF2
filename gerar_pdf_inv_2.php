@@ -753,17 +753,11 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
         $paybackTexto = $partes ? implode(' e ', $partes) : 'Menos de 1 mês';
     }
 
-    // Payback da LONGI na página de Composição: usa o MESMO retorno anual +5% que a
-    // geração exibida ali (pedido do usuário, 09/10/2026) — senão a página mostraria
-    // "gera mais" e "payback igual/pior" ao mesmo tempo, o que não faz sentido pro
-    // cliente. $paybackTexto (baseline) continua intocado — é o que a página de Análise
-    // Financeira usa, que não compara tecnologias.
-    $retornoAnualVerdeLongi = $retornoAnualVerde * 1.05;
-    if ($retornoAnualVerdeLongi > 0) {
-        $paybackAnosLongi = $precoFinal / $retornoAnualVerdeLongi;
-    } else {
-        $paybackAnosLongi = 0;
-    }
+    // Payback da LONGI na página de Composição: 5% menor que o baseline (pedido do
+    // usuário, 09/10/2026) — so' multiplica o resultado já calculado acima, sem
+    // recalcular nada. $paybackTexto (baseline) continua intocado — é o que a página de
+    // Análise Financeira usa, que não compara tecnologias.
+    $paybackAnosLongi = $paybackAnos * 0.95;
     $anosPaybackLongi = (int) floor($paybackAnosLongi);
     $mesesPaybackLongi = (int) round(($paybackAnosLongi - $anosPaybackLongi) * 12);
     if ($mesesPaybackLongi >= 12) {
