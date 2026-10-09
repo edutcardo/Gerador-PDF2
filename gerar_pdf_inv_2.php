@@ -25,6 +25,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $potenciaModulo = isset($_POST['potenciaModulo']) ? floatval($_POST['potenciaModulo']) : 0;
     $numeroDeFases = isset($_POST['numeroDeFases']) ? $_POST['numeroDeFases'] : '';
     $precoKit = isset($_POST['precoKit']) ? floatval($_POST['precoKit']) : 0;
+    // N-TYPE (fornecedor WEG, achado 09/10/2026) — par de precoKit (LONGI). Ausente/0 =
+    // usina sem custo N-TYPE derivado ainda (ver usinas-investimento.get.ts): o bloco
+    // N-TYPE da pagina de composicao (mais abaixo) duplica o LONGI nesse caso.
+    $precoNtypePost = isset($_POST['precoNtype']) && $_POST['precoNtype'] !== '' ? floatval($_POST['precoNtype']) : 0;
     $irradiacao = isset($_POST['irradiacao']) ? $_POST['irradiacao'] : '';
     $marca = isset($_POST['marca']) ? $_POST['marca'] : '';
     $fabricante = isset($_POST['fabricante']) ? $_POST['fabricante'] : '';
@@ -844,12 +848,58 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
         'payback' => $paybackTexto,
     ];
 
-    // O painel da N-TYPE já é o definitivo. O que ainda é cópia do LONGI são
-    // preço à vista, parcelas, payback e a coluna da tabela de viabilidade.
-    // TODO(N-TYPE): trocar 'vista', 'prazo', 'payback' e 'viabilidade' pelos
-    // valores próprios assim que o formulário começar a enviá-los.
+    // N-TYPE: usa o preço próprio (`precoNtype`, mandado pelo form desde que a usina
+    // tenha custo N-TYPE derivado do catálogo de kits — ver usinas-investimento.get.ts
+    // e InvestimentoForm.vue). Sem ele, duplica o LONGI (fallback combinado com o
+    // usuário, igual ao autoconsumo) — viabilidade (specs técnicas) é sempre igual nas
+    // duas tecnologias, só o painel/preço mudam.
     $dadosNtype = $dadosLongi;
     $dadosNtype['itens'] = trocarPainelNaComposicao($itensComposicao, $descricaoPainelNtype);
+
+    if ($precoNtypePost > 0) {
+        $precoNtypeRs = 'R$. ' . number_format($precoNtypePost, 2, ',', '.');
+
+        $parcelaNtype1 = calcularParcela_corrigido($taxa, $nper1, $precoNtypePost, $vf, $tipo);
+        $parcelaNtype1Rs = number_format(abs((float) $parcelaNtype1), 2, ',', '.');
+        $parcelaNtype2 = calcularParcela_corrigido($taxa, $nper2, $precoNtypePost, $vf, $tipo);
+        $parcelaNtype2Rs = number_format(abs((float) $parcelaNtype2), 2, ',', '.');
+        $parcelaNtype3 = calcularParcela_corrigido($taxa, $nper3, $precoNtypePost, $vf, $tipo);
+        $parcelaNtype3Rs = number_format(abs((float) $parcelaNtype3), 2, ',', '.');
+
+        // Mesmo retorno anual do LONGI (geração compensada não muda por painel) —
+        // só o preço na divisão muda.
+        if ($retornoAnualVerde > 0) {
+            $paybackAnosNtype = $precoNtypePost / $retornoAnualVerde;
+        } else {
+            $paybackAnosNtype = 0;
+        }
+        $anosPaybackNtype = (int) floor($paybackAnosNtype);
+        $mesesPaybackNtype = (int) round(($paybackAnosNtype - $anosPaybackNtype) * 12);
+        if ($mesesPaybackNtype >= 12) {
+            $anosPaybackNtype += 1;
+            $mesesPaybackNtype = 0;
+        }
+        if ($paybackAnosNtype <= 0) {
+            $paybackTextoNtype = 'Nao se paga no periodo analisado';
+        } else {
+            $partesNtype = [];
+            if ($anosPaybackNtype > 0) {
+                $partesNtype[] = $anosPaybackNtype . ($anosPaybackNtype == 1 ? ' ano' : ' anos');
+            }
+            if ($mesesPaybackNtype > 0) {
+                $partesNtype[] = $mesesPaybackNtype . ($mesesPaybackNtype == 1 ? ' mês' : ' meses');
+            }
+            $paybackTextoNtype = $partesNtype ? implode(' e ', $partesNtype) : 'Menos de 1 mês';
+        }
+
+        $dadosNtype['vista'] = $precoNtypeRs;
+        $dadosNtype['prazo'] = [
+            "36x de R$ $parcelaNtype1Rs",
+            "48x de R$ $parcelaNtype2Rs",
+            "60x de R$ $parcelaNtype3Rs",
+        ];
+        $dadosNtype['payback'] = $paybackTextoNtype;
+    }
 
     $blocos = [
         'LONGI' => $dadosLongi,
