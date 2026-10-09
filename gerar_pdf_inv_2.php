@@ -901,6 +901,10 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $dadosNtype = $dadosLongi;
     $dadosNtype['itens'] = trocarPainelNaComposicao($itensComposicao, $descricaoPainelNtype);
     $dadosNtype['viabilidade'] = $viabValoresNtype;
+    // Payback do baseline, NÃO o reduzido da LONGI ($paybackTextoLongiBC) — os -5% são
+    // só da LONGI; sem preço N-TYPE próprio ainda, o payback duplicado tem que ser o
+    // normal, não o "vantajoso" que só faz sentido pro painel LONGI.
+    $dadosNtype['payback'] = $paybackTexto;
 
     if ($precoNtypePost > 0) {
         $precoNtypeRs = 'R$. ' . number_format($precoNtypePost, 2, ',', '.');
