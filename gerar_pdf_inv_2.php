@@ -806,14 +806,25 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
         }
     }
 
-    // Valores da tabela "Estudo de viabilidade", na ordem de $viabLinhasY.
-    $viabValoresLongi = array(
+    // Valores da tabela "Estudo de viabilidade", na ordem de $viabLinhasY. Geração:
+    // LONGI mostra 5% a mais que a N-TYPE (pedido do usuário, 09/10/2026) — é só
+    // exibição nesta tabela, não mexe no payback/retorno (que usam $geracao/
+    // $retornoAnualVerde de verdade, a mesma instalação física nas duas tecnologias).
+    // "Base do Consumo": investimento não leva consumo em conta (o painel 1 já mostra
+    // "Não considerado" pra Média de Consumo) — texto fixo, não $mediaArredondado.
+    $viabComuns = array(
         number_format($potenciaGerador, 2, ',', '.') . ' kWp',
         number_format($metrosOcupados, 2, ',', '.') . ' m²',
         number_format($peso, 0, ',', '.') . ' kg',
-        number_format($mediaArredondado, 0, ',', '.') . ' kWh/mês',
-        number_format($geracaoArredondado, 0, ',', '.') . ' kWh/mês',
+        'Não considerado',
     );
+    $geracaoLongiArredondado = round($geracaoArredondado * 1.05);
+    $viabValoresLongi = array_merge($viabComuns, [
+        number_format($geracaoLongiArredondado, 0, ',', '.') . ' kWh/mês',
+    ]);
+    $viabValoresNtype = array_merge($viabComuns, [
+        number_format($geracaoArredondado, 0, ',', '.') . ' kWh/mês',
+    ]);
 
     // =======================================================================
     // PONTO ÚNICO DE LIGAÇÃO DAS TECNOLOGIAS — é SÓ AQUI que se mexe.
@@ -865,6 +876,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     // (specs técnicas) é sempre igual nas duas tecnologias, só o painel/preço mudam.
     $dadosNtype = $dadosLongi;
     $dadosNtype['itens'] = trocarPainelNaComposicao($itensComposicao, $descricaoPainelNtype);
+    $dadosNtype['viabilidade'] = $viabValoresNtype;
 
     if ($precoNtypePost > 0) {
         $precoNtypeRs = 'R$. ' . number_format($precoNtypePost, 2, ',', '.');
