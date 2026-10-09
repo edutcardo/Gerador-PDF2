@@ -29,6 +29,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // usina sem custo N-TYPE derivado ainda (ver usinas-investimento.get.ts): o bloco
     // N-TYPE da pagina de composicao (mais abaixo) duplica o LONGI nesse caso.
     $precoNtypePost = isset($_POST['precoNtype']) && $_POST['precoNtype'] !== '' ? floatval($_POST['precoNtype']) : 0;
+    // A PRAZO (LONGI e N-TYPE, migration 337, pedido do usuário 09/10/2026): preco
+    // COTADO de verdade, nao mais simulacao de financiamento (PMT 36/48/60x). Ausente/0
+    // = usina sem custo a prazo derivado ainda (ver usinas-investimento.get.ts).
+    $precoPrazoPost = isset($_POST['precoPrazo']) && $_POST['precoPrazo'] !== '' ? floatval($_POST['precoPrazo']) : 0;
+    $precoNtypePrazoPost = isset($_POST['precoNtypePrazo']) && $_POST['precoNtypePrazo'] !== '' ? floatval($_POST['precoNtypePrazo']) : 0;
     $irradiacao = isset($_POST['irradiacao']) ? $_POST['irradiacao'] : '';
     $marca = isset($_POST['marca']) ? $_POST['marca'] : '';
     $fabricante = isset($_POST['fabricante']) ? $_POST['fabricante'] : '';
@@ -836,35 +841,33 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $descricaoPainelLongi = "MODULOS FOTOVOLTÁICO LONGI $potenciaPainelTexto";
     $descricaoPainelNtype = "MODULOS FOTOVOLTÁICO ZNSHINE / RONMA / OSDA / WEG $potenciaPainelTexto";
 
+    // A PRAZO (LONGI e N-TYPE, migration 337, pedido do usuário 09/10/2026): preço
+    // COTADO de verdade (deriva do catálogo de kits, igual o à vista), não mais
+    // simulação de financiamento (PMT 36/48/60x) — era o que a página mostrava antes.
+    // `escreverBlocoTecnologia` já aceita 'prazo' como lista de 1 item só (comentário
+    // original: "quando passar a chegar um valor único... basta deixar um item só na
+    // lista — o desenho já aceita os dois formatos").
+    $precoFinalPrazoRs = $precoPrazoPost > 0 ? 'R$. ' . number_format($precoPrazoPost, 2, ',', '.') : null;
+    $precoNtypePrazoRs = $precoNtypePrazoPost > 0 ? 'R$. ' . number_format($precoNtypePrazoPost, 2, ',', '.') : null;
+
     $dadosLongi = [
         'itens' => trocarPainelNaComposicao($itensComposicao, $descricaoPainelLongi),
         'viabilidade' => $viabValoresLongi,
         'vista' => $precoFinalRs,
-        'prazo' => [
-            "36x de R$ $valorParcelaRs",
-            "48x de R$ $valorParcela2Rs",
-            "60x de R$ $valorParcela3Rs",
-        ],
+        'prazo' => [$precoFinalPrazoRs ?? 'Consulte'],
         'payback' => $paybackTexto,
     ];
 
-    // N-TYPE: usa o preço próprio (`precoNtype`, mandado pelo form desde que a usina
-    // tenha custo N-TYPE derivado do catálogo de kits — ver usinas-investimento.get.ts
-    // e InvestimentoForm.vue). Sem ele, duplica o LONGI (fallback combinado com o
-    // usuário, igual ao autoconsumo) — viabilidade (specs técnicas) é sempre igual nas
-    // duas tecnologias, só o painel/preço mudam.
+    // N-TYPE: usa os preços próprios (`precoNtype`/`precoNtypePrazo`, mandados pelo
+    // form desde que a usina tenha o custo correspondente derivado do catálogo de kits
+    // — ver usinas-investimento.get.ts e InvestimentoForm.vue). Sem eles, duplica o
+    // LONGI (fallback combinado com o usuário, igual ao autoconsumo) — viabilidade
+    // (specs técnicas) é sempre igual nas duas tecnologias, só o painel/preço mudam.
     $dadosNtype = $dadosLongi;
     $dadosNtype['itens'] = trocarPainelNaComposicao($itensComposicao, $descricaoPainelNtype);
 
     if ($precoNtypePost > 0) {
         $precoNtypeRs = 'R$. ' . number_format($precoNtypePost, 2, ',', '.');
-
-        $parcelaNtype1 = calcularParcela_corrigido($taxa, $nper1, $precoNtypePost, $vf, $tipo);
-        $parcelaNtype1Rs = number_format(abs((float) $parcelaNtype1), 2, ',', '.');
-        $parcelaNtype2 = calcularParcela_corrigido($taxa, $nper2, $precoNtypePost, $vf, $tipo);
-        $parcelaNtype2Rs = number_format(abs((float) $parcelaNtype2), 2, ',', '.');
-        $parcelaNtype3 = calcularParcela_corrigido($taxa, $nper3, $precoNtypePost, $vf, $tipo);
-        $parcelaNtype3Rs = number_format(abs((float) $parcelaNtype3), 2, ',', '.');
 
         // Mesmo retorno anual do LONGI (geração compensada não muda por painel) —
         // só o preço na divisão muda.
@@ -893,11 +896,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
         }
 
         $dadosNtype['vista'] = $precoNtypeRs;
-        $dadosNtype['prazo'] = [
-            "36x de R$ $parcelaNtype1Rs",
-            "48x de R$ $parcelaNtype2Rs",
-            "60x de R$ $parcelaNtype3Rs",
-        ];
+        $dadosNtype['prazo'] = [$precoNtypePrazoRs ?? 'Consulte'];
         $dadosNtype['payback'] = $paybackTextoNtype;
     }
 
