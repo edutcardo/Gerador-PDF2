@@ -254,7 +254,8 @@ $potenciaModulo = verificarValor2($potenciaModulo);
     $metrosOcupados = ($qtdmodulosArredondado * $m2placa)* $multiplicador;
 
     // Cálculos PGINV4
-    $peso = ($qtdmodulosArredondado * 33)* $multiplicador;
+    // Peso do painel LONGI: 33,5 kg/placa (pedido do usuário).
+    $peso = ($qtdmodulosArredondado * 33.5)* $multiplicador;
 if ($media > 0) {
     $percentualSolar = ($geracao / $media) * 100;
 } else {
@@ -811,7 +812,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
             // Sem marca aqui de propósito: cada tecnologia troca esta linha
             // pelo painel dela (ver trocarPainelNaComposicao mais abaixo).
             ['qtd' => '', 'desc' => "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO"],
-            ['qtd' => '', 'desc' => "$multiplicador INVERSOR SOLAR CHINT/SAJ/GROWATT $fabricante DE $potenciaInversorUnitario KW"],
+            ['qtd' => '', 'desc' => "$multiplicador INVERSOR SOLAR CHINT/SAJ/SOLIS/WEG $fabricante DE $potenciaInversorUnitario KW"],
             ['qtd' => '', 'desc' => "$qtdEstrutrura $descricaoEstrutura"],
             ['qtd' => '', 'desc' => "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612"],
             ['qtd' => '', 'desc' => "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612"],
