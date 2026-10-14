@@ -254,8 +254,8 @@ $potenciaModulo = verificarValor2($potenciaModulo);
     $metrosOcupados = ($qtdmodulosArredondado * $m2placa)* $multiplicador;
 
     // Cálculos PGINV4
-    // Peso do painel LONGI: 33,5 kg/placa (pedido do usuário).
-    $peso = ($qtdmodulosArredondado * 33.5)* $multiplicador;
+    // Peso do painel LONGI: 33,84 kg/placa (33,5 + 1%, pedido do usuário).
+    $peso = ($qtdmodulosArredondado * 33.84)* $multiplicador;
 if ($media > 0) {
     $percentualSolar = ($geracao / $media) * 100;
 } else {
