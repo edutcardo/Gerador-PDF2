@@ -528,7 +528,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $pdf->SetFont('helvetica', 'I', 10);
     $pdf->SetTextColor(100, 100, 100);
-    $pdf->Text(34.6, 286, "Este orçamento tem validade de 7 dias.");
+    $pdf->Text(34.6, 286, "Este orçamento tem validade de 3 dias.");
     $pdf->SetTextColor(0, 0, 0);
 
     // Segunda Página (com a imagem genérica e gráfico)

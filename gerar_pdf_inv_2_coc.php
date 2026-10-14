@@ -654,7 +654,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
 
     $pdf->SetFont('helvetica', 'I', 10);
     $pdf->SetTextColor(100, 100, 100);
-    $pdf->Text(21, 286, "Este orçamento tem validade de 7 dias.");
+    $pdf->Text(21, 286, "Este orçamento tem validade de 3 dias.");
     $pdf->SetTextColor(0, 0, 0);
 
     // Segunda Página (com a imagem genérica e gráfico)
