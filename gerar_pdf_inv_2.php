@@ -254,8 +254,11 @@ $potenciaModulo = verificarValor2($potenciaModulo);
     $metrosOcupados = ($qtdmodulosArredondado * $m2placa)* $multiplicador;
 
     // Cálculos PGINV4
-    // Peso do painel LONGI: 33,84 kg/placa (33,5 + 1%, pedido do usuário).
-    $peso = ($qtdmodulosArredondado * 33.84)* $multiplicador;
+    // Peso real por placa (pedido do usuário, 14/10/2026): LONGI 23,84 kg/placa,
+    // N-TYPE 33,84 kg/placa (LONGI + 10 kg) — $pesoNtype só é usado na tabela de
+    // viabilidade do bloco N-TYPE, mais abaixo.
+    $peso = ($qtdmodulosArredondado * 23.84)* $multiplicador;
+    $pesoNtype = ($qtdmodulosArredondado * 33.84)* $multiplicador;
 if ($media > 0) {
     $percentualSolar = ($geracao / $media) * 100;
 } else {
@@ -840,14 +843,18 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     $viabComuns = array(
         number_format($potenciaGerador, 2, ',', '.') . ' kWp',
         number_format($metrosOcupados, 2, ',', '.') . ' m²',
-        number_format($peso, 0, ',', '.') . ' kg',
-        'Não considerado',
     );
     $geracaoLongiArredondado = round($geracaoArredondado * 1.05);
+    // Peso: cada tecnologia mostra o peso do próprio painel (LONGI/N-TYPE — achado do
+    // usuário, 14/10/2026), igual à geração logo abaixo.
     $viabValoresLongi = array_merge($viabComuns, [
+        number_format($peso, 0, ',', '.') . ' kg',
+        'Não considerado',
         number_format($geracaoLongiArredondado, 0, ',', '.') . ' kWh/mês',
     ]);
     $viabValoresNtype = array_merge($viabComuns, [
+        number_format($pesoNtype, 0, ',', '.') . ' kg',
+        'Não considerado',
         number_format($geracaoArredondado, 0, ',', '.') . ' kWh/mês',
     ]);
 
