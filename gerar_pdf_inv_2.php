@@ -757,12 +757,12 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
         $paybackTexto = $partes ? implode(' e ', $partes) : 'Menos de 1 mês';
     }
 
-    // Payback da LONGI na página de Composição: 10% menor que o baseline (pedido do
-    // usuário, aumentado de 5% em 14/10/2026 — mesmo ajuste feito no autoconsumo,
-    // gerarPdf.ts) — so' multiplica o resultado já calculado acima, sem
-    // recalcular nada. $paybackTexto (baseline) continua intocado — é o que a página de
-    // Análise Financeira usa, que não compara tecnologias.
-    $paybackAnosLongi = $paybackAnos * 0.9;
+    // Payback REAL da LONGI (revertido o desconto artificial de 10% em 21/10/2026 — mesma
+    // reversao feita no autoconsumo, gerarPdf.ts: o cliente conferiu a conta com o preco a
+    // vista real mostrado no PDF e nao bateu com o payback forcado). $paybackTexto (baseline)
+    // continua intocado — é o que a página de Análise Financeira usa, que não compara
+    // tecnologias.
+    $paybackAnosLongi = $paybackAnos;
     $anosPaybackLongi = (int) floor($paybackAnosLongi);
     $mesesPaybackLongi = (int) round(($paybackAnosLongi - $anosPaybackLongi) * 12);
     if ($mesesPaybackLongi >= 12) {
