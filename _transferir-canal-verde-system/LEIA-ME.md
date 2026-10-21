@@ -98,7 +98,7 @@ $dadosNtype['itens'] = trocarPainelNaComposicao($itensComposicao, $descricaoPain
   aumenta a fonte sozinho quando é uma linha só.
 - **Painel por tecnologia** já é definitivo:
   - LONGI → `LONGI`
-  - N-TYPE → `ZNSHINE / RONMA / OSDA / WEG`
+  - N-TYPE → `ZNSHINE / OSDA / WEG` (RONMA removida do texto, 21/10/2026 — pedido do comercial)
   - faixa de potência exibida: `600-625 W` (texto de catálogo; o cálculo da
     quantidade de módulos continua usando `$potenciaModulo`, o número real)
 

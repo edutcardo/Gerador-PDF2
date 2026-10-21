@@ -473,7 +473,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // =======================================================================
     $potenciaPainelTexto = '600-625 W';
     $descricaoPainelLongi = "MÓDULO SOLAR LONGI $potenciaPainelTexto";
-    $descricaoPainelNtype = "MÓDULO SOLAR ZNSHINE / RONMA / OSDA / WEG $potenciaPainelTexto";
+    $descricaoPainelNtype = "MÓDULO SOLAR ZNSHINE / OSDA / WEG $potenciaPainelTexto";
 
     $dadosLongi = [
         'itens' => trocarPainelNaComposicao($itensComposicao, $descricaoPainelLongi),

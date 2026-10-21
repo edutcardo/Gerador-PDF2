@@ -883,7 +883,7 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
     // usando $potenciaModulo, que é o número de verdade.
     $potenciaPainelTexto = '600-625 W';
     $descricaoPainelLongi = "MODULOS FOTOVOLTÁICO LONGI $potenciaPainelTexto";
-    $descricaoPainelNtype = "MODULOS FOTOVOLTÁICO ZNSHINE / RONMA / OSDA / WEG $potenciaPainelTexto";
+    $descricaoPainelNtype = "MODULOS FOTOVOLTÁICO ZNSHINE / OSDA / WEG $potenciaPainelTexto";
 
     // A PRAZO (LONGI e N-TYPE, migration 337, pedido do usuário 09/10/2026): preço
     // COTADO de verdade (deriva do catálogo de kits, igual o à vista), não mais
