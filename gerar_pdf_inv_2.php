@@ -812,11 +812,22 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
         $qtdEstrutrura = number_format(($qtdmodulosArredondado / 4), 0, ',', '.');
         $qtdCabos = number_format(($qtdmodulosArredondado * 2), 0, ',', '.');
 
+        // Usinas de padrão mono rural: 20kW (Energisa MT, 1x100A) = 2 inversores
+        // monofásicos de 10kW; 40kW (Copel) = 4 de 10kW. Não 1 inversor só.
+        $pInv = (float)$potenciaInversorUnitario;
+        if ($pInv == 20 || $pInv == 40) {
+            $qtdInversoresDesc = $multiplicador * ($pInv / 10);
+            $potenciaInversorDesc = 10;
+        } else {
+            $qtdInversoresDesc = $multiplicador;
+            $potenciaInversorDesc = $potenciaInversorUnitario;
+        }
+
         $itensComposicao = [
             // Sem marca aqui de propósito: cada tecnologia troca esta linha
             // pelo painel dela (ver trocarPainelNaComposicao mais abaixo).
             ['qtd' => '', 'desc' => "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO"],
-            ['qtd' => '', 'desc' => "$multiplicador INVERSOR SOLAR CHINT/SAJ/SOLIS/WEG $fabricante DE $potenciaInversorUnitario KW"],
+            ['qtd' => '', 'desc' => "$qtdInversoresDesc INVERSOR SOLAR CHINT/SAJ/SOLIS/WEG $fabricante DE $potenciaInversorDesc KW"],
             ['qtd' => '', 'desc' => "$qtdEstrutrura $descricaoEstrutura"],
             ['qtd' => '', 'desc' => "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612"],
             ['qtd' => '', 'desc' => "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612"],
