@@ -814,20 +814,29 @@ $TaxaLucratividade_formatada = number_format($taxaLucratividade * 100, 2, ',', '
 
         // Usinas de padrão mono rural: 20kW (Energisa MT, 1x100A) = 2 inversores
         // monofásicos de 10kW; 40kW (Copel) = 4 de 10kW. Não 1 inversor só.
+        // Energisa MT passou para 23kW = 2x9kW + 1x5kW (24/11/2026).
         $pInv = (float)$potenciaInversorUnitario;
-        if ($pInv == 20 || $pInv == 40) {
+        $descInversor = null;
+        if ($pInv == 23) {
+            $qtd9 = $multiplicador * 2;
+            $qtd5 = $multiplicador;
+            $descInversor = "$qtd9 INVERSOR SOLAR CHINT/SAJ/SOLIS/WEG $fabricante DE 9 KW + $qtd5 DE 5 KW";
+        } elseif ($pInv == 20 || $pInv == 40) {
             $qtdInversoresDesc = $multiplicador * ($pInv / 10);
             $potenciaInversorDesc = 10;
         } else {
             $qtdInversoresDesc = $multiplicador;
             $potenciaInversorDesc = $potenciaInversorUnitario;
         }
+        if ($descInversor === null) {
+            $descInversor = "$qtdInversoresDesc INVERSOR SOLAR CHINT/SAJ/SOLIS/WEG $fabricante DE $potenciaInversorDesc KW";
+        }
 
         $itensComposicao = [
             // Sem marca aqui de propósito: cada tecnologia troca esta linha
             // pelo painel dela (ver trocarPainelNaComposicao mais abaixo).
             ['qtd' => '', 'desc' => "$qtdmodulosArredondado MODULOS FOTOVOLTÁICO"],
-            ['qtd' => '', 'desc' => "$qtdInversoresDesc INVERSOR SOLAR CHINT/SAJ/SOLIS/WEG $fabricante DE $potenciaInversorDesc KW"],
+            ['qtd' => '', 'desc' => $descInversor],
             ['qtd' => '', 'desc' => "$qtdEstrutrura $descricaoEstrutura"],
             ['qtd' => '', 'desc' => "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM PRETO NBR 16612"],
             ['qtd' => '', 'desc' => "$qtdCabos CABO SOLAR PV 1.8KVCC 4MM VERMELHO NBR 16612"],
